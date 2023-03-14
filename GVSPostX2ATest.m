@@ -33,18 +33,18 @@ MinCurrent = cell2mat(MinCurrent);
 
         % insert code here
  %% Rating Scale Data Extraction
+ rating_scale = ["none"; "noticeable"; "moderate"; "severe"];
+ Tingle_map1 = TextMatchMap(SideEffects1,TrialInfo1,rating_scale, 1);
+ Metallic_map1 = TextMatchMap(SideEffects1,TrialInfo1,rating_scale, 2);
+ VisFlash_map1 = TextMatchMap(SideEffects1,TrialInfo1,rating_scale, 3);
+ MotionRating_map1 = TextMatchMap(MotionSense1,TrialInfo1,rating_scale, 1);
+ ObservedRating_map1 = TextMatchMap(Observed1,TrialInfo1,rating_scale, 1);
 
- Tingle_map1 = RatingMap(SideEffects1(:,1),TrialInfo1);
- Metallic_map1 = RatingMap(SideEffects1(:,2),TrialInfo1);
- VisFlash_map1 = RatingMap(SideEffects1(:,3),TrialInfo1);
- MotionRating_map1 = RatingMap(MotionSense1(:,1),TrialInfo1);
- ObservedRating_map1 = RatingMap(Observed1(:,1),TrialInfo1);
-
- Tingle_map2 = RatingMap(SideEffects2(:,1),TrialInfo2);
- Metallic_map2 = RatingMap(SideEffects2(:,2),TrialInfo2);
- VisFlash_map2 = RatingMap(SideEffects2(:,3),TrialInfo2);
- MotionRating_map2 = RatingMap(MotionSense2(:,1),TrialInfo2);
- ObservedRating_map2 = RatingMap(Observed2(:,1),TrialInfo2);
+ Tingle_map2 = TextMatchMap(SideEffects2,TrialInfo2,rating_scale, 1);
+ Metallic_map2 = TextMatchMap(SideEffects2,TrialInfo2,rating_scale, 2);
+ VisFlash_map2 = TextMatchMap(SideEffects2,TrialInfo2,rating_scale, 3);
+ MotionRating_map2 = TextMatchMap(MotionSense2,TrialInfo2,rating_scale, 1);
+ ObservedRating_map2 = TextMatchMap(Observed2,TrialInfo2,rating_scale, 1);
  Label.Rating_map = ["Current"; "Rating"; "Config"];
 
 Tingle_map=Tingle_map1+Tingle_map2;
@@ -94,100 +94,6 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
 
 end
 
-
-function [Rating_map] = RatingMap(Rating_Var,TrialInfo)
-%UNTITLED4 Summary of this function goes here
-%   Detailed explanation goes here
-    current_col = 5;
-    config_col = 4; 
-    profile_col = 7;
-    profile_index = 0;
-
-    Rating_map =  zeros(9,4,3,5); % make sure this is a 3d array for config
-
-for inner = 1: length(Rating_Var)
-    Current = TrialInfo(inner, current_col);
-    Config = TrialInfo(inner, config_col);   
-    Var = Rating_Var(inner);
-    Profile = TrialInfo(inner, profile_col);
-        
-    switch string(Var)
-        case 'none'
-            rating_index = 1;
-        case 'noticeable'
-            rating_index = 2;
-        case 'moderate'
-            rating_index = 3;
-        case 'severe'
-            rating_index = 4;
-        otherwise
-            rating_index = 0;
-    end
-
-    switch string(Config)
-        case 'Binaural'
-            config_index = 1;
-        case 'Cevette'
-            config_index = 2;
-        case 'Aoyama'
-            config_index = 3;
-        otherwise
-            config_index = 0;
-    end
-    
-    switch string(Current)
-        case '0.1'
-            current_index = 1;
-        case '0.5'
-            current_index = 2;
-        case '1'
-            current_index = 3;
-        case '1.5'
-            current_index = 4;
-        case '2'
-            current_index = 5;
-        case '2.5'
-            current_index = 6;
-        case '3'
-            current_index = 7;
-        case '3.5'
-            current_index = 8;
-        case '4'
-            current_index = 9;
-        otherwise
-            current_index = 0;
-    end
-
-        switch string(Profile)
-            case 'front'
-                profile_index = 1;
-            case 'right'
-                profile_index = 1;
-           case 'back'
-                profile_index = 2;
-           case 'left'
-                profile_index = 2;
-            case '0.25'
-                profile_index = 3;
-            case '0.5'
-                profile_index = 4;
-            case '1'
-                profile_index = 5;
-
-            otherwise
-                profile_index = 0;
-        end
-
-    if current_index == 0 || rating_index == 0 || config_index == 0
-        continue
-    end
-    
-    Rating_map(current_index, rating_index,config_index,profile_index) = Rating_map(current_index, rating_index,config_index,profile_index) +1;
-        
-end       
-      
-end
-
 function [Output_map] = TextMatchMap(Input,TrialInfo,Text2Chk,Column)
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
@@ -203,7 +109,9 @@ profile_col = 7;
 profile_index = 0;
 match = 0;
 check = 1;
-Output_map = zeros(9,3,response_types,5);
+% 9 current levels, x response types, 3 configurations, 5 profiles
+% eventually these numbers should be pulled maybe from Trial info?
+Output_map = zeros(9,response_types,3,5);
 
 for j= 1:response_types
     match_loc = find(contains(Input(:,Column), Text2Chk(j)));
