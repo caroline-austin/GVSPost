@@ -33,17 +33,26 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 % 1: Sand plots across all 9 current amplitudes, separate files for each 
 % side effect and subplots for each electrode configuration, generates
 % plots for 4 sides effects and 5 profiles
+
 % 2: Sand plots for only sham, low, high current amplitudes, separate files 
 % for each side effect and subplots for each electrode configuration, generates
 % plots for 4 sides effects and 5 profiles
+
 % 3: obselete
+
 % 4: Bar plots across all 9 current amplitudes, separate files for each
 % side effect and subplots for each electrode configureation - generates
 % plots for 4 side effects and only the 0.5 Hz profile
-% 5:
-% 6:
 
-Include_plots = ['1 2 5 6'];
+% 5: Bar plots for all 9 current amplitudes, separate files 
+% for Type, Direction, Timing and subplots for each electrode configuration, generates
+% plots for 3 effects and 5 profiles
+
+% 6: Bar plots for only sham, low, high current amplitudes, separate files 
+% for Type, Direction, Timing and subplots for each electrode configuration, generates
+% plots for 3 effects and 5 profiles
+
+Include_plots = [' 2  6'];
 
 % should probably insert a for loop that checks to make sure this file exists first
 cd([file_path]);
@@ -374,7 +383,7 @@ if contains(Include_plots, '4')
     cd(code_path);
 end
 
-
+%plots for Direction, Type, and Timing all current amplitudes and all waveforms
 if contains(Include_plots,'5')
     %% Plot Motion Direction (roll, pitch, yaw data)
     for prof = 1:num_profiles
@@ -479,7 +488,7 @@ if contains(Include_plots,'5')
     end
 end
 
-
+%plots for Direction, Type, and Timing for sham, low, high current amplitudes and all waveforms
 if contains(Include_plots, '6')
 %% Reduced Plot Motion Direction (roll, pitch, yaw data)
     for prof = 1:num_profiles
@@ -583,70 +592,4 @@ if contains(Include_plots, '6')
     close all
     end
 end
-%%
-% % area plot figures for part 2 of the experiment
-% for i = 1:num_config
-% figure;
-% subplot(2,3,1)
-% MapAreaPlot(All_Tingle_map2(:,:,i),"Tingle Reporting",numsub, ["none", "noticeable", "moderate", "severe"])
-% xlim([0.5 4]);
-% 
-% subplot(2,3,2)
-% MapAreaPlot(All_Metallic_map2(:,:,i),"Metallic Taste Reporting",numsub, ["none", "noticeable", "moderate", "severe"])
-% xlim([0.5 4]);
-% 
-% subplot(2,3,3)
-% MapAreaPlot(All_VisFlash_map2(:,:,i),"Visual Flashes Reporting",numsub, ["none", "noticeable", "moderate", "severe"])
-% xlim([0.5 4]);
-% 
-% subplot(2,3,4)
-% MapAreaPlot(All_MotionRating_map2(:,:,i),"Motion Sensations Reporting",numsub, ["none", "noticeable", "moderate", "severe"])
-% xlim([0.5 4]);
-% 
-% subplot(2,3,5)
-% MapAreaPlot(All_ObservedRating_map2(:,:,i),"Observed Motion Reporting",numsub, ["none", "noticeable", "moderate", "severe"])
-% xlim([0.5 4]);
-% 
-% subplot(2,3,6,"visible", "off")
-% Total_title = horzcat([num2str(i+1) " Electrode Effects Ratings Multi Profile"]);
-% sgtitle(Total_title)
-% 
-% end
-
-
-
-% Current_levels_str = ["0.1" "0.5" "1" "1.5" "2" "2.5" "3" "3.5" "4"]; % need to save this variable earlier on
-% figure;
-% subplot(2,2,1)
-% bar(All_Tingle_map1(:,:,1));
-% hold on;
-% ylabel('Number of Responses')
-% xlabel('Current Level (mA)')
-% xticks([1 2 3 4 5 6 7 8 9]);
-% xticklabels(Current_levels_str);
-% title('2 Electrode');
-% % legend('none','noticeable', 'moderate', 'severe')
-% subplot(2,2,2)
-% bar(All_Tingle_map1(:,:,2));
-% hold on;
-% ylabel('Number of Responses')
-% xlabel('Current Level (mA)')
-% xticks([1 2 3 4 5 6 7 8 9]);
-% xticklabels(Current_levels_str);
-% title('3 Electrode');
-% subplot(2,2,3)
-% bar(All_Tingle_map1(:,:,3));
-% hold on;
-% ylabel('Number of Responses')
-% xlabel('Current Level (mA)')
-% xticks([1 2 3 4 5 6 7 8 9]);
-% xticklabels(Current_levels_str);
-% title('4 Electrode');
-% subplot(2,2,4)
-% bar(All_map);
-% lgd = legend('none','noticeable', 'moderate', 'severe');
-% sgtitle('Tingling Reports')
-% % lgd.Layout.Tile = 4;
-% 
-% % Code that generates the plots based on the responses
 
