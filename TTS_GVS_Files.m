@@ -1,7 +1,7 @@
 close all; 
 clear all; 
 clc; 
-
+% code section 1 for TTS stuff
 %% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -10,7 +10,7 @@ gvs_path = [file_path '\GVSProfiles'];
 tts_path = [file_path '\TTSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1002:1002;  % Subject List 
+subnum = 1003:1003;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -25,7 +25,7 @@ for sub = 1:numsub
 
     cd(file_path);
     Trial_Info = readcell('DynamicGVSPlusTilt.xlsx','Sheet', ...
-        ['PS' subject_str],'Range','A2:H30');
+        ['PS' subject_str],'Range','A2:H46'); % H30 for PS02, 46 for PS03
     Trial_Num = cell2mat(Trial_Info(:,1));
     Label.DataColumns = readcell('DynamicGVSPlusTilt.xlsx','Sheet',... 
         ['PS' subject_str], 'Range','A1:H1');
@@ -40,7 +40,7 @@ for sub = 1:numsub
 
     for i = 1:num_csv_files
        current_csv_file = char(csv_filenames(i));
-       if ~ contains(current_csv_file, '4A') && ~ contains(current_csv_file, '5A')
+       if ~ contains(current_csv_file, 'A.') && ~ contains(current_csv_file, 'B.')
            continue
        end
        % match the GVS Profile to the TTS profile currently using trial
@@ -53,8 +53,8 @@ for sub = 1:numsub
            trial_number = ['0', trial_number];
        end
        test = current_csv_file(end-23:end-14);
-       GVS_profile_name = char(strjoin([string(current_csv_file(end-22:end-13)) '_'  ...
-           string(Trial_Info(row,5)) 'mA_prop' string(Trial_Info(row,6))]));
+       part_1 = string(Trial_Info(row,4));
+       GVS_profile_name = char(strjoin([ string(Trial_Info(row,4)), "_", string(Trial_Info(row,5)), "mA_prop", string(Trial_Info(row,6))])); %string(current_csv_file(end-22:end-13))
         
        if contains(GVS_profile_name, '.')
             decimal_loc = find(GVS_profile_name(:) == '.');
