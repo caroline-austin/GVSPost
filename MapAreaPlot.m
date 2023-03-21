@@ -9,6 +9,9 @@ elseif row == 3
 end
 area(Current_levels, All_map/norm*100); % bi %need to calculate numsub differently
 colors = [Color_list(1,:); Color_list(2,:); Color_list(3,:); Color_list(4,:)];
+if col ==5
+    colors = [colors; 0,0,0];
+end
 colororder(colors);
 if row == 3
     Current_levels_str = ["0.1", "Low", "High"];
