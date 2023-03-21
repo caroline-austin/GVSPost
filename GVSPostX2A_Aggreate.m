@@ -10,7 +10,7 @@ file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2001:2009;  % Subject List 
+subnum = 2001:2010;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -25,6 +25,7 @@ for sub = 1:numsub
     end
     used_sub = used_sub +1;
     subject_label(used_sub)= subject;
+    Label.Subject(used_sub)= subject;
     cd([file_path, '/' , subject_str]);
     load(['A' subject_str 'Extract.mat'])
     cd(code_path);
@@ -36,7 +37,7 @@ for sub = 1:numsub
 vars_interest = split(vars_2_save);
 for vars = 1:length(vars_interest)
     current_var = char(vars_interest(vars));
-    if strcmp(current_var, "Label") 
+    if strcmp(current_var, "Label") || isempty(current_var)
         All_vars2save =  horzcat( [All_vars2save ' Label']);
         continue
     end
@@ -65,18 +66,27 @@ for vars = 1:length(vars_interest)
 
         else 
             %will worry about not reporting variable later 
+            eval(['[row, col] = size(' current_var ');'])
+             if subject == subnum(1)% this is probably not the best way to do this, but will probably work for now
+%                 test = zeros(row, col, depth);
+                eval(['All_' current_var ' = zeros(row, col );']);
+                dummy_name = ['All_' current_var];
+                All_vars2save =  horzcat( [All_vars2save ' ' dummy_name]);
+                
+             end
 %             eval(['All_' current_var '(used_sub*row-row+1:used_sub*row, :) = ' current_var ' ;'])
+                eval(['All_' current_var '(:, used_sub) = ' current_var ' ;'])
+                
+             
         end
 
 end
-
-
 
 end
 
 % insert any data aggregating code ( or can be saved for the plot script)
 
-
+All_vars2save = horzcat( [All_vars2save ' subject_label']);
     cd([file_path]);
 %     %vars_interest probably doesn't need to get reset here
 %     vars_interest = 'Label TrialInfo SideEffects MotionSense Observed EndImpedance StartImpedance MaxCurrent MinCurrent';
