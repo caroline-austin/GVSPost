@@ -37,6 +37,12 @@ Label.CurrentAmp = [0.1 , 0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0];
 MaxCurrent = cell2mat(MaxCurrent);
 MinCurrent = cell2mat(MinCurrent);
 
+%change data type of other variables of interest that are cells
+EndImpedance = cell2mat(EndImpedance);
+if isempty(EndImpedance)
+    EndImpedance = zeros(10,1);
+end
+StartImpedance = cell2mat(StartImpedance);
         
  %% Rating Scale Data Extraction
  rating_scale = ["none"; "noticeable"; "moderate"; "severe"]; %responses to check for
@@ -221,8 +227,8 @@ for j= 1:response_types %cycle through for each string you want to check
     
         %record the matched value in the proper map location
         if match % the way this is currently coded doesn't account for reducing multiple reports to a single report 
-            Output_map(current_index, j,config_index,profile_index) = ... 
-                Output_map(current_index,j, config_index,profile_index) +1;
+            Output_map(current_index, j,config_index,profile_index) = 1;%... 
+                %Output_map(current_index,j, config_index,profile_index) +1;
         end
         match = 0;
 
