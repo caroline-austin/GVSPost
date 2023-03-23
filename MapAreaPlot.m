@@ -4,6 +4,9 @@ function MapAreaPlot(All_map,Title,norm, Legend,Color_list )
 [row,col] = size(All_map);
 if row ==9
 Current_levels = [0.1 .5 1 1.5 2 2.5 3 3.5 4];
+elseif row == 8
+Current_levels = [0.25 .5 1 1.5 2 2.5 3 3.5 4 4.25];
+All_map = [ All_map(1,:); All_map; All_map(end,:)];
 elseif row == 3
     Current_levels = [1, 2, 3];
 end
