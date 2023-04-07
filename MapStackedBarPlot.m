@@ -1,4 +1,4 @@
-function MapStackedBarPlot(All_map,Title,norm, Legend, Color_list)
+function MapStackedBarPlot(All_map,Title,norm, legend, Color_list) %~ used to be legend
 %UNTITLED2 Summary of this function goes here
 %   Detailed explanation goes here
 
