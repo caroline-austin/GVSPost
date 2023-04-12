@@ -1,5 +1,6 @@
 % this script creates sand plots for the 0.5Hz waveform across all mA 
-% amplitudes with icons for individual subjects 
+% amplitudes with icons for individual subjects and also accounts for
+% "no report" trials 
 
 close all; 
 clear all; 
@@ -45,14 +46,20 @@ cd(code_path);
 
 prof = 4; 
 %% plotting code for Motion Rating
+% current , response, config, profile
 [dim1, dim2, dim3, dim4] = size(All_MotionRating_map);
+% reduce 4D var into 3D var -> dims = current, response, config and add
+% extra colummn for the "no report" responses
 Sin05Hz_MotionRating_map = [All_MotionRating_map(:,:,:,4) zeros(dim1,1,dim3)];
 for i = 1:dim3
     for j = 1:dim1
+        %check/calculate the number of recorded responses
         check = sum(Sin05Hz_MotionRating_map(j,:,i));
+        %make sure all double reports were removed
         if check > numsub % may need to change back to num_sub
             disp("error too many reports ")
         end
+        %record/save the number of trials/subjects without reports
         Sin05Hz_MotionRating_map(j,end,i)=numsub-check;% may need to change back to num_sub
         
     end
