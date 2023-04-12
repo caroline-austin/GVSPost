@@ -40,7 +40,7 @@ for sub = 1:numsub
     MotionSense1(cellfun(@(x) any(ismissing(x)), MotionSense1)) = {''};
     Observed1(cellfun(@(x) any(ismissing(x)), Observed1)) = {''};
 
-    % the 76 may need to be reduced to 23 (because the first subject had 3
+    % the 76 may need to be reduced to 73 (because the first subject had 3
     % extra trials
     TrialInfo2 = readcell(['A' subject_str '.xlsx'],'Range','A44:G73');
     SideEffects2 = readcell(['A' subject_str '.xlsx'],'Range','H44:J73');
@@ -62,6 +62,12 @@ for sub = 1:numsub
     MaxCurrent(cellfun(@(x) any(ismissing(x)),  MaxCurrent)) = {''};
     MinCurrent(cellfun(@(x) any(ismissing(x)), MinCurrent)) = {''};
     cd(code_path);
+
+    %In the excel spreadsheet the min/max is order Bi, Ay, Cv but
+    %everywhere else in this code it's Bi, Cv, Ay so this makes things more
+    %streamlined later on
+    MinCurrent = [MinCurrent(1), MinCurrent(3), MinCurrent(2)];
+    MaxCurrent = [MaxCurrent(1), MaxCurrent(3), MaxCurrent(2)];
 
 % insert code that will count the number of each type of response
 
