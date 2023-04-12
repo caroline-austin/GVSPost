@@ -55,6 +55,7 @@ StartImpedance = cell2mat(StartImpedance);
  VisFlash_map1 = TextMatchMap(SideEffects1,TrialInfo1,rating_scale, 3);
  MotionRating_map1 = TextMatchMap(MotionSense1,TrialInfo1,rating_scale, 1);
  ObservedRating_map1 = TextMatchMap(Observed1,TrialInfo1,rating_scale, 1);
+
  % suffix 2 is from part 2 of the experiment
  Tingle_map2 = TextMatchMap(SideEffects2,TrialInfo2,rating_scale, 1);
  Metallic_map2 = TextMatchMap(SideEffects2,TrialInfo2,rating_scale, 2);
@@ -63,11 +64,12 @@ StartImpedance = cell2mat(StartImpedance);
  ObservedRating_map2 = TextMatchMap(Observed2,TrialInfo2,rating_scale, 1);
  Label.Rating_map = ["Current"; "Rating"; "Config"];
 %combine responses from part 1 and 2 into a single array
-Tingle_map=Tingle_map1+Tingle_map2;
-Metallic_map=Metallic_map1+Metallic_map2;
-VisFlash_map=VisFlash_map1+VisFlash_map2;
-MotionRating_map=MotionRating_map1+MotionRating_map2;
-ObservedRating_map=ObservedRating_map1+ObservedRating_map2;
+Tingle_map=RemoveExtraReports(Tingle_map1+Tingle_map2);
+Metallic_map=RemoveExtraReports(Metallic_map1+Metallic_map2);
+VisFlash_map=RemoveExtraReports(VisFlash_map1+VisFlash_map2);
+MotionRating_map=RemoveExtraReports(MotionRating_map1+MotionRating_map2);
+ObservedRating_map=RemoveExtraReports(ObservedRating_map1+ObservedRating_map2);
+
 
 %take map variables and reduce it so that they only contain the responses
 %from the high (max), low (min), and sham (0.1) trials - the actual current values 
@@ -238,6 +240,13 @@ end
 
 end 
 
+% for debugging both subject 2 and 3 are missing some of their reports;
+% subject 3 is missing for the 3 and 4 electrode configuration of profile 1
+
+%need to fix Min and max current are ordered Bi, Ay, Cv instead of Bi, Cv,
+%Ay (which is what everything else in the code is ordered) - need to fix
+%this
+
 function [Reduced_map] = ReduceMapMultiple(Rating_map,MinCurrent,MaxCurrent,Label)
 %this function takes a previously generated map and reduces it so that the
 %values recorded are only for the sham(0.1), low (min), and high(max)
@@ -281,4 +290,22 @@ for outer = 1: dim4 %cycle through the different profiles
     end
 end
 
+end
+
+function Rating_map = RemoveExtraReports(Rating_map)
+%overwrite lower value of multiple reports
+ [dim1, dim2,dim3, dim4] = size(Rating_map);
+ for current = 1: dim1
+     for config = 1:dim3
+         for profile = 1:dim4
+            if sum(Rating_map(current,:,config,profile))>1
+                report_loc = find(Rating_map(current,:,config,profile));
+                %right now only have cases of 1 extra different report, but
+                %if multiple could make a loop              
+                Rating_map(current,report_loc(1),config,profile) = 0;
+            end
+
+         end
+     end
+ end
 end
