@@ -1,6 +1,7 @@
 close all; 
 clear all; 
 clc; 
+% code section 2
 
 %% 
 code_path = pwd; %save code directory
@@ -9,7 +10,7 @@ plots_path = [file_path '\Plots']; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1003:1005;  % Subject List 
+subnum = 1002:1002;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -51,8 +52,8 @@ for sub = 1:numsub
                 GVS_4A(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_4A);
                 GVS_4A(:,GVS_col+1) = GVS_command(2:end);
-                GVS_4A(:,GVS_col+2) = GVS_actual_mV;
-                GVS_4A(:,GVS_col+3) = GVS_actual_filt;
+                GVS_4A(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_4A(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_4A(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_4A(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
@@ -73,8 +74,8 @@ for sub = 1:numsub
                 GVS_4B(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_4B);
                 GVS_4B(:,GVS_col+1) = GVS_command;%(2:end);
-                GVS_4B(:,GVS_col+2) = GVS_actual_mV;
-                GVS_4B(:,GVS_col+3) = GVS_actual_filt;
+                GVS_4B(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_4B(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_4B(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_4B(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
@@ -95,8 +96,8 @@ for sub = 1:numsub
                 GVS_5A(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_5A);
                 GVS_5A(:,GVS_col+1) = GVS_command(2:end);
-                GVS_5A(:,GVS_col+2) = GVS_actual_mV;
-                GVS_5A(:,GVS_col+3) = GVS_actual_filt;
+                GVS_5A(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_5A(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_5A(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_5A(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
@@ -116,8 +117,8 @@ for sub = 1:numsub
                 GVS_5B(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_5B);
                 GVS_5B(:,GVS_col+1) = GVS_command;%(2:end);
-                GVS_5B(:,GVS_col+2) = GVS_actual_mV;
-                GVS_5B(:,GVS_col+3) = GVS_actual_filt;
+                GVS_5B(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_5B(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_5B(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_5B(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
@@ -138,8 +139,8 @@ for sub = 1:numsub
                 GVS_6A(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_6A);
                 GVS_6A(:,GVS_col+1) = GVS_command;%(2:end);
-                GVS_6A(:,GVS_col+2) = GVS_actual_mV;
-                GVS_6A(:,GVS_col+3) = GVS_actual_filt;
+                GVS_6A(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_6A(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_6A(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_6A(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
@@ -160,8 +161,8 @@ for sub = 1:numsub
                 GVS_6B(:,1) = tilt_command;
                 [~,GVS_col]=size(GVS_6B);
                 GVS_6B(:,GVS_col+1) = GVS_command;%(2:end);
-                GVS_6B(:,GVS_col+2) = GVS_actual_mV;
-                GVS_6B(:,GVS_col+3) = GVS_actual_filt;
+                GVS_6B(:,GVS_col+2) = -GVS_actual_mV;
+                GVS_6B(:,GVS_col+3) = -GVS_actual_filt;
                 
                 Label.GVS_6B(GVS_col+1,:) = string([ current_file(11:end-4), '_GVS_command']);
                 Label.GVS_6B(GVS_col+2,:) = string([ current_file(11:end-4), '_GVS_actual_mV']);
