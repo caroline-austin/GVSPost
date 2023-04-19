@@ -137,7 +137,7 @@ end
         lgd.Layout.Tile = 4;
         lgd.Color =  [1 1 1];
         
-        TotalTitle = char(strjoin(["Reported Motion Sensation" Profiles(prof)]));
+        TotalTitle = char(strjoin(["Reported Motion Intensity at Max Current Amplitude"]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllWaveStackedBarPlotSymbols"]));
         
