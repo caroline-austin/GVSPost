@@ -1,7 +1,7 @@
 close all; 
 clear all; 
 clc; 
-
+% code section 3
 %% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -9,7 +9,7 @@ plots_path = [file_path '\Plots']; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1003:1005;  % Subject List 
+subnum = 1002:1005;  % Subject List 
 numsub = length(subnum);
 subskip = [1004 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -207,7 +207,7 @@ All_shot_6B = All_shot_6B/tot_num;
 
 %% save files
    cd(file_path);
-   vars_2_save = ['Label Trial_Info time All_shot_4A tilt_4A GVS_4A  ... ' ...
+   vars_2_save = ['Label Trial_Info time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
        'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5A GVS_5B All_shot_6B tilt_6B GVS_6B'];
    eval(['  save ' ['PS' 'All.mat '] vars_2_save ' vars_2_save']);      
