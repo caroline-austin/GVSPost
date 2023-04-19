@@ -1,7 +1,6 @@
 function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,prof2plot)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-%% plot 4A
     [neg_prof] = find(contains(Shot_Label, 'N'));
     [pos_prof] = find(contains(Shot_Label, 'P'));
 %     pos_colors=['r'; 'r'; 'g';  'c';  'b'];
@@ -30,8 +29,9 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
     ylabel('Angular Velocity (degrees/s)')
      xlim([0 35]);
 
-    [gvs_prof] = find(contains(GVS_Label, 'command'));
-    gvs_colors=['g'; 'g';'c'; 'c';'b';'b' ; colors];
+    [gvs_prof] = find(contains(GVS_Label, 'command')); %'command'
+%     gvs_colors=['g'; 'g';'c'; 'c';'b';'b' ; colors];% PS1002
+    gvs_colors=['g'; 'c'; 'b' ; colors];% PS1003 and 4
 
     subplot(3,1,3)
     gvs_legend(1) = "test";
@@ -50,57 +50,5 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
 
     hold off;
 
-%     cd(plots_path);
-%    saveas(gcf, [ 'Positive_4A_4_00mA_Perception']); 
-%    cd(code_path);
-%    hold off;
-
-%     figure; 
-%     subplot(3,1,1)
-%     plot(time,tilt(:,3), 'k');
-%     neg_legend(1) = "TTS Commanded Tilt";
-%     hold on;
-%     for i = 1:length(neg_prof)
-%         plot(time,shot(:,neg_prof(i)), neg_colors(i))
-%         line_label = char(Shot_Label(neg_prof(i)));
-%         neg_legend(i+1) =(strrep(line_label(1:13), '_', '.'));
-%     end
-%     legend(neg_legend)
-%     xlabel('Time (s)');
-%     ylabel('Tilt (degrees)')
-%     title('4A Negative GVS Affects on Tilt Perception')
-%     ylim([-15 15]);
-%      xlim([0 31]);
-% 
-%     subplot(3,1,2)
-%     plot(time, tilt(:,2))
-%     xlabel('Time (s)');
-%     ylabel('Angular Velocity (degrees/s)');
-%      xlim([0 31]);
-% 
-%     [gvs_prof] = find(contains(GVS_Label, 'command'));
-% %     gvs_colors=['g'; 'g';'c'; 'c'; 'b' ; 'b';'r'; 'r'; 'g'; 'g'; 'g';'c'; 'c'; 'b' ; 'b'];
-% 
-%     subplot(3,1,3)
-%     gvs_legend(1) = "test";
-%     for i = 1:length(gvs_prof)
-%         if find(neg_prof == (gvs_prof(i)-2*(i-1)))
-%             plot(time,GVS(:,gvs_prof(i)), gvs_colors(i))
-%             hold on;
-%             line_label = char(GVS_Label(gvs_prof(i)));
-% %             gvs_legend(i) =(strrep(line_label(1:13), '_', '.'));
-%         end
-%     end
-% %     legend(gvs_legend)
-%     xlabel('Time (s)');
-%     ylabel('Current (mA)');
-%      xlim([0 31]);
-% 
-%     hold off;
-% 
-%     cd(plots_path);
-%    saveas(gcf, [ 'Negative_4A_4_00mA_Perception']); 
-%    cd(code_path);
-%    hold off;
 
 end
