@@ -1,17 +1,24 @@
-function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,prof2plot)
+function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,prof2plot, match_list)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-    [neg_prof] = find(contains(Shot_Label, 'N'));
-    [pos_prof] = find(contains(Shot_Label, 'P'));
-%     pos_colors=['r'; 'r'; 'g';  'c';  'b'];
+
     figure; 
+    %first subplot is the actual tilt and shot reports
     subplot(3,1,1)
+    %plot a sample tilt (all tilt should be ~the same)
     plot(time,tilt(:,3), 'k');
     pos_legend(1) = "TTS Commanded Tilt";
     hold on;
     pos_length = length(prof2plot);
     for i = 1:pos_length
-        plot(time,shot(:,prof2plot(i)), colors(i))
+        color_index = 1;
+        for j = 1:length(match_list)
+            if contains(Shot_Label(prof2plot(i)), match_list(j))
+                color_index = j+1;
+                continue;
+            end
+        end
+        plot(time,shot(:,prof2plot(i)), colors(color_index))
        
         line_label = char(Shot_Label(prof2plot(i)));
         pos_legend(i+1) =(strrep(line_label(1:13), '_', '.'));
@@ -37,7 +44,15 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
     gvs_legend(1) = "test";
     for i = 1:length(gvs_prof)
         if find(prof2plot == (gvs_prof(i)-2*(i-1)))
-            plot(time,GVS(:,gvs_prof(i)), gvs_colors(i))
+
+            color_index = 1;
+            for j = 1:length(match_list)
+                if contains(Shot_Label(i), match_list(j))
+                    color_index = j+1;
+                    continue;
+                end
+            end
+            plot(time,GVS(:,gvs_prof(i)), gvs_colors(color_index))
             hold on;
             line_label = char(GVS_Label(gvs_prof(i)));
 %             gvs_legend(i) =(strrep(line_label(1:13), '_', '.'));
