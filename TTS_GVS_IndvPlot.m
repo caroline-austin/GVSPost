@@ -10,7 +10,7 @@ plots_path = [file_path '\Plots']; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1002:1002;  % Subject List 
+subnum = 1011:1011;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -21,11 +21,12 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\PS' , subject_str];
+%     subject_path = [file_path, '\PS' , subject_str];
+    subject_path = [file_path, '\' , subject_str];
 
     cd(subject_path);
     load(['PS', subject_str, '.mat ']);
-    
+%     load(['PS', subject_str, '.mat ']);
     cd(code_path);
     [subject_filenames]=file_path_info2(code_path,subject_path ); % get files from file folder
     num_files = length(subject_filenames);
@@ -214,7 +215,7 @@ for sub = 1:numsub
 
 %% Plot 4B with function
     [pos_prof] = find(contains(Label.shot_4B, 'P'));
-    pos_colors=[ 'r'; 'g'; 'c';'b']; % PS1003 and 4
+%     pos_colors=[ 'r'; 'g'; 'c';'b']; % PS1003 and 4
     PlotGVSTTSPerception(Label.shot_4B,Label.GVS_4B, tilt_4B(1:trial_end,:),shot_4B(1:trial_end,:),GVS_4B(1:trial_end,:), time(1:trial_end),pos_colors,pos_prof);
     subplot(3,1,1)
     title('4B Positive GVS Affects on Tilt Perception')
@@ -265,7 +266,7 @@ for sub = 1:numsub
 
 %% Plot 5B with function
     [pos_prof] = find(contains(Label.shot_5B, 'P'));
-    pos_colors=[ 'r'; 'g'; 'c';'b']; % PS1003 and 4
+%     pos_colors=[ 'r'; 'g'; 'c';'b']; % PS1003 and 4
     PlotGVSTTSPerception(Label.shot_5B,Label.GVS_5B, tilt_5B(1:trial_end,:),shot_5B(1:trial_end,:),GVS_5B(1:trial_end,:), time(1:trial_end),pos_colors,pos_prof);
     subplot(3,1,1)
     title('5B Positive GVS Affects on Tilt Perception')
@@ -315,7 +316,7 @@ for sub = 1:numsub
 
 %% Plot 6B with function
     [pos_prof] = find(contains(Label.shot_6B, 'P'));
-    pos_colors=['r'; 'g'; 'c';'b']; % PS1003 and 4
+%     pos_colors=['r'; 'g'; 'c';'b']; % PS1003 and 4
     PlotGVSTTSPerception(Label.shot_6B,Label.GVS_6B, tilt_6B(1:trial_end,:),shot_6B(1:trial_end,:),GVS_6B(1:trial_end,:), time(1:trial_end),pos_colors,pos_prof);
     subplot(3,1,1)
     title('6B Positive GVS Affects on Tilt Perception')
@@ -342,7 +343,7 @@ for sub = 1:numsub
 %% save files
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
-   eval(['  save ' ['PS', subject_str, 'Group.mat '] vars_2_save ' vars_2_save']);      
+%    eval(['  save ' ['PS', subject_str, 'Group.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
