@@ -27,30 +27,6 @@ function  PlotGVSTTSPerceptionSHOTonly(Shot_Label,GVS_Label, tilt,shot,GVS, time
     ylim([-15 15]);
     xlim([0 35]);
     
-%     subplot(3,1,2)
-%     plot(time, tilt(:,2))
-%     xlabel('Time (s)');
-%     ylabel('Angular Velocity (degrees/s)')
-%      xlim([0 35]);
-% 
-%     [gvs_prof] = find(contains(GVS_Label, 'command')); %'command'
-% %     gvs_colors=['g'; 'g';'c'; 'c';'b';'b' ; colors];% PS1002
-%     gvs_colors=['g'; 'c'; 'b' ; colors];% PS1003 and 4
-% 
-%     subplot(3,1,3)
-%     gvs_legend(1) = "test";
-%     for i = 1:length(gvs_prof)
-%         if find(prof2plot == (gvs_prof(i)-2*(i-1)))
-%             plot(time,GVS(:,gvs_prof(i)), gvs_colors(i))
-%             hold on;
-%             line_label = char(GVS_Label(gvs_prof(i)));
-% %             gvs_legend(i) =(strrep(line_label(1:13), '_', '.'));
-%         end
-%     end
-% %     legend(gvs_legend)
-%     xlabel('Time (s)');
-%     ylabel('Current (mA)')
-%     xlim([0 35]);
 
     hold off;
 
