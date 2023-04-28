@@ -28,9 +28,10 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
         plot(time,shot(:,prof2plot(i)), colors(color_index))
         %save the label as part of the legend
         line_label = char(Shot_Label(prof2plot(i)));
-        pos_legend(i+1) =(strrep(line_label(1:13), '_', '.'));
+        pos_legend(i+1) =(strrep(match_list(color_index-1), '_', '.')); %line_label(1:13)
     end
     %make the label intuitive to readers
+    gvs_match = strrep(pos_legend(2:end), '.', '_');
     pos_legend = strrep(pos_legend, '7.00', 'Velocity');
     pos_legend = strrep(pos_legend, '7.50', 'Angle&Velocity');
     pos_legend = strrep(pos_legend, '8.00', 'Angle');
@@ -52,25 +53,27 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
      %will want/need to change this code to match the other color selection
      %code
     [gvs_prof] = find(contains(GVS_Label, 'command')); %'command'
-%     gvs_colors=['g'; 'g';'c'; 'c';'b';'b' ; colors];% PS1002
-    gvs_colors=['g'; 'c'; 'b' ; colors];% PS1003 and 4
 
     subplot(3,1,3)
-    gvs_legend(1) = "test";
+%     gvs_legend(1) = "test";
     for i = 1:length(gvs_prof)
-        if find(prof2plot == (gvs_prof(i)-2*(i-1)))
+        for k = 1:length(gvs_match)
+            %find where the gvs profile matches the shot report profile
+        loc = find(contains(GVS_Label(gvs_prof(i)), gvs_match(k)));
+        if loc
 
             color_index = 1;
             for j = 1:length(match_list)
-                if contains(Shot_Label(i), match_list(j))
+                if contains(GVS_Label(gvs_prof(i)), match_list(j)) 
                     color_index = j+1;
                     continue;
                 end
             end
-            plot(time,GVS(:,gvs_prof(i)), gvs_colors(color_index))
+            plot(time,GVS(:,gvs_prof(i)), colors(color_index))
             hold on;
-            line_label = char(GVS_Label(gvs_prof(i)));
-%             gvs_legend(i) =(strrep(line_label(1:13), '_', '.'));
+%             line_label = char(GVS_Label(gvs_prof(i)));
+%             gvs_legend(i) =(strrep(match_list(color_index-1), '_', '.'));
+        end
         end
     end
 %     legend(gvs_legend)
