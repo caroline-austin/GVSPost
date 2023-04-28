@@ -1,7 +1,7 @@
 function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,prof2plot, match_list)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
-
+ 
     figure; 
     %first subplot is the actual tilt and shot reports
     subplot(3,1,1)
