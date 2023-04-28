@@ -1,7 +1,11 @@
-function  PlotGVSTTSPerceptionSHOTonly(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,prof2plot,match_list)
+function  PlotGVSTTSPerceptionSHOTonly(Shot_Label,GVS_Label, tilt,shot,plot_mult, time,colors,prof2plot,match_list)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
+if plot_mult
+    hold on;
+else
     figure; 
+end
 %     subplot(3,1,1)
     plot(time,tilt(:,3), 'k');
     pos_legend(1) = "TTS Commanded Tilt";
@@ -26,7 +30,7 @@ function  PlotGVSTTSPerceptionSHOTonly(Shot_Label,GVS_Label, tilt,shot,GVS, time
         plot(time,shot(:,prof2plot(i)), colors(color_index))
        %save the label as part of the legend
         line_label = char(Shot_Label(prof2plot(i)));
-        pos_legend(i+1) =(strrep(line_label(1:13), '_', '.'));
+        pos_legend(i+1) =(strrep(match_list(color_index-1), '_', '.'));
     end
     pos_legend = strrep(pos_legend, '7.00', 'Velocity');
     pos_legend = strrep(pos_legend, '7.50', 'Angle&Velocity');
