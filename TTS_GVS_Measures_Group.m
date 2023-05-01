@@ -13,8 +13,8 @@ yellow = [255 190 50]/255;
 black =  [0 0 0];
 Color_list = [blue; green; yellow; red; black; navy; purple; ];
 
-Color_listA = ['k';'g'; 'c'; 'b'; 'r'; 'r'; 'g'; 'c'; 'b' ];
-Color_listB = ['k';'g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b'];
+Color_listA = ['g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b' ];
+Color_listB = ['g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b'];
 %% set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -59,8 +59,9 @@ cd(code_path);
     A=bar([1, 2, 3 ], rmsA'); 
     title ("A Profiles");
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
-    legend (["Actual","-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
-    for j = 1:9
+    ylabel("Degrees")
+    legend (["-4mA Vel", "-4 Ang & Vel", "-4 Ang",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
+    for j = 1:length(rmsA)
         A(j).FaceColor = Color_listA(j,:);
     end
     
@@ -69,9 +70,10 @@ cd(code_path);
     subplot(2,1,2)
     B=bar([1, 2, 3], rmsB'); 
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
+    ylabel("Degrees")
     title ("B Profiles");
-    legend (["Actual","-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
-    for j = 1:8 
+    legend (["-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
+    for j = 1:length(rmsB)
         B(j).FaceColor = Color_listB(j,:);
     end
     sgtitle(['RMS Subject Avg' ]);
@@ -106,8 +108,9 @@ cd(code_path);
     A=bar([1, 2, 3], varA'); 
     title ("A Profiles");
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
-    legend (["Actual", "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
-    for j = 1:9
+    ylabel("(Degrees)^2");
+    legend ([ "-4mA Vel", "-4 Ang & Vel", "-4 Ang",   "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
+    for j = 1:length(varA)
         A(j).FaceColor = Color_listA(j,:);
     end
     
@@ -117,8 +120,9 @@ cd(code_path);
     B=bar([1, 2, 3], varB');
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
     title ("B Profiles");
-    legend (["Actual", "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
-    for j = 1:8 
+    ylabel("(Degrees)^2");
+    legend ([ "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
+    for j = 1:length(varB)
         B(j).FaceColor = Color_listB(j,:);
     end
     sgtitle(['Variance Subject Avg' ]);
