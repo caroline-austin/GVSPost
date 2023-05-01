@@ -6,7 +6,7 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
     %first subplot is the actual tilt and shot reports
     subplot(3,1,1)
     %plot a sample tilt (all tilt should be ~the same)
-    plot(time,tilt(:,3), 'k');
+    plot(time,tilt(:,2), 'k');
     pos_legend(1) = "TTS Commanded Tilt";
     hold on;
     pos_length = length(prof2plot);
@@ -45,7 +45,7 @@ function  PlotGVSTTSPerception(Shot_Label,GVS_Label, tilt,shot,GVS, time,colors,
     xlim([0 35]);
     
     subplot(3,1,2)
-    plot(time, tilt(:,2))
+    plot(time, tilt(:,3))
     xlabel('Time (s)');
     ylabel('Angular Velocity (degrees/s)')
      xlim([0 35]);

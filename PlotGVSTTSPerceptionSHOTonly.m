@@ -7,7 +7,7 @@ else
     figure; 
 end
 %     subplot(3,1,1)
-    plot(time,tilt(:,3), 'k');
+    plot(time,tilt(:,2), 'k');
     pos_legend(1) = "TTS Commanded Tilt";
     hold on;
     pos_length = length(prof2plot);
