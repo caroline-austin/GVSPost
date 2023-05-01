@@ -14,8 +14,12 @@ yellow = [255 190 50]/255;
 black =  [0 0 0];
 Color_list = [blue; green; yellow; red; black; navy; purple; ];
 
-Color_listA = ['k';'g'; 'c'; 'b'; 'r'; 'r'; 'g'; 'c'; 'b' ];
-Color_listB = ['k';'g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b'];
+Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
+match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
+
+Color_listA = ['g'; 'c'; 'b'; 'r'; 'r'; 'g'; 'c'; 'b' ];
+Color_listB = ['g'; 'c'; 'b'; 'r'; 'r';  'g'; 'c'; 'b'];
+datatype = '';
 %% set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -24,7 +28,7 @@ gvs_path = [file_path '\GVSProfiles'];
 tts_path = [file_path '\TTSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1002:1005;  % Subject List 
+subnum = 1011:1011;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -38,10 +42,11 @@ for sub = 1:numsub
     end
     tot_num = tot_num+1;   
 
-    subject_path = [file_path, '\PS' , subject_str];
+%     subject_path = [file_path, '\PS' , subject_str];
+    subject_path = [file_path, '\' , subject_str];
 
     cd(subject_path);
-    load(['PS', subject_str, 'Group.mat ']);
+    load(['PS', subject_str, 'Group', datatype '.mat ']);
     cd(code_path);
    
 
@@ -70,8 +75,8 @@ for sub = 1:numsub
     A=bar([1, 2, 3 ], rmsA');
     title ("A Profiles");
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
-    legend (["Actual","-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
-    for j = 1:9
+    legend (["-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
+    for j = 1:length(rmsA)
         A(j).FaceColor = Color_listA(j,:);
     end
     
@@ -81,14 +86,14 @@ for sub = 1:numsub
     B=bar([1, 2, 3], rmsB'); 
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
     title ("B Profiles");
-    legend (["Actual","-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
-    for j = 1:8 
+    legend (["-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
+    for j = 1:length(rmsB)
         B(j).FaceColor = Color_listB(j,:);
     end
-    sgtitle(['RMS: Subject ' subject_str]);
+    sgtitle(['RMS: Subject ' datatype subject_str]);
 
     cd(plots_path);
-    saveas(gcf, [ 'RMS' subject_str  ]); 
+    saveas(gcf, [ 'RMS' datatype subject_str  ]); 
     cd(code_path);
     hold off;  
     
@@ -117,8 +122,8 @@ for sub = 1:numsub
     A=bar([1, 2, 3], varA'); 
     title ("A Profiles");
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
-    legend (["Actual", "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
-    for j = 1:9
+    legend ([ "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "0mA","+4mA Vel", "+4 Ang & Vel", "+4 Ang"], 'Location','north');
+    for j = 1:length(varA)
         A(j).FaceColor = Color_listA(j,:);
     end
     
@@ -128,14 +133,14 @@ for sub = 1:numsub
     B=bar([1, 2, 3], varB');%(:,2:end)
     xticklabels(["SumOfSin4", "SumOfSin5", "SumOfSin6"]);
     title ("B Profiles");
-    legend (["Actual", "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
-    for j = 1:8 
+    legend ([ "-4mA Vel", "-4 Ang & Vel", "-4 Ang", "0mA",  "+4mA Vel", "+4 Ang & Vel", "+4 Ang"],'Location','north');
+    for j = 1:length(varB)
         B(j).FaceColor = Color_listB(j,:);
     end
-    sgtitle(['Variance: Subject ' subject_str]);
+    sgtitle(['Variance: Subject ' datatype subject_str]);
 
     cd(plots_path);
-    saveas(gcf, [ 'Variance' subject_str  ]); 
+    saveas(gcf, [ 'Variance' datatype subject_str  ]); 
     cd(code_path);
     hold off;  
 end

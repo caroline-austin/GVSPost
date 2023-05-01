@@ -1,4 +1,4 @@
-close all; 
+ close all; 
 clear all; 
 clc; 
 % code section 3 or 2b? (TTS_GVS_IndvPlot or grouptrialsindv needs 
@@ -9,7 +9,7 @@ clc;
 %I think I also want this script to average together profiles that are the
 %same and maybe put the profiles in a distinct order for the group
 %averaging script
-
+datatype = '';
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 % Color_ListA = ["black"; "green";"green";"green"; "cyan";"cyan";"cyan"; ... 
@@ -37,11 +37,11 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\' , subject_str];
-%     subject_path = [file_path, '\PS' , subject_str];
+%     subject_path = [file_path, '\' , subject_str];
+    subject_path = [file_path, '\PS' , subject_str];
 
     cd(subject_path);
-    load(['PS', subject_str, 'Group.mat ']);
+    load(['PS', subject_str, 'Group' datatype '.mat ']);
     cd(code_path);
 
     [~,num_4A ]=size(shot_4A);

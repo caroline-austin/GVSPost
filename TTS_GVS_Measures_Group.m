@@ -2,7 +2,7 @@ close all;
 clear all; 
 clc; 
 % code section 4b for TTS dynamic tilt + GVS stuff
-
+datatype = 'Adj';
 %% initialize 
 blue = [ 0.2118    0.5255    0.6275];
 green = [0.5059    0.7451    0.6314];
@@ -30,7 +30,7 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 
 
 cd(file_path);
-load(['PSAll.mat ']);
+load(['PSAll' datatype '.mat ']);
 cd(code_path);
    
 
@@ -76,10 +76,10 @@ cd(code_path);
     for j = 1:length(rmsB)
         B(j).FaceColor = Color_listB(j,:);
     end
-    sgtitle(['RMS Subject Avg' ]);
+    sgtitle(['RMS Subject Avg' datatype]);
 
     cd(plots_path);
-    saveas(gcf, [ 'RMS_All'  ]); 
+    saveas(gcf, [ 'RMS_All' datatype ]); 
     cd(code_path);
     hold off;  
     
@@ -125,9 +125,9 @@ cd(code_path);
     for j = 1:length(varB)
         B(j).FaceColor = Color_listB(j,:);
     end
-    sgtitle(['Variance Subject Avg' ]);
+    sgtitle(['Variance Subject Avg' datatype]);
 
     cd(plots_path);
-    saveas(gcf, [ 'Variance_All'  ]); 
+    saveas(gcf, [ 'Variance_All'  datatype]); 
     cd(code_path);
     hold off;  

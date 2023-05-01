@@ -4,11 +4,11 @@ clc;
 % code section 7?
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
-
+datatype = 'Adj';
 %% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots']; % specify where plots are saved
+plots_path = [file_path '\Plots\Group' datatype]; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
@@ -17,7 +17,7 @@ numsub = length(subnum);
 subskip = [100 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 cd(file_path);
-load(['PSAll.mat ']);
+load(['PSAll' datatype '.mat ']);
 cd(code_path);
 
 %% Plot 4A with function
@@ -29,10 +29,10 @@ cd(code_path);
         tilt_4A(1:trial_end,:),All_shot_4A(1:trial_end,:),GVS_4A(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('4A Positive GVS Affects on Tilt PerceptionAvg')
+    title(['4A Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_4A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_4A_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -42,10 +42,10 @@ cd(code_path);
         tilt_4A(1:trial_end,:),All_shot_4A(1:trial_end,:),GVS_4A(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('4A Negative GVS Affects on Tilt PerceptionAvg')
+    title(['4A Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_4A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_4A_4_00mA_PerceptionAvg'  datatype]); 
     cd(code_path);
     hold off;
 
@@ -58,10 +58,10 @@ cd(code_path);
         tilt_4B(1:trial_end,:),All_shot_4B(1:trial_end,:),GVS_4B(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('4B Positive GVS Affects on Tilt PerceptionAvg')
+    title(['4B Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_4B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_4B_4_00mA_PerceptionAvg'  datatype]); 
     cd(code_path);
     hold off;
 
@@ -71,10 +71,10 @@ cd(code_path);
         tilt_4B(1:trial_end,:),All_shot_4B(1:trial_end,:),GVS_4B(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('4B Negative GVS Affects on Tilt PerceptionAvg')
+    title(['4B Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_4B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_4B_4_00mA_PerceptionAvg'  datatype]); 
     cd(code_path);
     hold off;
 
@@ -86,10 +86,10 @@ cd(code_path);
         tilt_5A(1:trial_end,:),All_shot_5A(1:trial_end,:),GVS_5A(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('5A Positive GVS Affects on Tilt PerceptionAvg')
+    title(['5A Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_5A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_5A_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -99,10 +99,10 @@ cd(code_path);
         tilt_5A(1:trial_end,:),All_shot_5A(1:trial_end,:),GVS_5A(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('5A Negative GVS Affects on Tilt PerceptionAvg')
+    title(['5A Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_5A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_5A_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -115,10 +115,10 @@ cd(code_path);
         tilt_5B(1:trial_end,:),All_shot_5B(1:trial_end,:),GVS_5B(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('5B Positive GVS Affects on Tilt PerceptionAvg')
+    title(['5B Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_5B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_5B_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -128,10 +128,10 @@ cd(code_path);
         tilt_5B(1:trial_end,:),All_shot_5B(1:trial_end,:),GVS_5B(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('5B Negative GVS Affects on Tilt PerceptionAvg')
+    title(['5B Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_5B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_5B_4_00mA_PerceptionAvg'  datatype]); 
     cd(code_path);
     hold off;    
 
@@ -143,10 +143,10 @@ cd(code_path);
         tilt_6A(1:trial_end,:),All_shot_6A(1:trial_end,:),GVS_6A(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('6A Positive GVS Affects on Tilt PerceptionAvg')
+    title(['6A Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_6A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_6A_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -156,10 +156,10 @@ cd(code_path);
         tilt_6A(1:trial_end,:),All_shot_6A(1:trial_end,:),GVS_6A(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('6A Negative GVS Affects on Tilt PerceptionAvg')
+    title(['6A Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_6A_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_6A_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -172,10 +172,10 @@ cd(code_path);
         tilt_6B(1:trial_end,:),All_shot_6B(1:trial_end,:),GVS_6B(1:trial_end,:), ...
         time(1:trial_end),Color_List,pos_prof,match_list);
     subplot(3,1,1)
-    title('6B Positive GVS Affects on Tilt PerceptionAvg')
+    title(['6B Positive GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Positive_6B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Positive_6B_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;
 
@@ -185,9 +185,9 @@ cd(code_path);
         tilt_6B(1:trial_end,:),All_shot_6B(1:trial_end,:),GVS_6B(1:trial_end,:), ...
         time(1:trial_end),Color_List,neg_prof,match_list);
     subplot(3,1,1)
-    title('6B Negative GVS Affects on Tilt PerceptionAvg')
+    title(['6B Negative GVS Affects on Tilt PerceptionAvg' datatype])
 
     cd(plots_path);
-    saveas(gcf, [ 'Negative_6B_4_00mA_PerceptionAvg'  ]); 
+    saveas(gcf, [ 'Negative_6B_4_00mA_PerceptionAvg' datatype ]); 
     cd(code_path);
     hold off;    

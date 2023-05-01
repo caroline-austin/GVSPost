@@ -4,7 +4,7 @@ clc;
 % code section 6?
 
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
-
+datatype = 'Adj';
 %% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -44,7 +44,7 @@ for sub = 1:numsub
     subject_path = [file_path, '\PS' , subject_str];
 
     cd(subject_path);
-    load(['PS', subject_str, 'Group.mat ']);
+    load(['PS', subject_str, 'Group' datatype '.mat ']);
     
     cd(code_path);
 
@@ -117,6 +117,6 @@ Label.shot_6B = match_list;
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
        'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B'];
-   eval(['  save ' ['PS' 'All.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['PS' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
