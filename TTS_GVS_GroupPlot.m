@@ -20,45 +20,6 @@ cd(file_path);
 load(['PSAll.mat ']);
 cd(code_path);
 
-% tot_num = 0;
-% All_shot_4A = 0;
-% All_shot_4B = 0;
-% All_shot_5A = 0;
-% All_shot_5B = 0;
-% All_shot_6A = 0;
-% All_shot_6B = 0;
-% 
-% for sub = 1:numsub
-%     subject = subnum(sub);
-%     subject_str = num2str(subject);
-%     % skip subjects that DNF'd or there is no data for
-%     if ismember(subject,subskip) == 1
-%        continue
-%     end
-%     tot_num = tot_num+1;   
-% 
-%     subject_path = [file_path, '\PS' , subject_str];
-% 
-%     cd(subject_path);
-%     load(['PS', subject_str, 'Group.mat ']);
-%     
-%     cd(code_path);
-%     All_shot_4A = All_shot_4A+shot_4A;
-%     All_shot_4B = All_shot_4B+shot_4B;
-%     All_shot_5A = All_shot_5A+shot_5A;
-%     All_shot_5B = All_shot_5B+shot_5B;
-%     All_shot_6A = All_shot_6A+shot_6A;
-%     All_shot_6B = All_shot_6B+shot_6B;
-% 
-% 
-% end
-% All_shot_4A = All_shot_4A/tot_num;
-% All_shot_4B = All_shot_4B/tot_num;
-% All_shot_5A = All_shot_5A/tot_num;
-% All_shot_5B = All_shot_5B/tot_num;
-% All_shot_6A = All_shot_6A/tot_num;
-% All_shot_6B = All_shot_6B/tot_num;
-
 %% Plot 4A with function
     [pos_prof] = find(contains(Label.shot_4A, 'P'));
     [zero_prof] = find(contains(Label.shot_4A, '0_00'));
