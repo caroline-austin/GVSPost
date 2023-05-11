@@ -10,9 +10,9 @@ plots_path = [file_path '\Plots']; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1011:1011;  % Subject List 
+subnum = 1014:1014;  % Subject List 
 numsub = length(subnum);
-subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 for sub = 1:numsub
     subject = subnum(sub);
@@ -33,8 +33,8 @@ for sub = 1:numsub
     mat_filenames = get_filetype(subject_filenames, 'mat');
     num_mat_files = length(mat_filenames);
 
-        tilt_4A_avg = sum(tilt_4A)/length(tilt_4A);
-        shot_4A_avg = sum(shot_4A)/length(shot_4A);
+        tilt_4A_avg = mean(tilt_4A,"omitnan"); 
+        shot_4A_avg = mean(shot_4A, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_4A_avg)
             if ~ rem(i+2,3)
@@ -46,8 +46,8 @@ for sub = 1:numsub
         bias_4A = tilt_4A_actual_avg-shot_4A_avg;
 
 
-        tilt_4B_avg = sum(tilt_4B)/length(tilt_4B);
-        shot_4B_avg = sum(shot_4B)/length(shot_4B);
+        tilt_4B_avg = mean(tilt_4B,"omitnan"); 
+        shot_4B_avg = mean(shot_4B, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_4B_avg)
             if ~ rem(i+2,3)
@@ -59,8 +59,8 @@ for sub = 1:numsub
         bias_4B = tilt_4B_actual_avg-shot_4B_avg;
 
 
-        tilt_5A_avg = sum(tilt_5A)/length(tilt_5A);
-        shot_5A_avg = sum(shot_5A)/length(shot_5A);
+        tilt_5A_avg = mean(tilt_5A,"omitnan"); 
+        shot_5A_avg = mean(shot_5A, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_5A_avg)
             if ~ rem(i+2,3)
@@ -72,8 +72,8 @@ for sub = 1:numsub
         bias_5A = tilt_5A_actual_avg-shot_5A_avg;
 
 
-        tilt_5B_avg = sum(tilt_5B)/length(tilt_5B);
-        shot_5B_avg = sum(shot_5B)/length(shot_5B);
+        tilt_5B_avg = mean(tilt_5B,"omitnan"); 
+        shot_5B_avg = mean(shot_5B, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_5B_avg)
             if ~ rem(i+2,3)
@@ -85,8 +85,8 @@ for sub = 1:numsub
         bias_5B = tilt_5B_actual_avg-shot_5B_avg;
 
 
-        tilt_6A_avg = sum(tilt_6A)/length(tilt_6A);
-        shot_6A_avg = sum(shot_6A)/length(shot_6A);
+        tilt_6A_avg = mean(tilt_6A,"omitnan"); 
+        shot_6A_avg = mean(shot_6A, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_6A_avg)
             if ~ rem(i+2,3)
@@ -98,8 +98,8 @@ for sub = 1:numsub
         bias_6A = tilt_6A_actual_avg-shot_6A_avg;
 
 
-        tilt_6B_avg = sum(tilt_6B)/length(tilt_6B);
-        shot_6B_avg = sum(shot_6B)/length(shot_6B);
+        tilt_6B_avg = mean(tilt_6B,"omitnan"); 
+        shot_6B_avg = mean(shot_6B, "omitnan"); 
         index = 1;
         for i = 1:length(tilt_6B_avg)
             if ~ rem(i+2,3)
