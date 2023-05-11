@@ -1,7 +1,7 @@
 close all; 
 clear all; 
 clc; 
-% code section 1 for TTS stuff
+% code section 1 for TTS dynamic tilt + GVS stuff
 %% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -10,9 +10,9 @@ gvs_path = [file_path '\GVSProfiles'];
 tts_path = [file_path '\TTSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1003:1003;  % Subject List 
+subnum = 1014:1014;  % Subject List 
 numsub = length(subnum);
-subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 for sub = 1:numsub
     subject = subnum(sub);
@@ -21,14 +21,23 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\PS' , subject_str];
+    subject_path = [file_path '\' subject_str];
+%     subject_path = [file_path, '\PS' , subject_str]; % for pilot subjects
 
     cd(file_path);
     Trial_Info = readcell('DynamicGVSPlusTilt.xlsx','Sheet', ...
-        ['PS' subject_str],'Range','A2:H46'); % H30 for PS02, 46 for PS03
+        ['S' subject_str],'Range','A2:H56'); % H59 for PS02, 46 for PS03 and 5, H56 for PS04
     Trial_Num = cell2mat(Trial_Info(:,1));
     Label.DataColumns = readcell('DynamicGVSPlusTilt.xlsx','Sheet',... 
-        ['PS' subject_str], 'Range','A1:H1');
+        ['S' subject_str], 'Range','A1:H1');
+    %add line to pull the impedances
+
+    %for pilot subjects
+%     Trial_Info = readcell('DynamicGVSPlusTilt.xlsx','Sheet', ...
+%         ['PS' subject_str],'Range','A2:H56'); % H59 for PS02, 46 for PS03 and 5, H56 for PS04
+%     Trial_Num = cell2mat(Trial_Info(:,1));
+%     Label.DataColumns = readcell('DynamicGVSPlusTilt.xlsx','Sheet',... 
+%         ['PS' subject_str], 'Range','A1:H1');
 
     cd(code_path);
     [subject_filenames]=file_path_info2(code_path,subject_path ); % get files from file folder
@@ -49,17 +58,26 @@ for sub = 1:numsub
        trial_number = current_csv_file(trial_loc+1:trial_loc+2);
 
        row = find(Trial_Num == str2num(trial_number),1);
+       if isempty(row)
+           continue;
+       end
        if str2num(trial_number)<10
            trial_number = ['0', trial_number];
        end
        test = current_csv_file(end-23:end-14);
-       part_1 = string(Trial_Info(row,4));
-       GVS_profile_name = char(strjoin([ string(Trial_Info(row,4)), "_", string(Trial_Info(row,5)), "mA_prop", string(Trial_Info(row,6))])); %string(current_csv_file(end-22:end-13))
+       part_1 = Trial_Info(row,4);
+       part_2 = string(Trial_Info(row,5)); 
+       part_3 = string(Trial_Info(row,6));
+       GVS_profile_name_test = (strjoin([part_1, "_", part_2, "mA_prop", part_3 ]));
+       GVS_profile_name = char(strjoin([ string(Trial_Info(row,4)), ...
+           "_", string(Trial_Info(row,5)), "mA_prop", string(Trial_Info(row,6))]));
+       %string(current_csv_file(end-22:end-13))
         
        if contains(GVS_profile_name, '.')
             decimal_loc = find(GVS_profile_name(:) == '.');
 
-            proportion= strrep(strjoin([string(GVS_profile_name(decimal_loc-1)) '_' GVS_profile_name(decimal_loc+1) '0']),' ', '');
+            proportion= strrep(strjoin([string(GVS_profile_name(decimal_loc-1)) ...
+                '_' GVS_profile_name(decimal_loc+1) '0']),' ', '');
         else
             proportion = [GVS_profile_name(end) '_00'];
         end
@@ -110,6 +128,20 @@ for sub = 1:numsub
        mustBeFinite(GVS_actual_mV);
        GVS_actual_filt = lowpass(GVS_actual_mV,1,50); %filter raw GVS data
        trial_end = find(time,1, 'last');
+
+
+
+       % Find where there are the random 0s because data was not sent and use
+        % linear interpolation to fill them in with representative values
+        ind = [];
+        for j = 2:length(tilt_command)-1
+            if tilt_command(j) == 0 && (tilt_command(j-1) ~= 0)
+                % there is a random zero, so replace with linear interpolating
+                ind = [ind j];
+                tilt_command(j) = interp1([time(j-1) time(j+1)], [tilt_command(j-1) tilt_command(j+1)], time(j));
+            end
+        end
+%         tilt_command = tilt_command_deg;
 
        cd(subject_path);
        vars_2_save = ['TTS_data tilt_command tilt_velocity tilt_actual' ...
