@@ -1,9 +1,10 @@
-%% Script 5 for Dynamic GVS +Tilt
-% plots a positive and negative plot for each A/B physcial motion profile
+%% Script 5a for Dynamic GVS +Tilt
+% This script generates 12 plots a positive and negative plot for each
+% A/B physcial motion profile
 % each plot includes the shot report for the sham and + or - GVS, a plot of
 % the angular velocity and a plot of the GVS profiles applied. 
 % run this script after running GroupByProfile and/or the
-% optional shot ajustment/correction scripts. This script generates 12
+% optional shot ajustment/correction scripts. 
 close all; 
 clear all; 
 clc; 
