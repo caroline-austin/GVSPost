@@ -1,20 +1,25 @@
+%% Script 4b for Dynamic GVS +Tilt
+% this script removes the first and last 1s of data from both shot and TTS
+% motion data series. It also finds the time adjustment of the shot data
+% (shifted forward) where the rms is minimized - this is calculated and
+% then averaged across all trials (not just sham) then all trials have
+% their shot data shifted forward by this amount
 close all; 
 clear all; 
 clc; 
-%code section 2c
-%%still need to save the data and then create some plots!
-datatype = 'Adj';
-%% 
+%% set up
+subnum = 1015:1015;  % Subject List 
+numsub = length(subnum);
+subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+datatype = 'Bias';
+
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
 gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-subnum = 1014:1014;  % Subject List 
-numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-
+%% time adjust for each subject
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -28,9 +33,9 @@ for sub = 1:numsub
     %load the subjects file that is grouped by profile and possibly
     %adjusted 
     cd(subject_path);
-    load(['PS', subject_str, 'Group' datatype '.mat ']);
+    load(['S', subject_str, 'Group' datatype '.mat ']);
     cd(code_path);
-
+    % calculate the avg. min time shift for each physical motion profile
     % this is not a computationally efficient way to do this, 
     % but it still runs pretty fast 
     avg_loc_rms_min_4A = find_time_shift(shot_4A,tilt_4A);
@@ -45,7 +50,7 @@ for sub = 1:numsub
     shot_start_avg = 51+avg_loc_rms_min;
     shot_end_avg = length(shot_4A)-50+avg_loc_rms_min;
 
-    %cut off beginning and end 0.5s of trials and shift the shot response
+    %cut off beginning and end 1s of trials and shift the shot response
     %data
     [shot_4A,tilt_4A] = shift_file(shot_4A,tilt_4A,shot_start_avg, shot_end_avg);
     [shot_4B,tilt_4B] = shift_file(shot_4B,tilt_4B,shot_start_avg, shot_end_avg);
@@ -63,7 +68,7 @@ for sub = 1:numsub
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
-   eval(['  save ' ['PS', subject_str, 'GroupTime' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S', subject_str, 'Group' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
@@ -99,11 +104,3 @@ function [shot,tilt] = shift_file(shot,tilt,start_index, end_index)
     tilt  = tilt(51:end-50, :);
     shot  = shot(start_index:end_index, :);
 end
-% %% debugging
-% for i = 1:16
-% %     if i == 17
-% %         plot(time, tilt_4A(:,i)); legend();
-% %     end
-% plot(time, tilt_4A(:,i)); legend();
-% hold on;
-% end
