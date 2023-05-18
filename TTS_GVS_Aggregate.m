@@ -21,7 +21,6 @@ gvs_path = [file_path '\GVSProfiles'];
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %initalize all shot variables 
-% tot_num = 0;
 All_shot_4A = zeros(1527,length(match_list)); %1527 is the length of the non-adjusted time series 
 if contains(datatype, 'Time')
     All_shot_4A = zeros(1427,length(match_list)); %1427 is the length of the time-adjusted time series
@@ -46,9 +45,7 @@ for sub = 1:numsub
     % skip subjects that DNF'd or there is no data for
     if ismember(subject,subskip) == 1
        continue
-    end
-    %keep track of the number of subjects that get used 
-%     tot_num = tot_num+1;   
+    end   
 
     %load subject file
     subject_path = [file_path, '\' , subject_str];
@@ -132,6 +129,6 @@ Label.shot_6B = match_list;
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
        'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B'];
-   eval(['  save ' ['PS' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
