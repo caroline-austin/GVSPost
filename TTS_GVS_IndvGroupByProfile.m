@@ -36,7 +36,7 @@ for sub = 1:numsub
     % load overall file(has info about all trials from the "master"
     % excel document)
     cd(subject_path);
-    load(['PS', subject_str, '.mat ']);
+    load(['S', subject_str, '.mat ']);
     cd(code_path);
 
     %get info about indiviual trial files
@@ -71,12 +71,12 @@ for sub = 1:numsub
     for file = 1:num_mat_files
         current_file = char(mat_filenames(file));
        %skip files that aren't the trial files 
-       if length(current_file)<26
+       if length(current_file)<25
            continue
        end
 
        %get info about and load trial file
-       check_profile_name = current_file(8:9); %reduce by one when transitioning to regular subjects
+       check_profile_name = current_file(7:8); %reduce by one when transitioning to regular subjects
        trial_number = current_file(end-5:end-4);
 %        current_val = current_file();
 %        proportional = current_file();
@@ -183,7 +183,7 @@ for sub = 1:numsub
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
    %change filename for saving -> remove PS and possibly swap out "Group"
    %for Extract or Sort
-   eval(['  save ' ['PS', subject_str, 'Group.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S', subject_str, 'Group.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
@@ -200,11 +200,11 @@ function [out_var, Label] = AddOnData3(out_var,data1,data2,data3, Label, ...
 
     %append corresponding labels
     eval(char(["Label." out_var_name "(out_var_col+1,:) = string([ " + ...
-        "current_file(11:end-4)  name1]);"]));
+        "current_file(10:end-4)  name1]);"]));
     eval(char(["Label." out_var_name "(out_var_col+2,:) = string([ " + ...
-        "current_file(11:end-4)  name2]);"]));
+        "current_file(10:end-4)  name2]);"]));
     eval(char(["Label." out_var_name "(out_var_col+3,:) = string([ " + ...
-        "current_file(11:end-4)  name3]);"]));
+        "current_file(10:end-4)  name3]);"]));
 
 end
 
@@ -216,6 +216,6 @@ function [out_var, Label] = AddOnData1(out_var,data1, Label, out_var_name, ...
     out_var(:,out_var_col+1) = data1; 
     %append corresponding labels
     eval(char(["Label." out_var_name "(out_var_col+1,:) = string([ " + ...
-        "current_file(11:end-4)  name1]);"]));
+        "current_file(10:end-4)  name1]);"]));
 
 end
