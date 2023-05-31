@@ -1,4 +1,4 @@
-function [] = TTS_GVS_Files_MACLINUX(subnum,numsub,subskip)
+function [GVS_command] = TTS_GVS_Files_MACLINUX(subnum,numsub,subskip)
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
