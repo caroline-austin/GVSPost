@@ -4,7 +4,7 @@
 % the data it takes its input from script 6 Aggregate and should include
 % similar measure to the individual measures script
 close all; 
-clear all; 
+clear al; 
 clc; 
 %% set up
 datatype = 'BiasTime';
@@ -12,14 +12,26 @@ Color_list = ['g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b' ];
 %% set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots\Measures']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
-tts_path = [file_path '\TTSProfiles'];
+if ismac || isunix
+    plots_path = [file_path '/Plots/Measures']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+    tts_path = [file_path '/TTSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots\Measures']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+    tts_path = [file_path '\TTSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %load data file
 cd(file_path);
-load(['SAll' datatype '.mat ']);
+if ismac || isunix
+    load(['SAll' datatype '.mat']);
+elseif ispc
+    load(['SAll' datatype '.mat ']);
+end
+
 cd(code_path);
 
 %% RMS calculation and plots

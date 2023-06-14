@@ -6,7 +6,7 @@
 % it can read in data from script 2 or the other 4 scripts and can be used
 % in the 3, 4, and 5 scripts. 
 close all; 
-clear all; 
+clear; 
 clc; 
 
 %% set up
@@ -19,8 +19,18 @@ datatype = ''; %can change this to specify which data you want to use for the ch
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
+if ismac || isunix
+    plots_path = [file_path '/Plots']; % specify where plots are saved
+elseif ispc
+    plots_path = [file_path '\Plots']; % specify where plots are saved
+end
+
+if ismac || isunix
+    gvs_path = [file_path '/GVSProfiles'];
+elseif ispc
+    gvs_path = [file_path '\GVSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% calculate and apply bias adjustment
@@ -32,11 +42,21 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\' , subject_str];
+
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str];
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str];
+    end
+    
 %     subject_path = [file_path, '\PS' , subject_str];
     %load in un-adjusted subject data
     cd(subject_path);
-    load(['S', subject_str, 'Group' datatype '.mat ']);
+    if ismac || isunix
+        load(['S', subject_str, 'Group' datatype '.mat']);
+    elseif ispc
+        load(['S', subject_str, 'Group' datatype '.mat ']);
+    end
         
     %calculate bias for all trials
     bias_4A=calc_bias(tilt_4A, shot_4A);

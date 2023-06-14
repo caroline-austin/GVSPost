@@ -3,7 +3,7 @@
 % then plots these outcomes for all trial types to help better visualize
 % the data it takes its input from scripts 2 and 4 and should include
 close all; 
-clear all; 
+clear; 
 clc; 
 %% set up
 subnum = 1015:1015;  % Subject List 
@@ -17,9 +17,16 @@ match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_0
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots\Measures']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
-tts_path = [file_path '\TTSProfiles'];
+if ismac || isunix
+    plots_path = [file_path '/Plots/Measures']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+    tts_path = [file_path '/TTSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots\Measures']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+    tts_path = [file_path '\TTSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% calculate and plot the different measures for each subject
@@ -32,10 +39,17 @@ for sub = 1:numsub
     end
    
 %     subject_path = [file_path, '\PS' , subject_str];
-    subject_path = [file_path, '\' , subject_str];
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str];
+        cd(subject_path);
+        load(['S', subject_str, 'Group', datatype '.mat']);
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str];
+        cd(subject_path);
+        load(['S', subject_str, 'Group', datatype '.mat ']);
+    end
+    
 
-    cd(subject_path);
-    load(['S', subject_str, 'Group', datatype '.mat ']);
     cd(code_path);
    
 

@@ -6,7 +6,7 @@
 % run this script after running GroupByProfile and/or the
 % optional shot ajustment/correction scripts. 
 close all; 
-clear all; 
+clear; 
 clc; 
 %% set up
 subnum = 1015:1015;  % Subject List 
@@ -19,7 +19,12 @@ datatype = 'BiasTime';
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots']; % specify where plots are saved
+if ismac || isunix
+    plots_path = [file_path '/Plots']; % specify where plots are saved
+elseif ispc
+    plots_path = [file_path '\Plots']; % specify where plots are saved
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% generate plots for each subject
@@ -32,14 +37,25 @@ for sub = 1:numsub
     end
     %set up file/plot save locations
 %     subject_path = [file_path, '\PS' , subject_str];
-    subject_path = [file_path, '\' , subject_str];
-    subject_plot_path = [plots_path '\' subject_str];
+    if ismac || isunix
+            subject_path = [file_path, '/' , subject_str];
+            subject_plot_path = [plots_path '/' subject_str];
+    elseif ispc
+            subject_path = [file_path, '\' , subject_str];
+            subject_plot_path = [plots_path '\' subject_str];
+    end
+
     mkdir(subject_plot_path);
 
     %load in the matlab file conaining a single subjects data that has been
     %sorted by profile 
     cd(subject_path);
-    load(['S', subject_str, 'Group', datatype, '.mat ']);
+    if ismac || isunix
+        load(['S', subject_str, 'Group', datatype, '.mat']);
+    elseif ispc
+        load(['S', subject_str, 'Group', datatype, '.mat ']);
+    end
+    
 %     load(['PS', subject_str, '.mat ']);
     cd(code_path);
 %% Plot 4A with function

@@ -5,7 +5,7 @@
 % then averaged across all trials (not just sham) then all trials have
 % their shot data shifted forward by this amount
 close all; 
-clear all; 
+clear; 
 clc; 
 %% set up
 subnum = 1015:1015;  % Subject List 
@@ -15,8 +15,14 @@ datatype = 'Bias';
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
+if ismac || isunix
+    plots_path = [file_path '/Plots']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% time adjust for each subject
@@ -27,13 +33,24 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\' , subject_str];
+
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str];
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str];
+    end
+
 %     subject_path = [file_path, '\PS' , subject_str];
 
     %load the subjects file that is grouped by profile and possibly
     %adjusted 
     cd(subject_path);
-    load(['S', subject_str, 'Group' datatype '.mat ']);
+    if ismac || isunix
+        load(['S', subject_str, 'Group' datatype '.mat']);
+    elseif ispc
+        load(['S', subject_str, 'Group' datatype '.mat ']);
+    end
+    
     cd(code_path);
     % calculate the avg. min time shift for each physical motion profile
     % this is not a computationally efficient way to do this, 

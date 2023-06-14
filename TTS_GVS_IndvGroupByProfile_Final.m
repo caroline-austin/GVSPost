@@ -7,7 +7,7 @@
 % The results of this file are unadjusted, but are able to be used as inputs 
 % in any of the 3,4,5 scripts
 close all; 
-clear all; 
+clear; 
 clc; 
 
 %% set up
@@ -17,9 +17,12 @@ subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete 
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory (Data)
-plots_path = [file_path '\Plots']; % specify where plots are saved
+if ismac || isunix
+    plots_path = [file_path '/Plots']; % specify where plots are saved
+elseif ispc
+    plots_path = [file_path '\Plots']; % specify where plots are saved
+end
 [filenames]=file_path_info2(code_path, file_path); % get file names from file folder
-   
 % combine individual trials for each subject
 for sub = 1:numsub
     subject = subnum(sub);
@@ -31,12 +34,21 @@ for sub = 1:numsub
     %directory with individual subject files (this naming convention is
     %predefined)
 %     subject_path = [file_path, '\PS' , subject_str];
+if ismac || isunix
+    subject_path = [file_path, '/' , subject_str];
+elseif ispc
     subject_path = [file_path, '\' , subject_str];
+end
+    
 
     % load overall file(has info about all trials from the "master"
     % excel document)
     cd(subject_path);
-    load(['S', subject_str, '.mat ']);
+    if ismac || isunix
+        load(['S', subject_str, '.mat']);
+    elseif ispc
+        load(['S', subject_str, '.mat ']);
+    end
     cd(code_path);
 
     %get info about indiviual trial files

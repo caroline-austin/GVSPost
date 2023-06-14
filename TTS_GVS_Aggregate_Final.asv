@@ -5,10 +5,10 @@
 % for scripts 7 
 
 close all; 
-clear all; 
+clear; 
 clc; 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1011:1017;  % Subject List 
 numsub = length(subnum);
 subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
@@ -16,8 +16,14 @@ datatype = 'BiasTime';
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
+if ismac || isunix
+    plots_path = [file_path '/Plots']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %initalize all shot variables 
@@ -48,11 +54,18 @@ for sub = 1:numsub
     end   
 
     %load subject file
-    subject_path = [file_path, '\' , subject_str];
-%     subject_path = [file_path, '\PS' , subject_str];
-    cd(subject_path);
-    load(['S', subject_str, 'Group' datatype '.mat ']);
-    cd(code_path);
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str];
+        cd(subject_path);
+        load(['S', subject_str, 'Group' datatype '.mat']);
+        cd(code_path);
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str];
+        cd(subject_path);
+        load(['S', subject_str, 'Group' datatype '.mat ']);
+        cd(code_path);
+    end
+
 
     % add the current subject's data into the aggregate variable
     %and increment the number of trials averaged into each trial type based on
@@ -131,4 +144,4 @@ Label.shot_6B = match_list;
        'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B'];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
+   %eval (['clear ' vars_2_save])
