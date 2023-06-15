@@ -12,6 +12,7 @@ Color_list = ['g'; 'c'; 'b'; 'r';  'g'; 'c'; 'b' ];
 %% set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
+
 if ismac || isunix
     plots_path = [file_path '/Plots/Measures']; % specify where plots are saved
     gvs_path = [file_path '/GVSProfiles'];

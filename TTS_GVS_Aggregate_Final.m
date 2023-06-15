@@ -4,7 +4,7 @@
 % the script can take input from scripts 2 and 4 and output should be used
 % for scripts 7 
 
-close all; 
+%close all; 
 clear; 
 clc; 
 %% set up
@@ -70,6 +70,7 @@ for sub = 1:numsub
     % add the current subject's data into the aggregate variable
     %and increment the number of trials averaged into each trial type based on
     %the trial data available for the current subject
+    save_5B{sub} = shot_5B;
     for i = 1:length(Label.shot_4A)
         for j = 1:length(match_list)
             if contains(Label.shot_4A(i), match_list(j))
@@ -120,6 +121,7 @@ for sub = 1:numsub
     end
 
 end
+
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects (need to add a calculation of error)
 All_shot_4A = All_shot_4A./num_trials_4A;
