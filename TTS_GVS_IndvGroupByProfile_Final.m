@@ -11,7 +11,7 @@ clear;
 clc; 
 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1016:1021;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -197,7 +197,7 @@ end
    %for Extract or Sort
    eval(['  save ' ['S', subject_str, 'Group.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
+   %eval (['clear ' vars_2_save])
    close all;
 
 end

@@ -70,7 +70,7 @@ for sub = 1:numsub
     % add the current subject's data into the aggregate variable
     %and increment the number of trials averaged into each trial type based on
     %the trial data available for the current subject
-    save_5B{sub} = shot_5B;
+
     for i = 1:length(Label.shot_4A)
         for j = 1:length(match_list)
             if contains(Label.shot_4A(i), match_list(j))
@@ -119,17 +119,46 @@ for sub = 1:numsub
             end
         end
     end
+    save_shot_4A(:,:,sub) = All_shot_4A;
+    save_shot_4B(:,:,sub) = All_shot_4B;
+    save_shot_5A(:,:,sub) = All_shot_5A;
+    save_shot_5B(:,:,sub) = All_shot_5B;
+    save_shot_6A(:,:,sub) = All_shot_6A;
+    save_shot_6B(:,:,sub) = All_shot_6B;
 
 end
 
+% summing all subjects' data to be averaged:
+rot_4A = permute(save_shot_4A,[1 3 2]);
+sum_rot_4A = sum(rot_4A(:,:,1),2);
+rot_4B = permute(save_shot_4B,[1 3 2]);
+sum_rot_4B = sum(rot_4B(:,:,1),2);
+rot_5A = permute(save_shot_5A,[1 3 2]);
+sum_rot_5A = sum(rot_5A(:,:,1),2);
+rot_5B = permute(save_shot_5B,[1 3 2]);
+sum_rot_5B = sum(rot_5B(:,:,1),2);
+rot_6A = permute(save_shot_6A,[1 3 2]);
+sum_rot_6A = sum(rot_6A(:,:,1),2);
+rot_6B = permute(save_shot_6B,[1 3 2]);
+sum_rot_6B = sum(rot_6B(:,:,1),2);
+
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects (need to add a calculation of error)
-All_shot_4A = All_shot_4A./num_trials_4A;
-All_shot_4B = All_shot_4B./num_trials_4B;
-All_shot_5A = All_shot_5A./num_trials_5A;
-All_shot_5B = All_shot_5B./num_trials_5B;
-All_shot_6A = All_shot_6A./num_trials_6A;
-All_shot_6B = All_shot_6B./num_trials_6B;
+% All_shot_4A = All_shot_4A./num_trials_4A;
+% All_shot_4B = All_shot_4B./num_trials_4B;
+% All_shot_5A = All_shot_5A./num_trials_5A;
+% All_shot_5B = All_shot_5B./num_trials_5B;
+% All_shot_6A = All_shot_6A./num_trials_6A;
+% All_shot_6B = All_shot_6B./num_trials_6B;
+
+% This could be wrong so double check but I think this should be correct:
+
+All_shot_4A = sum_rot_4A./num_trials_4A;
+All_shot_4B = sum_rot_4B./num_trials_4B;
+All_shot_5A = sum_rot_5A./num_trials_5A;
+All_shot_5B = sum_rot_5B./num_trials_5B;
+All_shot_6A = sum_rot_6A./num_trials_6A;
+All_shot_6B = sum_rot_6B./num_trials_6B;
 
 %update the label
 Label.shot_4A = match_list;
@@ -143,7 +172,8 @@ Label.shot_6B = match_list;
    cd(file_path);
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
-       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B'];
+       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B ' ...
+       'save_shot_4A save_shot_4B save_shot_5A save_shot_5B save_shot_6A save_shot_6B'];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   %eval (['clear ' vars_2_save])
+   eval (['clear ' vars_2_save])
