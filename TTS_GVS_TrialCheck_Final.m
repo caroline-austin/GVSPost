@@ -13,7 +13,7 @@ clear all;
 clc; 
 
 %% set up
-subnum = 1018:1018;  % Subject List 
+subnum = 1020:1020;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias'; %can change this to specify which data you want to use for the checkng
@@ -27,9 +27,17 @@ match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_0
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
-plots_path = [file_path '\Plots\Check']; % specify where plots are saved
-gvs_path = [file_path '\GVSProfiles'];
-tts_path = [file_path '\TTSProfiles'];
+
+if ismac || isunix
+    plots_path = [file_path '/Plots/Check']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+    tts_path = [file_path '/TTSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots\Check']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+    tts_path = [file_path '\TTSProfiles'];
+end
+
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %generate plots to check for each subject 
@@ -40,12 +48,23 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    subject_path = [file_path, '\' , subject_str];
+
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str];
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str];
+    end
+    
 %     subject_path = [file_path, '\PS' , subject_str];
 
     %load the data file with all trial shot reports for the subject
     cd(subject_path);
-    load(['S', subject_str, 'Group' datatype '.mat ']);
+    if ismac || isunix
+        load(['S', subject_str, 'Group' datatype '.mat']);
+    elseif ispc
+        load(['S', subject_str, 'Group' datatype '.mat ']);
+    end
+    
     cd(code_path);
 
     % determine the number of trials for each physcial motion profile

@@ -8,7 +8,7 @@
 clear; 
 clc; 
 %% set up
-subnum = 1011:1016;  % Subject List 
+subnum = 1011:1021;  % Subject List 
 numsub = length(subnum);
 subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
@@ -76,6 +76,7 @@ for sub = 1:numsub
             if contains(Label.shot_4A(i), match_list(j))
                 All_shot_4A(:,j) = All_shot_4A(:,j)+shot_4A(:,i);
                 num_trials_4A(j) = num_trials_4A(j)+1;
+                shot_save_4A(:,sub,j) = shot_4A(:,i);
             end
         end
     end
@@ -84,6 +85,7 @@ for sub = 1:numsub
             if contains(Label.shot_4B(i), match_list(j))
                 All_shot_4B(:,j) = All_shot_4B(:,j)+shot_4B(:,i);
                 num_trials_4B(j) = num_trials_4B(j)+1;
+                shot_save_4B(:,sub,j) = shot_4B(:,i);
             end
         end
     end
@@ -92,6 +94,7 @@ for sub = 1:numsub
             if contains(Label.shot_5A(i), match_list(j))
                 All_shot_5A(:,j) = All_shot_5A(:,j)+shot_5A(:,i);
                 num_trials_5A(j) = num_trials_5A(j)+1;
+                shot_save_5A(:,sub,j) = shot_5A(:,i);
             end
         end
     end
@@ -100,6 +103,7 @@ for sub = 1:numsub
             if contains(Label.shot_5B(i), match_list(j))
                 All_shot_5B(:,j) = All_shot_5B(:,j)+shot_5B(:,i);
                 num_trials_5B(j) = num_trials_5B(j)+1;
+                shot_save_5B(:,sub,j) = shot_5B(:,i);
             end
         end
     end
@@ -108,6 +112,7 @@ for sub = 1:numsub
             if contains(Label.shot_6A(i), match_list(j))
                 All_shot_6A(:,j) = All_shot_6A(:,j)+shot_6A(:,i);
                 num_trials_6A(j) = num_trials_6A(j)+1;
+                shot_save_6A(:,sub,j) = shot_6A(:,i);
             end
         end
     end
@@ -116,49 +121,52 @@ for sub = 1:numsub
             if contains(Label.shot_6B(i), match_list(j))
                 All_shot_6B(:,j) = All_shot_6B(:,j)+shot_6B(:,i);
                 num_trials_6B(j) = num_trials_6B(j)+1;
+                shot_save_6B(:,sub,j) = shot_6B(:,i);
             end
         end
     end
-    save_shot_4A(:,:,sub) = All_shot_4A;
-    save_shot_4B(:,:,sub) = All_shot_4B;
-    save_shot_5A(:,:,sub) = All_shot_5A;
-    save_shot_5B(:,:,sub) = All_shot_5B;
-    save_shot_6A(:,:,sub) = All_shot_6A;
-    save_shot_6B(:,:,sub) = All_shot_6B;
 
 end
 
-% summing all subjects' data to be averaged:
-rot_4A = permute(save_shot_4A,[1 3 2]);
-sum_rot_4A = sum(rot_4A(:,:,1),2);
-rot_4B = permute(save_shot_4B,[1 3 2]);
-sum_rot_4B = sum(rot_4B(:,:,1),2);
-rot_5A = permute(save_shot_5A,[1 3 2]);
-sum_rot_5A = sum(rot_5A(:,:,1),2);
-rot_5B = permute(save_shot_5B,[1 3 2]);
-sum_rot_5B = sum(rot_5B(:,:,1),2);
-rot_6A = permute(save_shot_6A,[1 3 2]);
-sum_rot_6A = sum(rot_6A(:,:,1),2);
-rot_6B = permute(save_shot_6B,[1 3 2]);
-sum_rot_6B = sum(rot_6B(:,:,1),2);
+% Taking std of all subjects at specific points in time:
+STD_shot_save_4A = std(shot_save_4A,[],2);
+STD_shot_save_4A =reshape(STD_shot_save_4A,1427,7);
+STD_shot_save_4B = std(shot_save_4B,[],2);
+STD_shot_save_4B = reshape(STD_shot_save_4B,1427,7);
+STD_shot_save_5A = std(shot_save_5A,[],2);
+STD_shot_save_5A = reshape(STD_shot_save_5A,1427,7);
+STD_shot_save_5B = std(shot_save_5B,[],2);
+STD_shot_save_5B = reshape(STD_shot_save_5B,1427,7);
+STD_shot_save_6A = std(shot_save_6A,[],2);
+STD_shot_save_6A = reshape(STD_shot_save_6A,1427,7);
+STD_shot_save_6B = std(shot_save_6B,[],2);
+STD_shot_save_6B = reshape(STD_shot_save_6B,1427,7);
+
+% Getting SEM of all subjects at specific points in time:
+SEM_shot_save_4A = STD_shot_save_4A./sqrt(num_trials_4A);
+SEM_shot_save_4B = STD_shot_save_4B./sqrt(num_trials_4B);
+SEM_shot_save_5A = STD_shot_save_5A./sqrt(num_trials_5A);
+SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
+SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
+SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
 
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects (need to add a calculation of error)
-% All_shot_4A = All_shot_4A./num_trials_4A;
-% All_shot_4B = All_shot_4B./num_trials_4B;
-% All_shot_5A = All_shot_5A./num_trials_5A;
-% All_shot_5B = All_shot_5B./num_trials_5B;
-% All_shot_6A = All_shot_6A./num_trials_6A;
-% All_shot_6B = All_shot_6B./num_trials_6B;
+All_shot_4A = All_shot_4A./num_trials_4A;
+All_shot_4B = All_shot_4B./num_trials_4B;
+All_shot_5A = All_shot_5A./num_trials_5A;
+All_shot_5B = All_shot_5B./num_trials_5B;
+All_shot_6A = All_shot_6A./num_trials_6A;
+All_shot_6B = All_shot_6B./num_trials_6B;
 
 % This could be wrong so double check but I think this should be correct:
 
-All_shot_4A = sum_rot_4A./num_trials_4A;
-All_shot_4B = sum_rot_4B./num_trials_4B;
-All_shot_5A = sum_rot_5A./num_trials_5A;
-All_shot_5B = sum_rot_5B./num_trials_5B;
-All_shot_6A = sum_rot_6A./num_trials_6A;
-All_shot_6B = sum_rot_6B./num_trials_6B;
+% All_shot_4A_test = sum_rot_4A./num_trials_4A;
+% All_shot_4B_test = sum_rot_4B./num_trials_4B;
+% All_shot_5A_test = sum_rot_5A./num_trials_5A;
+% All_shot_5B_test = sum_rot_5B./num_trials_5B;
+% All_shot_6A_test = sum_rot_6A./num_trials_6A;
+% All_shot_6B_test = sum_rot_6B./num_trials_6B;
 
 %update the label
 Label.shot_4A = match_list;
@@ -172,8 +180,7 @@ Label.shot_6B = match_list;
    cd(file_path);
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
-       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B ' ...
-       'save_shot_4A save_shot_4B save_shot_5A save_shot_5B save_shot_6A save_shot_6B'];
+       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B '];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
+   %eval (['clear ' vars_2_save])

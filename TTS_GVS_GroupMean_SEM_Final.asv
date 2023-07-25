@@ -1,0 +1,6 @@
+%% Script 8 for Dynamic GVS +Tilt
+% This script is meant to take the mean of all of the taken SHOT data for
+% each condition – velocity, vel. and. ang., and angle – and take an
+% average over all the subjects for +/-4mA and the sham condition. 
+% Then the SEM of each mean is to be plotted over top each mean line.
+

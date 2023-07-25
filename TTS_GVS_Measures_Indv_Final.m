@@ -6,7 +6,7 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1021:1021;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTime';
