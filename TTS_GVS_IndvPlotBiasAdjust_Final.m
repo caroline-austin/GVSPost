@@ -114,7 +114,7 @@ for sub = 1:numsub
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
-       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
+       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' bias_correction'];
    eval(['  save ' ['S', subject_str, 'Group' datatype 'Bias.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])

@@ -55,15 +55,16 @@ for sub = 1:numsub
     % calculate the avg. min time shift for each physical motion profile
     % this is not a computationally efficient way to do this, 
     % but it still runs pretty fast 
-    avg_loc_rms_min_4A = find_time_shift(shot_4A,tilt_4A);
-    avg_loc_rms_min_4B = find_time_shift(shot_4B,tilt_4B);
-    avg_loc_rms_min_5A = find_time_shift(shot_5A,tilt_5A);
-    avg_loc_rms_min_5B = find_time_shift(shot_5B,tilt_5B);
-    avg_loc_rms_min_6A = find_time_shift(shot_6A,tilt_6A);
-    avg_loc_rms_min_6B = find_time_shift(shot_6B,tilt_6B);
+    [avg_loc_rms_min_4A, avg_time_rms_min_4A] = find_time_shift(shot_4A,tilt_4A);
+    [avg_loc_rms_min_4B, avg_time_rms_min_4B] = find_time_shift(shot_4B,tilt_4B);
+    [avg_loc_rms_min_5A, avg_time_rms_min_5A] = find_time_shift(shot_5A,tilt_5A);
+    [avg_loc_rms_min_5B, avg_time_rms_min_5B] = find_time_shift(shot_5B,tilt_5B);
+    [avg_loc_rms_min_6A, avg_time_rms_min_6A] = find_time_shift(shot_6A,tilt_6A);
+    [avg_loc_rms_min_6B, avg_time_rms_min_6B] = find_time_shift(shot_6B,tilt_6B);
 
     %average the offsets from all trials 
     avg_loc_rms_min = round((avg_loc_rms_min_4A +avg_loc_rms_min_4B+ avg_loc_rms_min_5A +avg_loc_rms_min_5B+avg_loc_rms_min_6A +avg_loc_rms_min_6B)/6);
+    avg_time_rms_min = (avg_time_rms_min_4A +avg_time_rms_min_4B+ avg_time_rms_min_5A +avg_time_rms_min_5B+avg_time_rms_min_6A +avg_time_rms_min_6B)/6;
     shot_start_avg = 51+avg_loc_rms_min;
     shot_end_avg = length(shot_4A)-50+avg_loc_rms_min;
 
@@ -84,7 +85,7 @@ for sub = 1:numsub
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
-       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
+       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min'];
    eval(['  save ' ['S', subject_str, 'Group' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
@@ -93,7 +94,7 @@ for sub = 1:numsub
 
 end
 
-function avg_loc_rms_min = find_time_shift(shot,tilt)
+function [avg_loc_rms_min,avg_time_rms_min] = find_time_shift(shot,tilt)
     [num_timesteps,num_trials] = size(shot);
     % 
     for trial = 1:num_trials
@@ -115,6 +116,7 @@ function avg_loc_rms_min = find_time_shift(shot,tilt)
     %taking the median not the mean to help account for potential outliers)
     [min_rms,loc_min_rms]=min(time_rms);
     avg_loc_rms_min = median(loc_min_rms); % could use the mean instead 
+    avg_time_rms_min = mean(min_rms);
 end
 
 function [shot,tilt] = shift_file(shot,tilt,start_index, end_index)
