@@ -130,7 +130,7 @@ end
 
 % Taking std of all subjects at specific points in time:
 STD_shot_save_4A = std(shot_save_4A,[],2);
-STD_shot_save_4A =reshape(STD_shot_save_4A,1427,7);
+STD_shot_save_4A = reshape(STD_shot_save_4A,1427,7);
 STD_shot_save_4B = std(shot_save_4B,[],2);
 STD_shot_save_4B = reshape(STD_shot_save_4B,1427,7);
 STD_shot_save_5A = std(shot_save_5A,[],2);

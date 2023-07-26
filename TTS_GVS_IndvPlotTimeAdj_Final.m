@@ -4,11 +4,11 @@
 % (shifted forward) where the rms is minimized - this is calculated and
 % then averaged across all trials (not just sham) then all trials have
 % their shot data shifted forward by this amount
-close all; 
-clear; 
-clc; 
+
+clc; clear; close all;
+
 %% set up
-subnum = 1018:1021;  % Subject List 
+subnum = 1011:1021;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
@@ -121,3 +121,4 @@ function [shot,tilt] = shift_file(shot,tilt,start_index, end_index)
     tilt  = tilt(51:end-50, :);
     shot  = shot(start_index:end_index, :);
 end
+
