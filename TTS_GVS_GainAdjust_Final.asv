@@ -150,7 +150,7 @@ function avg_gain_rms_min = find_gain(shot,tilt)
     for trial = 1:num_trials
         %adjust tilt index becaue each trial has 3 columns of data
         tilt_index = (trial-1)*3+1;
-        gvec = 0:0.01:2;
+        gvec = 0:0.01:10;
         for gain_shift = 1:length(gvec)
             %calculate and save the error between the actual motion profile and the
             %shot response 
