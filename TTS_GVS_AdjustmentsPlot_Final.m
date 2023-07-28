@@ -3,7 +3,7 @@ clc; clear; close all;
 % This code plots all of the adjustments made to the data on bar graphs.
 
 %% set up
-subnum = 1011:1021;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -18,9 +18,9 @@ elseif ispc
 end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
-gain_vec = zeros(length(numsub),1);
-bias_vec = zeros(length(numsub),1);
-time_vec = zeros(length(numsub),1);
+% gain_vec = zeros(length(numsub),1);
+% bias_vec = zeros(length(numsub),1);
+% time_vec = zeros(length(numsub),1);
 
 %% generate plots for each subject
 for sub = 1:numsub 
@@ -56,9 +56,9 @@ for sub = 1:numsub
         end
     end
 
-    gain_vec(sub,1) = avg_gain_rms_min;
-    bias_vec(sub,1) = bias_correction;
-    time_vec(sub,1) = avg_time_rms_min;
+    gain_vec = avg_gain_rms_min;
+    bias_vec(sub) = bias_correction;
+    time_vec(sub) = avg_time_rms_min;
 
 
 

@@ -3,11 +3,8 @@
 
 clc; clear; close all; %warning off;
 
-close all; 
-clear; 
-clc; 
 %% set up
-subnum = 1011:1021;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTime';
@@ -111,20 +108,22 @@ for sub = 1:numsub
 
     %average the offsets from all trials 
     %avg_gain_rms_min = round((avg_gain_rms_min_4A + avg_gain_rms_min_4B + avg_gain_rms_min_5A + avg_gain_rms_min_5B + avg_gain_rms_min_6A + avg_gain_rms_min_6B)/6);
-    avg_gain_rms_min = (avg_gain_rms_min_4A + avg_gain_rms_min_4B + avg_gain_rms_min_5A + avg_gain_rms_min_5B + avg_gain_rms_min_6A + avg_gain_rms_min_6B)/6;
+    avg_gain_rms_min(sub) = (avg_gain_rms_min_4A + avg_gain_rms_min_4B + avg_gain_rms_min_5A + avg_gain_rms_min_5B + avg_gain_rms_min_6A + avg_gain_rms_min_6B)/6;
 %     shot_start_avg = 51 + avg_gain_rms_min;
 %     shot_end_avg = length(shot_4A)-50+avg_gain_rms_min;
 
     % Multiply each trial by the avgerage gain value:
 
-    [shot_4A,tilt_4A] = mult_gain(shot_4A,tilt_4A,avg_gain_rms_min);
-    [shot_4B,tilt_4B] = mult_gain(shot_4B,tilt_4B,avg_gain_rms_min);
+    [shot_4A,tilt_4A] = mult_gain(shot_4A,tilt_4A,avg_gain_rms_min(sub));
+    [shot_4B,tilt_4B] = mult_gain(shot_4B,tilt_4B,avg_gain_rms_min(sub));
 
-    [shot_5A,tilt_5A] = mult_gain(shot_5A,tilt_5A,avg_gain_rms_min);
-    [shot_5B,tilt_5B] = mult_gain(shot_5B,tilt_5B,avg_gain_rms_min);
+    [shot_5A,tilt_5A] = mult_gain(shot_5A,tilt_5A,avg_gain_rms_min(sub));
+    [shot_5B,tilt_5B] = mult_gain(shot_5B,tilt_5B,avg_gain_rms_min(sub));
 
-    [shot_6A,tilt_6A] = mult_gain(shot_6A,tilt_6A,avg_gain_rms_min);
-    [shot_6B,tilt_6B] = mult_gain(shot_6B,tilt_6B,avg_gain_rms_min);
+    [shot_6A,tilt_6A] = mult_gain(shot_6A,tilt_6A,avg_gain_rms_min(sub));
+    [shot_6B,tilt_6B] = mult_gain(shot_6B,tilt_6B,avg_gain_rms_min(sub));
+
+
 
     %redefine the end of the trial so that it can be properly used in other
     %scripts
@@ -141,10 +140,9 @@ for sub = 1:numsub
    %eval (['clear ' vars_2_save])
    close all;
 
-
 end
 
-function avg_gain_rms_min = find_gain(shot,tilt)
+function avg_gain_min = find_gain(shot,tilt)
 
     [num_timesteps,num_trials] = size(shot);
     for trial = 1:num_trials
@@ -154,7 +152,7 @@ function avg_gain_rms_min = find_gain(shot,tilt)
         for gain_shift = 1:length(gvec)
             %calculate and save the error between the actual motion profile and the
             %shot response 
-            signal_diff = tilt(:,tilt_index) - shot(:,trial)*(gvec(gain_shift));
+            signal_diff =  tilt(:,tilt_index) - shot(:,trial)*(gvec(gain_shift));
             gain_rms(gain_shift,trial) = rms(signal_diff); 
         end
     end 
@@ -162,7 +160,10 @@ function avg_gain_rms_min = find_gain(shot,tilt)
     %the location for all the trials in the current profile set (currently
     %taking the median not the mean to help account for potential outliers)
     [min_rms,~]=min(gain_rms);
-    avg_gain_rms_min = mean(min_rms); % could use the mean instead 
+    [min_rms_loc, ~] = find(gain_rms == min_rms);
+    gain_select = gvec(min_rms_loc);
+    avg_gain_min = mean(gain_select); % could use the mean instead 
+
 end
 
 function [shot,tilt] = mult_gain(shot,tilt,avg_gain)
