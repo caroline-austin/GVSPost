@@ -8,7 +8,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = 1022:1022;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
@@ -85,7 +85,7 @@ for sub = 1:numsub
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
-       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min'];
+       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min' ' avg_loc_rms_min'];
    eval(['  save ' ['S', subject_str, 'Group' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])

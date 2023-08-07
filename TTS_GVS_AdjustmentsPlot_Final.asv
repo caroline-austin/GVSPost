@@ -59,7 +59,7 @@ for sub = 1:numsub
     gain_vec = avg_gain_rms_min;
     bias_vec(sub) = bias_correction;
     time_vec(sub) = avg_time_rms_min;
-    loc_vec(sub) = 0.02*avg_loc_rms_min;
+    loc_vec(sub) = avg_loc_rms_min;
 
 
 
@@ -79,8 +79,8 @@ title('Bias Correction over all Subjects','FontSize',17,'interpreter','latex');
 
 figure();
 bar(loc_vec)
-xlabel('Subject','FontSize',17,'interpreter','latex'); ylabel('Time Correction','FontSize',17,'interpreter','latex');
-title('Time Correction over all Subjects','FontSize',17,'interpreter','latex');
+xlabel('Subject','FontSize',17,'interpreter','latex'); ylabel('L Correction','FontSize',17,'interpreter','latex');
+title('Location Correction over all Subjects','FontSize',17,'interpreter','latex');
 
 
 
