@@ -2,7 +2,10 @@
 % this script averages together the data from all specified subjects, if a
 % trial does not exist for a subject it is not averaged in. 
 % the script can take input from scripts 2 and 4 and output should be used
-% for scripts 7 
+% for scripts 7
+%
+%Be sure to change the datatype to match which adjustments should be made
+%to the data, as well as the subnum array!
 
 %close all; 
 clear; 
@@ -12,7 +15,7 @@ subnum = 1011:1021;  % Subject List
 numsub = length(subnum);
 subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
-datatype = 'BiasTime';
+datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -26,11 +29,14 @@ end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-%initalize all shot variables 
-All_shot_4A = zeros(1527,length(match_list)); %1527 is the length of the non-adjusted time series 
+%initalize all shot variables  
 if contains(datatype, 'Time')
-    All_shot_4A = zeros(1427,length(match_list)); %1427 is the length of the time-adjusted time series
+    timeSeriesLength = 1427;    %1427 is the length of the time-adjusted time series
+else
+    timeSeriesLength = 1527;    %1527 is the length of the non-adjusted time series 
 end
+All_shot_4A = zeros(timeSeriesLength,length(match_list));
+
 All_shot_4B = All_shot_4A;
 All_shot_5A = All_shot_4A;
 All_shot_5B = All_shot_4A;
@@ -130,17 +136,17 @@ end
 
 % Taking std of all subjects at specific points in time:
 STD_shot_save_4A = std(shot_save_4A,[],2);
-STD_shot_save_4A = reshape(STD_shot_save_4A,1427,7);
+STD_shot_save_4A = reshape(STD_shot_save_4A,timeSeriesLength,7);
 STD_shot_save_4B = std(shot_save_4B,[],2);
-STD_shot_save_4B = reshape(STD_shot_save_4B,1427,7);
+STD_shot_save_4B = reshape(STD_shot_save_4B,timeSeriesLength,7);
 STD_shot_save_5A = std(shot_save_5A,[],2);
-STD_shot_save_5A = reshape(STD_shot_save_5A,1427,7);
+STD_shot_save_5A = reshape(STD_shot_save_5A,timeSeriesLength,7);
 STD_shot_save_5B = std(shot_save_5B,[],2);
-STD_shot_save_5B = reshape(STD_shot_save_5B,1427,7);
+STD_shot_save_5B = reshape(STD_shot_save_5B,timeSeriesLength,7);
 STD_shot_save_6A = std(shot_save_6A,[],2);
-STD_shot_save_6A = reshape(STD_shot_save_6A,1427,7);
+STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,7);
 STD_shot_save_6B = std(shot_save_6B,[],2);
-STD_shot_save_6B = reshape(STD_shot_save_6B,1427,7);
+STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,7);
 
 % Getting SEM of all subjects at specific points in time:
 SEM_shot_save_4A = STD_shot_save_4A./sqrt(num_trials_4A);
