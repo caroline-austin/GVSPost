@@ -114,14 +114,14 @@ for sub = 1:numsub
 
     % Multiply each trial by the avgerage gain value:
 
-    [shot_4A,tilt_4A] = mult_gain(shot_4A,tilt_4A,avg_gain_rms_min(sub));
-    [shot_4B,tilt_4B] = mult_gain(shot_4B,tilt_4B,avg_gain_rms_min(sub));
+    [shot_4A] = mult_gain(shot_4A,avg_gain_rms_min(sub));
+    [shot_4B] = mult_gain(shot_4B,avg_gain_rms_min(sub));
 
-    [shot_5A,tilt_5A] = mult_gain(shot_5A,tilt_5A,avg_gain_rms_min(sub));
-    [shot_5B,tilt_5B] = mult_gain(shot_5B,tilt_5B,avg_gain_rms_min(sub));
+    [shot_5A] = mult_gain(shot_5A,avg_gain_rms_min(sub));
+    [shot_5B] = mult_gain(shot_5B,avg_gain_rms_min(sub));
 
-    [shot_6A,tilt_6A] = mult_gain(shot_6A,tilt_6A,avg_gain_rms_min(sub));
-    [shot_6B,tilt_6B] = mult_gain(shot_6B,tilt_6B,avg_gain_rms_min(sub));
+    [shot_6A] = mult_gain(shot_6A,avg_gain_rms_min(sub));
+    [shot_6B] = mult_gain(shot_6B,avg_gain_rms_min(sub));
 
 
 
@@ -166,7 +166,6 @@ function avg_gain_min = find_gain(shot,tilt)
 
 end
 
-function [shot,tilt] = mult_gain(shot,tilt,avg_gain)
+function [shot] = mult_gain(shot,avg_gain)
     shot = shot*avg_gain;
-    tilt = tilt*avg_gain;
 end
