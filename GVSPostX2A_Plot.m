@@ -55,6 +55,8 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 
 % 7: 
 
+%11: Reduced Plot Motion Direction (roll, pitch, yaw data)
+
 Include_plots = [' 11'];
 
 % should probably insert a for loop that checks to make sure this file exists first

@@ -8,9 +8,9 @@ close all;
 clear all; 
 clc; 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1011:1018;  % Subject List 
 numsub = length(subnum);
-subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 datatype = 'BiasTime';
 
@@ -110,11 +110,17 @@ end
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects (need to add a calculation of error)
 All_shot_4A = All_shot_4A./num_trials_4A;
+All_SEM_shot_4A = std(All_shot_4A)./sqrt(length(shot_4A));
 All_shot_4B = All_shot_4B./num_trials_4B;
+All_SEM_shot_4B = std(All_shot_4B)./sqrt(length(shot_4B));
 All_shot_5A = All_shot_5A./num_trials_5A;
+All_SEM_shot_5A = std(All_shot_5A)./sqrt(length(shot_5A));
 All_shot_5B = All_shot_5B./num_trials_5B;
+All_SEM_shot_5B = std(All_shot_5B)./sqrt(length(shot_5B));
 All_shot_6A = All_shot_6A./num_trials_6A;
+All_SEM_shot_6A = std(All_shot_6A)./sqrt(length(shot_6A));
 All_shot_6B = All_shot_6B./num_trials_6B;
+All_SEM_shot_6B = std(All_shot_6B)./sqrt(length(shot_6B));
 
 %update the label
 Label.shot_4A = match_list;
@@ -128,7 +134,9 @@ Label.shot_6B = match_list;
    cd(file_path);
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
-       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B'];
+       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B ' ...
+       'All_SEM_shot_4A All_SEM_shot_4B All_SEM_shot_5A All_SEM_shot_5B ' ...
+       'All_SEM_shot_6A All_SEM_shot_6B '];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])

@@ -8,7 +8,7 @@ close all;
 clear all; 
 clc; 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1011:1018;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
@@ -62,6 +62,7 @@ for sub = 1:numsub
     %redefine the end of the trial so that it can be properly used in other
     %scripts
     trial_end = length(shot_4A);
+    time = (0:trial_end-1)/50;
 
 %% save files
    cd(subject_path);

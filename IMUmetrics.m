@@ -11,18 +11,19 @@ restoredefaultpath;
 
 %% Experimental Methods Specifications
 sub_dir = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
+code_path = pwd;
 conditions = {'A'}; % right now ideally just one condition, might have an exp. A and B
 datatype = {'Accelerometer','Gyroscope'};
 
 numtrials = 57; % this number will vary, should not exceed 60
-subnum = 40004:40006;  % Subject List 
+subnum = 2001:2010;  % Subject List 
 groups = [1]; % 1:Control 2:VisualCM % I don't have groups yet so I'll just set them all as the same for now
-subskip = [40005 40006];  %DNF'd subjects
+subskip = [2001 2004 2008 2010];  %DNF'd subjects
 
 % additional start buffer for IMU data (sec.) row = cond.; col = subject
-buffer = [0;...
-          0;...
-          0]; 
+buffer = [0 0 0 0 0 0 0 0 0 0;...
+          0 0 0 0 0 0 0 0 0 0;...
+          0 0 0 0 0 0 0 0 0 0]; 
 
 % seconds to truncate off each trial [start, end]
 trunc = [0.3 -0.3]; %seconds 
@@ -30,7 +31,7 @@ trunc = [0.3 -0.3]; %seconds
 % Used to find buffer time for timed trial arrays
 findbuffers = 1; % 1 is on other num is off
 % Used to view sensor orientation over time
-sensorpositionplot =1; % 1 is on other num is off
+sensorpositionplot =0; % 1 is on other num is off
 
 %% Initialize Storage Variables
 numsub = length(subnum);
@@ -53,6 +54,7 @@ p2pXa = rmsXYa; p2pYa = p2pXa;
 %% Loop Through and get Metrics defining Sway
 for sub = 1:numsub
     subject = subnum(sub);
+    subject_str = num2str(subject);
     % skip subjects that DNF'd
     if ismember(subject,subskip) == 1
        continue
@@ -81,7 +83,8 @@ for sub = 1:numsub
         timestamps = readtable(timestampfile,'ReadVariableNames',false);
   
         % Ensure data aligns across measurement types
-        time = 1/100:1/100:max(acceldata.Var3); % create aligned time vec %adjust for sampling freq
+        time = 1/25:1/25:max(acceldata.Var3); % create aligned time vec %adjust for sampling freq
+        time = 0.5:0.5:max(acceldata.Var3); % create aligned time vec %adjust for sampling freq
         [acc, gyro] = TimeAlign(time,acceldata,gyrodata);
 
         % Convert units from g --> m/s2 and deg/s --> rad/s
@@ -89,7 +92,15 @@ for sub = 1:numsub
         gyro = pi/180*gyro;
 
         % Rotate accelerometer Data (x-ML y-AP z-EarthVertical)
-        acc_aligned = GravityAligned(acc, gyro,sensorpositionplot);
+        tic
+        acc_aligned = GravityAligned(acc(:,:), gyro(:,:),sensorpositionplot);
+        toc
+
+        cd([sub_dir, '\' , subject_str]);
+        vars_2_save = 'acc_aligned';
+        eval(['  save ' ['A', subject_str,'_IMU.mat '] vars_2_save ' vars_2_save']);      
+        cd(code_path)
+%         eval (['clear ' vars_2_save])
 
         % Get Trial Times
         Times = GetTrialTimes(timestamps,buffer(cond,sub),cond);
@@ -336,7 +347,7 @@ function  acc_aligned = GravityAligned(acc, gyro,sensorpositionplot)
     FUSE = imufilter('SampleRate',25);
     q = FUSE(acc,gyro); % goes from Inertial to Sensor
     Eulers = eulerd(q, 'ZYX', 'frame'); % sensor = Rx'*Ry'*Rz'*global
-
+    
     acc_aligned = zeros(length(acc),3);
     for i = 1:length(acc)
         theta = Eulers(i,3);
