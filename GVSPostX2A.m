@@ -22,7 +22,13 @@ for sub = 1:numsub
        continue
     end
 
-    cd([file_path, '\' , subject_str]);
+    if ismac || isunix
+        cd([file_path, '/' , subject_str]);
+    elseif ispc
+        cd([file_path, '\' , subject_str]);
+    end
+
+    
     Label.TrialInfo = readcell(['A' subject_str '.xlsx'],'Range','A1:G1');
     Label.SideEffects = readcell(['A' subject_str '.xlsx'],'Range','H1:J1');
     Label.MotionSense = readcell(['A' subject_str '.xlsx'],'Range','K1:O1');
@@ -72,9 +78,12 @@ for sub = 1:numsub
 % insert code that will count the number of each type of response
 
 
+    if ismac || isunix
+        cd([file_path, '/' , subject_str]);
+    elseif ispc
+        cd([file_path, '\' , subject_str]);
+    end
 
-
-    cd([file_path, '\' , subject_str]);
     vars_2_save = 'Label TrialInfo1 SideEffects1 MotionSense1 Observed1 TrialInfo2 SideEffects2 MotionSense2 Observed2 EndImpedance StartImpedance MaxCurrent MinCurrent';
     eval(['  save ' ['A', subject_str,'.mat '] vars_2_save ' vars_2_save']);      
     cd(code_path)
