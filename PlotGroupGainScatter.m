@@ -1,4 +1,4 @@
-function PlotPerceptions(Type)
+function PlotGroupGainScatter(Type)
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
@@ -46,40 +46,30 @@ for j = 1:3
     
             tiltname = "tilt_"+motion+dir;
             tiltang = Var.(tiltname);
-    
-            T = length(tiltang)*0.02;
-            dt = 0.02;
-            time = (0:dt:T-dt)';
             
             shot_name = "All_shot_"+motion+dir;
             shot_data = Var.(shot_name);
             perceptions = shot_data(:,condition);
-            sem_name = "SEM_shot_save_"+motion+dir;
-            SEM = Var.(sem_name);
-            percSEM = SEM(:,condition);
     
-            % PostProcess
-            timeplot = 0:dt*2:T;
-            angplot = interp1(time,tiltang(:,1),timeplot);
-            percplot = interp1(time,perceptions,timeplot);
-            semplot = interp1(time,percSEM,timeplot);
-    
-            plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
-            plot(timeplot,percplot,'-','LineWidth',LW,'color',...
-                LC(i,:),'LineStyle',LS(i))
-            
-            % Plot SEM
-            plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
-            plot(timeplot, percplot+semplot, 'color',LC(i,:), 'LineWidth',1);
-            x2 = [timeplot, fliplr(timeplot)];
-            inBetween = [percplot-semplot, fliplr(percplot+semplot)];
-            fill(x2, inBetween,LC(i,:),'FaceAlpha',0.3);
-            
-            % if strcmp(Type,'Velocity')==1 && i == 3
-            %     plot(time,tiltang(:,3),'LineWidth',LW,'Color',[0.5 0.5 0.5 0.5],'LineStyle','--')
-            % elseif strcmp(Type,'Semi')==1 && i == 3
-            %     plot(time,0.5*tiltang(:,3)+0.5*tiltang(:,1),'LineWidth',LW,'Color',[0.5 0.5 0.5 0.5],'LineStyle','--')
-            % end
+
+            delta = perceptions -tiltang(:,1);
+
+            if strcmp(Type,'Angle') == 1
+                current = tiltang(:,1);
+                sc = red;
+            elseif strcmp(Type,'Velocity')==1 
+                current = tiltang(:,3);
+                sc = blue;
+            elseif strcmp(Type,'Semi')==1
+                current = 0.5*tiltang(:,3)+0.5*tiltang(:,1);
+                sc = green;
+            end
+
+
+            scatter(current,delta,50,'filled','color',LC(i,:),...
+                'markeredgecolor','k')
+
+
         end
         hold off
         ylim([-15 15])
@@ -93,8 +83,8 @@ for j = 1:3
         if j ~= 3
             xticks([])
         else
-            xlabel('Time(s)')
-            xticks(0:5:25)
+            xlabel('Current (mA)')
+            xticks([-5 0 5])
         end
         if k == 2 && j ==2
             ylabel('Mirrored Motions')
@@ -102,6 +92,5 @@ for j = 1:3
     end
 end
 title(t,Title,'Fontsize',16)
-legend('Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating')
 
 end
