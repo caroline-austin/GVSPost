@@ -9,13 +9,13 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1015:1015;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
-datatype = 'BiasTime';
+datatype = 'BiasTimeGain';
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -237,5 +237,7 @@ for sub = 1:numsub
     cd(subject_plot_path);
     saveas(gcf, [ 'Negative_6B_4_00mA_Perception' datatype subject_str]); 
     cd(code_path);
-    hold off;    
+    hold off;   
+
+    close all
 end
