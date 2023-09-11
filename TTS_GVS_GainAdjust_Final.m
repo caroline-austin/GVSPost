@@ -6,7 +6,7 @@ clc; clear; close all; %warning off;
 %% set up
 subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTime';
 
 code_path = pwd; %save code directory
@@ -71,59 +71,57 @@ for sub = 1:numsub
     % this is not a computationally efficient way to do this, 
     % but it still runs pretty fast 
     if any(sham_shot_4A) == 1
-        avg_gain_rms_min_4A = find_gain(shot_4A(:,sham_shot_4A),tilt_4A(:,sham_tilt_4A));
+        avg_gain_4A = find_gain(shot_4A(:,sham_shot_4A),tilt_4A(:,sham_tilt_4A));
     elseif any(sham_shot_4A) == 0
-        avg_gain_rms_min_4A = 0;
+        avg_gain_4A = NaN;
     end
 
     if any(sham_shot_4B) == 1
-        avg_gain_rms_min_4B = find_gain(shot_4B(:,sham_shot_4B),tilt_4B(:,sham_tilt_4B));
+        avg_gain_4B = find_gain(shot_4B(:,sham_shot_4B),tilt_4B(:,sham_tilt_4B));
     elseif any(sham_shot_4B) == 0
-        avg_gain_rms_min_4B = 0;
+        avg_gain_4B = NaN;
     end
 
     if any(sham_shot_5A) == 1
-        avg_gain_rms_min_5A = find_gain(shot_5A(:,sham_shot_5A),tilt_5A(:,sham_tilt_5A));
+        avg_gain_5A = find_gain(shot_5A(:,sham_shot_5A),tilt_5A(:,sham_tilt_5A));
     elseif any(sham_shot_5A) == 0
-        avg_gain_rms_min_5A = 0;
+        avg_gain_5A = NaN;
     end
 
     if any(sham_shot_5B) == 1
-        avg_gain_rms_min_5B = find_gain(shot_5B(:,sham_shot_5B),tilt_5B(:,sham_tilt_5B));
+        avg_gain_5B = find_gain(shot_5B(:,sham_shot_5B),tilt_5B(:,sham_tilt_5B));
     elseif any(sham_shot_5B) == 0
-        avg_gain_rms_min_5B = 0;
+        avg_gain_5B = NaN;
     end
 
     if any(sham_shot_6A) == 1
-        avg_gain_rms_min_6A = find_gain(shot_6A(:,sham_shot_6A),tilt_6A(:,sham_tilt_6A));
+        avg_gain_6A = find_gain(shot_6A(:,sham_shot_6A),tilt_6A(:,sham_tilt_6A));
     elseif any(sham_shot_6A) == 0
-        avg_gain_rms_min_6A = 0;
+        avg_gain_6A = NaN;
     end
 
     if any(sham_shot_6B) == 1
-        avg_gain_rms_min_6B = find_gain(shot_6B(:,sham_shot_6B),tilt_6B(:,sham_tilt_6B));
+        avg_gain_6B = find_gain(shot_6B(:,sham_shot_6B),tilt_6B(:,sham_tilt_6B));
     elseif any(sham_shot_6B) == 0
-        avg_gain_rms_min_6B = 0;
+        avg_gain_6B = NaN;
     end
 
     %average the offsets from all trials 
     %avg_gain_rms_min = round((avg_gain_rms_min_4A + avg_gain_rms_min_4B + avg_gain_rms_min_5A + avg_gain_rms_min_5B + avg_gain_rms_min_6A + avg_gain_rms_min_6B)/6);
-    avg_gain_rms_min(sub) = (avg_gain_rms_min_4A + avg_gain_rms_min_4B + avg_gain_rms_min_5A + avg_gain_rms_min_5B + avg_gain_rms_min_6A + avg_gain_rms_min_6B)/6;
+    avg_gain = mean([avg_gain_4A  avg_gain_4B  avg_gain_5A  avg_gain_5B  avg_gain_6A  avg_gain_6B], "omitnan");
 %     shot_start_avg = 51 + avg_gain_rms_min;
 %     shot_end_avg = length(shot_4A)-50+avg_gain_rms_min;
 
     % Multiply each trial by the avgerage gain value:
 
-    [shot_4A] = mult_gain(shot_4A,avg_gain_rms_min(sub));
-    [shot_4B] = mult_gain(shot_4B,avg_gain_rms_min(sub));
+    [shot_4A] = mult_gain(shot_4A,avg_gain);
+    [shot_4B] = mult_gain(shot_4B,avg_gain);
 
-    [shot_5A] = mult_gain(shot_5A,avg_gain_rms_min(sub));
-    [shot_5B] = mult_gain(shot_5B,avg_gain_rms_min(sub));
+    [shot_5A] = mult_gain(shot_5A,avg_gain);
+    [shot_5B] = mult_gain(shot_5B,avg_gain);
 
-    [shot_6A] = mult_gain(shot_6A,avg_gain_rms_min(sub));
-    [shot_6B] = mult_gain(shot_6B,avg_gain_rms_min(sub));
-
-
+    [shot_6A] = mult_gain(shot_6A,avg_gain);
+    [shot_6B] = mult_gain(shot_6B,avg_gain);
 
     %redefine the end of the trial so that it can be properly used in other
     %scripts
@@ -134,7 +132,7 @@ for sub = 1:numsub
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ...
-       ' avg_gain_rms_min'];
+       ' avg_gain'];
    eval(['  save ' ['S', subject_str, 'Group' datatype 'Gain.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    %eval (['clear ' vars_2_save])
@@ -142,7 +140,7 @@ for sub = 1:numsub
 
 end
 
-function avg_gain_min = find_gain(shot,tilt)
+function avg_gain = find_gain(shot,tilt)
 
     [num_timesteps,num_trials] = size(shot);
     for trial = 1:num_trials
@@ -162,7 +160,7 @@ function avg_gain_min = find_gain(shot,tilt)
     [min_rms,~]=min(gain_rms);
     [min_rms_loc, ~] = find(gain_rms == min_rms);
     gain_select = gvec(min_rms_loc);
-    avg_gain_min = mean(gain_select); % could use the mean instead 
+    avg_gain = mean(gain_select); % could use the mean instead 
 
 end
 
