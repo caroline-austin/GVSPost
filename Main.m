@@ -3,7 +3,7 @@ clc;clear;close all;
 
 % Aggregate Data
 TTS_GVS_Aggregate_Final
-save("DynamicData.mat") % Save Data to .mat
+save("DynamicData.mat") % Save Aggregate Data to .mat
 
 % Plot Data
 PlotGroupPerceptions('Angle')
@@ -14,6 +14,6 @@ PlotGroupGainScatter('Angle')
 PlotGroupGainScatter('Semi')
 PlotGroupGainScatter('Velocity')
 
-
+% Compute Metrics (store in csv)
 MetricCompute_Gain("AngleGain")
 MetricCompute_Gain("CurrentGain")
