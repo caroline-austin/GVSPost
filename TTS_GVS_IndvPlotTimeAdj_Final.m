@@ -10,7 +10,7 @@ clc; clear; close all;
 %% set up
 subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
 
 code_path = pwd; %save code directory
@@ -52,34 +52,92 @@ for sub = 1:numsub
     end
     
     cd(code_path);
+
+ % isolating the sham, non-GVS, trials:
+
+    sham_shot_4A = startsWith(Label.shot_4A,'P_0');
+    sham_tilt_4A = startsWith(Label.tilt_4A,'P_0');
+
+    sham_shot_4B = startsWith(Label.shot_4B,'P_0');
+    sham_tilt_4B = startsWith(Label.tilt_4B,'P_0');
+
+    sham_shot_5A = startsWith(Label.shot_5A,'P_0');
+    sham_tilt_5A = startsWith(Label.tilt_5A,'P_0');
+
+    sham_shot_5B = startsWith(Label.shot_5B,'P_0');
+    sham_tilt_5B = startsWith(Label.tilt_5B,'P_0');
+
+    sham_shot_6A = startsWith(Label.shot_6A,'P_0');
+    sham_tilt_6A = startsWith(Label.tilt_6A,'P_0');
+
+    sham_shot_6B = startsWith(Label.shot_6B,'P_0');
+    sham_tilt_6B = startsWith(Label.tilt_6B,'P_0');
+
     % calculate the avg. min time shift for each physical motion profile
     % this is not a computationally efficient way to do this, 
-    % but it still runs pretty fast 
-    [avg_loc_rms_min_4A, avg_time_rms_min_4A] = find_time_shift(shot_4A,tilt_4A);
-    [avg_loc_rms_min_4B, avg_time_rms_min_4B] = find_time_shift(shot_4B,tilt_4B);
-    [avg_loc_rms_min_5A, avg_time_rms_min_5A] = find_time_shift(shot_5A,tilt_5A);
-    [avg_loc_rms_min_5B, avg_time_rms_min_5B] = find_time_shift(shot_5B,tilt_5B);
-    [avg_loc_rms_min_6A, avg_time_rms_min_6A] = find_time_shift(shot_6A,tilt_6A);
-    [avg_loc_rms_min_6B, avg_time_rms_min_6B] = find_time_shift(shot_6B,tilt_6B);
+    % but it still runs pretty fast  
+    if any(sham_shot_4A) == 1
+        [avg_loc_rms_min_4A, avg_time_rms_min_4A] = find_time_shift(shot_4A(:,sham_shot_4A),tilt_4A(:,sham_tilt_4A));
+    elseif any(sham_shot_4A) == 0
+        avg_loc_rms_min_4A = NaN;
+        avg_time_rms_min_4A = NaN;
+    end
 
-    %average the offsets from all trials 
-    avg_loc_rms_min = round((avg_loc_rms_min_4A +avg_loc_rms_min_4B+ avg_loc_rms_min_5A +avg_loc_rms_min_5B+avg_loc_rms_min_6A +avg_loc_rms_min_6B)/6);
-    avg_time_rms_min = (avg_time_rms_min_4A +avg_time_rms_min_4B+ avg_time_rms_min_5A +avg_time_rms_min_5B+avg_time_rms_min_6A +avg_time_rms_min_6B)/6;
+    if any(sham_shot_4B) == 1
+        [avg_loc_rms_min_4B, avg_time_rms_min_4B] = find_time_shift(shot_4B(:,sham_shot_4B),tilt_4B(:,sham_tilt_4B));
+    elseif any(sham_shot_4B) == 0
+        avg_loc_rms_min_4B = NaN;
+        avg_time_rms_min_4B = NaN;
+    end
+
+    if any(sham_shot_5A) == 1
+        [avg_loc_rms_min_5A, avg_time_rms_min_5A] = find_time_shift(shot_5A(:,sham_shot_5A),tilt_5A(:,sham_tilt_5A));
+    elseif any(sham_shot_5A) == 0
+        avg_loc_rms_min_5A = NaN;
+        avg_time_rms_min_5A = NaN;
+    end
+
+    if any(sham_shot_5B) == 1
+        [avg_loc_rms_min_5B, avg_time_rms_min_5B] = find_time_shift(shot_5B(:,sham_shot_5B),tilt_5B(:,sham_tilt_5B));
+    elseif any(sham_shot_5B) == 0
+        avg_loc_rms_min_5B = NaN;
+        avg_time_rms_min_5B = NaN;
+    end
+
+    if any(sham_shot_6A) == 1
+        [avg_loc_rms_min_6A, avg_time_rms_min_6A] = find_time_shift(shot_6A(:,sham_shot_6A),tilt_6A(:,sham_tilt_6A));
+    elseif any(sham_shot_6A) == 0
+        avg_loc_rms_min_6A = NaN;
+        avg_time_rms_min_6A = NaN;
+    end
+
+    if any(sham_shot_6B) == 1
+        [avg_loc_rms_min_6B, avg_time_rms_min_6B] = find_time_shift(shot_6B(:,sham_shot_6B),tilt_6B(:,sham_tilt_6B));
+    elseif any(sham_shot_6B) == 0
+        avg_loc_rms_min_6B = NaN;
+        avg_time_rms_min_6B = NaN;
+    end
+
+    %average the offsets from all trials
+    avg_loc_rms_min_all = [avg_loc_rms_min_4A ,avg_loc_rms_min_4B, avg_loc_rms_min_5A ,avg_loc_rms_min_5B,avg_loc_rms_min_6A ,avg_loc_rms_min_6B];
+    avg_loc_rms_min = round(mean(avg_loc_rms_min_all, 'omitnan'));
+    avg_time_rms_min = mean([avg_time_rms_min_4A avg_time_rms_min_4B avg_time_rms_min_5A avg_time_rms_min_5B avg_time_rms_min_6A avg_time_rms_min_6B], 'omitnan');
     shot_start_avg = 51+avg_loc_rms_min;
     shot_end_avg = length(shot_4A)-50+avg_loc_rms_min;
 
     %cut off beginning and end 1s of trials and shift the shot response
     %data
-    [shot_4A,tilt_4A] = shift_file(shot_4A,tilt_4A,shot_start_avg, shot_end_avg);
-    [shot_4B,tilt_4B] = shift_file(shot_4B,tilt_4B,shot_start_avg, shot_end_avg);
-    [shot_5A,tilt_5A] = shift_file(shot_5A,tilt_5A,shot_start_avg, shot_end_avg);
-    [shot_5B,tilt_5B] = shift_file(shot_5B,tilt_5B,shot_start_avg, shot_end_avg);
-    [shot_6A,tilt_6A] = shift_file(shot_6A,tilt_6A,shot_start_avg, shot_end_avg);
-    [shot_6B,tilt_6B] = shift_file(shot_6B,tilt_6B,shot_start_avg, shot_end_avg);
+    [shot_4A,tilt_4A,GVS_4A] = shift_file(shot_4A,tilt_4A,GVS_4A,shot_start_avg, shot_end_avg);
+    [shot_4B,tilt_4B,GVS_4B] = shift_file(shot_4B,tilt_4B,GVS_4B,shot_start_avg, shot_end_avg);
+    [shot_5A,tilt_5A,GVS_5A] = shift_file(shot_5A,tilt_5A,GVS_5A,shot_start_avg, shot_end_avg);
+    [shot_5B,tilt_5B,GVS_5B] = shift_file(shot_5B,tilt_5B,GVS_5B,shot_start_avg, shot_end_avg);
+    [shot_6A,tilt_6A,GVS_6A] = shift_file(shot_6A,tilt_6A,GVS_6A,shot_start_avg, shot_end_avg);
+    [shot_6B,tilt_6B,GVS_6B] = shift_file(shot_6B,tilt_6B,GVS_6B,shot_start_avg, shot_end_avg);
 
     %redefine the end of the trial so that it can be properly used in other
     %scripts
     trial_end = length(shot_4A);
+    time = time(1:trial_end);
 
 %% save files
    cd(subject_path);
@@ -119,8 +177,9 @@ function [avg_loc_rms_min,avg_time_rms_min] = find_time_shift(shot,tilt)
     avg_time_rms_min = mean(min_rms);
 end
 
-function [shot,tilt] = shift_file(shot,tilt,start_index, end_index)
+function [shot,tilt, GVS] = shift_file(shot,tilt,GVS,start_index, end_index)
     tilt  = tilt(51:end-50, :);
     shot  = shot(start_index:end_index, :);
+    GVS  = GVS(51:end-50, :);
 end
 
