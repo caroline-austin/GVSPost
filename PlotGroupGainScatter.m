@@ -65,7 +65,6 @@ for j = 1:3
                 sc = green;
             end
 
-
             scatter(current,delta,50,'filled','color',LC(i,:),...
                 'markeredgecolor','k')
 

@@ -13,3 +13,7 @@ PlotGroupPerceptions('Velocity')
 PlotGroupGainScatter('Angle')
 PlotGroupGainScatter('Semi')
 PlotGroupGainScatter('Velocity')
+
+
+MetricCompute_Gain("AngleGain")
+MetricCompute_Gain("CurrentGain")
