@@ -5,7 +5,7 @@ clc; clear; close all;
 %% set up
 subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 datatype = ["BiasTimeGain", "BiasTime" ,"Bias"];
 
@@ -56,7 +56,7 @@ for sub = 1:numsub
         end
     end
 
-    gain_vec = avg_gain_rms_min;
+    gain_vec(sub) = avg_gain;
     bias_vec(sub) = bias_correction;
     time_vec(sub) = avg_time_rms_min;
     loc_vec(sub) = 0.02*avg_loc_rms_min;

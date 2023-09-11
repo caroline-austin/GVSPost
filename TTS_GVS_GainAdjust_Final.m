@@ -135,7 +135,7 @@ for sub = 1:numsub
        ' avg_gain'];
    eval(['  save ' ['S', subject_str, 'Group' datatype 'Gain.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   %eval (['clear ' vars_2_save])
+%    eval (['clear ' vars_2_save])
    close all;
 
 end
@@ -151,7 +151,7 @@ function avg_gain = find_gain(shot,tilt)
             %calculate and save the error between the actual motion profile and the
             %shot response 
             signal_diff =  tilt(:,tilt_index) - shot(:,trial)*(gvec(gain_shift));
-            gain_rms(gain_shift,trial) = rms(signal_diff); 
+            gain_rms(gain_shift,trial) = rms(signal_diff,'omitnan'); 
         end
     end 
     %find the location where error is least for each trial and then average
