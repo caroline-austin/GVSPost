@@ -52,7 +52,7 @@ for j = 1:3
             perceptions = shot_data(:,condition);
     
 
-            delta = perceptions -tiltang(:,1);
+            delta = perceptions - tiltang(:,1);
 
             if strcmp(Type,'Angle') == 1
                 current = tiltang(:,1);
@@ -64,6 +64,7 @@ for j = 1:3
                 current = 0.5*tiltang(:,3)+0.5*tiltang(:,1);
                 sc = green;
             end
+            current = current*4/max(current);
 
             scatter(current,delta,50,'filled','color',LC(i,:),...
                 'markeredgecolor','k')
@@ -76,14 +77,14 @@ for j = 1:3
         if k ~= 1
             yticks([])
         else
-            ylabel('Tilt (deg)')
+            ylabel('\Delta Tilt (deg)')
             yticks(-10:5:10)
         end
         if j ~= 3
             xticks([])
         else
             xlabel('Current (mA)')
-            xticks([-5 0 5])
+            xticks([-4 0 4])
         end
         if k == 2 && j ==2
             ylabel('Mirrored Motions')
