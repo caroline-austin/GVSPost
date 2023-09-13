@@ -67,8 +67,7 @@ for j = 1:3
             current = current*4/max(current);
 
             scatter(current,delta,50,'filled','color',LC(i,:),...
-                'markeredgecolor','k')
-
+                'markeredgecolor','k','MarkerFaceAlpha',.5,'MarkerEdgeAlpha',.5)
 
         end
         hold off

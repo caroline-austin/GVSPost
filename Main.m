@@ -14,6 +14,6 @@ PlotGroupGainScatter('Angle')
 PlotGroupGainScatter('Semi')
 PlotGroupGainScatter('Velocity')
 
-% Compute Metrics (store in csv)
+% Compute Metrics (store in .csv)
 MetricCompute_Gain("AngleGain")
 MetricCompute_Gain("CurrentGain")

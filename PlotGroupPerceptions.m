@@ -17,10 +17,10 @@ LC = [226 107 109;128 128 128;90 160 163]/255;
 %% Make Figure
 
 switch Type
-    case 'Angle'
+    case 'Velocity'
         conditions = [5 4 1];
         Title = 'Angle Coupled GVS';
-    case 'Velocity'
+    case 'Angle'
         conditions = [7 4 3];
         Title = 'Velocity Coupled GVS';
     case 'Semi'
