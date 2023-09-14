@@ -9,10 +9,10 @@ save("DynamicData.mat") % Save Aggregate Data to .mat
 PlotGroupPerceptions('Angle')
 PlotGroupPerceptions('Semi')
 PlotGroupPerceptions('Velocity')
-
-PlotGroupGainScatter('Angle')
-PlotGroupGainScatter('Semi')
-PlotGroupGainScatter('Velocity')
+% 
+% PlotGroupGainScatter('Angle')
+% PlotGroupGainScatter('Semi')
+% PlotGroupGainScatter('Velocity')
 
 % Compute Metrics (store in .csv)
 MetricCompute_Gain("AngleGain")

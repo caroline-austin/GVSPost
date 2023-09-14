@@ -82,13 +82,13 @@ for j = 1:3
             % end
         end
         hold off
-        ylim([-15 15])
+        ylim([-25 25])
         set(gca,'FontSize',16)
         if k ~= 1
             yticks([])
         else
             ylabel('Tilt (deg)')
-            yticks(-10:5:10)
+            yticks([-10 0 10])
         end
         if j ~= 3
             xticks([])
