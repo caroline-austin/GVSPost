@@ -2,6 +2,7 @@
 clc;clear;close all;
 
 % Aggregate Data
+TTS_GVS_GainAdjust_Aaron
 TTS_GVS_Aggregate_Final
 save("DynamicData.mat") % Save Aggregate Data to .mat
 
