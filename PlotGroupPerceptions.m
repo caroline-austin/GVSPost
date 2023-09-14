@@ -19,17 +19,17 @@ LC = [226 107 109;128 128 128;90 160 163]/255;
 switch Type
     case 'Velocity'
         conditions = [5 4 1];
-        Title = 'Angle Coupled GVS';
+        Title = 'Velocity Coupled GVS';
     case 'Angle'
         conditions = [7 4 3];
-        Title = 'Velocity Coupled GVS';
+        Title = 'Angle Coupled GVS';
     case 'Semi'
         conditions = [6 4 2];
         Title = 'Semi Coupled GVS';
 end
 motions = ["4","5","6"];
 
-figure;
+f=figure;
 t=tiledlayout(3,2,'TileSpacing','tight');
 for j = 1:3
     for k = 1:2
@@ -82,7 +82,7 @@ for j = 1:3
             % end
         end
         hold off
-        ylim([-25 25])
+        ylim([-20 20])
         set(gca,'FontSize',16)
         if k ~= 1
             yticks([])
@@ -102,6 +102,6 @@ for j = 1:3
     end
 end
 title(t,Title,'Fontsize',16)
-legend('Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating')
-
+legend({'Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating'},'Position',[0.8 0.325 0.15 0.15])
+f.Position = [100 100 1000 500];
 end

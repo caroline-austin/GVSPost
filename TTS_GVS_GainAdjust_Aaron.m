@@ -142,26 +142,25 @@ end
 
 function avg_gain = find_gain(shot,tilt)
     
-    l = size(shot,1);
+    [l,trials] = size(shot);
 
-    gain_select = zeros(size(shot,2),1);
-    for k = 1:size(shot,2)
-        G = -4:0.01:4;
+    gain_select = zeros(trials,1);
+    for k = 1:trials
+        G = 0.01:0.01:4; % Gains for search
         Cost = zeros(length(G),1);
 
         for g = 1:length(G)
-            ti = (k-1)*3+1;
-            pred = tilt(:,ti)*G(g);
+            tti = (k-1)*3+1; % tilt trial index 
+            pred = tilt(:,tti)/G(g);
             
             se = (shot(:,k)-pred)'*(shot(:,k)-pred);
             Cost(g) = 1/l*(se);
         end
 
         [~,ind] = min(Cost);
-        gain_select(k) = 1/G(ind);
+        gain_select(k) = G(ind);
     end
-    avg_gain = mean(gain_select); 
-
+    avg_gain = mean(gain_select);
 end
 
 function [shot] = mult_gain(shot,avg_gain)
