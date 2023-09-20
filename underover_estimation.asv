@@ -120,13 +120,13 @@ o5Bavg = nanmean(s5B(1:2:end,:),2); u5Bavg = nanmean(s5B(2:2:end,:),2);
 o6Aavg = nanmean(s6A(1:2:end,:),2); u6Aavg = nanmean(s6A(2:2:end,:),2);
 o6Bavg = nanmean(s6B(1:2:end,:),2); u6Bavg = nanmean(s6B(2:2:end,:),2);
 % Plotting:
-lp = ['N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 '];
+lp = {'N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 '};
 figure();
-plot(o4Aavg,'o','Color','b'); hold on; % over
-plot(u4Aavg,'*','Color','r'); % even
+plot(o4Bavg,'o','Color','b'); hold on; % over
+plot(u4Bavg,'*','Color','r'); % even
 hold off;
 title('4A');
-xlabel(lp);
+xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
 ylabel('percentage');
 legend('overestimate', 'underestimate');
 
@@ -134,49 +134,35 @@ figure();
 plot(o4Bavg,'o','Color','b'); hold on; % over
 plot(u4Bavg,'*','Color','r'); % even
 hold off;
-title('4B');
-xlabel(lp);
-%xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
+title('4A');
+xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
 ylabel('percentage');
 legend('overestimate', 'underestimate');
 
 figure();
-plot(o5Aavg,'o','Color','b'); hold on; % over
-plot(u5Aavg,'*','Color','r'); % even
+plot(o4Bavg,'o','Color','b'); hold on; % over
+plot(u4Bavg,'*','Color','r'); % even
 hold off;
-title('5A');
-xlabel(lp);
-%xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
+title('4A');
+xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
 ylabel('percentage');
 legend('overestimate', 'underestimate');
 
 figure();
-plot(o5Bavg,'o','Color','b'); hold on; % over
-plot(u5Bavg,'*','Color','r'); % even
+plot(o4Bavg,'o','Color','b'); hold on; % over
+plot(u4Bavg,'*','Color','r'); % even
 hold off;
-title('5B');
-xlabel(lp);
-%xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
+title('4A');
+xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
 ylabel('percentage');
 legend('overestimate', 'underestimate');
 
 figure();
-plot(o6Aavg,'o','Color','b'); hold on; % over
-plot(u6Aavg,'*','Color','r'); % even
+plot(o4Bavg,'o','Color','b'); hold on; % over
+plot(u4Bavg,'*','Color','r'); % even
 hold off;
-title('6A');
-xlabel(lp);
-%xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
-ylabel('percentage');
-legend('overestimate', 'underestimate');
-
-figure();
-plot(o6Bavg,'o','Color','b'); hold on; % over
-plot(u6Bavg,'*','Color','r'); % even
-hold off;
-title('6B');
-xlabel(lp);
-%xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
+title('4A');
+xlabel('N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 ');
 ylabel('percentage');
 legend('overestimate', 'underestimate');
 
