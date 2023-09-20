@@ -29,6 +29,21 @@ end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
+All_rms_4A = zeros(1,length(match_list));
+
+All_rms_4B = All_rms_4A;
+All_rms_5A = All_rms_4A;
+All_rms_5B = All_rms_4A;
+All_rms_6A = All_rms_4A;
+All_rms_6B = All_rms_4A;
+num_trials_4A = zeros(1, length(match_list));
+num_trials_4B = num_trials_4A;
+num_trials_5A = num_trials_4A;
+num_trials_5B = num_trials_4A;
+num_trials_6A = num_trials_4A;
+num_trials_6B = num_trials_4A;
+
+
 %% calculate and plot the different measures for each subject
 for sub = 1:numsub
     subject = subnum(sub);
@@ -54,12 +69,12 @@ for sub = 1:numsub
    
 
 % RMS calculation and plots   
-    rms4A = rms(shot_4A-mean(shot_4A));
-    rms4B = rms(shot_4B-mean(shot_4B));
-    rms5A = rms(shot_5A-mean(shot_5A));
-    rms5B = rms(shot_5B-mean(shot_5B));
-    rms6A = rms(shot_6A-mean(shot_6A));
-    rms6B = rms(shot_6B-mean(shot_6B));
+    rms_4A = rms(shot_4A-mean(shot_4A));
+    rms_4B = rms(shot_4B-mean(shot_4B));
+    rms_5A = rms(shot_5A-mean(shot_5A));
+    rms_5B = rms(shot_5B-mean(shot_5B));
+    rms_6A = rms(shot_6A-mean(shot_6A));
+    rms_6B = rms(shot_6B-mean(shot_6B));
     
 %     rmsA = [ rms4A; rms5A; rms6A ];
 %     rmsB = [ rms4B; rms5B; rms6B ];
@@ -67,22 +82,22 @@ for sub = 1:numsub
     % plot rms
     figure;
     subplot(2,3,1)
-    plot_single_outcomes(rms4A,Label.shot_4A, Color_List,match_list);
+    plot_single_outcomes(rms_4A,Label.shot_4A, Color_List,match_list);
     title ("Profile 4A");
     subplot(2,3,2)
-    plot_single_outcomes(rms5A,Label.shot_5A, Color_List,match_list);
+    plot_single_outcomes(rms_5A,Label.shot_5A, Color_List,match_list);
     title ("Profile 5A");
     subplot(2,3,3)
-    plot_single_outcomes(rms6A,Label.shot_6A, Color_List,match_list);
+    plot_single_outcomes(rms_6A,Label.shot_6A, Color_List,match_list);
     title ("Profile 6A");
     subplot(2,3,4)
-    plot_single_outcomes(rms4B,Label.shot_4B, Color_List,match_list);
+    plot_single_outcomes(rms_4B,Label.shot_4B, Color_List,match_list);
     title ("Profile 4B");
     subplot(2,3,5)
-    plot_single_outcomes(rms5B,Label.shot_5B, Color_List,match_list);
+    plot_single_outcomes(rms_5B,Label.shot_5B, Color_List,match_list);
     title ("Profile 5B");
     subplot(2,3,6)
-    plot_single_outcomes(rms6B,Label.shot_6B, Color_List,match_list);
+    plot_single_outcomes(rms_6B,Label.shot_6B, Color_List,match_list);
     title ("Profile 6B");
     hold on; 
     sgtitle(['RMS: Subject ' datatype subject_str]);
@@ -92,12 +107,86 @@ for sub = 1:numsub
     cd(code_path);
     hold off;  
 
-    rms_4A = rms4A;
-    rms_4B = rms4B;
-    rms_5A = rms5A;
-    rms_5B = rms5B;
-    rms_6A = rms6A;
-    rms_6B = rms6B;
+
+ % add the current subject's data into the aggregate variable
+    %and increment the number of trials averaged into each trial type based on
+    %the trial data available for the current subject
+
+    for i = 1:length(Label.shot_4A)
+        for j = 1:length(match_list)
+            if contains(Label.shot_4A(i), match_list(j))
+                All_rms_4A(:,j) = All_rms_4A(:,j)+rms_4A(:,i);
+                num_trials_4A(j) = num_trials_4A(j)+1;
+                rms_save_4A(:,sub,j) = rms_4A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.shot_4B)
+        for j = 1:length(match_list)
+            if contains(Label.shot_4B(i), match_list(j))
+                All_rms_4B(:,j) = All_rms_4B(:,j)+rms_4B(:,i);
+                num_trials_4B(j) = num_trials_4B(j)+1;
+                rms_save_4B(:,sub,j) = rms_4B(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.shot_5A)
+        for j = 1:length(match_list)
+            if contains(Label.shot_5A(i), match_list(j))
+                All_rms_5A(:,j) = All_rms_5A(:,j)+rms_5A(:,i);
+                num_trials_5A(j) = num_trials_5A(j)+1;
+                rms_save_5A(:,sub,j) = rms_5A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.shot_5B)
+        for j = 1:length(match_list)
+            if contains(Label.shot_5B(i), match_list(j))
+                All_rms_5B(:,j) = All_rms_5B(:,j)+rms_5B(:,i);
+                num_trials_5B(j) = num_trials_5B(j)+1;
+                rms_save_5B(:,sub,j) = rms_5B(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.shot_6A)
+        for j = 1:length(match_list)
+            if contains(Label.shot_6A(i), match_list(j))
+                All_rms_6A(:,j) = All_rms_6A(:,j)+rms_6A(:,i);
+                num_trials_6A(j) = num_trials_6A(j)+1;
+                rms_save_6A(:,sub,j) = rms_6A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.shot_6B)
+        for j = 1:length(match_list)
+            if contains(Label.shot_6B(i), match_list(j))
+                All_rms_6B(:,j) = All_rms_6B(:,j)+rms_6B(:,i);
+                num_trials_6B(j) = num_trials_6B(j)+1;
+                rms_save_6B(:,sub,j) = rms_6B(:,i);
+            end
+        end
+    end
+
+
+
+%divide the aggregate report by the number of trials added into it to get
+%the average report across subjects (need to add a calculation of error)
+All_rms_4A = All_rms_4A./num_trials_4A;
+All_rms_4B = All_rms_4B./num_trials_4B;
+All_rms_5A = All_rms_5A./num_trials_5A;
+All_rms_5B = All_rms_5B./num_trials_5B;
+All_rms_6A = All_rms_6A./num_trials_6A;
+All_rms_6B = All_rms_6B./num_trials_6B;
+
+%update the label
+Label_rms_4A = match_list;
+Label_rms_4B = match_list;
+Label_rms_5A = match_list;
+Label_rms_5B = match_list;
+Label_rms_6A = match_list;
+Label_rms_6B = match_list;
+
+
     %% save files
    cd(plots_path);
    vars_2_save = ['Label rms_4A rms_4B rms_5A rms_5B rms_6A rms_6B' ];
@@ -108,7 +197,33 @@ for sub = 1:numsub
     
 end
 
+% plot rms
+    figure;
+    subplot(2,3,1)
+    plot_single_outcomes(All_rms_4A,Label_rms_4A, Color_List,match_list);
+    title ("Profile 4A");
+    subplot(2,3,2)
+    plot_single_outcomes(All_rms_5A,Label_rms_5A, Color_List,match_list);
+    title ("Profile 5A");
+    subplot(2,3,3)
+    plot_single_outcomes(All_rms_6A,Label_rms_6A, Color_List,match_list);
+    title ("Profile 6A");
+    subplot(2,3,4)
+    plot_single_outcomes(All_rms_4B,Label_rms_4B, Color_List,match_list);
+    title ("Profile 4B");
+    subplot(2,3,5)
+    plot_single_outcomes(All_rms_5B,Label_rms_5B, Color_List,match_list);
+    title ("Profile 5B");
+    subplot(2,3,6)
+    plot_single_outcomes(All_rms_6B,Label_rms_6B, Color_List,match_list);
+    title ("Profile 6B");
+    hold on; 
+    sgtitle(['RMS: AllSubjects' datatype ]);
 
+    cd(plots_path);
+    saveas(gcf, [ 'RMSAllSubjects' datatype  ]); 
+    cd(code_path);
+    hold off;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)
     %plot data 
