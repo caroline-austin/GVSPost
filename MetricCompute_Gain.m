@@ -37,26 +37,26 @@ for k = 1:2
 
              switch i
                 case 1
-                    coup = tiltang(:,1);
+                    coup = tiltang(:,3);
                     GVS = 1*coup/max(coup)*4;
                 case 2 
                     coup = (tiltang(:,1)*0.5+tiltang(:,3)*0.5);
                     GVS = 1*coup/max(coup)*4;
                 case 3
-                    coup = tiltang(:,3);
+                    coup = tiltang(:,1);
                     GVS = 1*coup/max(coup)*4;
                 case 4
                     coup = tiltang(:,1)*0;
                     GVS = coup;
                 case 5
-                    coup = tiltang(:,1);
-                    GVS = -1*coup/max(coup)*4;
+                    coup = tiltang(:,3);
+                    GVS = 1*coup/max(coup)*4;
                 case 6
                     coup = (tiltang(:,1)*0.5+tiltang(:,3)*0.5);
-                    GVS = -1*coup/max(coup)*4;
+                    GVS = 1*coup/max(coup)*4;
                 case 7
-                    coup = tiltang(:,3);
-                    GVS = -1*coup/max(coup)*4;
+                    coup = tiltang(:,1);
+                    GVS = 1*coup/max(coup)*4;
              end
              
     
@@ -79,7 +79,7 @@ for k = 1:2
                     se = (shot_data(:,sub,i)-pred)'*(shot_data(:,sub,i)-pred);
                     Cost(g) = 1/l*(se);
                 end
-                [mini,ind] = min(Cost);
+                [~,ind] = min(Cost);
                 GainSave(sub,i,j,k) = G(ind);
 
                 if i<4
