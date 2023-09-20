@@ -1,3 +1,5 @@
+% script 3 (can be used for both X2A and X1)
+
 close all; 
 clear all; 
 clc; 
@@ -10,7 +12,7 @@ file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2001:2010;  % Subject List 
+subnum = 1017:1022;  % Subject List 2001:2010
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
