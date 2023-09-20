@@ -9,6 +9,8 @@ Current_levels = [0.25 .5 1 1.5 2 2.5 3 3.5 4 4.25];
 All_map = [ All_map(1,:); All_map; All_map(end,:)];
 elseif row == 3
     Current_levels = [1, 2, 3];
+else 
+    Current_levels = 1:row;
 end
 area(Current_levels, All_map/norm*100); % bi %need to calculate numsub differently
 colors = [Color_list(1,:); Color_list(2,:); Color_list(3,:); Color_list(4,:)];
