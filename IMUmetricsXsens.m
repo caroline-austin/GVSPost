@@ -29,34 +29,22 @@ for sub = 1:numsub
     % subject_path = [file_path, '\PS' , subject_str];
     if ismac || isunix
         subject_path = [file_path, '/' , subject_str, '/IMU_data'];
-        cd(subject_path);
-        imu_list = dir(subject_path);
 
-        % iterates through trials in the IMU folder. 
-        for i= 3:length(imu_list) 
-            imu_table = readtable(imu_list(i).name);
-            imu_data = table2array(imu_table(:,3:11));
-            time = 0:0.05:((height(imu_data)/20)-0.05);
-
-            plot(time, imu_data(:,1));
-
-        end
-  
     elseif ispc
         subject_path = [file_path, '\' , subject_str , '\IMU_data'];
-        cd(subject_path);
-        imu_list = dir(subject_path);
-
-        for i=length(imu_list)
-            imu_table = readtable(imu_list(i).name);
-            imu_data = table2array(imu_table(:,3:11));
-            time = 0:0.05:((height(imu_data)/20)-0.05);
-
-            plot(time, imu_data(:,1))
-            %saveas(gcf,'output','fig');
-        end
+               
     end
-    
+%     cd(subject_path);
+    imu_list = file_path_info2(code_path, subject_path); % get files from file folder
+    cd(subject_path);
+    for i=length(imu_list)
+        imu_table = readtable(string(imu_list(i)));
+        imu_data = table2array(imu_table(:,3:11));
+        time = 0:0.05:((height(imu_data)/20)-0.05);
+        figure;
+        plot(time, imu_data)
+    end
+            %saveas(gcf,'output','fig');
     cd(code_path);
 
 % all of the code you want to run 
