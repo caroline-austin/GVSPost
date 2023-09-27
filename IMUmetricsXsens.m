@@ -1,45 +1,88 @@
-clc;clear;close all;
+close all;clear;clc;
+%% set up
+subnum = 1017:1021;  % Subject List 
+numsub = length(subnum);
+subskip = [0,0];  %DNF'd subjects or subjects that didn't complete this part
+file_count = 0;
 
-sub_dir = uigetdir;
-[~,name] = fileparts(sub_dir); % Determine the name of the folder
-
-IMU_FileName = uigetfile; % Determine the name of the file
-
-IMU_File = [sub_dir,'\',IMU_FileName]; % Create a location for readtable
-
-IMU_data = readtable(IMU_File);
-
-% Initialize structure variables
-euler(height(IMU_data)).x = 0;
-euler(height(IMU_data)).y = 0;
-euler(height(IMU_data)).z = 0;
-accel(height(IMU_data)).x = 0;
-accel(height(IMU_data)).y = 0;
-accel(height(IMU_data)).z = 0;
-gyr(height(IMU_data)).x = 0;
-gyr(height(IMU_data)).y = 0;
-gyr(height(IMU_data)).z = 0;
-
-% Read data into the structure
-for i=1:height(IMU_data)
-    euler(i).x = table2array(IMU_data(i,3));
-    euler(i).y = table2array(IMU_data(i,4));
-    euler(i).z = table2array(IMU_data(i,5));
-    accel(i).x = table2array(IMU_data(i,6));
-    accel(i).y = table2array(IMU_data(i,7));
-    accel(i).z = table2array(IMU_data(i,8));
-    gyr(i).x = table2array(IMU_data(i,9));
-    gyr(i).y = table2array(IMU_data(i,10));
-    gyr(i).z = table2array(IMU_data(i,11));
+% set up pathing
+code_path = pwd; %save code directory
+file_path = uigetdir; %user selects file directory
+if ismac || isunix
+    plots_path = [file_path '/Plots/Measures/MeanRemovedRMS']; % specify where plots are saved
+    gvs_path = [file_path '/GVSProfiles'];
+    tts_path = [file_path '/TTSProfiles'];
+elseif ispc
+    plots_path = [file_path '\Plots\Measures\MeanRemovedRMS']; % specify where plots are saved
+    gvs_path = [file_path '\GVSProfiles'];
+    tts_path = [file_path '\TTSProfiles'];
 end
+[filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-time = 0:0.05:((height(IMU_data)/20)-0.05); % Create time steps
+for sub = 1:numsub % first for loop that iterates through subject files
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+    % skip subjects that DNF'd or there is no data for
+    if ismember(subject,subskip) == 1
+       continue
+    end
 
-var_input = input('input data type to plot (EX: euler.x) ','s'); % Select a data type for the plot
+    % subject_path = [file_path, '\PS' , subject_str];
+    if ismac || isunix
+        subject_path = [file_path, '/' , subject_str, '/IMU_data'];
 
-var_cat = eval(strcat('[', var_input ,']')); % Create a variable name in brackets for the plot 
+    elseif ispc
+        subject_path = [file_path, '\' , subject_str , '\IMU_data'];
+               
+    end
+    cd(subject_path);
+% change directories
+    cd(file_path);
+    Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
+    TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
+    TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
+    cd(code_path);
 
+    imu_list = file_path_info2(code_path, subject_path); % get files from file folder
+    cd(subject_path);
 
-plot(time,var_cat);
-title(var_input);
-xlabel('time');
+    for i=1:length(imu_list) % nested for loop that iterates through IMU files in the subject folder
+
+        if (endsWith(imu_list(i),'.csv') == false) % <change this to check if file type is not excel
+            continue
+        end
+       
+        file_count = file_count+1; % keeps track of the number of readable files currently read in the cycle
+        original_filename = imu_list(i);
+        imu_table = readtable(string(imu_list(i)));
+
+        %pull label info from table and save into Label structure 
+
+        imu_data = table2array(imu_table(:,3:11));
+        time = 0:0.05:((height(imu_data)/20)-0.05);
+
+        trial_name = cell2mat(strcat(TrialInfo(file_count,2), '_', string(TrialInfo(file_count,3)), 'mA_', TrialInfo(file_count,4), '_', string(TrialInfo(file_count,5)), 'Hz'));
+
+        for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
+
+            figure;
+            plot(time, imu_data(:,j));
+            title(trial_name);
+            % forbidden save function. It creates funky files.
+            % eval(['  save ' ['S' subject_str 'IMU' trial_name '.fig ']]);  
+        end
+        
+%% save files
+        cd(subject_path);
+        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);      
+        %close all;
+        
+    end
+    eval (['clear ' vars_2_save])
+    file_count = 0;
+end    
+    cd(code_path);
+
+% all of the code you want to run 
+

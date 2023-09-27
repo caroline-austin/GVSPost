@@ -13,7 +13,8 @@ datatype = 'BiasTimeGain';
 
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
-
+plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
+prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -29,6 +30,14 @@ end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
+%preallocate for aggregating metric across subjects
+for p = 1: length(prof)
+    eval(["All_avg_rms_" + prof(p) + "= zeros(1,length(match_list));"]);
+    eval(["num_trials_" + prof(p) + "= zeros(1, length(match_list));"]);
+    eval(["num_sub_trials_" + prof(p) + "= zeros(numsub, length(match_list));"]);
+    eval(["rms_save_" + prof(p) + "= zeros(numsub, length(match_list));"]);
+end 
+
 %% calculate and plot the different measures for each subject
 for sub = 1:numsub
     subject = subnum(sub);
@@ -37,7 +46,7 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-   
+
 %     subject_path = [file_path, '\PS' , subject_str];
     if ismac || isunix
         subject_path = [file_path, '/' , subject_str];
@@ -49,66 +58,101 @@ for sub = 1:numsub
         load(['S', subject_str, 'Group', datatype '.mat ']);
     end
     
-
     cd(code_path);
-   
 
-% RMS calculation and plots   
-    rms4A = rms(shot_4A-mean(shot_4A));
-    rms4B = rms(shot_4B-mean(shot_4B));
-    rms5A = rms(shot_5A-mean(shot_5A));
-    rms5B = rms(shot_5B-mean(shot_5B));
-    rms6A = rms(shot_6A-mean(shot_6A));
-    rms6B = rms(shot_6B-mean(shot_6B));
+% RMS calculation 
+for p = 1: length(prof)
+    eval(["rms_" + prof(p) + "= rms(shot_" + prof(p) ...
+        + "(51:end-50,:)-mean(shot_" + prof(p) + "(51:end-50,:)));"]);
+end
     
-%     rmsA = [ rms4A; rms5A; rms6A ];
-%     rmsB = [ rms4B; rms5B; rms6B ];
-    
-    % plot rms
-    figure;
-    subplot(2,3,1)
-    plot_single_outcomes(rms4A,Label.shot_4A, Color_List,match_list);
-    title ("Profile 4A");
-    subplot(2,3,2)
-    plot_single_outcomes(rms5A,Label.shot_5A, Color_List,match_list);
-    title ("Profile 5A");
-    subplot(2,3,3)
-    plot_single_outcomes(rms6A,Label.shot_6A, Color_List,match_list);
-    title ("Profile 6A");
-    subplot(2,3,4)
-    plot_single_outcomes(rms4B,Label.shot_4B, Color_List,match_list);
-    title ("Profile 4B");
-    subplot(2,3,5)
-    plot_single_outcomes(rms5B,Label.shot_5B, Color_List,match_list);
-    title ("Profile 5B");
-    subplot(2,3,6)
-    plot_single_outcomes(rms6B,Label.shot_6B, Color_List,match_list);
-    title ("Profile 6B");
+%indv rms plot
+figure;
+for p = 1: length(prof)
+    subplot(2,3,p)
+    eval(["plot_single_outcomes(rms_" + prof(p) + ",Label.shot_" + prof(p) + ", Color_List,match_list);"]);
+    title (["Profile " + prof(p)]);
+end
     hold on; 
     sgtitle(['RMS: Subject ' datatype subject_str]);
 
     cd(plots_path);
-    saveas(gcf, [ 'RMS' datatype subject_str  ]); 
+    saveas(gcf, [ 'RMSShort' datatype subject_str  ]); 
     cd(code_path);
     hold off;  
 
-    rms_4A = rms4A;
-    rms_4B = rms4B;
-    rms_5A = rms5A;
-    rms_5B = rms5B;
-    rms_6A = rms6A;
-    rms_6B = rms6B;
+ % add the current subject's data into the aggregate variable
+    %and increment the number of trials averaged into each trial type based on
+    %the trial data available for the current subject. Use the
+    %AggregateSingleMetric function
+
+for p = 1: length(prof)
+    eval(["[All_avg_rms_" + prof(p) + ",num_trials_" + prof(p) + ...
+        ",rms_save_" + prof(p) + ",num_sub_trials_" + prof(p) + ...
+        "] =  AggregateSingleMetric(rms_" + prof(p) + ", Label.shot_" ...
+        + prof(p) + ", sub, All_avg_rms_" + prof(p) + ",num_trials_" ...
+        + prof(p) + ",rms_save_" + prof(p) + ",num_sub_trials_" + prof(p) ...
+        + ", match_list);"]);
+end
+
+%update the label
+Label_rms = match_list;
+
     %% save files
    cd(plots_path);
    vars_2_save = ['Label rms_4A rms_4B rms_5A rms_5B rms_6A rms_6B' ];
-   eval(['  save ' ['S' subject_str 'MeanRemovedRMS' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S' subject_str 'MeanRemovedRMSShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
     
 end
+%divide the aggregate report by the number of trials added into it to get
+%the average report across subjects and/or trials 
+for p = 1: length(prof)
+    eval(["All_avg_rms_" + prof(p) + "= All_avg_rms_" + prof(p) + "./num_trials_" + prof(p) + ";"]);
+    eval(["rms_save_" + prof(p) + "= rms_save_" + prof(p) + "./num_sub_trials_" + prof(p) + ";"]);
+end 
 
+%create box plot
+figure;
+for p = 1: length(prof)
+    subplot(2,3,p)
+    eval(["boxplot(rms_save_" + prof(p) + ");"]);
+    title (["Profile " + prof(p)]);
+    xticks([1 2 3 4 5 6 7]);
+    xticklabels(plot_list);
+end
+hold on; 
+sgtitle(['RMS: AllSubjectsBoxPlot' datatype ]);
 
+ cd(plots_path);
+    saveas(gcf, [ 'RMSShortAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;
+
+%all subjects averaged rms plot
+figure;
+for p = 1: length(prof)
+    subplot(2,3,p)
+    eval(["plot_single_outcomes(All_avg_rms_" + prof(p) + ",Label_rms, Color_List,match_list);"]);
+    title (["Profile " + prof(p)]);
+end
+    hold on; 
+    sgtitle(['RMS: AllSubjects' datatype ]);
+
+    cd(plots_path);
+    saveas(gcf, [ 'RMSShortAllSubjects' datatype  ]); 
+    cd(code_path);
+    hold off; 
+
+    %% save files
+   cd(plots_path);
+   vars_2_save = ['Label_rms rms_save_4A rms_save_4B rms_save_5A rms_save_5B rms_save_6A rms_save_6B' ];
+   eval(['  save ' ['SAllMeanRemovedRMSShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   cd(code_path)
+   eval (['clear ' vars_2_save])
+   close all;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)
     %plot data 
