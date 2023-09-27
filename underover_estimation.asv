@@ -113,7 +113,7 @@ over_vec4B(over_vec4B == 0) = NaN; under_vec4B(under_vec4B == 0) = NaN;
 over_vec5A(over_vec5A == 0) = NaN; under_vec5A(under_vec5A == 0) = NaN;
 over_vec5B(over_vec5B == 0) = NaN; under_vec5B(under_vec5B == 0) = NaN;
 over_vec6A(over_vec6A == 0) = NaN; under_vec6A(under_vec6A == 0) = NaN;
-over_vec6B(over_vec6B == 0) = NaN; under_vec6B(under_vec6B == 0) = NaN;
+over_vec4A(over_vec4A == 0) = NaN; under_vec6B(over_vec6== 0) = NaN;
 under4A_allsub = mean(under_vec4A,2,"omitnan"); over4A_allsub = mean(over_vec4A,2,"omitnan");
 under4B_allsub = mean(under_vec4B,2,"omitnan"); over4B_allsub = mean(over_vec4B,2,"omitnan");
 under5A_allsub = mean(under_vec5A,2,"omitnan"); over5A_allsub = mean(over_vec5A,2,"omitnan");
