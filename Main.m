@@ -10,7 +10,7 @@ TTS_GVS_Aggregate_Final
 % Save Aggregate Data to .mat
 save(DataName) 
 
-%% Load 
+%% Load
 Var = load(DataName);
 
 % Plot Data
@@ -22,5 +22,5 @@ PlotIndPerceptions(Var)
 PlotNoGVSGroupPerceptions(Var)
 
 % Compute Metrics (store in .csv)
-MetricCompute_Gain("AngleGain")
-MetricCompute_Gain("CurrentGain")
+MetricCompute_Gain("AngleGain",Var)
+MetricCompute_Gain("CurrentGain",Var)
