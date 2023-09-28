@@ -2,7 +2,6 @@
 clc;clear;close all;
 DataName = "DynamicData.mat";
 
-
 %% PreProcess
 % Aggregate Data
 TTS_GVS_GainAdjust_Aaron
