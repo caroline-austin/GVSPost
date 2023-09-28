@@ -5,7 +5,9 @@ DataName = "DynamicData.mat";
 % Aggregate Data
 TTS_GVS_GainAdjust_Aaron
 TTS_GVS_Aggregate_Final
-save(DataName) % Save Aggregate Data to .mat
+
+% Save Aggregate Data to .mat
+save(DataName) 
 Var = load(DataName);
 
 % Plot Data

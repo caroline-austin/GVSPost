@@ -1,4 +1,4 @@
-function PlotIndPerceptions()
+function PlotIndPerceptions(Var)
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron

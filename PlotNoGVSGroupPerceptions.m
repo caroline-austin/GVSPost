@@ -1,4 +1,4 @@
-function PlotNoGVSGroupPerceptions()
+function PlotNoGVSGroupPerceptions(Var)
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
