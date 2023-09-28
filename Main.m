@@ -2,12 +2,16 @@
 clc;clear;close all;
 DataName = "DynamicData.mat";
 
+
+%% PreProcess
 % Aggregate Data
 TTS_GVS_GainAdjust_Aaron
 TTS_GVS_Aggregate_Final
 
 % Save Aggregate Data to .mat
 save(DataName) 
+
+%% Load 
 Var = load(DataName);
 
 % Plot Data
