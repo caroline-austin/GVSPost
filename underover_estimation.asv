@@ -130,22 +130,22 @@ lt = {'N7','N75','N8','P0','P7','P75','P8'};
 figure();
 subplot(2,3,1)
 boxplot(100*over_vec4A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('4A Overestimate'); ylabel('Percentage');
+title('4A Overestimate);
 subplot(2,3,2)
 boxplot(100*over_vec4B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('4B Overestimate'); ylabel('Percentage');
+title(4B Overestimate);
 subplot(2,3,3)
 boxplot(100*over_vec5A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('5A Overestimate'); ylabel('Percentage');
+title(5A Overestimate);
 subplot(2,3,4)
 boxplot(100*over_vec5B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('5B Overestimate'); ylabel('Percentage');
+title(5B Overestimate);
 subplot(2,3,5)
 boxplot(100*over_vec6A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('6A Overestimate'); ylabel('Percentage');
+title(6A Overestimate);
 subplot(2,3,6)
 boxplot(100*over_vec6B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('6B Overestimate'); ylabel('Percentage');
+title(6B Overestimate);
 
 
 
