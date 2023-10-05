@@ -61,26 +61,38 @@ for sub = 1:numsub % first for loop that iterates through subject files
         imu_data = table2array(imu_table(:,3:11));
 
         Eulers = imu_data(:,1:3);
-        acc = 
-        gyro = 
-        
+        acc = imu_data(:,4:6);
+        gyro = imu_data(:,7:9);
 
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(imu_data)/30)-1/30);
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
+        
+        % makes all trial names the same number of chars
+
+        while strlength(string(TrialInfo(file_count,3))) ~= 5 
+            if strlength(string(TrialInfo(file_count,3))) == 1
+                TrialInfo(file_count,3) = mat2cell(string(TrialInfo(file_count,3)) + ".000",1);
+            else
+                TrialInfo(file_count,3) = mat2cell(string(TrialInfo(file_count,3)) + "0",1);
+            end
+        end
 
         trial_name = strrep(cell2mat(strcat(TrialInfo(file_count,2), '_', ...
             string(TrialInfo(file_count,3)), 'mA_', TrialInfo(file_count,4), '_', ...
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
+        data_type = ["EulerX","EulerY","EulerZ","AccX","AccY","AccZ","GyrX","GyrY","GyrZ"];
+
         figure();
+        sgtitle(trial_name)
         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
             subplot(3,3,j);
             plot(time, imu_data(:,j));
-            title(trial_name);
+            title((data_type(j)));
         end
-        
+
         Filename=(['S' subject_str 'IMU' trial_name]);
         cd(plots_path)
         saveas(gcf, [char(Filename) '.fig']);
