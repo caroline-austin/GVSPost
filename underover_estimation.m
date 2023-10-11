@@ -5,7 +5,7 @@ numsub = length(subnum);
 subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N700"; "N750"; "N800"; "000mA";"P700"; "P750"; "P800"];
 %match_list = 
-datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
+datatype = 'BiasTime';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -42,12 +42,12 @@ for sub = 1:11
 
 
 
-    [under_vec4A(:,sub), over_vec4A(:,sub)] = lengthfinder('shot_4A',Label,shot_4A,'tilt_4A',tilt_4A);
-    [under_vec4B(:,sub), over_vec4B(:,sub)] = lengthfinder('shot_4B',Label,shot_4B,'tilt_4B',tilt_4B);
-    [under_vec5A(:,sub), over_vec5A(:,sub)] = lengthfinder('shot_5A',Label,shot_5A,'tilt_5A',tilt_5A);
-    [under_vec5B(:,sub), over_vec5B(:,sub)] = lengthfinder('shot_5B',Label,shot_5B,'tilt_5B',tilt_5B);
-    [under_vec6A(:,sub), over_vec6A(:,sub)] = lengthfinder('shot_6A',Label,shot_6A,'tilt_6A',tilt_6A);
-    [under_vec6B(:,sub), over_vec6B(:,sub)] = lengthfinder('shot_6B',Label,shot_6B,'tilt_6B',tilt_6B);
+    [under_vec4A(:,sub), over_vec4A(:,sub), over_vec_val4A(:,sub), under_vec_val4A(:, sub)] = lengthfinder('shot_4A',Label,shot_4A,'tilt_4A',tilt_4A);
+    [under_vec4B(:,sub), over_vec4B(:,sub), over_vec_val4B(:,sub), under_vec_val4B(:, sub)] = lengthfinder('shot_4B',Label,shot_4B,'tilt_4B',tilt_4B);
+    [under_vec5A(:,sub), over_vec5A(:,sub), over_vec_val5A(:,sub), under_vec_val5A(:, sub)] = lengthfinder('shot_5A',Label,shot_5A,'tilt_5A',tilt_5A);
+    [under_vec5B(:,sub), over_vec5B(:,sub), over_vec_val5B(:,sub), under_vec_val5B(:, sub)] = lengthfinder('shot_5B',Label,shot_5B,'tilt_5B',tilt_5B);
+    [under_vec6A(:,sub), over_vec6A(:,sub), over_vec_val6A(:,sub), under_vec_val6A(:, sub)] = lengthfinder('shot_6A',Label,shot_6A,'tilt_6A',tilt_6A);
+    [under_vec6B(:,sub), over_vec6B(:,sub), over_vec_val6B(:,sub), under_vec_val6B(:, sub)] = lengthfinder('shot_6B',Label,shot_6B,'tilt_6B',tilt_6B);
 
     % col 1: both values (+); col 2: SHOT (-) tilt (+); col 3: SHOT (+) tilt
     % (-); col 4: SHOT (-) tilt (-); 
@@ -121,11 +121,19 @@ under5B_allsub = mean(under_vec5B,2,"omitnan"); over5B_allsub = mean(over_vec5B,
 under6A_allsub = mean(under_vec6A,2,"omitnan"); over6A_allsub = mean(over_vec6A,2,"omitnan");
 under6B_allsub = mean(under_vec6B,2,"omitnan"); over6B_allsub = mean(over_vec6B,2,"omitnan");
 
+% Combine 4A thruogh 6B:
+over_vec_tot = over_vec_val4A + over_vec_val4B + over_vec_val5A + over_vec_val5B + over_vec_val6A + over_vec_val6B; 
+under_vec_tot = under_vec_val4A + under_vec_val4B + under_vec_val5A + under_vec_val5B + under_vec_val6A + under_vec_val6B; 
 
+over_mat = over_vec_tot./(over_vec_tot + under_vec_tot); 
 
 lp = ['N7 ','N75 ','N8 ','P0 ','P7 ','P75 ','P8 '];
 lt = {'N7','N75','N8','P0','P7','P75','P8'};
 %lt = {'N7','N75'};
+
+figure();
+boxplot(100*over_mat','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('Combined Overestimate'); ylabel('Percentage');
 
 figure();
 subplot(2,3,1)
@@ -621,7 +629,7 @@ ylabel('percentage'); xlabel(lp);
 
 
 
-function [under_vec, over_vec] = lengthfinder(shot_val,Label,sv,tilt_val,tv)
+function [under_vec, over_vec, over_vec_val, under_vec_val] = lengthfinder(shot_val,Label,sv,tilt_val,tv)
 % shot_val = 'shot_4A'; tilt_val = 'tilt_4A';
 % sv = shot_4A; tv = tilt_4A;
 cont_shot_N7_00 = contains(Label.(shot_val),'N_4_00mA_7_00'); 
@@ -663,6 +671,9 @@ over0v = sum(P0 > 0,"all"); under0v = sum(P0 < 0,"all");
 over7Nv = sum(N7 > 0,"all"); under7Nv = sum(N7 < 0,"all");
 over75Nv = sum(N75 > 0,"all"); under75Nv = sum(N75 < 0,"all");
 over8Nv = sum(N8 > 0,"all"); under8Nv = sum(N8 < 0,"all");
+
+over_vec_val = [over7Nv, over75Nv, over8Nv, over0v, over7v, over75v, over8v];
+under_vec_val = [under7Nv, under75Nv, under8Nv, under0v, under7v, under75v, under8v];
 
 over7 = over7v/(over7v + under7v); under7 = under7v/(over7v + under7v);
 over75 = over75v/(over75v + under75v); under75 = under75v/(over75v + under75v);
