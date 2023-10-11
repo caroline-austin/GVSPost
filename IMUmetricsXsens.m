@@ -83,26 +83,28 @@ for sub = 1:numsub % first for loop that iterates through subject files
             string(TrialInfo(file_count,3)), 'mA_', TrialInfo(file_count,4), '_', ...
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
-        data_type = ["EulerX","EulerY","EulerZ","AccX","AccY","AccZ","GyrX","GyrY","GyrZ"];
+        data_type = imu_table.Properties.VariableNames(3:11);
+        yaxis = [ "degrees", "degrees", "degrees","m/s^2", "m/s^2","m/s^2", "rad/s", "rad/s", "rad/s"];
 
         figure();
-        sgtitle(trial_name)
+        sgtitle(strrep(trial_name,'_','.'))
         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
             subplot(3,3,j);
             plot(time, imu_data(:,j));
             title((data_type(j)));
+            ylabel(yaxis(j));
+            xlabel('seconds');
         end
-
-        Filename=(['S' subject_str 'IMU' trial_name]);
-        cd(plots_path)
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path)
+%         Filename=(['S' subject_str 'IMU' trial_name]);
+%         cd(plots_path)
+%         saveas(gcf, [char(Filename) '.fig']);
+%         cd(code_path)
 
 % save files
 
         cd(subject_path);
         vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+ %      eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
         cd(code_path);
         close all;
         
@@ -112,7 +114,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
 end    
 
 function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot)
-    FUSE = imufilter('SampleRate',25);
+    FUSE = imufilter('SampleRate',30);
     q = FUSE(acc,gyro); % goes from Inertial to Sensor
     Eulers = eulerd(q, 'ZYX', 'frame'); % sensor = Rx'*Ry'*Rz'*global
     [yaw, pitch, roll] = quat2angle(q);
@@ -132,7 +134,7 @@ function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gy
         % Rz = [cosd(yaw) -sind(phi) 0; 
         %       sind(yaw) cosd(yaw) 0; 0 0 1];
         acc_aligned(i,:) = (Ry*Rx*acc(i,:)')'; % Rz*Ry*Rx*sensor to go back
-        gyro_aligned(i,:) = (Ry*Rx*gyro(i,:)')'; % Rz*Ry*Rx*sensor to go back
+        gyro_aligned(i,:) = (Ry*Rx*gyro(i,:)')'; %#ok<AGROW> % Rz*Ry*Rx*sensor to go back
     end
 
     if sensorpositionplot == 1
