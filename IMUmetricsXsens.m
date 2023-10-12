@@ -35,7 +35,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
                
     end
     cd(subject_path);
-% change directories
+
+% reads in trial info as a structure
     cd(file_path);
     Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
     TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
@@ -84,10 +85,11 @@ for sub = 1:numsub % first for loop that iterates through subject files
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
         data_type = imu_table.Properties.VariableNames(3:11);
-        yaxis = [ "degrees", "degrees", "degrees","m/s^2", "m/s^2","m/s^2", "rad/s", "rad/s", "rad/s"];
+        yaxis = [ "degrees", "degrees", "degrees","m/s^2", "m/s^2","m/s^2", "degrees", "degrees", "degrees"];
 
         figure();
         sgtitle(strrep(trial_name,'_','.'))
+
         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
             subplot(3,3,j);
             plot(time, imu_data(:,j));
@@ -95,16 +97,58 @@ for sub = 1:numsub % first for loop that iterates through subject files
             ylabel(yaxis(j));
             xlabel('seconds');
         end
-%         Filename=(['S' subject_str 'IMU' trial_name]);
-%         cd(plots_path)
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path)
 
-% save files
+        % save files
 
+        Filename=(['S' subject_str 'IMU' trial_name]);
+        cd(plots_path)
+        saveas(gcf, [char(Filename) '.fig']);
+        cd(code_path)
+
+        direction = ["x", "y", "z"];
+
+        figure();
+        sgtitle(strrep(trial_name,'_','.'));
+
+        for k=1:width(acc_aligned)
+            subplot(3,3,k)
+            plot(time,acc_aligned(:,k))
+            direction_title_1 = strcat("Acc Aligned ", direction(k));
+            title(direction_title_1)
+            xlabel('seconds');
+        end
+
+        for l=1:width(gyro_aligned)
+            subplot(3,3,l+3)
+            plot(time,gyro_aligned(:,l))
+            direction_title_2 = strcat("Gyro Aligned ", direction(l));
+            title(direction_title_2)
+            xlabel('seconds');
+        end
+
+        subplot(3,3,7)
+        plot(time,yaw)
+        title("Yaw")
+        xlabel('seconds');
+
+        subplot(3,3,8)
+        plot(time,pitch)
+        title("Pitch")
+        xlabel('seconds');
+
+        subplot(3,3,9)
+        plot(time,roll)
+        title("Roll")
+        xlabel('seconds');
+
+        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        cd(plots_path)
+        saveas(gcf, [char(Filename) '.fig']);
+        cd(code_path)
+    
         cd(subject_path);
         vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
- %      eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
         cd(code_path);
         close all;
         
