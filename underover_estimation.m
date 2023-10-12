@@ -126,13 +126,20 @@ over_vec_tot = over_vec_val4A + over_vec_val4B + over_vec_val5A + over_vec_val5B
 under_vec_tot = under_vec_val4A + under_vec_val4B + under_vec_val5A + under_vec_val5B + under_vec_val6A + under_vec_val6B; 
 
 over_mat = over_vec_tot./(over_vec_tot + under_vec_tot); 
+over_mat_perc = 100*over_mat; % getting values into percentage form
+over_quant = quantile(over_mat_perc',[0.25 0.5 0.75]);
+sub_sham = over_mat_perc - over_mat_perc(4,:); % subtracting sham from other trials
+sub_sham(4,:) = []; % removing sham case from matrix
 
 lp = ['N7 ','N75 ','N8 ','P0 ','P7 ','P75 ','P8 '];
 lt = {'N7','N75','N8','P0','P7','P75','P8'};
-%lt = {'N7','N75'};
 
 figure();
-boxplot(100*over_mat','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+boxplot(sub_sham','Labels',{'N7','N75','N8','P7','P75','P8'});
+title('Combined Overestimate Subtracted from Sham'); ylabel('Percentage');
+
+figure();
+boxplot(over_mat_perc','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
 title('Combined Overestimate'); ylabel('Percentage');
 
 figure();
@@ -168,8 +175,6 @@ ylabel('percentage'); xlabel(lp);
 v1 = [1,0.38]; v2=[2,0.32]; v3 = [3,0.28];
 v4 = [4,0.41]; v5 = [5,0.43]; v6=[6,0.53];
 v7 = [7,0.52];
-%text(v1,v2,lt);
-%text(v1,v2,v3,v4,v5,v6,v7,lt);
 
 subplot(2,3,2)
 plot(under4B_allsub,'*','Color','r'); hold on;
