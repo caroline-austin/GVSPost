@@ -105,6 +105,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path)
 
+        %% Gravity Aligned Plots
         direction = ["x", "y", "z"];
 
         figure();
@@ -115,7 +116,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
             plot(time,acc_aligned(:,k))
             direction_title_1 = strcat("Acc Aligned ", direction(k));
             title(direction_title_1)
-            xlabel('seconds');
+            xlabel("seconds");
+            ylabel("m/s^2")
         end
 
         for l=1:width(gyro_aligned)
@@ -123,23 +125,27 @@ for sub = 1:numsub % first for loop that iterates through subject files
             plot(time,gyro_aligned(:,l))
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
             title(direction_title_2)
-            xlabel('seconds');
+            xlabel("seconds");
+            ylabel("degrees")
         end
 
         subplot(3,3,7)
         plot(time,yaw)
         title("Yaw")
-        xlabel('seconds');
+        xlabel("seconds");
+        ylabel("degrees")
 
         subplot(3,3,8)
         plot(time,pitch)
         title("Pitch")
-        xlabel('seconds');
+        xlabel("seconds");
+        ylabel("degrees")
 
         subplot(3,3,9)
         plot(time,roll)
         title("Roll")
-        xlabel('seconds');
+        xlabel("seconds");
+        ylabel("degrees")
 
         Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
         cd(plots_path)
@@ -157,6 +163,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
     file_count = 0;
 end    
 
+%% Gravity Aligned Function
 function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot)
     FUSE = imufilter('SampleRate',30);
     q = FUSE(acc,gyro); % goes from Inertial to Sensor
