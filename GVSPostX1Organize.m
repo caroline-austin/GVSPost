@@ -10,9 +10,9 @@ file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 1017:1022;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum); % calculate how many subjects are specified in line above
-subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 used_sub = 0; % initialize variable that keeps track of the subjects' data that is analyzed in this step
 for sub = 1:numsub %interate through all of the specified subjects
@@ -181,72 +181,3 @@ end
 
 end 
 
-% for debugging both subject 2 and 3 are missing some of their reports;
-% subject 3 is missing for the 3 and 4 electrode configuration of profile 1
-
-%need to fix Min and max current are ordered Bi, Ay, Cv instead of Bi, Cv,
-%Ay (which is what everything else in the code is ordered) - need to fix
-%this
-
-% function [Reduced_map] = ReduceMapMultiple(Rating_map,MinCurrent,MaxCurrent,Label)
-% %this function takes a previously generated map and reduces it so that the
-% %values recorded are only for the sham(0.1), low (min), and high(max)
-% %current amplitude conditions. 
-% % dim1 is current, dim2 is variable of interest,dim 3 electrode configuration,is dim 4 is profile
-% 
-% %get size of the original map and pre-allocate the reduced map
-% [dim1, dim2, dim3, dim4] = size(Rating_map);
-% Reduced_map = zeros(3,dim2,dim3,dim4);
-% 
-% for outer = 1: dim4 %cycle through the different profiles
-%     for inner = 1:dim3 %cycle through the different electrode configurations
-%         %find locations where a response is recorded 
-%         [row,col] = find(Rating_map(:,:,inner,outer));
-% 
-%         num_trials = length(row); %number of responses
-%         %initialize checking variables
-%         check_low = 0;
-%         check_min = 0;
-%         check_max = 0;
-%         for k = 1:num_trials %cycle through all identified responses
-%             if Label.CurrentAmp(row(k)) == 0.1 %for sham condition
-%                 Reduced_map(1,:, inner, outer) = Rating_map(row(k),:, inner, outer);
-%                 check_low = 1;
-%             elseif Label.CurrentAmp(row(k)) == MinCurrent(inner) %for low current condition
-%                 Reduced_map(2,:, inner, outer) = Rating_map(row(k),:, inner, outer);
-%                 check_min = 1;
-%             elseif Label.CurrentAmp(row(k)) == MaxCurrent(inner) %for high current conditions 
-%                 Reduced_map(3,:, inner, outer) = Rating_map(row(k),:, inner, outer);
-%                 check_max = 1;
-%                 %below is meant to handle a couple of trials where the
-%                 %current provided in a part 2 trial was less than the
-%                 %predetermined max while still meant to represent the max
-%                 %report
-%             elseif Label.CurrentAmp(row(k)) <= MaxCurrent(inner) && Label.CurrentAmp(row(k)) >= MinCurrent(inner) && outer ~= 4 %not 0.5hz profile
-%                 Reduced_map(3,:, inner, outer) = Rating_map(row(k),:, inner, outer);
-%                 check_max = 1;
-%             end
-%         end
-% 
-%     end
-% end
-% 
-% end
-
-% function Rating_map = RemoveExtraReports(Rating_map)
-% %overwrite lower value of multiple reports
-%  [dim1, dim2,dim3, dim4] = size(Rating_map);
-%  for current = 1: dim1
-%      for config = 1:dim3
-%          for profile = 1:dim4
-%             if sum(Rating_map(current,:,config,profile))>1
-%                 report_loc = find(Rating_map(current,:,config,profile));
-%                 %right now only have cases of 1 extra different report, but
-%                 %if multiple could make a loop              
-%                 Rating_map(current,report_loc(1),config,profile) = 0;
-%             end
-% 
-%          end
-%      end
-%  end
-% end
