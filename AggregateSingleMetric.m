@@ -19,10 +19,12 @@ function [All_avg,num_trials_avg,all_save,num_trials_save] = AggregateSingleMetr
     for i = 1:length(Label)
         for j = 1:length(match_list)
             if contains(Label(i), match_list(j))
-                All_avg(j) = All_avg(j)+metric(i);
-                num_trials_avg(j) = num_trials_avg(j)+1;
-                all_save(sub,j) = all_save(sub,j) + metric(i);
-                num_trials_save(sub,j) = num_trials_save(sub,j)+1;
+                if ~isnan(metric(i))
+                    All_avg(j) = All_avg(j)+metric(i);
+                    num_trials_avg(j) = num_trials_avg(j)+1;
+                    all_save(sub,j) = all_save(sub,j) + metric(i);
+                    num_trials_save(sub,j) = num_trials_save(sub,j)+1;
+                end
             end
         end
     end
