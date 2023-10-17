@@ -132,6 +132,53 @@ for sub = 1:numsub
         end
     end
 
+%% GVS variables
+
+    for i = 1:length(Label.GVS_4A) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_4A(i), match_list(j)) && contains(Label.GVS_4A(i), 'command')
+                All_GVS_4A(:,j) = GVS_4A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.GVS_4B) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_4B(i), match_list(j)) && contains(Label.GVS_4B(i), 'command')
+                All_GVS_4B(:,j) = GVS_4B(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.GVS_5A) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_5A(i), match_list(j)) && contains(Label.GVS_5A(i), 'command')
+                All_GVS_5A(:,j) = GVS_5A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.GVS_5B) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_5B(i), match_list(j)) && contains(Label.GVS_5B(i), 'command')
+                All_GVS_5B(:,j) = GVS_5B(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.GVS_6A) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_6A(i), match_list(j)) && contains(Label.GVS_6A(i), 'command')
+                All_GVS_6A(:,j) = GVS_6A(:,i);
+            end
+        end
+    end
+    for i = 1:length(Label.GVS_6B) %1:24
+        for j = 1:length(match_list)  %1:7
+            if contains(Label.GVS_6B(i), match_list(j)) && contains(Label.GVS_6B(i), 'command')
+                All_GVS_6B(:,j) = GVS_6B(:,i);
+            end
+        end
+    end
+
+
+
 end
 
 % Taking std of all subjects at specific points in time:
@@ -165,6 +212,8 @@ All_shot_5B = All_shot_5B./num_trials_5B;
 All_shot_6A = All_shot_6A./num_trials_6A;
 All_shot_6B = All_shot_6B./num_trials_6B;
 
+
+
 % This could be wrong so double check but I think this should be correct:
 
 % All_shot_4A_test = sum_rot_4A./num_trials_4A;
@@ -186,7 +235,8 @@ Label.shot_6B = match_list;
    cd(file_path);
    vars_2_save = ['Label Trial_Info trial_end time All_shot_4A tilt_4A GVS_4A ' ... 
        'All_shot_5A tilt_5A GVS_5A All_shot_6A tilt_6A GVS_6A ' ...
-       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B '];
+       'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B ' ...
+       'All_GVS_4A All_GVS_4B All_GVS_5A All_GVS_5B All_GVS_6A All_GVS_6B'];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    %eval (['clear ' vars_2_save])
