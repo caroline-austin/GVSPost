@@ -11,9 +11,9 @@ file_path = uigetdir; %user selects file directory % select data folder
 plots_path = [file_path '\Plots']; % specify where plots are saved
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 1017:1022;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 for sub = 1:numsub
     subject = subnum(sub);
