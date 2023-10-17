@@ -1,8 +1,7 @@
-function PlotGroupPerceptions(Type)
+function PlotGroupPerceptions(Type,Var)
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
-Var = load("DynamicData.mat");
 
 % User Definied
 %Type = 'Angle' (7.0), 'Velocity' (8.0), or 'Semi' (7.5)

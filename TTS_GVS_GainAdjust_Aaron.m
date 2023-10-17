@@ -160,7 +160,7 @@ function avg_gain = find_gain(shot,tilt)
         [~,ind] = min(Cost);
         gain_select(k) = G(ind);
     end
-    avg_gain = mean(gain_select);
+    avg_gain = gain_select';
 end
 
 function [shot] = mult_gain(shot,avg_gain)
