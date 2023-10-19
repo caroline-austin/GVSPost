@@ -93,7 +93,7 @@ for j = 1:3
         end
     end
 end
-Title = "Net MSE = "+num2str(NetMSE)+" | "+"Net avgSME = "+num2str(NetAvgSEM);
+Title = "Net MSE = "+num2str(NetMSE)+" | "+"Net avgSEM = "+num2str(NetAvgSEM);
 title(t,Title,'Fontsize',16)
 f.Position = [100 100 1000 500];
 end
