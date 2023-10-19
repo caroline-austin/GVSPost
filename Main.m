@@ -3,7 +3,7 @@ clc;clear;close all;
 
 %% PreProcess
 % Aggregate Data
-TTS_GVS_GainAdjust_Aaron
+TTS_GVS_GainAdjust_P2P
 TTS_GVS_Aggregate_Final
 
 % Save Aggregate Data to .mat

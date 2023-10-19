@@ -22,6 +22,8 @@ end
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% time adjust for each subject
+Gain_Save = cell(numsub,1);
+
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -138,25 +140,42 @@ for sub = 1:numsub
 %    eval (['clear ' vars_2_save])
    close all;
 
+Gain_Save{sub} = [avg_gain_4A  avg_gain_4B  avg_gain_5A  avg_gain_5B  avg_gain_6A  avg_gain_6B];
+end
+
+plotgains=1;
+if plotgains == 1
+    figure;
+    hold on
+    for i = 1:numsub
+        subdata = Gain_Save{i};
+        boxplot(subdata, i, 'Positions',i)       
+        scatter(i*ones(length(subdata),1),subdata)
+    end
+    hold off
+    xlabel('Subject')
+    ylabel('Trial Gains')
+    set(gca,'FontSize',12)
 end
 
 function avg_gain = find_gain(shot,tilt)
     
-    [l,trials] = size(shot);
+    [~,trials] = size(shot);
 
     gain_select = zeros(trials,1);
     for k = 1:trials
-        G = 0.01:0.01:4; % Gains for search
-        Cost = zeros(length(G),1);
+        tti = (k-1)*3+1; % tilt trial index 
 
-        for g = 1:length(G)
-            tti = (k-1)*3+1; % tilt trial index 
-            
-            se = (G(g)*shot(:,k)-tilt(:,tti))'*(G(g)*shot(:,k)-tilt(:,tti));
-            Cost(g) = 1/l*(se);
-        end
-
-        [~,ind] = min(Cost);
+        % G = 0.01:0.01:4; % Gains for search
+        % Cost = zeros(length(G),1);
+        % 
+        % for g = 1:length(G)
+        % 
+        %     se = (G(g)*shot(:,k)-tilt(:,tti))'*(G(g)*shot(:,k)-tilt(:,tti));
+        %     Cost(g) = 1/l*(se);
+        % end
+        % 
+        % [~,ind] = min(Cost);
         % gain_select(k) = G(ind);
         gain_select(k) = peak2peak(tilt(:,tti))/peak2peak(shot(:,k)); 
     end
