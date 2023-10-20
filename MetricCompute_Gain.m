@@ -1,11 +1,10 @@
-function MetricCompute_Gain(Type)
+function MetricCompute_Gain(Type,Var)
 
 % Compute Gain Metric and Save to CSV for R analysis
 % Two Types:
 %"CurrentGain" Proposed by Aaron: Y = Angle + (1/-1)Current*K
 %"AnlgeGain"   Proposed by Caroline: Y = Angle*K
 
-Var = load("DynamicData.mat");
 %% Make Figure
 
 motions = ["4","5","6"];

@@ -9,7 +9,16 @@ clc;
 subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-datatype = 'BiasTimeGain';
+datatype = 'BiasTime';
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
 
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
@@ -35,7 +44,17 @@ for p = 1: length(prof)
     eval(["num_trials_" + prof(p) + "= zeros(1, length(match_list));"]);
     eval(["num_sub_trials_" + prof(p) + "= zeros(numsub, length(match_list));"]);
     eval(["slope_save_" + prof(p) + "= zeros(numsub, length(match_list));"]);
+
+    All_avg_slope_all= zeros(1,length(match_list));
+    num_trials_all= zeros(1, length(match_list));
+    num_sub_trials_all= zeros(numsub, length(match_list));
+    slope_save_all= zeros(numsub, length(match_list));
 end 
+
+for j = 1:length(match_list)
+    eval(["shot_" + match_list(j) + " =[];"]);
+    eval(["GVS_" + match_list(j) + " =[];"]);
+end
 
 %% calculate and plot the different measures for each subject
 for sub = 1:numsub
@@ -62,6 +81,67 @@ for sub = 1:numsub
 % slope calculation 
 for p = 1: length(prof)
     eval(["[row,col] = size(shot_" + prof(p) + ");"])
+    for i = 1:col
+        GVS_index = i*3-2;
+        for j = 1:length(match_list)
+            if eval(["contains(Label.shot_" + prof(p) + "(i), match_list(j))"])
+                eval(["shot_" + match_list(j) + " = [shot_" + match_list(j) + " shot_" + prof(p) + "(:,i)'];"]);
+                eval(["GVS_" + match_list(j) + " = [GVS_" + match_list(j) + " GVS_" + prof(p) + "(:,GVS_index)'];"]);
+            end
+        end
+    end
+end
+
+for j = 1:length(match_list)
+    eval(["LM.X" + match_list(j) + " = fitlm(GVS_" + match_list(j) + ", shot_" + match_list(j) + ", 'Intercept', false);"]);
+    eval(["slope_all(j)= LM.X" + match_list(j) + ".Coefficients.Estimate;"]);
+end
+%% curve fitting plots
+x_current = linspace(-4,4);
+for j = 1:length(slope_all)
+    y_slope(:,j) = x_current.*slope_all(j);
+end
+
+figure;
+plot(GVS_N_4_00mA_7_00,shot_N_4_00mA_7_00, '^','MarkerEdgeColor', blue);
+hold on; plot(GVS_N_4_00mA_7_50,shot_N_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
+hold on; plot(GVS_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'v','MarkerEdgeColor', red);
+hold on; plot(GVS_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
+hold on; plot(x_current,y_slope(:,1),"Color", "#0072BD", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,2),"Color", "#7E2F8E", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,3),"Color", 	"red", "LineWidth", 3);
+title(["Tilt Perception V. GVS Attenuating" subject_str])
+xlabel("Current mA")
+ylabel ("Percieved Tilt Angle")
+ylim([-20 20])
+legend([match_list(4) match_list(1:3)'])
+hold off;
+cd(plots_path);
+    saveas(gcf, [ 'Perception-GVS-Slope-Fit-Negative' datatype subject_str ]); 
+    cd(code_path);
+    hold off; 
+figure;
+plot(GVS_P_4_00mA_7_00,shot_P_4_00mA_7_00, '^','MarkerEdgeColor', blue);
+hold on; plot(GVS_P_4_00mA_7_50,shot_P_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
+hold on; plot(GVS_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'v','MarkerEdgeColor', red);
+hold on; plot(GVS_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
+hold on; plot(x_current,y_slope(:,5),"Color", "#0072BD", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,6),"Color", "#7E2F8E", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,7),"Color", "red", "LineWidth", 3);
+%plot slopes
+title(["Tilt Perception V. GVS  Amplifying" subject_str])
+xlabel("Current mA")
+ylabel ("Percieved Tilt Angle")
+ylim([-20 20]);
+legend(match_list(4:end));
+cd(plots_path);
+    saveas(gcf, [ 'Perception-GVS-Slope-Fit-Positive' datatype subject_str ]); 
+    cd(code_path);
+    hold off; 
+
+%%
+for p = 1: length(prof)
+    eval(["[row,col] = size(shot_" + prof(p) + ");"])
     for trial = 1:col
         GVS_index = trial*3-2;
         eval(["[LM_" + prof(p) + "." + eval(["Label.shot_" + prof(p) ...
@@ -84,6 +164,17 @@ end
     
 %indv slope plot
 figure;
+    plot_single_outcomes(slope_all,match_list, Color_List,match_list);
+    hold on; 
+    title(['Perception-GVS-Slope-All-Profiles: Subject ' datatype subject_str]);
+
+    cd(plots_path);
+    saveas(gcf, [ 'Perception-GVS-Slope-All-Profiles' datatype subject_str ]); 
+    cd(code_path);
+    hold off; 
+
+
+figure;
 for p = 1: length(prof)
     subplot(2,3,p)
     eval(["plot_single_outcomes(slope_" + prof(p) + ",Label.shot_" + prof(p) + ", Color_List,match_list);"]);
@@ -93,7 +184,7 @@ end
     sgtitle(['Perception-GVS-Slope: Subject ' datatype subject_str]);
 
     cd(plots_path);
-    saveas(gcf, [ 'Perception-GVS-Slope' datatype subject_str  ]); 
+    saveas(gcf, [ 'Perception-GVS-Slope' datatype subject_str ]); 
     cd(code_path);
     hold off;  
 
@@ -110,12 +201,16 @@ for p = 1: length(prof)
         + ", match_list);"]);
 end
 
+[All_avg_slope_all,num_trials_all ,slope_save_all,num_sub_trials_all] =  AggregateSingleMetric( ...
+    slope_all, match_list, sub, All_avg_slope_all,num_trials_all ...
+        ,slope_save_all,num_sub_trials_all, match_list);
+
 %update the label
 Label_slope = match_list;
 
     %% save files
    cd(plots_path);
-   vars_2_save = ['Label slope_4A slope_4B slope_5A slope_5B slope_6A slope_6B' ];
+   vars_2_save = ['Label slope_4A slope_4B slope_5A slope_5B slope_6A slope_6B LM slope_all' ];
    eval(['  save ' ['S' subject_str 'Perception-GVS-Slope' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
@@ -124,12 +219,28 @@ Label_slope = match_list;
 end
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects and trials (need to add a calculation of error)
+All_avg_slope_all= All_avg_slope_all./num_trials_all;
+slope_save_all= slope_save_all./num_sub_trials_all;
+
 for p = 1: length(prof)
     eval(["All_avg_slope_" + prof(p) + "= All_avg_slope_" + prof(p) + "./num_trials_" + prof(p) + ";"]);
     eval(["slope_save_" + prof(p) + "= slope_save_" + prof(p) + "./num_sub_trials_" + prof(p) + ";"]);
 end 
 
+
 %create box plot
+figure;
+boxplot(slope_save_all);
+xticks([1 2 3 4 5 6 7]);
+xticklabels(plot_list);
+hold on; 
+sgtitle(['Perception-GVS-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+
+ cd(plots_path);
+    saveas(gcf, [ 'Perception-GVS-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;
+
 figure;
 
 for p = 1: length(prof)
@@ -149,6 +260,18 @@ sgtitle(['Perception-GVS-Slope: AllSubjectsBoxPlot' datatype ]);
 
 %all subjects averaged slope plot
 figure;
+
+    plot_single_outcomes(All_avg_slope_all,Label_slope, Color_List,match_list);
+
+    hold on; 
+    sgtitle(['Perception-GVS-Slope-All-Profiles: AllSubjects' datatype ]);
+
+    cd(plots_path);
+    saveas(gcf, [ 'Perception-GVS-Slope-All-ProfilesAllSubjects' datatype  ]); 
+    cd(code_path);
+    hold off; 
+
+figure;
 for p = 1: length(prof)
     subplot(2,3,p)
     eval(["plot_single_outcomes(All_avg_slope_" + prof(p) + ",Label_slope, Color_List,match_list);"]);
@@ -164,7 +287,7 @@ end
 
     %% save files
    cd(plots_path);
-   vars_2_save = ['Label_slope slope_save_4A slope_save_4B slope_save_5A slope_save_5B slope_save_6A slope_save_6B' ];
+   vars_2_save = ['Label_slope slope_save_4A slope_save_4B slope_save_5A slope_save_5B slope_save_6A slope_save_6B slope_save_all' ];
    eval(['  save ' ['SAllPerception-GVS-Slope' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])

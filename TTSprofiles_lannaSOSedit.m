@@ -34,12 +34,12 @@ gain = -0.3; k = (gain/9.81)*(180/pi);
 zpad=1;                         % sec at beginning runs padded with zeros
 zpad_after = 1;                 % sec at the end of runs padded with zeros
 cycles = 1;                     % number of cycles for the sine to run
-freq = [0.07,0.25, 0.33  ];       % Hz 1:*[0.07,0.18, 0.31, 0.5], *[0.07,0.25, 0.33, .45 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36, .48 ];
+freq = [0.07,0.18, 0.31  ];       % Hz 1:*[0.07,0.18, 0.31], *[0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36  ];
 ampl = [1 1 1 ];                % +/- deg 
 amp_scale = 8;
 phase_shift = [ 0, 0, 0];
 
-s1 = 'SumOfSin5A.txt'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
+s1 = 'Test.txt'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
 %s5 = '_vtilt_ttilt_on.txt';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 filename = strcat(s1); %,s2,s3,s4,s5
