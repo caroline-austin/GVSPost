@@ -11,7 +11,7 @@ clear;
 clc; 
 
 %% set up
-subnum = 1022:1022;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -83,7 +83,7 @@ end
     for file = 1:num_mat_files
         current_file = char(mat_filenames(file));
        %skip files that aren't the trial files 
-       if length(current_file)<25
+       if ~contains(current_file,'mA')  %length(current_file)<25
            continue
        end
 
