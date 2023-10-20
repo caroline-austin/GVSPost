@@ -112,7 +112,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         sgtitle(strrep(trial_name,'_','.'));
 
         for k=1:width(acc_aligned)
-            subplot(3,3,k)
+            subplot(3,3,k+3)
             plot(time,acc_aligned(:,k))
             direction_title_1 = strcat("Acc Aligned ", direction(k));
             title(direction_title_1)
@@ -121,7 +121,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         end
 
         for l=1:width(gyro_aligned)
-            subplot(3,3,l+3)
+            subplot(3,3,l+6)
             plot(time,gyro_aligned(:,l))
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
             title(direction_title_2)
@@ -129,19 +129,19 @@ for sub = 1:numsub % first for loop that iterates through subject files
             ylabel("degrees")
         end
 
-        subplot(3,3,7)
+        subplot(3,3,1)
         plot(time,yaw)
         title("Yaw")
         xlabel("seconds");
         ylabel("degrees")
 
-        subplot(3,3,8)
+        subplot(3,3,2)
         plot(time,pitch)
         title("Pitch")
         xlabel("seconds");
         ylabel("degrees")
 
-        subplot(3,3,9)
+        subplot(3,3,3)
         plot(time,roll)
         title("Roll")
         xlabel("seconds");
