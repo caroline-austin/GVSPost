@@ -35,8 +35,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
                
     end
     cd(subject_path);
-
-% reads in trial info as a structure
+% change directories
     cd(file_path);
     Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
     TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
@@ -69,7 +68,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         time = 0:1/30:((height(imu_data)/30)-1/30);
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
-        
+        [Xlimit,Ylimit] = PlotScale(imu_data,time);
         % makes all trial names the same number of chars
 
         while strlength(string(TrialInfo(file_count,3))) ~= 5 
@@ -84,27 +83,30 @@ for sub = 1:numsub % first for loop that iterates through subject files
             string(TrialInfo(file_count,3)), 'mA_', TrialInfo(file_count,4), '_', ...
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
-        data_type = imu_table.Properties.VariableNames(3:11);
-        yaxis = [ "degrees", "degrees", "degrees","m/s^2", "m/s^2","m/s^2", "degrees", "degrees", "degrees"];
+        data_type = ["EulerX","EulerY","EulerZ","AccX","AccY","AccZ","GyrX","GyrY","GyrZ"];
 
         figure();
-        sgtitle(strrep(trial_name,'_','.'))
-
+        sgtitle(trial_name)
         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
             subplot(3,3,j);
             plot(time, imu_data(:,j));
             title((data_type(j)));
-            ylabel(yaxis(j));
-            xlabel('seconds');
+            xlim(Xlimit);
         end
-
-        % save files
 
         Filename=(['S' subject_str 'IMU' trial_name]);
         cd(plots_path)
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path)
 
+% save files
+
+        cd(subject_path);
+        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        cd(code_path);
+        close all;
+        
         %% Gravity Aligned Plots
         direction = ["x", "y", "z"];
 
@@ -157,46 +159,10 @@ for sub = 1:numsub % first for loop that iterates through subject files
         eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
         cd(code_path);
         close all;
-        
+
     end
     eval (['clear ' vars_2_save])
     file_count = 0;
 end    
 
-%% Gravity Aligned Function
-function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot)
-    FUSE = imufilter('SampleRate',30);
-    q = FUSE(acc,gyro); % goes from Inertial to Sensor
-    Eulers = eulerd(q, 'ZYX', 'frame'); % sensor = Rx'*Ry'*Rz'*global
-    [yaw, pitch, roll] = quat2angle(q);
-
-    acc_aligned = zeros(length(acc),3);
-    for i = 1:length(acc)
-        theta = Eulers(i,3);
-        phi = Eulers(i,2);
-        Rx = [1 0 0;0 cosd(theta) -sind(theta);...
-              0 sind(theta) cosd(theta)];
-        Ry = [cosd(phi) 0 sind(phi); 0 1 0;...
-             -sind(phi) 0 cosd(phi)];
-
-        % Excludes Rz to keep ML and AP aligned with x and y in the subject 
-        % coordinated system vs. some fixed yaw inertial reference frame
-        % yaw = -Eulers(i,1);
-        % Rz = [cosd(yaw) -sind(phi) 0; 
-        %       sind(yaw) cosd(yaw) 0; 0 0 1];
-        acc_aligned(i,:) = (Ry*Rx*acc(i,:)')'; % Rz*Ry*Rx*sensor to go back
-        gyro_aligned(i,:) = (Ry*Rx*gyro(i,:)')'; %#ok<AGROW> % Rz*Ry*Rx*sensor to go back
-    end
-
-    if sensorpositionplot == 1
-        pp=poseplot;
-        for ii=1:size(acc,1)
-            qimu = FUSE(acc(ii,:), gyro(ii,:));
-            set(pp, "Orientation", qimu)
-            drawnow limitrate
-            pause(0.05)
-        end
-    end
-end
 % all of the code you want to run 
-
