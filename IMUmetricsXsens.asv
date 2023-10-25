@@ -84,15 +84,15 @@ for sub = 1:numsub % first for loop that iterates through subject files
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
         data_type = ["EulerX","EulerY","EulerZ","accX","accY","accZ","gyroX","gyroY","gyroZ"];
-        direction = ["X", "Y", "Z"];
+        direction = ["x", "y", "z","x", "y", "z","x", "y", "z"];
 
         figure();
         sgtitle(trial_name)
         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
             subplot(3,3,j);
             plot(time, imu_data(:,j));
-            xlim(Xlimit)
-            title(data_type(j));
+            title(string(data_type(j)), direction(j));
+            xlim(Xlimit);
         end
 
         Filename=(['S' subject_str 'IMU' trial_name]);
@@ -116,7 +116,6 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for k=1:width(acc_aligned)
             subplot(3,3,k+3)
             plot(time,acc_aligned(:,k))
-            xlim(Xlimit)
             direction_title_1 = strcat("Acc Aligned ", direction(k));
             title(direction_title_1)
             xlabel("seconds");
@@ -126,7 +125,6 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for l=1:width(gyro_aligned)
             subplot(3,3,l+6)
             plot(time,gyro_aligned(:,l))
-            xlim(Xlimit)
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
             title(direction_title_2)
             xlabel("seconds");
@@ -135,21 +133,18 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         subplot(3,3,1)
         plot(time,yaw)
-        xlim(Xlimit)
         title("Yaw")
         xlabel("seconds");
         ylabel("degrees")
 
         subplot(3,3,2)
         plot(time,pitch)
-        xlim(Xlimit)
         title("Pitch")
         xlabel("seconds");
         ylabel("degrees")
 
         subplot(3,3,3)
         plot(time,roll)
-        xlim(Xlimit)
         title("Roll")
         xlabel("seconds");
         ylabel("degrees")
