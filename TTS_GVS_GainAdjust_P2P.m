@@ -184,4 +184,5 @@ end
 
 function [shot] = mult_gain(shot,avg_gain)
     shot = shot*avg_gain;
+    % shot = shot;
 end
