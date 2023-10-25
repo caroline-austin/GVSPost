@@ -6,10 +6,10 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1017:1017;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-datatype = 'BiasTime';
+datatype = 'BiasTimeGain';
 
 % colors- first 5 are color blind friendly colors
 blue = [ 0.2118    0.5255    0.6275];
@@ -78,7 +78,7 @@ for sub = 1:numsub
     
     cd(code_path);
 
-% slope calculation 
+% aggregate based on coupling scheme
 for p = 1: length(prof)
     eval(["[row,col] = size(shot_" + prof(p) + ");"])
     for i = 1:col
@@ -91,7 +91,7 @@ for p = 1: length(prof)
         end
     end
 end
-
+% slope calculation for data aggregated by coupling scheme
 for j = 1:length(match_list)
     eval(["LM.X" + match_list(j) + " = fitlm(tilt_" + match_list(j) + ", shot_" + match_list(j) + ", 'Intercept', false);"]);
     eval(["slope_all(j)= LM.X" + match_list(j) + ".Coefficients.Estimate;"]);
@@ -166,7 +166,7 @@ cd(plots_path);
     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Pos-Neg-Angle' datatype subject_str ]); 
     cd(code_path);
     hold off; 
-
+%% calculate slopes for trials grouped by motion profile
 for p = 1: length(prof)
     eval(["[row,col] = size(shot_" + prof(p) + ");"])
     for trial = 1:col
