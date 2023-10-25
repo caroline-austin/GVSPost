@@ -1,5 +1,5 @@
 %% Script 5x for Dynamic GVS +Tilt
-% this script calculates outcome measures (mae, total deflection ...) and
+% this script calculates outcome measures (mae, ...) and
 % then plots these outcomes for all trial types to help better visualize
 % the data it takes its input from scripts 2 and 4 and should include
 close all; 
@@ -35,7 +35,19 @@ for p = 1: length(prof)
     eval(["num_trials_" + prof(p) + "= zeros(1, length(match_list));"]);
     eval(["num_sub_trials_" + prof(p) + "= zeros(numsub, length(match_list));"]);
     eval(["mae_save_" + prof(p) + "= zeros(numsub, length(match_list));"]);
+
+    All_avg_mae_all= zeros(1,length(match_list));
+    All_avg_mae_all_norm= zeros(1,length(match_list));
+    num_trials_all= zeros(1, length(match_list));
+    num_sub_trials_all= zeros(numsub, length(match_list));
+    mae_save_all= zeros(numsub, length(match_list));
+    mae_save_all_norm= zeros(numsub, length(match_list));
 end 
+
+for j = 1:length(match_list)
+    eval(["shot_" + match_list(j) + " =[];"]);
+    eval(["tilt_" + match_list(j) + " =[];"]);
+end
 
 %% calculate and plot the different measures for each subject
 for sub = 1:numsub
@@ -58,13 +70,33 @@ for sub = 1:numsub
     end
     
     cd(code_path);
-
-% MAE calculation 
+% aggregate based on coupling scheme
 for p = 1: length(prof)
-    eval(["mae_" + prof(p) + "= sum(abs(shot_" + prof(p) ...
-        + "(51:end-50,:)-(tilt_" + prof(p) + "(51:end-50,1:3:end))))/(length(time)-100);"]); %MAE from actual tilt
+    eval(["[row,col] = size(shot_" + prof(p) + ");"])
+    for i = 1:col
+        tilt_index = i*3-2;
+        for j = 1:length(match_list)
+            if eval(["contains(Label.shot_" + prof(p) + "(i), match_list(j))"])
+                eval(["shot_" + match_list(j) + " = [shot_" + match_list(j) + " shot_" + prof(p) + "(:,i)'];"]);
+                eval(["tilt_" + match_list(j) + " = [tilt_" + match_list(j) + " tilt_" + prof(p) + "(:,tilt_index)'];"]);
+            end
+        end
+    end
+end
+
+% mae calculation for data aggregated by coupling scheme
+for j = 1:length(match_list)
+     eval(["mae_" + match_list(j) + "= sum(abs(shot_" + match_list(j) ...
+        + "(51:end-50)))/(length(shot_" + match_list(j) + "));"]); %MAE from zero 
+     eval(["mae_all(j)= mae_" + match_list(j) + ";"]);
+end
+mae_all_norm = mae_all-mae_all(4);
+% MAE calculation for trials grouped by motion profile
+for p = 1: length(prof)
 %     eval(["mae_" + prof(p) + "= sum(abs(shot_" + prof(p) ...
-%         + "(51:end-50,:)))/(length(time)-100);"]); %MAE from zero
+%         + "(51:end-50,:)-(tilt_" + prof(p) + "(51:end-50,1:3:end))))/(length(time)-100);"]); %MAE from actual tilt
+    eval(["mae_" + prof(p) + "= sum(abs(shot_" + prof(p) ...
+        + "(51:end-50,:)))/(length(time)-100);"]); %MAE from zero
 end
     
 %indv mae plot
@@ -95,12 +127,20 @@ for p = 1: length(prof)
         + ", match_list);"]);
 end
 
+[All_avg_mae_all,num_trials_all ,mae_save_all,num_sub_trials_all] =  AggregateSingleMetric( ...
+    mae_all, match_list, sub, All_avg_mae_all,num_trials_all ...
+        ,mae_save_all,num_sub_trials_all, match_list);
+
+
+[All_avg_mae_all_norm,num_trials_all ,mae_save_all_norm,num_sub_trials_all] =  AggregateSingleMetric( ...
+    mae_all_norm, match_list, sub, All_avg_mae_all_norm,num_trials_all ...
+        ,mae_save_all_norm,num_sub_trials_all, match_list);
 %update the label
 Label_mae = match_list;
 
     %% save files
    cd(plots_path);
-   vars_2_save = ['Label mae_4A mae_4B mae_5A mae_5B mae_6A mae_6B' ];
+   vars_2_save = ['Label mae_4A mae_4B mae_5A mae_5B mae_6A mae_6B mae_all mae_all_norm' ];
    eval(['  save ' ['S' subject_str 'MeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
@@ -109,12 +149,46 @@ Label_mae = match_list;
 end
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects and trials (need to add a calculation of error)
+All_avg_mae_all= All_avg_mae_all./num_trials_all;
+mae_save_all= mae_save_all./num_sub_trials_all;
+
+All_avg_mae_all_norm= All_avg_mae_all_norm./num_trials_all;
+mae_save_all_norm= mae_save_all_norm./num_sub_trials_all;
+
 for p = 1: length(prof)
     eval(["All_avg_mae_" + prof(p) + "= All_avg_mae_" + prof(p) + "./num_trials_" + prof(p) + ";"]);
     eval(["mae_save_" + prof(p) + "= mae_save_" + prof(p) + "./num_sub_trials_" + prof(p) + ";"]);
 end 
 
 %create box plot
+%create box plot
+figure;
+boxplot(mae_save_all);
+xticks([1 2 3 4 5 6 7]);
+xticklabels(plot_list);
+hold on; 
+sgtitle(['MAE-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+
+ cd(plots_path);
+    saveas(gcf, [ 'MAE-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;
+
+    %create box plot
+%create box plot
+figure;
+boxplot(mae_save_all_norm);
+xticks([1 2 3 4 5 6 7]);
+xticklabels(plot_list);
+hold on; 
+sgtitle(['MAE-Sham-Removed-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+
+ cd(plots_path);
+    saveas(gcf, [ 'MAE-Sham-Removed-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;
+
+
 figure;
 
 for p = 1: length(prof)
@@ -131,6 +205,33 @@ sgtitle(['MAE: AllSubjectsBoxPlot' datatype ]);
     saveas(gcf, [ 'MAEShortAllSubjectsBoxPlot' datatype  ]); 
     cd(code_path);
     hold off;
+
+
+%all subjects averaged mae plot (aggregate by coupling scheme)
+figure;
+
+    plot_single_outcomes(All_avg_mae_all,Label_mae, Color_List,match_list);
+
+    hold on; 
+    sgtitle(['MAE-All-Profiles: AllSubjects' datatype ]);
+
+    cd(plots_path);
+    saveas(gcf, [ 'MAE-All-ProfilesAllSubjects' datatype  ]); 
+    cd(code_path);
+    hold off; 
+
+    %all subjects averaged mae plot (aggregate by coupling scheme)
+figure;
+
+    plot_single_outcomes(All_avg_mae_all_norm,Label_mae, Color_List,match_list);
+
+    hold on; 
+    sgtitle(['MAE-Sham-Removed-All-Profiles: AllSubjects' datatype ]);
+
+    cd(plots_path);
+    saveas(gcf, [ 'MAE-Sham-Removed-All-ProfilesAllSubjects' datatype  ]); 
+    cd(code_path);
+    hold off; 
 
 %all subjects averaged mae plot
 figure;
@@ -149,7 +250,7 @@ end
 
     %% save files
    cd(plots_path);
-   vars_2_save = ['Label_mae mae_save_4A mae_save_4B mae_save_5A mae_save_5B mae_save_6A mae_save_6B' ];
+   vars_2_save = ['Label_mae mae_save_4A mae_save_4B mae_save_5A mae_save_5B mae_save_6A mae_save_6B mae_save_all mae_save_all_norm' ];
    eval(['  save ' ['SAllMeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
