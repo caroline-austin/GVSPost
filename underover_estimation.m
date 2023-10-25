@@ -5,7 +5,7 @@ numsub = length(subnum);
 subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N700"; "N750"; "N800"; "000mA";"P700"; "P750"; "P800"];
 %match_list = 
-datatype = 'BiasTime';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
+datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
