@@ -13,10 +13,10 @@ clear all;
 clc; 
 
 %% set up
-subnum = 1022:1022;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-datatype = 'Bias'; %can change this to specify which data you want to use for the checkng
+datatype = ''; %can change this to specify which data you want to use for the checkng
 % '' = regular , 'Time' = time adjusted, 'Adj' = Bias adjusted (can stack
 % multiple)
 

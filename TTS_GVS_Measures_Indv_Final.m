@@ -6,10 +6,10 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1021:1021;  % Subject List 
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-datatype = 'BiasTime';
+subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+datatype = 'BiasTimeGain';
 
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];

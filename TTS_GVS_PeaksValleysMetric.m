@@ -17,7 +17,7 @@ subnum = 1011:1022;  % Subject List
 subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-profileNums = ["_4A" "_4B" "_5A" "_5B" "_6A" "_6B"];
+ttsProfileNums = ["_4A" "_4B" "_5A" "_5B" "_6A" "_6B"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 gvsProfiles = ["N700"; "N750"; "N800"; "N000";"P700"; "P750"; "P800"];
 shotStr = "shot";
@@ -27,11 +27,11 @@ numsub = length(subnum);
 count = 0;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Instantiate the arrays for saving Data
-for i = 1:numel(profileNums)
+for i = 1:numel(ttsProfileNums)
 
-        gvsTrial = strcat(gvsStr,profileNums(i));
-        shotTrial = strcat(shotStr,profileNums(i));
-        tiltTrial = strcat(tiltStr,profileNums(i));
+        gvsTrial = strcat(gvsStr,ttsProfileNums(i));
+        shotTrial = strcat(shotStr,ttsProfileNums(i));
+        tiltTrial = strcat(tiltStr,ttsProfileNums(i));
 
     for j = 1:numel(gvsProfiles)
         % GVS Arrays
@@ -74,11 +74,30 @@ for sub = 1:numsub
         cd(code_path);
     end
 
-    for i = 1:numel(profileNums)
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Instantiate the Subject-Specific arrays for saving Data
+    for i = 1:numel(ttsProfileNums)
+
+        gvsTrial = strcat(gvsStr,ttsProfileNums(i));
+        shotTrial = strcat(shotStr,ttsProfileNums(i));
+        tiltTrial = strcat(tiltStr,ttsProfileNums(i));
+
+        for j = 1:numel(gvsProfiles)
+            % GVS Arrays
+            Subject(sub).AllChangePercep.(gvsTrial).(gvsProfiles(j)) = [];
+            Subject(sub).AllChangeGvs.(gvsTrial).(gvsProfiles(j)) = [];
+            % Tilt Arrays
+            Subject(sub).AllChangePercep.(tiltTrial).(gvsProfiles(j)) = [];
+            Subject(sub).AllChangeTilt.(tiltTrial).(gvsProfiles(j)) = [];
+
+        end
+    end
+
+    for i = 1:numel(ttsProfileNums)
         % Which Profile are we looking at?
-        gvsTrial = strcat(gvsStr,profileNums(i));
-        shotTrial = strcat(shotStr,profileNums(i));
-        tiltTrial = strcat(tiltStr,profileNums(i));
+        gvsTrial = strcat(gvsStr,ttsProfileNums(i));
+        shotTrial = strcat(shotStr,ttsProfileNums(i));
+        tiltTrial = strcat(tiltStr,ttsProfileNums(i));
         % Which Columns contain command data?
         gvsList = contains(Label.(gvsTrial),"command");
         tiltList = contains(Label.(tiltTrial),"command");
@@ -144,6 +163,9 @@ for sub = 1:numsub
                     % Add in the Tilt Data
                     AllChangePercep.(tiltTrial).(gvsProfiles(m)) = cat(2,AllChangePercep.(tiltTrial).(gvsProfiles(m)),TiltChangePercep);
                     AllChangeTilt.(tiltTrial).(gvsProfiles(m)) = cat(2,AllChangeTilt.(tiltTrial).(gvsProfiles(m)),TiltChangeTilt);
+                    % Add in the Subject-Specific Tilt Data
+                    Subject(sub).AllChangePercep.(tiltTrial).(gvsProfiles(m)) = cat(2,Subject(sub).AllChangePercep.(tiltTrial).(gvsProfiles(m)),TiltChangePercep);
+                    Subject(sub).AllChangeTilt.(tiltTrial).(gvsProfiles(m)) = cat(2,Subject(sub).AllChangeTilt.(tiltTrial).(gvsProfiles(m)),TiltChangeTilt);
                 end
             end
 
@@ -201,6 +223,9 @@ for sub = 1:numsub
                     % Add in the GVS Data
                     AllChangePercep.(gvsTrial).(gvsProfiles(m)) = cat(2,AllChangePercep.(gvsTrial).(gvsProfiles(m)),GvsChangePercep);
                     AllChangeGvs.(gvsTrial).(gvsProfiles(m)) = cat(2,AllChangeGvs.(gvsTrial).(gvsProfiles(m)),GvsChangeGvs);
+                    % Add in the Subject-Specific GVS Data
+                    Subject(sub).AllChangePercep.(gvsTrial).(gvsProfiles(m)) = cat(2,Subject(sub).AllChangePercep.(gvsTrial).(gvsProfiles(m)),GvsChangePercep);
+                    Subject(sub).AllChangeGvs.(gvsTrial).(gvsProfiles(m)) = cat(2,Subject(sub).AllChangeGvs.(gvsTrial).(gvsProfiles(m)),GvsChangeGvs);
                 end
             end
 
@@ -208,73 +233,63 @@ for sub = 1:numsub
         count = 0;
     end
 
-end
+    %% Plot The subject specific data
+%     figure();
+%     for i = 1:numel(ttsProfileNums)    % Loop through the 7 coupling types
+%         gvsTrial = strcat(gvsStr,ttsProfileNums(i));
+% 
+%         for j = 1:numel(gvsProfiles)
+%             gvsCoupling = convertStringsToChars(gvsProfiles(j));
+% 
+%             gvsData = reshape(Subject(sub).AllChangeGvs.(gvsTrial).(gvsProfiles(j)), [],1);
+%             perceptionData = reshape(Subject(sub).AllChangePercep.(gvsTrial).(gvsProfiles(j)), [],1);
+% 
+%             % Determine the color of the dots
+%             switch gvsCoupling(2:4)
+%                 case '000'
+%                     color = [0.8500 0.3250 0.0980]; %red
+%                 case '700'
+%                     color = [0 0.4470 0.7410]; %blue
+%                 case '750'
+%                     color = [0.4660 0.6740 0.1880]; %green
+%                 case '800'
+%                     color = [0.4940 0.1840 0.5560]; %purple
+%             end
+% 
+%             switch gvsCoupling
+%                 case 'P700'
+%                     subplot(2,3,1)
+%                 case 'P750'
+%                     subplot(2,3,2)
+%                 case 'P800'
+%                     subplot(2,3,3)
+%                 case 'N000'
+%                     %skip
+%                 case 'N700'
+%                     subplot(2,3,4)
+%                 case 'N750'
+%                     subplot(2,3,5)
+%                 case 'N800'
+%                     subplot(2,3,6)
+%             end
+%             title(gvsCoupling)
+% 
+%             scatter(gvsData,perceptionData,[],color,'filled');
+%             hold on;
+%             sgtitle(strcat("Subject ",subject_str,"Change in Perception vs Change in GVS"))
+%             ylim([-40 40]); xlim([-8 8]);
+%             xlabel("Change in GVS (mA)"); ylabel("Change in Perception (deg)");
+%             %Plot a line with slope of one
+%             oneLine = refline(1,0);
+%             oneLine.Color = 'k';
+%         end
+%     end
 
 
-%% Plot the Perceptions
-% Change in GVS vs Change in Perception 
-figure();
-for i = 1:numel(profileNums)    % Loop through the 7 coupling types
-    gvsTrial = strcat(gvsStr,profileNums(i));
-
-    for j = 1:numel(gvsProfiles)
-        gvsCoupling = convertStringsToChars(gvsProfiles(j));
-
-        gvsData = reshape(AllChangeGvs.(gvsTrial).(gvsProfiles(j)), [],1);
-        perceptionData = reshape(AllChangePercep.(gvsTrial).(gvsProfiles(j)), [],1);
-        
-        % Determine the color of the dots
-        switch gvsCoupling(2:4)
-            case '000'
-                color = [0.8500 0.3250 0.0980]; %red
-            case '700'
-                color = [0 0.4470 0.7410]; %blue
-            case '750'
-                color = [0.4660 0.6740 0.1880]; %green
-            case '800'
-                color = [0.4940 0.1840 0.5560]; %purple
-        end
-
-        switch gvsCoupling
-            case 'P700'
-                subplot(2,3,1)
-            case 'P750'
-                subplot(2,3,2)
-            case 'P800'
-                subplot(2,3,3)
-            case 'N000'
-                %skip
-            case 'N700'
-                subplot(2,3,4)
-            case 'N750'
-                subplot(2,3,5)
-            case 'N800'
-                subplot(2,3,6)
-        end
-        title(gvsCoupling)
-
-        scatter(gvsData,perceptionData,[],color,'filled');
-        hold on;
-        sgtitle("Change in Perception vs Change in GVS")
-        ylim([-40 40]); xlim([-8 8]);
-        xlabel("Change in GVS (mA)"); ylabel("Change in Perception (deg)");
-        zeroLine = refline(1,0);
-        zeroLine.Color = 'k';
-    end
-end
- 
- 
-% Change in Tilt vs Change in Perception 
-figure();
-for i = 1:numel(profileNums)    % Loop through the 7 coupling types
-    tiltTrial = strcat(tiltStr,profileNums(i));
-
-
-    for j = 1:numel(gvsProfiles)
-        gvsCoupling = convertStringsToChars(gvsProfiles(j));
-
-        tiltData = reshape(AllChangeTilt.(tiltTrial).(gvsProfiles(j)), [],1);
-        perceptionData = reshape(AllChangePercep.(tiltTrial).(gvsProfiles(j)), [],1);
+    % Change in Tilt vs Change in Perception
+    figure();
+    for i = 1:numel(gvsProfiles)    % Loop through the 7 coupling types
+        gvsCoupling = convertStringsToChars(gvsProfiles(i));
         
         % Determine the color of the dots
         switch gvsCoupling(2:4)
@@ -304,14 +319,147 @@ for i = 1:numel(profileNums)    % Loop through the 7 coupling types
             case 'N800'
                 subplot(2,4,7)
         end
+
+        %Instantiate empty arrays for compiling data
+        x = [];
+        y = [];
+
+        for j = 1:numel(ttsProfileNums)    % Loop through the 6 TTS profile types
+            tiltTrial = strcat(tiltStr,ttsProfileNums(j));
+
+            tiltData = reshape(Subject(sub).AllChangeTilt.(tiltTrial).(gvsProfiles(i)), [],1);
+            perceptionData = reshape(Subject(sub).AllChangePercep.(tiltTrial).(gvsProfiles(i)), [],1);
+            % Cat the data into a gvs coupling specific array 
+            x = cat(1,x,tiltData);
+            y = cat(1,y,perceptionData);
+
+            
+
+            scatter(tiltData,perceptionData,[],color,'filled');
+            hold on;
+            sgtitle(strcat("Subject ",subject_str,"Change in Perception vs Change in Tilt"))
+            ylim([-40 40]); xlim([-15 15]);
+            xlabel("Change in Tilt (deg)"); ylabel("Change in Perception (deg)");
+        end
+        % Calculate and plot linear regression line
+        b1 = x\y;   % Slope of the line
+        Subject(sub).LinearRegression.(gvsProfiles(i)) = b1;
+        yCalc = b1*x;
+        lrLine = plot(x,yCalc);
+        lrLine.Color = 'k';
+        lrLine.LineWidth = 2;
+        txt = strcat('LR Line with slope of',num2str(b1));
+        text(-14,-30,txt)
         title(gvsCoupling)
 
-        scatter(tiltData,perceptionData,[],color,'filled');
-        hold on;
-        sgtitle("Change in Perception vs Change in Tilt")
-        ylim([-40 40]); xlim([-15 15]);
-        xlabel("Change in Tilt (deg)"); ylabel("Change in Perception (deg)");
-        zeroLine = refline(1,0);
-        zeroLine.Color = 'k';
     end
+
 end
+
+
+%% Plot the Perceptions
+% Change in GVS vs Change in Perception 
+% figure();
+% for i = 1:numel(ttsProfileNums)    % Loop through the 7 coupling types
+%     gvsTrial = strcat(gvsStr,ttsProfileNums(i));
+% 
+%     for j = 1:numel(gvsProfiles)
+%         gvsCoupling = convertStringsToChars(gvsProfiles(j));
+% 
+%         gvsData = reshape(AllChangeGvs.(gvsTrial).(gvsProfiles(j)), [],1);
+%         perceptionData = reshape(AllChangePercep.(gvsTrial).(gvsProfiles(j)), [],1);
+%         
+%         % Determine the color of the dots
+%         switch gvsCoupling(2:4)
+%             case '000'
+%                 color = [0.8500 0.3250 0.0980]; %red
+%             case '700'
+%                 color = [0 0.4470 0.7410]; %blue
+%             case '750'
+%                 color = [0.4660 0.6740 0.1880]; %green
+%             case '800'
+%                 color = [0.4940 0.1840 0.5560]; %purple
+%         end
+% 
+%         switch gvsCoupling
+%             case 'P700'
+%                 subplot(2,3,1)
+%             case 'P750'
+%                 subplot(2,3,2)
+%             case 'P800'
+%                 subplot(2,3,3)
+%             case 'N000'
+%                 %skip
+%             case 'N700'
+%                 subplot(2,3,4)
+%             case 'N750'
+%                 subplot(2,3,5)
+%             case 'N800'
+%                 subplot(2,3,6)
+%         end
+%         title(gvsCoupling)
+% 
+%         scatter(gvsData,perceptionData,[],color,'filled');
+%         hold on;
+%         sgtitle("Change in Perception vs Change in GVS")
+%         ylim([-40 40]); xlim([-8 8]);
+%         xlabel("Change in GVS (mA)"); ylabel("Change in Perception (deg)");
+%         %Plot a line with slope of one
+%         oneLine = refline(1,0);
+%         oneLine.Color = 'k';
+%     end
+% end
+%  
+%  
+% % Change in Tilt vs Change in Perception 
+% figure();
+% for i = 1:numel(ttsProfileNums)    % Loop through the 7 coupling types
+%     tiltTrial = strcat(tiltStr,ttsProfileNums(i));
+% 
+% 
+%     for j = 1:numel(gvsProfiles)
+%         gvsCoupling = convertStringsToChars(gvsProfiles(j));
+% 
+%         tiltData = reshape(AllChangeTilt.(tiltTrial).(gvsProfiles(j)), [],1);
+%         perceptionData = reshape(AllChangePercep.(tiltTrial).(gvsProfiles(j)), [],1);
+%         
+%         % Determine the color of the dots
+%         switch gvsCoupling(2:4)
+%             case '000'
+%                 color = [0.8500 0.3250 0.0980]; %red
+%             case '700'
+%                 color = [0 0.4470 0.7410]; %blue
+%             case '750'
+%                 color = [0.4660 0.6740 0.1880]; %green
+%             case '800'
+%                 color = [0.4940 0.1840 0.5560]; %purple
+%         end
+% 
+%         switch gvsCoupling
+%             case 'P700'
+%                 subplot(2,4,1)
+%             case 'P750'
+%                 subplot(2,4,2)
+%             case 'P800'
+%                 subplot(2,4,3)
+%             case 'N000'
+%                 subplot(2,4,4)
+%             case 'N700'
+%                 subplot(2,4,5)
+%             case 'N750'
+%                 subplot(2,4,6)
+%             case 'N800'
+%                 subplot(2,4,7)
+%         end
+%         title(gvsCoupling)
+% 
+%         scatter(tiltData,perceptionData,[],color,'filled');
+%         hold on;
+%         sgtitle("Change in Perception vs Change in Tilt")
+%         ylim([-40 40]); xlim([-15 15]);
+%         xlabel("Change in Tilt (deg)"); ylabel("Change in Perception (deg)");
+%         %plot a line with slope of 1
+%         oneLine = refline(1,0);
+%         oneLine.Color = 'k';
+%     end
+% end
