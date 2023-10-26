@@ -8,9 +8,9 @@ function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gy
     for i = 1:length(acc)
         theta = Eulers(i,3);
         phi = Eulers(i,2);
-        Ry = [1 0 0;0 cosd(theta) -sind(theta);...
+        Rx = [1 0 0;0 cosd(theta) -sind(theta);...
               0 sind(theta) cosd(theta)];
-        Rx = [cosd(phi) 0 sind(phi); 0 1 0;...
+        Ry = [cosd(phi) 0 sind(phi); 0 1 0;...
              -sind(phi) 0 cosd(phi)];
 
         % Excludes Rz to keep ML and AP aligned with x and y in the subject 
@@ -18,8 +18,8 @@ function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gy
         % yaw = -Eulers(i,1);
         % Rz = [cosd(yaw) -sind(phi) 0; 
         %       sind(yaw) cosd(yaw) 0; 0 0 1];
-        acc_aligned(i,:) = (Ry*Rx*acc(i,:)')'; % Rz*Ry*Rx*sensor to go back
-        gyro_aligned(i,:) = (Ry*Rx*gyro(i,:)')'; % Rz*Ry*Rx*sensor to go back
+        acc_aligned(i,:) = (Rx*Ry*acc(i,:)')'; % Rz*Ry*Rx*sensor to go back
+        gyro_aligned(i,:) = (Rx*Ry*gyro(i,:)')'; % Rz*Ry*Rx*sensor to go back
     end
 
     if sensorpositionplot == 1

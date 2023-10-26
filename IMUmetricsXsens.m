@@ -116,6 +116,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for k=1:width(acc_aligned)
             subplot(3,3,k+3)
             plot(time,acc_aligned(:,k))
+            ylim([0 10])
             xlim(Xlimit)
             direction_title_1 = strcat("Acc Aligned ", direction(k));
             title(direction_title_1)
@@ -126,6 +127,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for l=1:width(gyro_aligned)
             subplot(3,3,l+6)
             plot(time,gyro_aligned(:,l))
+            ylim([0 10])
             xlim(Xlimit)
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
             title(direction_title_2)
