@@ -1,4 +1,5 @@
 close all;clear;clc;
+
 %% set up
 subnum = 1017:1021;  % Subject List 
 numsub = length(subnum);
@@ -35,8 +36,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
                
     end
     cd(subject_path);
-% change directories
-    cd(file_path);
+
+    cd(file_path); % change directories
     Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
     TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
     TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
@@ -69,9 +70,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
         [Xlimit,Ylimit] = PlotScale(imu_data,time);
-        % makes all trial names the same number of chars
 
-        while strlength(string(TrialInfo(file_count,3))) ~= 5 
+        while strlength(string(TrialInfo(file_count,3))) ~= 5  % makes all trial names the same number of chars
             if strlength(string(TrialInfo(file_count,3))) == 1
                 TrialInfo(file_count,3) = mat2cell(string(TrialInfo(file_count,3)) + ".000",1);
             else
@@ -116,7 +116,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for k=1:width(acc_aligned)
             subplot(3,3,k+3)
             plot(time,acc_aligned(:,k))
-            ylim([0 10])
+            ylim([-8 10])
             xlim(Xlimit)
             direction_title_1 = strcat("Acc Aligned ", direction(k));
             title(direction_title_1)
@@ -127,7 +127,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         for l=1:width(gyro_aligned)
             subplot(3,3,l+6)
             plot(time,gyro_aligned(:,l))
-            ylim([0 10])
+            ylim([-8 8])
             xlim(Xlimit)
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
             title(direction_title_2)
@@ -138,6 +138,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         subplot(3,3,1)
         plot(time,yaw)
         xlim(Xlimit)
+        ylim([-10 10])
         title("Yaw")
         xlabel("seconds");
         ylabel("degrees")
@@ -145,6 +146,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         subplot(3,3,2)
         plot(time,pitch)
         xlim(Xlimit)
+        ylim([-10 10])
         title("Pitch")
         xlabel("seconds");
         ylabel("degrees")
@@ -152,6 +154,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         subplot(3,3,3)
         plot(time,roll)
         xlim(Xlimit)
+        ylim([-10 10])
         title("Roll")
         xlabel("seconds");
         ylabel("degrees")
@@ -173,3 +176,5 @@ for sub = 1:numsub % first for loop that iterates through subject files
 end    
 
 % all of the code you want to run 
+
+
