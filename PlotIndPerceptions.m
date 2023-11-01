@@ -1,4 +1,4 @@
-function PlotIndPerceptions(Var)
+function PlotIndPerceptions(Var,subnum)
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
@@ -46,7 +46,7 @@ for j = 1:3
             angplot = interp1(time,tiltang(:,1),timeplot);
             percplot = interp1(time,perceptions,timeplot);
     
-            plot(timeplot,percplot,'-','LineWidth',LW,'LineStyle',LS(i))
+            plot(timeplot,percplot(:,subnum),'-','LineWidth',LW,'LineStyle',LS(i))
             plot(timeplot,angplot,'LineWidth',LW*2,'color',[0 0 0]);
             
         end

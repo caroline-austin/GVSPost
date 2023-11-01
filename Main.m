@@ -4,22 +4,24 @@ clc;clear;close all;
 %%
 % PreProcess
 % Aggregate Data
-TTS_GVS_GainAdjust_P2P
+TTS_GVS_GainAdjust_Final
 TTS_GVS_Aggregate_Final
 
 % Save Aggregate Data to .mat
 DataName = "DynamicDataGain.mat";
-save(DataName) 
+save("./data/"+DataName) 
 
 %% Load
-Var = load(DataName);
+Var = load("./data/"+DataName);
 
 % Plot Data
 PlotGroupPerceptions('Angle',Var)
 PlotGroupPerceptions('Semi',Var)
 PlotGroupPerceptions('Velocity',Var)
 
-PlotIndPerceptions(Var)
+for i = 1:12
+    PlotIndPerceptions(Var,i)
+end
 PlotNoGVSGroupPerceptions(Var)
 
 % % Compute Metrics (store in .csv)
