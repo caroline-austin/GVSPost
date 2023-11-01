@@ -84,7 +84,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
             string(TrialInfo(file_count,5)), 'Hz', string(TrialInfo(file_count,1)))),'.','_');
 
         data_type = ["EulerX","EulerY","EulerZ","accX","accY","accZ","gyroX","gyroY","gyroZ"];
-        direction = ["X", "Y", "Z"];
+        direction = ["Z", "Y", "X"];
 
         figure();
         sgtitle(trial_name)
