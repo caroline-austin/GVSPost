@@ -233,7 +233,7 @@ for sub = 1:numsub
         count = 0;
     end
 
-    %% Plot the individual subject data
+    %% Plot he individual subject data
     % Change in Tilt vs Change in Perception
     figure();
     for i = 1:numel(gvsProfiles)    % Loop through the 7 coupling types
