@@ -1,8 +1,15 @@
-clc; close; clear;
+%% Script 5x for Dynamic GVS +Tilt
+% this script calculates outcome measures (% time over or underestiating, ...) and
+% then plots these outcomes for all trial types to help better visualize
+% the data it takes its input from scripts 2 and 4 and should include
 
-subnum = 1011:1021;  % Subject List 
+close all; 
+clear; 
+clc; 
+%% set up
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N700"; "N750"; "N800"; "000mA";"P700"; "P750"; "P800"];
 %match_list = 
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
@@ -10,16 +17,16 @@ datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeG
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 if ismac || isunix
-    plots_path = [file_path '/Plots']; % specify where plots are saved
+    plots_path = [file_path '/Plots/Measures/OverUnder']; % specify where plots are saved
     gvs_path = [file_path '/GVSProfiles'];
 elseif ispc
-    plots_path = [file_path '\Plots']; % specify where plots are saved
+    plots_path = [file_path '\Plots\Measures\OverUnder']; % specify where plots are saved
     gvs_path = [file_path '\GVSProfiles'];
 end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-for sub = 1:11
+for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
     % skip subjects that DNF'd or there is no data for
@@ -129,7 +136,20 @@ over_mat = over_vec_tot./(over_vec_tot + under_vec_tot);
 over_mat_perc = 100*over_mat; % getting values into percentage form
 over_quant = quantile(over_mat_perc',[0.25 0.5 0.75]);
 sub_sham = over_mat_perc - over_mat_perc(4,:); % subtracting sham from other trials
+over_save_all_norm = sub_sham'; %put into saving format where col are couplin schems and rows are subjects
 sub_sham(4,:) = []; % removing sham case from matrix
+
+%put into saving format where col are couplin schems and rows are subjects
+over_save_4A = over_vec4A';
+over_save_4B = over_vec4B';
+over_save_5A = over_vec5A';
+over_save_5B = over_vec5B';
+over_save_6A = over_vec6A';
+over_save_6B = over_vec6B';
+over_save_all = over_mat_perc';
+%update Label for saved variable
+Label_over = match_list;
+
 
 lp = ['N7 ','N75 ','N8 ','P0 ','P7 ','P75 ','P8 '];
 lt = {'N7','N75','N8','P0','P7','P75','P8'};
@@ -211,7 +231,13 @@ title('6B');
 legend('underestimate','overestimate');
 ylabel('percentage'); xlabel(lp);
 
-
+    %% save files
+   cd(plots_path);
+   vars_2_save = ['Label_over over_save_4A over_save_4B over_save_5A over_save_5B over_save_6A over_save_6B over_save_all over_save_all_norm' ];
+   eval(['  save ' ['SAllOverPerc' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   cd(code_path)
+   eval (['clear ' vars_2_save])
+   close all;
 
 % s4A = [N74A;N724A;N754A;N7524A;N84A;N824A;P04Ap;P024Ap;P034Ap;P74Ap;P724Ap;P754Ap;P7524Ap;P84Ap;P824Ap];
 % s4A((s4A == 0)) = NaN; s4A((s4A == 1)) = NaN;
