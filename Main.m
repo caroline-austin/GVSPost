@@ -19,9 +19,9 @@ PlotGroupPerceptions('Angle',Var)
 PlotGroupPerceptions('Semi',Var)
 PlotGroupPerceptions('Velocity',Var)
 
-for i = 1:12
-    PlotIndPerceptions(Var,i)
-end
+% for i = 1:12
+%     PlotIndPerceptions(Var,i)
+% end
 PlotNoGVSGroupPerceptions(Var)
 
 % % Compute Metrics (store in .csv)
@@ -30,5 +30,5 @@ PlotNoGVSGroupPerceptions(Var)
 
 %% Plots for Paper
 % Figure 1
-Var = load(DataName);
+Var = load("./data/"+DataName);
 Figure1b(Var)
