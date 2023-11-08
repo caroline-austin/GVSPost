@@ -14,12 +14,12 @@ LC = [226 107 109;128 128 128;90 160 163]/255;
 
 
 %% Make Figure
-dir = "A";
-nummot = 3; %number of motions to plot
+dir = "B";
+nummot = 1; %number of motions to plot
 motions = ["4";"5";"6"];
 
 f=figure;
-tiledlayout(3*nummot,3,'TileSpacing','none');
+tiledlayout(4*nummot,3,'TileSpacing','none');
 for d = 1:nummot
     motion = motions(d);
     for j = 1:2
@@ -68,7 +68,7 @@ for d = 1:nummot
                 ylim([min(tiltang(:,1)) max(tiltang(:,1))])
     
             elseif j == 2
-                nexttile([2,1])
+                nexttile([3,1])
                 hold on
                 for i = 1:3
                     condition = conditions(i);
@@ -114,7 +114,7 @@ for d = 1:nummot
             ylim([-4 4])
             yticks([-4 0 4])
         else
-            ylim([-12 12])
+            ylim([-12 15])
             yticks([-10 0 10])
         end
         if j == 1 && d ==1
@@ -140,6 +140,6 @@ for d = 1:nummot
         end
     end
 end
-legend({'Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating'},'Position',[0.8 0.325 0.15 0.075])
-f.Position = [100 100 1250 300*nummot];
+legend({'Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating'},'Position',[0.8 0.325 0.15 0.15])
+f.Position = [100 100 1250 500*nummot];
 end

@@ -139,6 +139,8 @@ for sub = 1:numsub
     trial_end = length(shot_4A);
     time = time(1:trial_end);
 
+    Time_shift_sub{sub}= avg_loc_rms_min_all;
+
 %% save files
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
@@ -150,6 +152,21 @@ for sub = 1:numsub
    close all;
 
 
+end
+
+plotadj=1;
+if plotadj == 1
+    figure;
+    hold on
+    for i = 1:numsub
+        subdata = Time_shift_sub{i}/50 -0.2; 
+        boxplot(subdata, i, 'Positions',i)       
+        scatter(i*ones(length(subdata),1),subdata)
+    end
+    hold off
+    xlabel('Subject')
+    ylabel('Trial Time Shifts')
+    set(gca,'FontSize',12)
 end
 
 function [avg_loc_rms_min,avg_time_rms_min] = find_time_shift(shot,tilt)
