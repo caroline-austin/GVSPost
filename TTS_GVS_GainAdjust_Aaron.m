@@ -141,6 +141,7 @@ for sub = 1:numsub
 end
 
 function avg_gain = find_gain(shot,tilt)
+<<<<<<<< Updated upstream:TTS_GVS_GainAdjust_Aaron.m
     
     [l,trials] = size(shot);
 
@@ -161,6 +162,29 @@ function avg_gain = find_gain(shot,tilt)
         gain_select(k) = G(ind);
     end
     avg_gain = mean(gain_select);
+========
+
+    [num_timesteps,num_trials] = size(shot);
+    for trial = 1:num_trials
+        %adjust tilt index becaue each trial has 3 columns of data
+        tilt_index = (trial-1)*3+1;
+        gvec = 0:0.01:2;
+        for gain_shift = 1:length(gvec)
+            %calculate and save the error between the actual motion profile and the
+            %shot response 
+            signal_diff =  tilt(:,tilt_index) - shot(:,trial)*(gvec(gain_shift));
+            gain_rms(gain_shift,trial) = rms(signal_diff,'omitnan'); 
+        end
+    end 
+    %find the location where error is least for each trial and then average
+    %the location for all the trials in the current profile set (currently
+    %taking the median not the mean to help account for potential outliers)
+    [min_rms,~]=min(gain_rms);
+    [min_rms_loc, ~] = find(gain_rms == min_rms);
+    gain_select = gvec(min_rms_loc);
+    avg_gain = mean(gain_select); % could use the mean instead 
+
+>>>>>>>> Stashed changes:archived/TTS_GVS_GainAdjust_Final.m
 end
 
 function [shot] = mult_gain(shot,avg_gain)

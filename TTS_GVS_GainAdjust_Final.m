@@ -22,6 +22,8 @@ end
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 %% time adjust for each subject
+Gain_Save = cell(numsub,1);
+
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -70,6 +72,9 @@ for sub = 1:numsub
     % calculate the avg. min gain shift for each physical motion profile
     % this is not a computationally efficient way to do this, 
     % but it still runs pretty fast 
+    if sub == 8
+        disp(8)
+    end
     if any(sham_shot_4A) == 1
         avg_gain_4A = find_gain(shot_4A(:,sham_shot_4A),tilt_4A(:,sham_tilt_4A));
     elseif any(sham_shot_4A) == 0
@@ -138,30 +143,48 @@ for sub = 1:numsub
 %    eval (['clear ' vars_2_save])
    close all;
 
+Gain_Save{sub} = [avg_gain_4A  avg_gain_4B  avg_gain_5A  avg_gain_5B  avg_gain_6A  avg_gain_6B];
+end
+
+plotgains=1;
+if plotgains == 1
+    figure;
+    hold on
+    for i = 1:numsub
+        subdata = Gain_Save{i};
+        boxplot(subdata, i, 'Positions',i)       
+        scatter(i*ones(length(subdata),1),subdata)
+    end
+    hold off
+    xlabel('Subject')
+    ylabel('Trial Gains')
+    set(gca,'FontSize',12)
 end
 
 function avg_gain = find_gain(shot,tilt)
+    
+    [~,trials] = size(shot);
 
-    [num_timesteps,num_trials] = size(shot);
-    for trial = 1:num_trials
-        %adjust tilt index becaue each trial has 3 columns of data
-        tilt_index = (trial-1)*3+1;
-        gvec = 0:0.01:2;
-        for gain_shift = 1:length(gvec)
-            %calculate and save the error between the actual motion profile and the
-            %shot response 
-            signal_diff =  tilt(:,tilt_index) - shot(:,trial)*(gvec(gain_shift));
-            gain_rms(gain_shift,trial) = rms(signal_diff,'omitnan'); 
+    gain_select = zeros(trials,1);
+    for k = 1:trials
+        tti = (k-1)*3+1; % tilt trial index 
+        
+        % shottrial = abs(shot(:,k)).*sign(tilt(:,tti));
+        shottrial = shot(:,k);
+        tilttrial = tilt(:,tti);
+        
+        p = shottrial(abs(tilttrial)>2);
+        t = tilttrial(abs(tilttrial)>2);
+
+        G = 0.1:0.01:8;
+        Cost = zeros(length(G),1);
+        for g = 1:length(G)
+            Cost(g) = abs(1/length(p)*sum((G(g)*abs(p)-abs(t))));
         end
-    end 
-    %find the location where error is least for each trial and then average
-    %the location for all the trials in the current profile set (currently
-    %taking the median not the mean to help account for potential outliers)
-    [min_rms,~]=min(gain_rms);
-    [min_rms_loc, ~] = find(gain_rms == min_rms);
-    gain_select = gvec(min_rms_loc);
-    avg_gain = mean(gain_select); % could use the mean instead 
-
+        gain_select(k) = G(Cost==min(Cost));
+        
+    end
+    avg_gain = gain_select';
 end
 
 function [shot] = mult_gain(shot,avg_gain)

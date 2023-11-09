@@ -1,8 +1,15 @@
-clc; close; clear;
+%% Script 5x for Dynamic GVS +Tilt
+% this script calculates outcome measures (% time over or underestiating, ...) and
+% then plots these outcomes for all trial types to help better visualize
+% the data it takes its input from scripts 2 and 4 and should include
 
-subnum = 1011:1021;  % Subject List 
+close all; 
+clear; 
+clc; 
+%% set up
+subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [1006 1007 1008 1009 1010 1013 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N700"; "N750"; "N800"; "000mA";"P700"; "P750"; "P800"];
 %match_list = 
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
@@ -10,16 +17,16 @@ datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeG
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 if ismac || isunix
-    plots_path = [file_path '/Plots']; % specify where plots are saved
+    plots_path = [file_path '/Plots/Measures/OverUnder']; % specify where plots are saved
     gvs_path = [file_path '/GVSProfiles'];
 elseif ispc
-    plots_path = [file_path '\Plots']; % specify where plots are saved
+    plots_path = [file_path '\Plots\Measures\OverUnder']; % specify where plots are saved
     gvs_path = [file_path '\GVSProfiles'];
 end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
-for sub = 1:11
+for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
     % skip subjects that DNF'd or there is no data for
@@ -114,11 +121,142 @@ s6B((s6B == 0)) = NaN; s6B((s6B == 1)) = NaN;
 o4Aavg = nanmean(s4A(1:2:end,:),2); u4Aavg = nanmean(s4A(2:2:end,:),2);
 o4Bavg = nanmean(s4B(1:2:end,:),2); u4Bavg = nanmean(s4B(2:2:end,:),2);
 
+<<<<<<< Updated upstream
 o5Aavg = nanmean(s5A(1:2:end,:),2); u5Aavg = nanmean(s5A(2:2:end,:),2);
 o5Bavg = nanmean(s5B(1:2:end,:),2); u5Bavg = nanmean(s5B(2:2:end,:),2);
 
 o6Aavg = nanmean(s6A(1:2:end,:),2); u6Aavg = nanmean(s6A(2:2:end,:),2);
 o6Bavg = nanmean(s6B(1:2:end,:),2); u6Bavg = nanmean(s6B(2:2:end,:),2);
+=======
+over_mat = over_vec_tot./(over_vec_tot + under_vec_tot); 
+over_mat_perc = 100*over_mat; % getting values into percentage form
+over_quant = quantile(over_mat_perc',[0.25 0.5 0.75]);
+sub_sham = over_mat_perc - over_mat_perc(4,:); % subtracting sham from other trials
+over_save_all_norm = sub_sham'; %put into saving format where col are couplin schems and rows are subjects
+sub_sham(4,:) = []; % removing sham case from matrix
+
+%put into saving format where col are couplin schems and rows are subjects
+over_save_4A = over_vec4A';
+over_save_4B = over_vec4B';
+over_save_5A = over_vec5A';
+over_save_5B = over_vec5B';
+over_save_6A = over_vec6A';
+over_save_6B = over_vec6B';
+over_save_all = over_mat_perc';
+%update Label for saved variable
+Label_over = match_list;
+
+
+lp = ['N7 ','N75 ','N8 ','P0 ','P7 ','P75 ','P8 '];
+lt = {'N7','N75','N8','P0','P7','P75','P8'};
+
+figure();
+boxplot(sub_sham','Labels',{'N7','N75','N8','P7','P75','P8'});
+title('Combined Overestimate Subtracted from Sham'); ylabel('Percentage');
+
+figure();
+boxplot(over_mat_perc','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('Combined Overestimate'); ylabel('Percentage');
+
+figure();
+subplot(2,3,1)
+boxplot(100*over_vec4A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('4A Overestimate'); ylabel('Percentage');
+subplot(2,3,2)
+boxplot(100*over_vec4B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('4B Overestimate'); ylabel('Percentage');
+subplot(2,3,3)
+boxplot(100*over_vec5A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('5A Overestimate'); ylabel('Percentage');
+subplot(2,3,4)
+boxplot(100*over_vec5B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('5B Overestimate'); ylabel('Percentage');
+subplot(2,3,5)
+boxplot(100*over_vec6A','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('6A Overestimate'); ylabel('Percentage');
+subplot(2,3,6)
+boxplot(100*over_vec6B','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+title('6B Overestimate'); ylabel('Percentage');
+
+
+
+
+figure();
+subplot(2,3,1)
+plot(under4A_allsub,'*','Color','r'); hold on;
+plot(over4A_allsub,'o','Color','b'); hold off;
+title('4A');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+v1 = [1,0.38]; v2=[2,0.32]; v3 = [3,0.28];
+v4 = [4,0.41]; v5 = [5,0.43]; v6=[6,0.53];
+v7 = [7,0.52];
+
+subplot(2,3,2)
+plot(under4B_allsub,'*','Color','r'); hold on;
+plot(over4B_allsub,'o','Color','b'); hold off;
+title('4B');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+
+subplot(2,3,3)
+plot(under5A_allsub,'*','Color','r'); hold on;
+plot(over5A_allsub,'o','Color','b'); hold off;
+title('5A');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+
+subplot(2,3,4)
+plot(under5B_allsub,'*','Color','r'); hold on;
+plot(over5B_allsub,'o','Color','b'); hold off;
+title('5B');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+
+subplot(2,3,5)
+plot(under6A_allsub,'*','Color','r'); hold on;
+plot(over6A_allsub,'o','Color','b'); hold off;
+title('6A');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+
+subplot(2,3,6)
+plot(under6B_allsub,'*','Color','r'); hold on;
+plot(over6B_allsub,'o','Color','b'); hold off;
+title('6B');
+legend('underestimate','overestimate');
+ylabel('percentage'); xlabel(lp);
+
+    %% save files
+   cd(plots_path);
+   vars_2_save = ['Label_over over_save_4A over_save_4B over_save_5A over_save_5B over_save_6A over_save_6B over_save_all over_save_all_norm' ];
+   eval(['  save ' ['SAllOverPerc' datatype '.mat '] vars_2_save ' vars_2_save']);      
+   cd(code_path)
+   eval (['clear ' vars_2_save])
+   close all;
+
+% s4A = [N74A;N724A;N754A;N7524A;N84A;N824A;P04Ap;P024Ap;P034Ap;P74Ap;P724Ap;P754Ap;P7524Ap;P84Ap;P824Ap];
+% s4A((s4A == 0)) = NaN; s4A((s4A == 1)) = NaN;
+% s4B = [N74B;N724B;N754B;N7524B;N84B;N824B;P04Bp;P024Bp;P034Bp;P74Bp;P724Bp;P754Bp;P7524Bp;P84Bp;P824Bp];
+% s4B((s4B == 0)) = NaN; s4B((s4B == 1)) = NaN;
+% s5B = [N75B;N725B;N755B;N7525B;N85B;N825B;P05Bp;P025Bp;P035Bp;P75Bp;P725Bp;P755Bp;P7525Bp;P85Bp;P825Bp];
+% s5B((s5B == 0)) = NaN; s5B((s5B == 1)) = NaN;
+% s5A = [N75A;N725A;N755A;N7525A;N85A;N825A;P05Ap;P025Ap;P035Ap;P75Ap;P725Ap;P755Ap;P7525Ap;P85Ap;P825Ap];
+% s5A((s5A == 0)) = NaN; s5A((s5A == 1)) = NaN;
+% s6A = [N76A;N726A;N756A;N7526A;N86A;N826A;P06Ap;P026Ap;P036Ap;P76Ap;P726Ap;P756Ap;P7526Ap;P86Ap;P826Ap];
+% s6A((s6A == 0)) = NaN; s6A((s6A == 1)) = NaN;
+% s6B = [N76B;N726B;N756B;N7526B;N86B;N826B;P06Bp;P026Bp;P036Bp;P76Bp;P726Bp;P756Bp;P7526Bp;P86Bp;P826Bp];
+% s6B((s6B == 0)) = NaN; s6B((s6B == 1)) = NaN;
+
+% o4Aavg = nanmean(s4A(1:2:end,:),2); u4Aavg = nanmean(s4A(2:2:end,:),2);
+% o4Bavg = nanmean(s4B(1:2:end,:),2); u4Bavg = nanmean(s4B(2:2:end,:),2);
+% 
+% o5Aavg = nanmean(s5A(1:2:end,:),2); u5Aavg = nanmean(s5A(2:2:end,:),2);
+% o5Bavg = nanmean(s5B(1:2:end,:),2); u5Bavg = nanmean(s5B(2:2:end,:),2);
+% 
+% o6Aavg = nanmean(s6A(1:2:end,:),2); u6Aavg = nanmean(s6A(2:2:end,:),2);
+% o6Bavg = nanmean(s6B(1:2:end,:),2); u6Bavg = nanmean(s6B(2:2:end,:),2);
+>>>>>>> Stashed changes
 % Plotting:
 lp = ['N7 ','N72 ','N75 ','N752 ','N8 ','N82 ','P0 ','P02 ','P03 ','P7 ','P72 ','P75 ','P752 ','P8 ','P82 '];
 figure();
