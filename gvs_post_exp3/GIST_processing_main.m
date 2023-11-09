@@ -16,6 +16,11 @@
 
 clc; clear; close all;
 
+%% set up
+subnum = [3001, 3023:3024];  % Subject List 
+numsub = length(subnum);
+subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
+
 %% Data Import
 
 % set up pathing
