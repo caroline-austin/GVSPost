@@ -18,17 +18,18 @@ clc; clear; close all;
 
 %% Data Import
 
-% Spreadsheet File Location
-filename = '.\FunctionalMobilityTesting.xlsx';
+% set up pathing
+code_path = strrep(pwd,'\','/'); %save code directory
+% Set High Level Folder 
+file_path =  strrep(uigetdir,'\','/'); %user selects file directory
+
+% Master Spreadsheet File Location
+filename = [ file_path '/FunctionalMobilityTesting.xlsx'];
 sheets = sheetnames(filename);
 
-
 % GIST File Locations
-% Set High Level Folder
-directory = '.\';
-
 % Get List of Files & Folders in Directory
-files = dir(directory);
+files = dir(file_path);
 
 % Get a Logical Vector that Tells which is a Directory
 dir_flags = [files.isdir];
@@ -45,7 +46,7 @@ sub_folder_names = sub_folder_names(~plot_folder_flag);
 
 %% Set Plot Locations
 
-plot_location = '.\plots\';
+plot_path = [file_path '/plots/'];
 
 %% Reference Spreadsheet Vals
 
@@ -302,7 +303,7 @@ ylabel('Completion Time [s]');
 axis([0,1100, 0, 40]);
 legend(["Participant 1 Raw Time", "Participant 1 Corrected Time", "Participant 2 Raw Time", "Participant 2 Corrected Time"]);
 title('Functional Mobility Test Completion Time vs. K');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % Plot FMT Erros vs K
 figure_save = figure(); 
@@ -316,7 +317,7 @@ ylabel('Errors');
 axis([0,1100, 0, 5]);
 legend(["Participant 1 Errors", "Participant 2 Errors"]);
 title('Functional Mobility Test Errors vs. K');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 %% IMU Plotting
 
@@ -335,7 +336,7 @@ ylabel('Roll');
 axis([0,60, -100, 100]);
 legend%(["Participant 1 Errors", "Participant 2 Errors"]);
 title('Functional Mobility Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % roll
 figure_save = figure(); 
@@ -351,7 +352,7 @@ ylabel('Roll');
 axis([0,10, -40, 40]);
 legend%(["Participant 1 Errors", "Participant 2 Errors"]);
 title('Functional Mobility Test IMU Roll Data vs. Current Level');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % pitch
 figure_save = figure();
@@ -367,7 +368,7 @@ ylabel('Pitch');
 axis([0,60, -100, 100]);
 legend
 title('Functional Mobility Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % yaw
 figure_save = figure();
@@ -383,7 +384,7 @@ ylabel('Yaw');
 axis([0,60, -200, 200]);
 legend
 title('Functional Mobility Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % Raw Data Plots for Tandem Walk
 % roll
@@ -400,7 +401,7 @@ ylabel('Roll');
 axis([0,60, -100, 100]);
 legend
 title('Tandem Walk Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % pitch
 figure_save = figure();
@@ -416,7 +417,7 @@ ylabel('Pitch');
 axis([0,60, -100, 100]);
 legend
 title('Tandem Walk Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % yaw
 figure_save = figure();
@@ -432,7 +433,7 @@ ylabel('Yaw');
 axis([0,60, -200, 200]);
 legend
 title('Tandem Walk Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % Raw Data Plots for Romberg
 % roll
@@ -449,7 +450,7 @@ ylabel('Roll');
 axis([0,60, -100, 100]);
 legend
 title('Romberg Balance Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % pitch
 figure_save = figure();
@@ -465,7 +466,7 @@ ylabel('Pitch');
 axis([0,60, -100, 100]);
 legend
 title('Romberg Balance Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % yaw
 figure_save = figure(); 
@@ -481,7 +482,7 @@ ylabel('Yaw');
 axis([0,60, -100, 100]);
 legend
 title('Romberg Balance Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 %% Correlate Spreadsheet and GIST data files
 
@@ -579,7 +580,7 @@ ylabel('Roll');
 axis([0,40, -100, 100]);
 legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Roll Data vs. Time for K = 999');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 
 % pitch
@@ -600,7 +601,7 @@ ylabel('Pitch');
 axis([0,40, -100, 100]);
 legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Pitch Data vs. Time for K = 999');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % yaw
 figure_save = figure(); 
@@ -620,7 +621,7 @@ ylabel('Yaw');
 axis([0,40, -200, 200]);
 legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Yaw Data vs. Time for K = 999');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 
 % 0 value
@@ -643,7 +644,7 @@ ylabel('Roll');
 axis([0,40, -100, 100]);
 legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
 title('Functional Mobility Test IMU Roll Data vs. Time for K = 0');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 
 % pitch
@@ -664,7 +665,7 @@ ylabel('Pitch');
 axis([0,40, -100, 100]);
 legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
 title('Functional Mobility Test IMU Pitch Data vs. Time for K = 0');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % yaw
 figure_save = figure(); 
@@ -684,7 +685,7 @@ ylabel('Yaw');
 axis([0,40, -200, 200]);
 legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
 title('Functional Mobility Test IMU Yaw Data vs. Time for K = 0');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 %% Figures per participant for all gain values
 
@@ -703,7 +704,7 @@ ylabel('Yaw');
 axis([0,40, -200, 200]);
 legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
 
 % Participant 2
 figure_save = figure(); 
@@ -720,4 +721,4 @@ ylabel('Yaw');
 axis([0,40, -200, 200]);
 legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-saveas(figure_save, [plot_location plot_title '.fig']);
+saveas(figure_save, [plot_path plot_title '.fig']);
