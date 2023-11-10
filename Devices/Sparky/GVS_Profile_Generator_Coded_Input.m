@@ -14,7 +14,7 @@ file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/MontageTesting/Bilateral
 % can also add polarity and/or fs to end if applicable
 % I might make code that automatically names the profile based on the input
 % information
-Filename = 'Cevette_Direction_3_00mA_12s_sin0_50Hz_bipolar_50Hz'; % the name you would like to file to be saved as 
+Filename = 'Cevette_1-2_3_00mA_12s_sin0_50Hz_bipolar_50Hz'; % the name you would like to file to be saved as 
  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % Parameters to modify for all/any profile
@@ -36,6 +36,18 @@ Num_Electrode = 2;
 
 % 1 = Sinusoidal, 2 = Noise, 3 = DC
 Profile_Type = 1; 
+
+% Cevette Montages
+% 0 = not a cevette montage, 
+%note that the electrode numbers in parenthesis are for sparky - for the
+%cevette electrode numbering scheme 2 and 3 are flipped
+% for 2 electrodes: 1 = roll right, pitch back (1-3); 2 = roll right , pitch
+% forward (3-1); 3= roll left pitch back (3-2); 4 = roll left pitch forward (2-3); 5= roll
+% left (2-4); 6= roll right(4-2); 7 = roll right(4-1); 8 = roll left (1-4); 
+% 9= yaw left (1-2) ; 10 = yaw righ (2-1)
+%for 3 electrodes: 
+%for 4 electrodes:
+cevette = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Profile Type Modifiers
@@ -112,14 +124,86 @@ psdx(2:end-1)=2*psdx(2:end-1);
 %% Create GVS signals for all electrodes.
 Electrode_1_Sig=GVS_Signal;
 if Num_Electrode==2
-    Electrode_2_Sig=GVS_Signal*(-1);
-    if Current_Direction ==2
-        Electrode_1_Sig=GVS_Signal*(-1);
-        Electrode_2_Sig=GVS_Signal;
+    switch cevette
+        case 0
+            Electrode_2_Sig=GVS_Signal*(-1);
+            if Current_Direction ==2
+                Electrode_1_Sig=GVS_Signal*(-1);
+                Electrode_2_Sig=GVS_Signal;
+            end
+            Electrode_3_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_3_Sig;
+            Electrode_5_Sig=Electrode_3_Sig;
+        case 1 %roll right, pitch back (1-3)
+            Electrode_3_Sig=-1*GVS_Signal;
+
+            Electrode_2_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_2_Sig;
+            Electrode_5_Sig=Electrode_2_Sig;
+        case 2 %roll right , pitch forward (3-1)
+            Electrode_1_Sig=GVS_Signal*(-1);
+            Electrode_3_Sig=GVS_Signal;
+
+            Electrode_2_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_2_Sig;
+            Electrode_5_Sig=Electrode_2_Sig;
+        case 3 %3= roll left pitch back (3-2)
+            Electrode_2_Sig=GVS_Signal;
+            Electrode_3_Sig=GVS_Signal*(-1);
+
+            Electrode_1_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_1_Sig;
+            Electrode_5_Sig=Electrode_1_Sig;
+        case 4% 4 = roll left pitch forward (2-3); 
+            Electrode_2_Sig=GVS_Signal*(-1);
+            Electrode_3_Sig=GVS_Signal;
+
+            Electrode_1_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_1_Sig;
+            Electrode_5_Sig=Electrode_1_Sig;
+        case 5 %5= roll left (2-4);    
+            Electrode_2_Sig=GVS_Signal;
+            Electrode_4_Sig=GVS_Signal*(-1);
+
+            Electrode_1_Sig=zeros(1,T);
+            Electrode_3_Sig=Electrode_1_Sig;
+            Electrode_5_Sig=Electrode_1_Sig;
+        case 6 %6= roll right(4-2);
+            Electrode_2_Sig=GVS_Signal*(-1);
+            Electrode_4_Sig=GVS_Signal;
+
+            Electrode_1_Sig=zeros(1,T);
+            Electrode_3_Sig=Electrode_1_Sig;
+            Electrode_5_Sig=Electrode_1_Sig;
+        case 7 %7 = roll right(4-1);
+            Electrode_4_Sig=GVS_Signal;
+            Electrode_1_Sig=GVS_Signal*(-1);
+
+            Electrode_2_Sig=zeros(1,T);
+            Electrode_3_Sig=Electrode_2_Sig;
+            Electrode_5_Sig=Electrode_2_Sig;
+        case 8 %8 = roll left (1-4);
+            Electrode_1_Sig=GVS_Signal;
+            Electrode_4_Sig=GVS_Signal*(-1);
+
+            Electrode_2_Sig=zeros(1,T);
+            Electrode_3_Sig=Electrode_2_Sig;
+            Electrode_5_Sig=Electrode_2_Sig;
+        case 9 % 9= yaw left (1-2) ; 
+            Electrode_1_Sig=GVS_Signal;
+            Electrode_2_Sig=GVS_Signal*(-1);
+
+            Electrode_3_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_3_Sig;
+            Electrode_5_Sig=Electrode_3_Sig;
+        case 10 %10 = yaw righ (2-1)
+             Electrode_1_Sig=GVS_Signal*(-1);
+            Electrode_2_Sig=GVS_Signal;
+
+            Electrode_3_Sig=zeros(1,T);
+            Electrode_4_Sig=Electrode_3_Sig;
+            Electrode_5_Sig=Electrode_3_Sig;
     end
-    Electrode_3_Sig=zeros(1,T);
-    Electrode_4_Sig=Electrode_3_Sig;
-    Electrode_5_Sig=Electrode_3_Sig;
 elseif Num_Electrode==3
     if Current_Direction == 1
         %electrodes 1&2 are cathodes 5 is the anode (backward)
