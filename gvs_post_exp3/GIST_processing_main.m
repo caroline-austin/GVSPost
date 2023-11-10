@@ -219,7 +219,7 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    sub_path = [file_path, '/' , subject_str];
+    sub_path = strjoin([file_path, '/' , current_GIST_participant], '');
 
 %     % Current GIST Participant
 %     current_GIST_participant = sub_folder_names{1,sub};
@@ -233,15 +233,15 @@ for sub = 1:numsub
         GIST_participant_list(num_GIST_participants) = string(current_GIST_participant);
 
         % Length of FMT GIST Files for Current Participant
-        GIST_file_location_FMT = strcat(sub_path, '/', fmt_folder);
+        GIST_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
         GIST_files_FMT{sub} = dir(fullfile(string(GIST_file_location_FMT), '*.csv')); %could use the get_filetype.m function
     
         % Length of Tandem Walk GIST Files for Current Participant
-        GIST_file_location_tandem = strcat([file_path, '/' , subject_str], '/', tandem_folder);
+        GIST_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
         GIST_files_tandem{sub} = dir(fullfile(string(GIST_file_location_tandem), '*.csv'));
     
         % Length of Romberg Balance GIST Files for Current Participant
-        GIST_file_location_romberg = strcat([file_path, '/' , subject_str], '/', romberg_folder);
+        GIST_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
         GIST_files_romberg{sub} = dir(fullfile(string(GIST_file_location_romberg), '*.csv'));
         
         % Loop through FMT GIST files
