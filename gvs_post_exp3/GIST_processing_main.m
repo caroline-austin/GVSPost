@@ -17,7 +17,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3001, 3023:3024];  % Subject List 
+subnum = [3023:3024];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -116,16 +116,28 @@ opts_romberg.DataRange = romberg_dataLines(1, :);
 
 % Enter Loop for Each Participant
 participant_num = 0;
-for i = 1:length(sheets)
-    sheet = sheets(i);
-    % Skip Pilot Data (until the spreadsheet mods are implemented)
-    if ~contains(sheet, "S3")
-        continue
+for sub = 1:numsub % I want to change this to cycle through the subject list instead- this will make it easier to skip unwanted subjects
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+
+    if subject < 3023 
+        sheet = string(['P' subject_str]);
     else
-        % Skip Template Tab
-        if i == 1
-            continue
-        else
+        sheet = string(['S' subject_str]);
+    end
+
+    if ismember(subject,subskip) == 1
+       continue
+    end
+
+%     % Skip Pilot Data (until the spreadsheet mods are implemented)
+%     if ~contains(sheet, "S3")
+%         continue
+%     else
+%         % Skip Template Tab
+%         if sub == 1
+%             continue
+%         else
             % Increment Participant
             participant_num = participant_num + 1;
             sp_participant_list(participant_num) = sheet;
@@ -177,8 +189,8 @@ for i = 1:length(sheets)
             % Set Training and Trial Data Arrays for Plotting
             sp_romberg_data_training{participant_num} = sp_romberg_data_all(1:romberg_training_range,:);
             sp_romberg_data{participant_num} = sp_romberg_data_all((romberg_training_range + 1):height(sp_romberg_data_all), :);
-        end
-    end
+        %end
+    %end
 end
 
 %% GIST IMU Data Processing
@@ -189,38 +201,52 @@ tandem_folder = 'Tandem\';
 romberg_folder = 'Romberg\';
 
 % Find Total Number of Data Folders in High Level Directory
-GIST_participants = length(sub_folder_names);
+% GIST_participants = length(sub_folder_names);
 
 % Iterate through all CSV Files in Folder
 num_GIST_participants = 0;
-for j = 1:GIST_participants
+for sub = 1:numsub
+    subject = subnum(sub);
+    subject_str = num2str(subject);
 
-    % Current GIST Participant
-    current_GIST_participant = sub_folder_names{1,j};
-
-    % Skip Pilot Participant
-    if strcmp(current_GIST_participant, 'P3001')
-        continue
+     % Current GIST Participant
+    if subject < 3023 
+        current_GIST_participant = string(['P' subject_str]);
     else
+        current_GIST_participant = string(['S' subject_str]);
+    end
+
+    if ismember(subject,subskip) == 1
+       continue
+    end
+    sub_path = [file_path, '/' , subject_str];
+
+%     % Current GIST Participant
+%     current_GIST_participant = sub_folder_names{1,sub};
+% 
+%     % Skip Pilot Participant
+%     if strcmp(current_GIST_participant, 'P3001')
+%         continue
+%     else
         % Generate GIST participant list
         num_GIST_participants = num_GIST_participants + 1;
         GIST_participant_list(num_GIST_participants) = string(current_GIST_participant);
 
         % Length of FMT GIST Files for Current Participant
-        GIST_file_location_FMT = strcat(sub_folder_names{1,j}, '\', fmt_folder);
-        GIST_files_FMT{j} = dir(fullfile(string(GIST_file_location_FMT), '*.csv'));
+        GIST_file_location_FMT = strcat(sub_path, '/', fmt_folder);
+        GIST_files_FMT{sub} = dir(fullfile(string(GIST_file_location_FMT), '*.csv')); %could use the get_filetype.m function
     
         % Length of Tandem Walk GIST Files for Current Participant
-        GIST_file_location_tandem = strcat(sub_folder_names{1,j}, '\', tandem_folder);
-        GIST_files_tandem{j} = dir(fullfile(string(GIST_file_location_tandem), '*.csv'));
+        GIST_file_location_tandem = strcat([file_path, '/' , subject_str], '/', tandem_folder);
+        GIST_files_tandem{sub} = dir(fullfile(string(GIST_file_location_tandem), '*.csv'));
     
         % Length of Romberg Balance GIST Files for Current Participant
-        GIST_file_location_romberg = strcat(sub_folder_names{1,j}, '\', romberg_folder);
-        GIST_files_romberg{j} = dir(fullfile(string(GIST_file_location_romberg), '*.csv'));
+        GIST_file_location_romberg = strcat([file_path, '/' , subject_str], '/', romberg_folder);
+        GIST_files_romberg{sub} = dir(fullfile(string(GIST_file_location_romberg), '*.csv'));
         
         % Loop through FMT GIST files
-        for k = 1:length(GIST_files_FMT{j})
-            current_datafile = GIST_files_FMT{j}(k,1); 
+        for k = 1:length(GIST_files_FMT{sub})
+            current_datafile = GIST_files_FMT{sub}(k,1); 
             current_filename = current_datafile.name;
             
             % Read in GIST file
@@ -243,8 +269,8 @@ for j = 1:GIST_participants
         end
     
         % Loop through Tandem Walk GIST files
-        for k = 1:length(GIST_files_tandem{j})
-            current_datafile = GIST_files_tandem{j}(k,1); 
+        for k = 1:length(GIST_files_tandem{sub})
+            current_datafile = GIST_files_tandem{sub}(k,1); 
             current_filename = current_datafile.name;
     
             % Read in GIST file
@@ -267,8 +293,8 @@ for j = 1:GIST_participants
         end
     
         % Loop through Romberg Balance GIST files
-        for k = 1:length(GIST_files_romberg{j})
-            current_datafile = GIST_files_romberg{j}(k,1); 
+        for k = 1:length(GIST_files_romberg{sub})
+            current_datafile = GIST_files_romberg{sub}(k,1); 
             current_filename = current_datafile.name;
     
             % Read in GIST file
@@ -289,7 +315,7 @@ for j = 1:GIST_participants
             % Add to Cell Array for Plotting
             romberg_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
         end
-    end
+%     end
 end
 
 %% Spreadsheet Plotting
