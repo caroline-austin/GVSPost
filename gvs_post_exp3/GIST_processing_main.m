@@ -21,7 +21,7 @@ subnum = [3023:3024];  % Subject List 3001,
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 
-%% Data Import
+%% Data Import setup
 
 % set up pathing
 code_path = strrep(pwd,'\','/'); %save code directory
@@ -116,7 +116,7 @@ opts_romberg.DataRange = romberg_dataLines(1, :);
 
 % Enter Loop for Each Participant
 participant_num = 0;
-for sub = 1:numsub % I want to change this to cycle through the subject list instead- this will make it easier to skip unwanted subjects
+for sub = 1:numsub 
     subject = subnum(sub);
     subject_str = num2str(subject);
 
@@ -130,14 +130,6 @@ for sub = 1:numsub % I want to change this to cycle through the subject list ins
        continue
     end
 
-%     % Skip Pilot Data (until the spreadsheet mods are implemented)
-%     if ~contains(sheet, "S3")
-%         continue
-%     else
-%         % Skip Template Tab
-%         if sub == 1
-%             continue
-%         else
             % Increment Participant
             participant_num = participant_num + 1;
             sp_participant_list(participant_num) = sheet;
@@ -221,13 +213,6 @@ for sub = 1:numsub
     end
     sub_path = strjoin([file_path, '/' , current_GIST_participant], '');
 
-%     % Current GIST Participant
-%     current_GIST_participant = sub_folder_names{1,sub};
-% 
-%     % Skip Pilot Participant
-%     if strcmp(current_GIST_participant, 'P3001')
-%         continue
-%     else
         % Generate GIST participant list
         num_GIST_participants = num_GIST_participants + 1;
         GIST_participant_list(num_GIST_participants) = string(current_GIST_participant);
@@ -317,8 +302,17 @@ for sub = 1:numsub
         end
 %     end
 end
+%% Xsens IMU data processing 
+
+%% Cut IMU data to right length (manual)
+
+%% Save Files
 
 %% Spreadsheet Plotting
+% I would like to put the plotting code in a new script where we load in
+% the files we've saved so we don't have to deal with the cutting /loading
+% naming code everytime we want to generate plots or do other things with
+% the data
 
 % Plot FMT Raw Completion time vs K
 figure_save = figure(); 
