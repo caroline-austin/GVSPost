@@ -86,7 +86,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         data_type = ["EulerX","EulerY","EulerZ","accX","accY","accZ","gyroX","gyroY","gyroZ"];
         direction = ["Z", "Y", "X"];
 
-        fourier_calc = (fft(gyro_aligned(:,1))); 
+        %fourier_calc = (fft(gyro_aligned(:,1))); 
+        Y = fft(gyro_aligned(:,1));
         FS = 30; % sampling freq.
         T = 1/FS; % period
         L = length(time); % length of signal
@@ -95,16 +96,37 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         x_vec = FS/L*(0:L-1);
         %x_vec = FS/L*(-L/2:L/2-1);
-        fft_med = median(abs(fourier_calc));
-        [Max,ind] = max(abs(fourier_calc(2:length(gyro_aligned))));
-        mnxfft_freq(i) = x_vec(ind);
+        %fft_med = median(abs(fourier_calc));
+        %[Max,ind] = max(abs(fourier_calc(2:length(gyro_aligned))));
+        %mnxfft_freq(i) = x_vec(ind);
+
+        % Power spectral density
+        %S = 0.8 + 0.7*sin(2*pi*1*t) + 2*randn(size(t));  % example signal S, with signal at 1 Hz of amplitude 0.7 plus DC offset and noise
+  
+        %Fs = 1/(t(2)-t(1));            % Sampling frequency                    
+        %T = 1/Fs;             % Sampling period      
+        L = length(Y);             % Length of signal
+        P2 = abs(Y/L);        % two-sided amplitude spectrum
+        P1 = P2(1:L/2+1);
+        P1(2:end-1) = 2*P1(2:end-1);  % to produce the one-sided amplitude spectrum, take the first half of the 2 sided, then multiply in the positive spectrum by 2. You do not need to multiply P1(1) and P1(end) by 2 because these amplitudes correspond to the zero and Nyquist frequencies respectively, and they do not have the complex conjugate pairs in the negative frequencies
+        f{sub,i} = FS/L*(0:(L/2));   % Define the frequency domain f for the single sided spectrum
+        Hz_val = 1; % looking for fft values at 1Hz freq.
+        % [subval, loc] = min(abs(f - Hz_val));
+        % freq_SpHz = f(loc); % freq. closest to 1 Hz
+        % fft_SpHz(i,:) = P1(loc); 
+        % 
+        % figure;
+        % plot(f,P1,"LineWidth",3)
+        % title("Single-Sided Amplitude Spectrum")
+        % xlabel("f (Hz)")
+        % ylabel("|P1(f)|")
         
         
-        figure();
-        stem(x_vec,abs((fourier_calc))); hold on;
-        %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
-        title('Complex Magnitude of FFT');
-        xlabel('Frequency [Hz]'); ylabel("|fft|");
+        % figure();
+        % stem(x_vec,abs((fourier_calc))); hold on;
+        % %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
+        % title('Complex Magnitude of FFT');
+        % xlabel('Frequency [Hz]'); ylabel("|fft|");
 
 %         figure();
 %         sgtitle(trial_name)
@@ -193,17 +215,18 @@ for sub = 1:numsub % first for loop that iterates through subject files
     end
     %eval (['clear ' vars_2_save])
     file_count = 0;
-    savesubfft{sub} = mnxfft_freq;
-end   
+    %savesubfft{sub} = mnxfft_freq;
 
-max_cell_length = max(cellfun('length',savesubfft));
-y = num2cell(1:numel(savesubfft));
-x = cellfun(@(x,y) [x(:) y*ones(size(x(:)))],savesubfft,y,'UniformOutput',0);
-X = vertcat(x{:});
-figure();
-boxplot(X(:,1),X(:,2));
-title('Subject Frequency Boxplot')
-xlabel('Subject'); ylabel('Frequency');
+end   
+%fft_SpHz(fft_SpHz == 0) = [];
+% max_cell_length = max(cellfun('length',savesubfft));
+% y = num2cell(1:numel(savesubfft));
+% x = cellfun(@(x,y) [x(:) y*ones(size(x(:)))],savesubfft,y,'UniformOutput',0);
+% X = vertcat(x{:});
+% figure();
+% boxplot(X(:,1),X(:,2));
+% title('Subject Frequency Boxplot')
+% xlabel('Subject'); ylabel('Frequency');
 
 toc
 % all of the code you want to run 
