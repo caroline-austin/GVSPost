@@ -100,11 +100,11 @@ for sub = 1:numsub % first for loop that iterates through subject files
         mnxfft_freq(i) = x_vec(ind);
         
         
-        figure();
-        stem(x_vec,abs(fftshift(fourier_calc))); hold on;
-        %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
-        title('Complex Magnitude of FFT');
-        xlabel('Frequency [Hz]'); ylabel("|fft|");
+        % figure();
+        % stem(x_vec,abs(fftshift(fourier_calc))); hold on;
+        % %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
+        % title('Complex Magnitude of FFT');
+        % xlabel('Frequency [Hz]'); ylabel("|fft|");
 
 %         figure();
 %         sgtitle(trial_name)
@@ -193,6 +193,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
     end
     %eval (['clear ' vars_2_save])
     file_count = 0;
+    savesubfft{sub} = mnxfft_freq;
 end   
 
 max_cell_length = max(cellfun('length',savesubfft));
