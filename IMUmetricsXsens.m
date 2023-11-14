@@ -1,9 +1,9 @@
 close all;clear;clc;
 tic
 %% set up
-subnum = 1017:1021;  % Subject List 
+subnum = 1017:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [0,0];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
 
@@ -93,18 +93,18 @@ for sub = 1:numsub % first for loop that iterates through subject files
         t = (0:L-1)*T; % time vector 
         time_verify = time - t; % should result in zeros vector
 
-                %x_vec = FS/L*(0:L-1);
-        x_vec = FS/L*(-L/2:L/2-1);
+        x_vec = FS/L*(0:L-1);
+        %x_vec = FS/L*(-L/2:L/2-1);
         fft_med = median(abs(fourier_calc));
         [Max,ind] = max(abs(fourier_calc(2:length(gyro_aligned))));
         mnxfft_freq(i) = x_vec(ind);
         
         
-        % figure();
-        % stem(x_vec,abs(fftshift(fourier_calc))); hold on;
-        % %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
-        % title('Complex Magnitude of FFT');
-        % xlabel('Frequency [Hz]'); ylabel("|fft|");
+        figure();
+        stem(x_vec,abs((fourier_calc))); hold on;
+        %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
+        title('Complex Magnitude of FFT');
+        xlabel('Frequency [Hz]'); ylabel("|fft|");
 
 %         figure();
 %         sgtitle(trial_name)
