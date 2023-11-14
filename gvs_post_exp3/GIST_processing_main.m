@@ -324,7 +324,7 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    sub_path = strjoin([file_path, '/' , current_XSENS_participant], '/XSENS');
+    sub_path = strjoin([file_path, '/' , current_XSENS_participant, '/XSENS'], '');
 
         % Generate XSENS participant list
         num_XSENS_participants = num_XSENS_participants + 1;
@@ -349,18 +349,18 @@ for sub = 1:numsub
             
             % Set Time, Roll, Pitch, and Yaw data
             time_data = XSENS_data.Time;
-            euler_x = XSENS_data.Ch1CurrentuA;
-            euler_y = XSENS_data.Ch1Impedance;
-            euler_z = XSENS_data.Ch1VoltageV;
-            acc_x = XSENS_data.Ch2CurrentuA;
-            acc_y = XSENS_data.Ch2Impedance;
-            acc_z = XSENS_data.Ch2VoltageV;            
-            gyro_x = XSENS_data.Roll;
-            gyro_y = XSENS_data.Pitch;
-            gyro_z = XSENS_data.Yaw;
+            euler_x = XSENS_data.EulerX;
+            euler_y = XSENS_data.EulerY;
+            euler_z = XSENS_data.EulerZ;
+            acc_x = XSENS_data.AccX;
+            acc_y = XSENS_data.AccY;
+            acc_z = XSENS_data.AccZ;            
+            gyro_x = XSENS_data.GyroX;
+            gyro_y = XSENS_data.GyroY;
+            gyro_z = XSENS_data.GyroZ;
     
             % Add to Cell Array for Plotting
-            FMT_data{num_XSENS_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+            FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
         end
 
          % Loop through Tandem Walk XSENS files
@@ -371,20 +371,20 @@ for sub = 1:numsub
             % Read in XSENS file
             XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_tandem, current_filename));
     
-            % Set Time, Roll, Pitch, and Yaw data
+           % Set Time, Roll, Pitch, and Yaw data
             time_data = XSENS_data.Time;
-            channel_1_current = XSENS_data.Ch1CurrentuA;
-            channel_1_impedance = XSENS_data.Ch1Impedance;
-            channel_1_voltage = XSENS_data.Ch1VoltageV;
-            channel_2_current = XSENS_data.Ch2CurrentuA;
-            channel_2_impedance = XSENS_data.Ch2Impedance;
-            channel_2_voltage = XSENS_data.Ch2VoltageV;            
-            roll_data = XSENS_data.Roll;
-            pitch_data = XSENS_data.Pitch;
-            yaw_data = XSENS_data.Yaw;
+            euler_x = XSENS_data.EulerX;
+            euler_y = XSENS_data.EulerY;
+            euler_z = XSENS_data.EulerZ;
+            acc_x = XSENS_data.AccX;
+            acc_y = XSENS_data.AccY;
+            acc_z = XSENS_data.AccZ;            
+            gyro_x = XSENS_data.GyroX;
+            gyro_y = XSENS_data.GyroY;
+            gyro_z = XSENS_data.GyroZ;
     
             % Add to Cell Array for Plotting
-            tandem_data{num_XSENS_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+            tandem_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
         end
 
         end
@@ -393,7 +393,29 @@ for sub = 1:numsub
         XSENS_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
         XSENS_files_romberg{sub} = dir(fullfile(string(XSENS_file_location_romberg), '*.csv'));
 
-
+                % Loop through Romberg Balance GIST files
+        for k = 1:length(XSENS_files_romberg{sub})
+            current_datafile = XSENS_files_romberg{sub}(k,1); 
+            current_filename = current_datafile.name;
+    
+            % Read in XSENS file
+            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_romberg, current_filename));
+    
+            % Set Time, Roll, Pitch, and Yaw data
+            time_data = XSENS_data.Time;
+            euler_x = XSENS_data.EulerX;
+            euler_y = XSENS_data.EulerY;
+            euler_z = XSENS_data.EulerZ;
+            acc_x = XSENS_data.AccX;
+            acc_y = XSENS_data.AccY;
+            acc_z = XSENS_data.AccZ;            
+            gyro_x = XSENS_data.GyroX;
+            gyro_y = XSENS_data.GyroY;
+            gyro_z = XSENS_data.GyroZ;
+    
+            % Add to Cell Array for Plotting
+            romberg_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
+        end
 end
 %% Cut IMU data to right length (manual)
 
