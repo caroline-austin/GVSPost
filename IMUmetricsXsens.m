@@ -193,7 +193,17 @@ for sub = 1:numsub % first for loop that iterates through subject files
     end
     %eval (['clear ' vars_2_save])
     file_count = 0;
-end    
+end   
+
+max_cell_length = max(cellfun('length',savesubfft));
+y = num2cell(1:numel(savesubfft));
+x = cellfun(@(x,y) [x(:) y*ones(size(x(:)))],savesubfft,y,'UniformOutput',0);
+X = vertcat(x{:});
+figure();
+boxplot(X(:,1),X(:,2));
+title('Subject Frequency Boxplot')
+xlabel('Subject'); ylabel('Frequency');
+
 toc
 % all of the code you want to run 
 
