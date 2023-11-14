@@ -1,4 +1,4 @@
-close all;clear;clc;
+close all;clear;clc; warning off;
 tic
 %% set up
 subnum = 1017:1022;  % Subject List 
@@ -12,10 +12,8 @@ code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 if ismac || isunix
     plots_path = [file_path '/Plots/Measures/IMU']; % specify where plots are saved
-
 elseif ispc
     plots_path = [file_path '\Plots\Measures\IMU']; % specify where plots are saved
-   
 end
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
@@ -109,11 +107,12 @@ for sub = 1:numsub % first for loop that iterates through subject files
         P2 = abs(Y/L);        % two-sided amplitude spectrum
         P1 = P2(1:L/2+1);
         P1(2:end-1) = 2*P1(2:end-1);  % to produce the one-sided amplitude spectrum, take the first half of the 2 sided, then multiply in the positive spectrum by 2. You do not need to multiply P1(1) and P1(end) by 2 because these amplitudes correspond to the zero and Nyquist frequencies respectively, and they do not have the complex conjugate pairs in the negative frequencies
-        f{sub,i} = FS/L*(0:(L/2));   % Define the frequency domain f for the single sided spectrum
+        f = FS/L*(0:(L/2));   % Define the frequency domain f for the single sided spectrum
         Hz_val = 1; % looking for fft values at 1Hz freq.
-        % [subval, loc] = min(abs(f - Hz_val));
-        % freq_SpHz = f(loc); % freq. closest to 1 Hz
-        % fft_SpHz(i,:) = P1(loc); 
+        [subval, loc] = min(abs(f - Hz_val));
+        freq_SpHz = f(loc); % freq. closest to 1 Hz
+        fft_SpHz(i,sub) = P1(loc);
+
         % 
         % figure;
         % plot(f,P1,"LineWidth",3)
@@ -219,6 +218,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 end   
 %fft_SpHz(fft_SpHz == 0) = [];
+fft_SpHz(fft_SpHz == 0) = NaN;
 % max_cell_length = max(cellfun('length',savesubfft));
 % y = num2cell(1:numel(savesubfft));
 % x = cellfun(@(x,y) [x(:) y*ones(size(x(:)))],savesubfft,y,'UniformOutput',0);
