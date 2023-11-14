@@ -178,7 +178,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
 %         close all;
 
     end
-    %eval (['clear ' vars_2_save])
+    eval (['clear ' vars_2_save])
     file_count = 0;
 end    
 
