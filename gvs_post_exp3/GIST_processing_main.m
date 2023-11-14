@@ -303,7 +303,98 @@ for sub = 1:numsub
 %     end
 end
 %% Xsens IMU data processing 
+% Define Each Folder Structure
+fmt_folder = 'FMT\';
+tandem_folder = 'Tandem\';
+romberg_folder = 'Romberg\';
 
+% Iterate through all subjects 
+num_XSENS_participants = 0;
+for sub = 1:numsub
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+
+     % Current XSENS Participant
+    if subject < 3023 
+        current_XSENS_participant = string(['P' subject_str]);
+    else
+        current_XSENS_participant = string(['S' subject_str]);
+    end
+
+    if ismember(subject,subskip) == 1
+       continue
+    end
+    sub_path = strjoin([file_path, '/' , current_XSENS_participant], '/XSENS');
+
+        % Generate XSENS participant list
+        num_XSENS_participants = num_XSENS_participants + 1;
+        XSENS_participant_list(num_XSENS_participants) = string(current_XSENS_participant);
+        
+        if subject > 3024
+            % Length of FMT XSENS Files for Current Participant
+            XSENS_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
+            XSENS_files_FMT{sub} = dir(fullfile(string(XSENS_file_location_FMT), '*.csv')); %could use the get_filetype.m function
+
+            % Length of Tandem Walk XSENS Files for Current Participant
+            XSENS_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
+            XSENS_files_tandem{sub} = dir(fullfile(string(XSENS_file_location_tandem), '*.csv'));
+
+            % Loop through FMT XSENS files
+        for k = 1:length(XSENS_files_FMT{sub})
+            current_datafile = XSENS_files_FMT{sub}(k,1); 
+            current_filename = current_datafile.name;
+            
+            % Read in XSENS file
+            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_FMT, current_filename));
+            
+            % Set Time, Roll, Pitch, and Yaw data
+            time_data = XSENS_data.Time;
+            euler_x = XSENS_data.Ch1CurrentuA;
+            euler_y = XSENS_data.Ch1Impedance;
+            euler_z = XSENS_data.Ch1VoltageV;
+            acc_x = XSENS_data.Ch2CurrentuA;
+            acc_y = XSENS_data.Ch2Impedance;
+            acc_z = XSENS_data.Ch2VoltageV;            
+            gyro_x = XSENS_data.Roll;
+            gyro_y = XSENS_data.Pitch;
+            gyro_z = XSENS_data.Yaw;
+    
+            % Add to Cell Array for Plotting
+            FMT_data{num_XSENS_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+        end
+
+         % Loop through Tandem Walk XSENS files
+        for k = 1:length(XSENS_files_tandem{sub})
+            current_datafile = XSENS_files_tandem{sub}(k,1); 
+            current_filename = current_datafile.name;
+    
+            % Read in XSENS file
+            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_tandem, current_filename));
+    
+            % Set Time, Roll, Pitch, and Yaw data
+            time_data = XSENS_data.Time;
+            channel_1_current = XSENS_data.Ch1CurrentuA;
+            channel_1_impedance = XSENS_data.Ch1Impedance;
+            channel_1_voltage = XSENS_data.Ch1VoltageV;
+            channel_2_current = XSENS_data.Ch2CurrentuA;
+            channel_2_impedance = XSENS_data.Ch2Impedance;
+            channel_2_voltage = XSENS_data.Ch2VoltageV;            
+            roll_data = XSENS_data.Roll;
+            pitch_data = XSENS_data.Pitch;
+            yaw_data = XSENS_data.Yaw;
+    
+            % Add to Cell Array for Plotting
+            tandem_data{num_XSENS_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+        end
+
+        end
+    
+        % Length of Romberg Balance XSENS Files for Current Participant
+        XSENS_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
+        XSENS_files_romberg{sub} = dir(fullfile(string(XSENS_file_location_romberg), '*.csv'));
+
+
+end
 %% Cut IMU data to right length (manual)
 
 %% Save Files
