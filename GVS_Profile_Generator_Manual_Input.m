@@ -21,6 +21,11 @@ if Num_Electrode>3 && Num_Electrode<=5
 elseif Num_Electrode<2 && Num_Electrode>5
     error('Error: Number of electrodes cannot be <2 or >5.');
 end
+
+if Num_Electrode==4
+    Electrode_Shape=input('4c) Enter shape of configuration (Aoyama = 1 or Diamond = 2): ');
+end
+
 Profile_Type=input('5) Enter profile signal type (1 = Sinusoidal or 2 = Noise 3 = DC): ');
 if Profile_Type < 3
     Polarity_Type=input('6) Enter polarity type (1 = Unipolar or 2 = Bipolar): ');
@@ -84,7 +89,7 @@ elseif Num_Electrode==3
     end
     Electrode_4_Sig=zeros(1,T);
     Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
-elseif Num_Electrode==4
+elseif Num_Electrode==4 && Electrode_Shape==1
     if Electrode_Config==1
         Electrode_2_Sig=GVS_Signal*(-1/3);
         Electrode_3_Sig=Electrode_2_Sig;
@@ -104,6 +109,22 @@ elseif Num_Electrode==4
         end
         Electrode_4_Sig=Electrode_3_Sig;
     end
+
+elseif Num_Electrode==4 && Electrode_Shape==2
+    Pos_Index = find(GVS_Signal>0);
+    Neg_Index = find(GVS_Signal<=0);
+
+    %electrodes 1&2 are cathodes 3 is the anode (backward)
+    Electrode_5_Sig=zeros(1,T);
+    Electrode_4_Sig(Pos_Index)=0;
+    Electrode_3_Sig(Pos_Index)=GVS_Signal(Pos_Index);
+    Electrode_2_Sig=GVS_Signal*(-.5);
+    Electrode_1_Sig=Electrode_2_Sig;
+  
+    %electrodes 1&2 are anodes 3 is the cathode (forward)
+    Electrode_4_Sig(Neg_Index)=GVS_Signal(Neg_Index);
+    Electrode_3_Sig(Neg_Index)=0;
+ 
 elseif Num_Electrode==5
     if Electrode_Config==1
         Electrode_2_Sig=GVS_Signal*(-.25);
