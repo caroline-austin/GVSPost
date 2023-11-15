@@ -188,9 +188,9 @@ end
 %% GIST IMU Data Processing
 
 % Define Each Folder Structure
-fmt_folder = 'FMT\';
-tandem_folder = 'Tandem\';
-romberg_folder = 'Romberg\';
+fmt_folder = 'FMT/';
+tandem_folder = 'Tandem/';
+romberg_folder = 'Romberg/';
 
 % Find Total Number of Data Folders in High Level Directory
 % GIST_participants = length(sub_folder_names);
@@ -304,9 +304,9 @@ for sub = 1:numsub
 end
 %% Xsens IMU data processing 
 % Define Each Folder Structure
-fmt_folder = 'FMT\';
-tandem_folder = 'Tandem\';
-romberg_folder = 'Romberg\';
+fmt_folder = 'FMT/';
+tandem_folder = 'Tandem/';
+romberg_folder = 'Romberg/';
 
 % Iterate through all subjects 
 num_XSENS_participants = 0;
@@ -329,71 +329,88 @@ for sub = 1:numsub
         % Generate XSENS participant list
         num_XSENS_participants = num_XSENS_participants + 1;
         XSENS_participant_list(num_XSENS_participants) = string(current_XSENS_participant);
-        
-        if subject > 3024
-            % Length of FMT XSENS Files for Current Participant
-            XSENS_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
-            XSENS_files_FMT{sub} = dir(fullfile(string(XSENS_file_location_FMT), '*.csv')); %could use the get_filetype.m function
 
-            % Length of Tandem Walk XSENS Files for Current Participant
-            XSENS_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
-            XSENS_files_tandem{sub} = dir(fullfile(string(XSENS_file_location_tandem), '*.csv'));
+        % Length of FMT XSENS Files for Current Participant
+        XSENS_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
+        XSENS_files_FMT{sub} = dir(fullfile(string(XSENS_file_location_FMT), '*.csv')); %could use the get_filetype.m function
 
-            % Loop through FMT XSENS files
-        for k = 1:length(XSENS_files_FMT{sub})
-            current_datafile = XSENS_files_FMT{sub}(k,1); 
-            current_filename = current_datafile.name;
-            
-            % Read in XSENS file
-            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_FMT, current_filename));
-            
-            % Set Time, Roll, Pitch, and Yaw data
-            time_data = XSENS_data.Time;
-            euler_x = XSENS_data.EulerX;
-            euler_y = XSENS_data.EulerY;
-            euler_z = XSENS_data.EulerZ;
-            acc_x = XSENS_data.AccX;
-            acc_y = XSENS_data.AccY;
-            acc_z = XSENS_data.AccZ;            
-            gyro_x = XSENS_data.GyroX;
-            gyro_y = XSENS_data.GyroY;
-            gyro_z = XSENS_data.GyroZ;
-    
-            % Add to Cell Array for Plotting
-            FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
-        end
+        % Length of Tandem Walk XSENS Files for Current Participant
+        XSENS_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
+        XSENS_files_tandem{sub} = dir(fullfile(string(XSENS_file_location_tandem), '*.csv'));
 
-         % Loop through Tandem Walk XSENS files
-        for k = 1:length(XSENS_files_tandem{sub})
-            current_datafile = XSENS_files_tandem{sub}(k,1); 
-            current_filename = current_datafile.name;
-    
-            % Read in XSENS file
-            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_tandem, current_filename));
-    
-           % Set Time, Roll, Pitch, and Yaw data
-            time_data = XSENS_data.Time;
-            euler_x = XSENS_data.EulerX;
-            euler_y = XSENS_data.EulerY;
-            euler_z = XSENS_data.EulerZ;
-            acc_x = XSENS_data.AccX;
-            acc_y = XSENS_data.AccY;
-            acc_z = XSENS_data.AccZ;            
-            gyro_x = XSENS_data.GyroX;
-            gyro_y = XSENS_data.GyroY;
-            gyro_z = XSENS_data.GyroZ;
-    
-            % Add to Cell Array for Plotting
-            tandem_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
-        end
-
-        end
-    
         % Length of Romberg Balance XSENS Files for Current Participant
         XSENS_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
         XSENS_files_romberg{sub} = dir(fullfile(string(XSENS_file_location_romberg), '*.csv'));
 
-                % Loop through Romberg Balance GIST files
+
+        if subject > 3024
+            % Loop through FMT XSENS files
+            for k = 1:length(XSENS_files_FMT{sub})
+                current_datafile = XSENS_files_FMT{sub}(k,1); 
+                current_filename = current_datafile.name;
+                
+                % Read in XSENS file
+                XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_FMT, current_filename));
+                
+                % Set Time, Roll, Pitch, and Yaw data
+                time_data = XSENS_data.Time;
+                euler_x = XSENS_data.EulerX;
+                euler_y = XSENS_data.EulerY;
+                euler_z = XSENS_data.EulerZ;
+                acc_x = XSENS_data.AccX;
+                acc_y = XSENS_data.AccY;
+                acc_z = XSENS_data.AccZ;            
+                gyro_x = XSENS_data.GyroX;
+                gyro_y = XSENS_data.GyroY;
+                gyro_z = XSENS_data.GyroZ;
+        
+                % Add to Cell Array for Plotting
+                FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
+            end
+    
+             % Loop through Tandem Walk XSENS files
+            for k = 1:length(XSENS_files_tandem{sub})
+                current_datafile = XSENS_files_tandem{sub}(k,1); 
+                current_filename = current_datafile.name;
+        
+                % Read in XSENS file
+                XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_tandem, current_filename));
+        
+               % Set Time, Roll, Pitch, and Yaw data
+                time_data = XSENS_data.Time;
+                euler_x = XSENS_data.EulerX;
+                euler_y = XSENS_data.EulerY;
+                euler_z = XSENS_data.EulerZ;
+                acc_x = XSENS_data.AccX;
+                acc_y = XSENS_data.AccY;
+                acc_z = XSENS_data.AccZ;            
+                gyro_x = XSENS_data.GyroX;
+                gyro_y = XSENS_data.GyroY;
+                gyro_z = XSENS_data.GyroZ;
+        
+                % Add to Cell Array for Plotting
+                tandem_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
+            end
+        else % for subjects without XSENS tandem walk and functional mobility data set as zeros
+            time_data = NaN;
+            euler_x = NaN;
+            euler_y = NaN;
+            euler_z = NaN;
+            acc_x = NaN;
+            acc_y = NaN;
+            acc_z = NaN;           
+            gyro_x = NaN;
+            gyro_y = NaN;
+            gyro_z = NaN;
+               for k = 1:length(GIST_files_FMT{sub}) % number of GIST and anticipated XSENS files should match (ie. same number of trials)
+                FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
+               end
+               for k = 1:length(GIST_files_tandem{sub}) % number of GIST and anticipated XSENS files should match (ie. same number of trials)
+                tandem_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
+               end
+        end
+
+                % Loop through Romberg Balance XSENS files
         for k = 1:length(XSENS_files_romberg{sub})
             current_datafile = XSENS_files_romberg{sub}(k,1); 
             current_filename = current_datafile.name;
@@ -419,7 +436,48 @@ for sub = 1:numsub
 end
 %% Cut IMU data to right length (manual)
 
-%% Save Files
+%% Sort variables and save Files
+Label.GIST = ["Time", "Ch1CurrentuA", "Ch1Impedance", "Ch1VoltageV", "Ch2CurrentuA", "Ch2Impedance", "Ch2VoltageV", "Roll", "Pitch", "Yaw"];
+Label.XSENS = ["Time", "EulerX", "EulerY", "EulerZ", "AccX", "AccY", "AccZ", "GyroX", "GyroY", "GyroZ"];
+FMT_Label = ["K000", "K000", "K500", "K500", "K999", "K999"];
+for sub= 1:numsub
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+
+     % Current XSENS Participant
+    if subject < 3023 
+        current_save_participant = string(['P' subject_str]);
+    else
+        current_save_participant = string(['S' subject_str]);
+    end
+
+    if ismember(subject,subskip) == 1
+       continue
+    end
+    sub_path = strjoin([file_path, '/' , current_save_participant], '');
+    
+    %FMT
+    for trial = 1:height(sp_fmt_data{1,sub})
+        fmt_trial_name = strrep(strjoin(['FMT_K' string(sp_fmt_data{1,sub}{trial,5}) '_' string(sp_fmt_data{1,sub}{trial,2})], ''), 'K0', 'K000');
+        fmt_GIST = FMT_data{1,sub}{trial,1};
+        fmt_XSENS = FMT_dataX{1,sub}{trial,1};
+        fmt_EXCEL = sp_fmt_data{1,sub}(trial,:);
+
+        cd(strjoin([sub_path '/' fmt_folder],''));
+        vars_2_save = ['fmt_GIST ' 'fmt_XSENS ' 'fmt_EXCEL '];
+        eval(strjoin(['  save ' strjoin([current_save_participant '_' fmt_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
+        cd(code_path);
+        eval (['clear ' vars_2_save])
+        close all;
+    end
+    
+
+    %Tandem Walk
+
+    %Romberg
+
+
+end
 
 %% Spreadsheet Plotting
 % I would like to put the plotting code in a new script where we load in
