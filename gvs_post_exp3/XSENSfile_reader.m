@@ -1,4 +1,4 @@
-function XSENS_data = XSENSfile_reader(filename, dataLines)
+function XSENS_data = XSENSfile_reader(filename,  sample_freq,dataLines)
 %IMPORTFILE Import data from a text file
 %  GIST20231027115332 = IMPORTFILE(FILENAME) reads data from text file
 %  FILENAME for the default selection.  Returns the data as a table.
@@ -18,7 +18,7 @@ function XSENS_data = XSENSfile_reader(filename, dataLines)
 %% Input handling
 
 % If dataLines is not specified, define defaults
-if nargin < 2
+if nargin < 3
     dataLines = [3, Inf];
 end
 
@@ -39,5 +39,13 @@ opts.EmptyLineRule = "read";
 
 % Import the data
 XSENS_data = readtable(filename, opts);
+
+% sensorpositionplot =0; %default is that we do not want to see the sensor position plot
+% if sample_freq >0
+% code_path = pwd;
+% cd ..\
+% XSENS_data(:,6:9) = GravityAligned([XSENS_data.AccX XSENS_data.AccY XSENS_data.AccZ], [XSENS_data.GyroX XSENS_data.GyroY XSENS_data.GyroZ],sensorpositionplot,sample_freq);
+% cd(code_path);
+% end
 
 end

@@ -399,7 +399,7 @@ for sub = 1:numsub
             current_filename = current_datafile.name;
     
             % Read in XSENS file
-            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_romberg, current_filename));
+            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_romberg, current_filename),30);
     
             % Set Time, Roll, Pitch, and Yaw data
             time_data = XSENS_data.Time;
