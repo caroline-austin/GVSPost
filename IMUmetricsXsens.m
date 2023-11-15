@@ -119,7 +119,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         figure;
         plot(f,P1,"LineWidth",3)
-        title("Single-Sided Amplitude Spectrum")
+        sgtitle(strrep(trial_name,'_','.'));
+        %title("Single-Sided Amplitude Spectrum")
         xlabel("f (Hz)")
         ylabel("|P1(f)|")
         
