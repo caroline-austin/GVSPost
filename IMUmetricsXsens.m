@@ -116,12 +116,12 @@ for sub = 1:numsub % first for loop that iterates through subject files
         
 
 
-        % 
-        % figure;
-        % plot(f,P1,"LineWidth",3)
-        % title("Single-Sided Amplitude Spectrum")
-        % xlabel("f (Hz)")
-        % ylabel("|P1(f)|")
+
+        figure;
+        plot(f,P1,"LineWidth",3)
+        title("Single-Sided Amplitude Spectrum")
+        xlabel("f (Hz)")
+        ylabel("|P1(f)|")
         
         
         % figure();
@@ -253,9 +253,17 @@ for mHz = 1:numsub
     end
 end
 
+sortval = sort(val_mat_mA);
+switchmat = permute(sortval,[3 2 1]);
 
+C = [];
+for bp = 1:12
+ C = [C;switchmat(:,:,bp)];
+end
 
-
+figure();
+boxplot(C(:,1),C(:,2));
+xlabel('mA'); ylabel('P1 amplitude spectrum');
 
 
 
