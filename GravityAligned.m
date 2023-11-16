@@ -1,5 +1,5 @@
-function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot)
-    FUSE = imufilter('SampleRate',25);
+function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot,sample_freq)
+    FUSE = imufilter('SampleRate',sample_freq);
     q = FUSE(acc,gyro); % goes from Inertial to Sensor
     Eulers = eulerd(q, 'ZYX', 'frame'); % sensor = Rx'*Ry'*Rz'*global
     [yaw, pitch, roll] = quat2angle(q);
