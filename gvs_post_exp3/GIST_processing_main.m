@@ -20,6 +20,12 @@ clc; clear; close all;
 subnum = [3023:3024];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
+% full subject data sets should have:
+% FMT: 6 GIST files, (9+ excel rows, 6 XSENS files(?)
+% tandem: 12 GIST files, 16(?) excel rows, 12 XSENS files (?)
+% Romberg: 30 GIST files (6 training, 24 trials), 18 excel rows (6
+% training, 12 trials), 30 XSENS files (6 training, 24 trials)
+
 
 %% Data Import setup
 
@@ -439,12 +445,29 @@ end
 %% Sort variables and save Files
 Label.GIST = ["Time", "Ch1CurrentuA", "Ch1Impedance", "Ch1VoltageV", "Ch2CurrentuA", "Ch2Impedance", "Ch2VoltageV", "Roll", "Pitch", "Yaw"];
 Label.XSENS = ["Time", "EulerX", "EulerY", "EulerZ", "AccX", "AccY", "AccZ", "GyroX", "GyroY", "GyroZ"];
+
+%define order for aggregated data
 FMT_Label = ["K000", "K000", "K500", "K500", "K999", "K999"];
+tandem_Label = ["K000_NHeadTilt_EO",  "K500_NHeadTilt_EO",  "K999_NHeadTilt_EO", ... 
+    "K000_YHeadTilt_EO",  "K500_YHeadTilt_EO",  "K999_YHeadTilt_EO", ... 
+    "K000_NHeadTilt_EC",  "K500_NHeadTilt_EC",  "K999_NHeadTilt_EC", ... 
+    "K000_YHeadTilt_EC",  "K500_YHeadTilt_EC",  "K999_YHeadTilt_EC"];
+romberg_Label = ["K000_NHeadTilt", "K000_NHeadTilt", "K000_NHeadTilt", ...
+        "K000_NHeadTilt",  "K500_NHeadTilt","K500_NHeadTilt","K500_NHeadTilt", ...
+        "K500_NHeadTilt",  "K999_NHeadTilt","K999_NHeadTilt","K999_NHeadTilt",... 
+        "K999_NHeadTilt", "K000_YHeadTilt", "K000_YHeadTilt","K000_YHeadTilt", ...
+        "K000_YHeadTilt", "K500_YHeadTilt", "K500_YHeadTilt","K500_YHeadTilt", ...
+        "K500_YHeadTilt", "K999_YHeadTilt", "K999_YHeadTilt", "K999_YHeadTilt", "K999_YHeadTilt"]; 
+romberg_training_Label = [ "K000_NHeadTilt_EO_HS", "K000_NHeadTilt_EC_HS", "K000_NHeadTilt_EO_FS", ... 
+        "K000_NHeadTilt_EC_FS", "K000_YHeadTilt_EO_FS", "K000_YHeadTilt_EC_FS"]; 
+
+%process data one participant at a time
 for sub= 1:numsub
+    %set up subject info and pathing
     subject = subnum(sub);
     subject_str = num2str(subject);
 
-     % Current XSENS Participant
+     % Current save Participant
     if subject < 3023 
         current_save_participant = string(['P' subject_str]);
     else
@@ -457,27 +480,203 @@ for sub= 1:numsub
     sub_path = strjoin([file_path, '/' , current_save_participant], '');
     
     %FMT
+    check = zeros(1,height(sp_fmt_data{1,sub})); % one zero for each of the anticipated trials
+    % it would be good to pre allocate the sort and all variables
+
+    %process data one trial at a time
     for trial = 1:height(sp_fmt_data{1,sub})
+        %create trial name
         fmt_trial_name = strrep(strjoin(['FMT_K' string(sp_fmt_data{1,sub}{trial,5}) '_' string(sp_fmt_data{1,sub}{trial,2})], ''), 'K0', 'K000');
+        %pull data for given trial
         fmt_GIST = FMT_data{1,sub}{trial,1};
         fmt_XSENS = FMT_dataX{1,sub}{trial,1};
         fmt_EXCEL = sp_fmt_data{1,sub}(trial,:);
-
+        %save individual trial data into a its own file
         cd(strjoin([sub_path '/' fmt_folder],''));
         vars_2_save = ['fmt_GIST ' 'fmt_XSENS ' 'fmt_EXCEL '];
         eval(strjoin(['  save ' strjoin([current_save_participant '_' fmt_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
         cd(code_path);
-        eval (['clear ' vars_2_save])
         close all;
+        % aggregate the data from all of the trials into a single organized
+        % variable - trial organization is determined by the label defined
+        % at the beginning of the section
+        for match = 1:length(FMT_Label)
+            if contains(fmt_trial_name, FMT_Label(match)) && check(match) ==0
+                check(match) = 1; % additional condition because each treatment is repeated
+                %single subject organization of trials
+                fmt_GIST_sort{match} = FMT_data{1,sub}{trial,1};
+                fmt_XSENS_sort{match} = FMT_dataX{1,sub}{trial,1};
+                fmt_EXCEL_sort{match}= sp_fmt_data{1,sub}(trial,:);
+                % store all trials from all subjects 
+                fmt_GIST_all{sub,match} = FMT_data{1,sub}{trial,1};
+                fmt_XSENS_all{sub,match} = FMT_dataX{1,sub}{trial,1};
+                fmt_EXCEL_all{sub,match}= sp_fmt_data{1,sub}(trial,:);
+                break;
+            end
+        end
+        eval (['clear ' vars_2_save])
     end
     
-
     %Tandem Walk
+        % it would be good to pre allocate the sort and all variables
 
+         %process data one trial at a time
+    for trial = 1:height(sp_tandem_data{1,sub})
+        %create trial name (pulling some of the sub components beforehand 
+        % so that captialization and name length can be consistent)
+        headtilts = char(sp_tandem_data{1,sub}{trial,7});
+        headtilts = upper(headtilts(1));
+        eyes = char(sp_tandem_data{1,sub}{trial,8});
+        eyes = upper(eyes(1));
+        tandem_trial_name = strrep(strjoin(['TDM_K' string(sp_tandem_data{1,sub}{trial,5}) '_' headtilts 'HeadTilt_E' eyes  '_' string(sp_tandem_data{1,sub}{trial,2})], ''), 'K0', 'K000');
+        %pull data for given trial
+        tandem_GIST = tandem_data{1,sub}{trial,1};
+        tandem_XSENS = tandem_dataX{1,sub}{trial,1};
+        tandem_EXCEL = sp_tandem_data{1,sub}(trial,:);
+        %save individual trial data into a its own file
+        cd(strjoin([sub_path '/' tandem_folder],''));
+        vars_2_save = ['tandem_GIST ' 'tandem_XSENS ' 'tandem_EXCEL '];
+        eval(strjoin(['  save ' strjoin([current_save_participant '_' tandem_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
+        cd(code_path);
+        close all;
+        % aggregate the data from all of the trials into a single organized
+        % variable - trial organization is determined by the label defined
+        % at the beginning of the section
+        for match = 1:length(tandem_Label)
+            if contains(tandem_trial_name, tandem_Label(match)) 
+                %single subject organization of trials
+                tandem_GIST_sort{match} = tandem_data{1,sub}{trial,1};
+                tandem_XSENS_sort{match} = tandem_dataX{1,sub}{trial,1};
+                tandem_EXCEL_sort{match}= sp_tandem_data{1,sub}(trial,:);
+                % store all trials from all subjects 
+                tandem_GIST_all{sub,match} = tandem_data{1,sub}{trial,1};
+                tandem_XSENS_all{sub,match} = tandem_dataX{1,sub}{trial,1};
+                tandem_EXCEL_all{sub,match}= sp_tandem_data{1,sub}(trial,:);
+                break;
+            end
+        end
+        eval (['clear ' vars_2_save])
+    end
     %Romberg
+        check_rom = zeros(1,height(sp_romberg_data{1,sub})*2); % one zero for each of the anticipated trials
+    % it would be good to pre allocate the sort and all variables
+    training = height(sp_romberg_data_training{1,sub});
+    %process data one trial at a time (shifting to account for training trials in the data matrix )
+    for trial = (training+1):(length(romberg_data{1,sub}))
+        % set up index to account for 2 trials in each row of the sp_
+        % variable from the excel sheet
+        index = ceil((trial-training)/2);
+        %create trial name (pulling some of the sub components beforehand 
+        % so that captialization and name length can be consistent)
+        if rem(trial,2) ==0
+            order = "B";
+        else 
+            order = "A";
+        end
+        headtilts = char(sp_romberg_data{1,sub}{index,7});
+        headtilts = upper(headtilts(1));
+        romberg_trial_name = strrep(strjoin(['ROM_K' string(sp_romberg_data{1,sub}{index,5}) '_' headtilts 'HeadTilt_' string(sp_romberg_data{1,sub}{index,2}) order], ''), 'K0', 'K000');
+        %pull data for given trial
+        romberg_GIST = romberg_data{1,sub}{trial,1}; % need to adjust/split first file for S3023
+        romberg_XSENS = romberg_dataX{1,sub}{trial,1};
+        romberg_EXCEL = sp_romberg_data{1,sub}(index,:);
+        %save individual trial data into a its own file
+        cd(strjoin([sub_path '/' romberg_folder],''));
+        vars_2_save = ['romberg_GIST ' 'romberg_XSENS ' 'romberg_EXCEL '];
+        eval(strjoin(['  save ' strjoin([current_save_participant '_' romberg_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
+        cd(code_path);
+        close all;
+        % aggregate the data from all of the trials into a single organized
+        % variable - trial organization is determined by the label defined
+        % at the beginning of the section
+        for match = 1:length(romberg_Label)
+            if contains(romberg_trial_name, romberg_Label(match)) && check_rom(match) ==0
+                check_rom(match) =1;
+                %single subject organization of trials
+                romberg_GIST_sort{match} = romberg_data{1,sub}{trial,1};
+                romberg_XSENS_sort{match} = romberg_dataX{1,sub}{trial,1};
+                romberg_EXCEL_sort{match}= sp_romberg_data{1,sub}(index,:);
+                % store all trials from all subjects 
+                romberg_GIST_all{sub,match} = romberg_data{1,sub}{trial,1};
+                romberg_XSENS_all{sub,match} = romberg_dataX{1,sub}{trial,1};
+                romberg_EXCEL_all{sub,match}= sp_romberg_data{1,sub}(index,:);
+                break;
+            end
+        end
+        eval (['clear ' vars_2_save])
+    end
 
+   %Romberg training trials
+    check = zeros(1,height(sp_romberg_data_training{1,sub})); % one zero for each of the anticipated trials
+    % it would be good to pre allocate the sort and all variables
 
+    %process data one trial at a time
+    for trial = 1:height(sp_romberg_data_training{1,sub})
+
+        headtilts = char(sp_romberg_data_training{1,sub}{trial,7});
+        headtilts = upper(headtilts(1));
+        eyes = char(sp_romberg_data_training{1,sub}{trial,9});
+        eyes = upper(eyes(1));
+        surface = char(sp_romberg_data_training{1,sub}{trial,8});
+        surface = upper(surface(1));
+        
+        romberg_trial_name = strrep(strjoin(['ROM_K' string(sp_romberg_data_training{1,sub}{trial,5}) '_' headtilts 'HeadTilt_E' eyes '_' surface 'S_' string(sp_romberg_data_training{1,sub}{trial,1})], ''), 'K0', 'K000');
+        %pull data for given trial
+        romberg_GIST_train = romberg_data{1,sub}{trial,1}; % missing file for S3023
+        romberg_XSENS_train = romberg_dataX{1,sub}{trial,1};
+        romberg_EXCEL_train = sp_romberg_data_training{1,sub}(trial,:);
+        %save individual trial data into a its own file
+        cd(strjoin([sub_path '/' romberg_folder],''));
+        vars_2_save = ['romberg_GIST_train ' 'romberg_XSENS_train ' 'romberg_EXCEL_train '];
+        eval(strjoin(['  save ' strjoin([current_save_participant '_' romberg_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
+        cd(code_path);
+        close all;
+        % aggregate the data from all of the trials into a single organized
+        % variable - trial organization is determined by the label defined
+        % at the beginning of the section
+        for match = 1:length(romberg_training_Label)
+            if contains(romberg_trial_name, romberg_training_Label(match)) && check(match) ==0
+                %single subject organization of trials
+                romberg_GIST_train_sort{match} = romberg_data{1,sub}{trial,1};
+                romberg_XSENS_train_sort{match} = romberg_dataX{1,sub}{trial,1};
+                romberg_EXCEL_train_sort{match}= sp_romberg_data_training{1,sub}(trial,:);
+                % store all trials from all subjects 
+                romberg_GIST_train_all{sub,match} = romberg_data{1,sub}{trial,1};
+                romberg_XSENS_train_all{sub,match} = romberg_dataX{1,sub}{trial,1};
+                romberg_EXCEL_train_all{sub,match}= sp_romberg_data_training{1,sub}(trial,:);
+                break;
+            end
+        end
+
+        eval (['clear ' vars_2_save])
+    end
+    
+    % put all Labels into the label variable (these were not needed for the individual trial files)
+    Label.romberg = romberg_Label;
+    Label.romberg_training = romberg_training_Label;
+    Label.tandem = tandem_Label;
+    Label.FMT = FMT_Label;
+
+    % save all of the trials for a given subject
+        cd(sub_path);
+        vars_2_save = ['fmt_GIST_sort ' 'fmt_XSENS_sort ' 'fmt_EXCEL_sort ' ... 
+            'tandem_GIST_sort ' 'tandem_XSENS_sort ' 'tandem_EXCEL_sort ' ... 
+            'romberg_GIST_sort ' 'romberg_XSENS_sort ' 'romberg_EXCEL_sort ' ...
+            'romberg_GIST_train_sort ' 'romberg_XSENS_train_sort ' 'romberg_EXCEL_train_sort '];
+        eval(strjoin(['  save ' strjoin([current_save_participant '.mat '],'') vars_2_save  ' Label vars_2_save']));     
+        cd(code_path);
+        close all;
+        eval (['clear ' vars_2_save])
 end
+    % save all of the trials for all subjects
+    cd(file_path);
+    vars_2_save = ['fmt_GIST_all ' 'fmt_XSENS_all ' 'fmt_EXCEL_all ' ...
+        'tandem_GIST_all ' 'tandem_XSENS_all ' 'tandem_EXCEL_all ' ... 
+        'romberg_GIST_all ' 'romberg_XSENS_all ' 'romberg_EXCEL_all '... 
+        'romberg_GIST_train_all ' 'romberg_XSENS_train_all ' 'romberg_EXCEL_train_all '];
+    eval(['  save All.mat ' vars_2_save  ' Label vars_2_save']);     
+    cd(code_path);
+    close all;
 
 %% Spreadsheet Plotting
 % I would like to put the plotting code in a new script where we load in
