@@ -17,7 +17,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3024];  % Subject List 3001, 
+subnum = [3023:3025];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -142,7 +142,7 @@ for sub = 1:numsub
             
             % Functional Mobility Test
             % Adjust for additional training trial for subject S3023
-            if strcmp(sheet, 'S3023')
+            if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025')
                 opts_fmt_mod.Sheet = sheet;
                 sp_fmt_data_all = readtable(filename, opts_fmt_mod, "UseExcel", false);
 
@@ -577,7 +577,7 @@ for sub= 1:numsub
         headtilts = upper(headtilts(1));
         romberg_trial_name = strrep(strjoin(['ROM_K' string(sp_romberg_data{1,sub}{index,5}) '_' headtilts 'HeadTilt_' string(sp_romberg_data{1,sub}{index,2}) order], ''), 'K0', 'K000');
         %pull data for given trial
-        romberg_GIST = romberg_data{1,sub}{trial,1}; % need to adjust/split first file for S3023
+        romberg_GIST = romberg_data{1,sub}{trial,1}; 
         romberg_XSENS = romberg_dataX{1,sub}{trial,1};
         romberg_EXCEL = sp_romberg_data{1,sub}(index,:);
         %save individual trial data into a its own file
