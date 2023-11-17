@@ -17,7 +17,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3025];  % Subject List 3001, 
+subnum = [3023:3026];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -369,7 +369,8 @@ for sub = 1:numsub
                 gyro_x = XSENS_data.GyroX;
                 gyro_y = XSENS_data.GyroY;
                 gyro_z = XSENS_data.GyroZ;
-        
+
+                        
                 % Add to Cell Array for Plotting
                 FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
             end
@@ -435,6 +436,57 @@ for sub = 1:numsub
             gyro_x = XSENS_data.GyroX;
             gyro_y = XSENS_data.GyroY;
             gyro_z = XSENS_data.GyroZ;
+
+            cd ..
+            [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned([acc_x, acc_y, acc_z], [gyro_x, gyro_y, gyro_z],0,30);
+            cd(code_path);
+            
+            figure; 
+            subplot(3,3,1)
+            plot(euler_x,'r'); title("Euler X");
+            subplot(3,3,2)
+            plot(euler_y,'b'); title("Euler y");
+            subplot(3,3,3)
+            plot(euler_z,'g'); title("Euler Z");
+            
+            subplot(3,3,4)
+            plot(acc_x,'r');  title("Acc X");
+            subplot(3,3,5)
+            plot(acc_y,'b'); title("Acc Y");
+            subplot(3,3,6)
+            plot(acc_z,'g'); title("Acc Z");
+
+            subplot(3,3,7)
+            plot(gyro_x,'r'); title("Gyro X");
+            subplot(3,3,8)
+            plot(gyro_y,'b'); title("Gyro Y");
+            subplot(3,3,9)
+            plot(gyro_z,'g'); title("Gyro Z");
+            sgtitle("Not Gravity Aligned") 
+
+
+            figure; 
+            subplot(3,3,1)
+            plot(roll, 'r'); title("Roll");
+            subplot(3,3,2)
+            plot(pitch, 'b'); title("Pitch");
+            subplot(3,3,3)
+            plot(yaw,'g'); title("Yaw");
+            
+            subplot(3,3,4)
+            plot(acc_aligned(:,1),'r');  title("Acc X");
+            subplot(3,3,5)
+            plot(acc_aligned(:,2),'b'); title("Acc Y");
+            subplot(3,3,6)
+            plot(acc_aligned(:,3),'g'); title("Acc Z");
+
+            subplot(3,3,7)
+            plot(gyro_aligned(:,1),'r'); title("Gyro X");
+            subplot(3,3,8)
+            plot(gyro_aligned(:,2),'b'); title("Gyro Y");
+            subplot(3,3,9)
+            plot(gyro_aligned(:,3),'g'); title("Gyro Z");
+            sgtitle("Gravity Aligned") 
     
             % Add to Cell Array for Plotting
             romberg_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
