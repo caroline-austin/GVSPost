@@ -441,7 +441,7 @@ for sub = 1:numsub
             gyro_raw = pi/180*[gyro_x, gyro_y, gyro_z]; % must be rad/s
 
             cd ..
-            [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc_raw(10:end), gyro_raw(10:end),0,30);
+            [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc_raw(10:end,:), gyro_raw(10:end,:),0,30);
             cd(code_path);
             
             figure; 
