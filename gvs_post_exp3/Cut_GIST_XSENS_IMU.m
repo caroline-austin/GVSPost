@@ -59,8 +59,12 @@ plot_path = [file_path '/plots/'];
 %% Specify files to cut
 %% load file 
 
+% add some logic to see if the data has already been cut/ to specify what
+% you want to cut rather than making the user recut all of the data every
+% time
+
 cd(file_path);
-load('All.m');
+load('All.mat');
 cd(code_path);
 
 
@@ -85,8 +89,51 @@ for sub = 1:numsub
             % Increment Participant
             participant_num = participant_num + 1;
             sp_participant_list(participant_num) = current_participant;
+            for trial = 1:width(fmt_EXCEL_all)
+                trial_info = fmt_EXCEL_all{sub,trial};
+                raw_time = trial_info.RawTime;
+                trial_length = round(raw_time*30);
+                Xsens_data = fmt_XSENS_all{sub,trial};
+                GIST_data = fmt_GIST_all{sub,trial};
+                Xsens_length = height(Xsens_data); 
+                
+                fmt_start{sub,trial} = 0;
+                fmt_end{sub,trial} =0;
+    
+                if Xsens_length >1
+                    clc; close all;
+                figure; 
+                    for i = 2: width(Xsens_data)
+                        subplot(3,3,i-1)
+                        plot(Xsens_data(:,i),'r'); 
+                        title(Label.XSENS(i));
+                        
+                    end
+                    sgtitle(strjoin(["Uncut FMT Data; Expected Trial Length: " num2str(trial_length) " samples = " num2str(trial_length/30) " s"])) ;
 
-            trial_info = fmt_EXCEL_all{}
+                    % if your estimate is more than two seconds off the expected value it will flag it
+                    iter = 0;
+                    while fmt_end{sub,trial} == 0 || abs(trial_length - abs(fmt_start{sub,trial}-fmt_end{sub,trial})) > 60 
+                        if iter >=1
+                            disp("Your start and end values do not match the expected trial length");
+                        end
+                        fmt_start{sub,trial} = input("Enter the time (x-value integer) for the start of the trial: ");
+                        fmt_end{sub,trial} = input(strjoin(["Enter the time (x-value integer) for the end of the trial (estimated" num2str(fmt_start{sub,trial} + trial_length) ", enter 0 to reselect the start value): "]));
+                        iter= iter+1;
+                    end
+                    Xsens_data_cut = Xsens_data(fmt_start{sub,trial}:fmt_end{sub,trial},:);
+
+                    figure; 
+                    for i = 2: width(Xsens_data_cut)
+                        subplot(3,3,i-1)
+                        plot(Xsens_data_cut(:,i),'r'); 
+                        title(Label.XSENS(i));
+                        
+                    end
+                    sgtitle(strjoin(["Cut FMT Data; Selected Trial Length: " num2str(fmt_end{sub,trial}-fmt_start{sub,trial}) " samples = " num2str((fmt_end{sub,trial}-fmt_start{sub,trial})/30) " s" ])) ;
+    
+                end
+            end
 
 
 
@@ -100,7 +147,7 @@ end
 % cut to the trial length based on the start/end time the user specified
 % and the known length of the trial
 
-% overwrite the variable storing the uncut dat 
+% overwrite the variable storing the uncut data 
 
 %% Cut GIST Tandem
 
