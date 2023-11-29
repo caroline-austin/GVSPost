@@ -864,6 +864,7 @@ for sub= 1:numsub
         eval (['clear ' vars_2_save])
 end
     % save all of the trials for all subjects
+    % need to add subject number label
     cd(file_path);
     vars_2_save = ['fmt_GIST_all ' 'fmt_XSENS_all ' 'fmt_EXCEL_all ' ...
         'tandem_GIST_all ' 'tandem_XSENS_all ' 'tandem_EXCEL_all ' ... 
