@@ -17,7 +17,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3027];  % Subject List 3001, 
+subnum = [3023:3028];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -142,7 +142,7 @@ for sub = 1:numsub
             
             % Functional Mobility Test
             % Adjust for additional training trial for subject S3023
-            if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025') || strcmp(sheet, 'S3027')
+            if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025') || strcmp(sheet, 'S3027') || strcmp(sheet, 'S3028')
                 opts_fmt_mod.Sheet = sheet;
                 sp_fmt_data_all = readtable(filename, opts_fmt_mod, "UseExcel", false);
 
