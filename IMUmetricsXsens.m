@@ -59,9 +59,9 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         imu_data = table2array(imu_table(:,3:11));
 
-        Euler = imu_data(:,1:3);
-        acc = imu_data(:,4:6);
-        gyro = imu_data(:,7:9);
+        Euler = imu_data(2:end,1:3); % exclude first line of 0's
+        acc = imu_data(2:end,4:6);
+        gyro = pi/180*imu_data(2:end,7:9); % convert to rad/s
 
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(imu_data)/30)-1/30);
