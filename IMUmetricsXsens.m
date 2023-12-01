@@ -87,7 +87,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % magnitude of gyro and acc 
         mag_acc = sqrt((acc_aligned(:,1).^2) + (acc_aligned(:,2).^2));
         mag_gyro = sqrt((gyro_aligned(:,1).^2) + (gyro_aligned(:,2).^2));
-        Y_acc = fft(mag_gyro); Y_gyro = fft(mag_gyro);
+        Y_gyroz = fft(gyro_aligned(:,3));
+        Y_acc = fft(mag_acc); Y_gyro = fft(mag_gyro);
 
         % fft: roll, pitch, yaw 
         Y_yaw = fft(yaw); Y_pitch = fft(pitch); Y_roll = fft(roll);
@@ -99,6 +100,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         [fft_SpHz_yaw(i,sub),freq_SpHz] = fftcalc(i,Y_yaw,time,sub,trial_name);
         [fft_SpHz_pitch(i,sub),freq_SpHz] = fftcalc(i,Y_pitch,time,sub,trial_name);
         [fft_SpHz_roll(i,sub),freq_SpHz] = fftcalc(i,Y_roll,time,sub,trial_name);
+        [fft_SpHz_gyroz(i,sub),freq_SpHz] = fftcalc(i,Y_gyroz,time,sub,trial_name);
         
         
         % figure();
@@ -211,6 +213,7 @@ end
 [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
 [C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
 [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
+[C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 
 
 function [C] = boxplotfft(fft_SpHz,numsub,trialinfo_mAval)
