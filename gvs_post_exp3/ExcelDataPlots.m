@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3027];  % Subject List 3001, 
+subnum = [3023:3030];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
