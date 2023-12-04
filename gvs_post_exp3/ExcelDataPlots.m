@@ -162,7 +162,7 @@ xticklabels( Label.tandem);
 title("Tandem Walk Completion Time Performance")
 ylabel("Time (s)")
 xlabel("Condition")
-
+%%
 figure;
 for i = 1:height(completion_time)
     plot(correct_steps(i,:), sub_symbols(i),'MarkerSize',15);
@@ -173,6 +173,11 @@ xticklabels( strrep(Label.tandem, '_', ''));
 title("Tandem Walk Correct Steps")
 ylabel("Number of Correct Steps")
 xlabel("Condition")
+
+xlim ([9.5 12.5]);
+xticklabels( ["" "" "" "" "" "" "" "" ""  "No GVS"  "1mA @45 deg"  "2mA @45 deg" ]);
+ylim([0 10])
+title("Tandem Walk Correct Steps: Eyes Closed With ~30 deg Head Tilts")
 
 %%
 figure;
@@ -185,3 +190,9 @@ xticklabels( strrep(Label.romberg, '_',''));
 title("Romberg Fail Time")
 ylabel("Time (s)")
 xlabel("Condition")
+
+% xlim ([13 24]);
+% xticklabels( ["" "" "" "" "" "" "" "" "" "" "" "" "No GVS" "No GVS" "No GVS" "No GVS" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg"]);
+% ylim([0 15.25])
+% title("Romberg Fail Time Eyes Closed With ~30 deg Head Tilts")
+% title("Romberg Fail Time: Eyes Closed With ~30 deg Head Tilts")
