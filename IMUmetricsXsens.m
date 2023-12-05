@@ -1,7 +1,7 @@
-close all;clear;clc;% warning off;
+close all;clear;clc; warning off;
 
 %% set up
-subnum = 1018:1021;  % Subject List 
+subnum = 1017:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -37,7 +37,6 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
     cd(file_path); % change directories
     Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
-    %Label = 1;
     TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
     TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
     cd(code_path);
@@ -66,7 +65,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 
         Label.imu = imu_table.Properties.VariableNames(3:11);
-        time = 0:1/30:((height(imu_data)/30)-1/30);
+        time = 0:1/30:((height(acc)/30)-1/30);
+        timeimu = 0:1/30:((height(imu_data)/30)-1/30);
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
         [Xlimit,Ylimit] = PlotScale(imu_data,time);
@@ -110,89 +110,89 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % %plot(x_vec,abs(smoothdata(fourier_calc,"gaussian",5))); hold off;
         % title('Complex Magnitude of FFT');
         % xlabel('Frequency [Hz]'); ylabel("|fft|");
+        % 
+        % figure();
+        % sgtitle(trial_name)
+        % for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
+        %     subplot(3,3,j);
+        %     plot(timeimu, imu_data(:,j));
+        %     xlim(Xlimit)
+        %     title(data_type(j));
+        % end
+        % 
+        % Filename=(['S' subject_str 'IMU' trial_name]);
+        % cd(plots_path)
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path)
 
-%         figure();
-%         sgtitle(trial_name)
-%         for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
-%             subplot(3,3,j);
-%             plot(time, imu_data(:,j));
-%             xlim(Xlimit)
-%             title(data_type(j));
-%         end
-% 
-%         Filename=(['S' subject_str 'IMU' trial_name]);
-%         cd(plots_path)
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path)
-% 
-% % save files
-% 
-%         cd(subject_path);
-%         vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-%         eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-%         cd(code_path);
-%         close all;
-% 
-%         %% Gravity Aligned Plots
-% 
-%         figure();
-%         sgtitle(strrep(trial_name,'_','.'));
-% 
-%         for k=1:width(acc_aligned)
-%             subplot(3,3,k+3)
-%             plot(time,acc_aligned(:,k))
-%             ylim([-8 10])
-%             xlim(Xlimit)
-%             direction_title_1 = strcat("Acc Aligned ", direction(k));
-%             title(direction_title_1)
-%             xlabel("seconds");
-%             ylabel("m/s^2")
-%         end
-% 
-%         for l=1:width(gyro_aligned)
-%             subplot(3,3,l+6)
-%             plot(time,gyro_aligned(:,l))
-%             ylim([-8 8])
-%             xlim(Xlimit)
-%             direction_title_2 = strcat("Gyro Aligned ", direction(l));
-%             title(direction_title_2)
-%             xlabel("seconds");
-%             ylabel("degrees")
-%         end
-% 
-%         subplot(3,3,1)
-%         plot(time,yaw)
-%         xlim(Xlimit)
-%         ylim([-10 10])
-%         title("Yaw")
-%         xlabel("seconds");
-%         ylabel("degrees")
-% 
-%         subplot(3,3,2)
-%         plot(time,pitch)
-%         xlim(Xlimit)
-%         ylim([-10 10])
-%         title("Pitch")
-%         xlabel("seconds");
-%         ylabel("degrees")
-% 
-%         subplot(3,3,3)
-%         plot(time,roll)
-%         xlim(Xlimit)
-%         ylim([-10 10])
-%         title("Roll")
-%         xlabel("seconds");
-%         ylabel("degrees")
-% 
-%         Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
-%         cd(plots_path)
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path)
-% 
-%         cd(subject_path);
-%         vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-%         eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-%         cd(code_path);
+% save files
+
+        % cd(subject_path);
+        % vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        % eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        % cd(code_path);
+        % close all;
+
+        %% Gravity Aligned Plots
+
+        figure();
+        sgtitle(strrep(trial_name,'_','.'));
+
+        for k=1:width(acc_aligned)
+            subplot(3,3,k+3)
+            plot(time,acc_aligned(:,k))
+            ylim([-8 10])
+            xlim(Xlimit)
+            direction_title_1 = strcat("Acc Aligned ", direction(k));
+            title(direction_title_1)
+            xlabel("seconds");
+            ylabel("m/s^2")
+        end
+
+        for l=1:width(gyro_aligned)
+            subplot(3,3,l+6)
+            plot(time,gyro_aligned(:,l))
+            ylim([-8 8])
+            xlim(Xlimit)
+            direction_title_2 = strcat("Gyro Aligned ", direction(l));
+            title(direction_title_2)
+            xlabel("seconds");
+            ylabel("degrees")
+        end
+
+        subplot(3,3,1)
+        plot(time,yaw)
+        xlim(Xlimit)
+        ylim([-10 10])
+        title("Yaw")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        subplot(3,3,2)
+        plot(time,pitch)
+        xlim(Xlimit)
+        ylim([-10 10])
+        title("Pitch")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        subplot(3,3,3)
+        plot(time,roll)
+        xlim(Xlimit)
+        ylim([-10 10])
+        title("Roll")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        cd(plots_path)
+        saveas(gcf, [char(Filename) '.fig']);
+        cd(code_path)
+
+        cd(subject_path);
+        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        cd(code_path);
 %         close all;
 
     end
@@ -210,12 +210,12 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 end   
 
-[C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
-[C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
-[C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
-[C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
-[C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
-[C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
+% [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
+% [C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
+% [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
+% [C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
+% [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
+% [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 
 
 function [C] = boxplotfft(fft_SpHz,numsub,trialinfo_mAval)
@@ -279,7 +279,7 @@ function [fft_SpHz,freq_SpHz] = fftcalc(i,Y,time,sub,trial_name)
         fft_SpHz = P1(loc);
         %save_trail_name{i,sub} = trial_name;
         
-        % 
+
         % figure;
         % plot(f,P1,"LineWidth",3)
         % sgtitle(strrep(trial_name,'_','.'));
