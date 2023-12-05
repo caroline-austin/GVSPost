@@ -171,13 +171,13 @@ end
 xticks([1 2 3 4 5 6 7 8 9 10 11 12]);
 xticklabels( strrep(Label.tandem, '_', ''));
 title("Tandem Walk Correct Steps")
-ylabel("Number of Correct Steps")
-xlabel("Condition")
+ylabel("Number of Correct Steps", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
 
 xlim ([9.5 12.5]);
 xticklabels( ["" "" "" "" "" "" "" "" ""  "No GVS"  "1mA @45 deg"  "2mA @45 deg" ]);
 ylim([0 10])
-title("Tandem Walk Correct Steps: Eyes Closed With ~30 deg Head Tilts")
+title("Tandem Walk Correct Steps: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
 
 %%
 figure;
@@ -188,11 +188,11 @@ end
 xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
 xticklabels( strrep(Label.romberg, '_',''));
 title("Romberg Fail Time")
-ylabel("Time (s)")
-xlabel("Condition")
+ylabel("Time (s)", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
 
-% xlim ([13 24]);
-% xticklabels( ["" "" "" "" "" "" "" "" "" "" "" "" "No GVS" "No GVS" "No GVS" "No GVS" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg"]);
-% ylim([0 15.25])
+xlim ([13 24]);
+xticklabels( ["" "" "" "" "" "" "" "" "" "" "" "" "No GVS" "No GVS" "No GVS" "No GVS" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg"]);
+ylim([0 15.25])
 % title("Romberg Fail Time Eyes Closed With ~30 deg Head Tilts")
-% title("Romberg Fail Time: Eyes Closed With ~30 deg Head Tilts")
+title("Romberg Fail Time: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
