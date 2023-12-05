@@ -1,7 +1,7 @@
 close all;clear;clc;% warning off;
 
 %% set up
-subnum = 1017:1022;  % Subject List 
+subnum = 1018:1021;  % Subject List 
 numsub = length(subnum);
 subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -37,6 +37,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
     cd(file_path); % change directories
     Label.TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P1:T1');
+    Label = 1;
     TrialInfo = readcell('DynamicGVSPlusTilt.xlsx','Sheet',['S' subject_str] ,'Range','P2:T13');
     TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
     cd(code_path);
