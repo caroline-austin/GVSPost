@@ -111,14 +111,14 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % title('Complex Magnitude of FFT');
         % xlabel('Frequency [Hz]'); ylabel("|fft|");
         % 
-        % figure();
-        % sgtitle(trial_name)
-        % for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
-        %     subplot(3,3,j);
-        %     plot(timeimu, imu_data(:,j));
-        %     xlim(Xlimit)
-        %     title(data_type(j));
-        % end
+        figure();
+        sgtitle(trial_name)
+        for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
+            subplot(3,3,j);
+            plot(timeimu, imu_data(:,j));
+            xlim(Xlimit)
+            title(data_type(j));
+        end
         % 
         % Filename=(['S' subject_str 'IMU' trial_name]);
         % cd(plots_path)
