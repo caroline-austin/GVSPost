@@ -108,12 +108,12 @@ for sub = 1:numsub % first for loop that iterates through subject files
         [fft_SpHz_gyrox(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_gyrox,time,sub,trial_name);
         [fft_SpHz_gyroy(i,sub),freq_SpHz,P1gy,fgy] = fftcalc(i,Y_gyroy,time,sub,trial_name);
 
-        figure;
-        plot(fg,P1g,"LineWidth",3)
-        sgtitle(strrep(trial_name,'_','.'));
-        %title("Single-Sided Amplitude Spectrum")
-        xlabel("f (Hz)")
-        ylabel("|P1(f)|")
+        % figure;
+        % plot(fgz,P1gz,"LineWidth",3)
+        % sgtitle(strrep(trial_name,'_','.'));
+        % %title("Single-Sided Amplitude Spectrum")
+        % xlabel("f (Hz)")
+        % ylabel("|P1(f)|")
         
         
         % figure();
