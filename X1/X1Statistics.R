@@ -6,23 +6,24 @@ library(rstatix)
 #navigate to the directory
 setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
-mae_bias_time<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTime.csv")
+#C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
+mae_bias_time<-read.csv(file = "C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTime.csv")
 perception_tilt_bias_time<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/Perception-tilt-Slope/SAllPerception-tilt-SlopeBiasTime.csv")
 over_bias_time<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/OverUnder/SAllOverPercBiasTime.csv")
 peak_bias_time<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/SAllPeaksValleysBiasTime.csv")
 
-mae_bias_time_gain<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeGain.csv")
+mae_bias_time_gain<-read.csv(file = "C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeGain.csv")
 perception_tilt_bias_time_gain<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/Perception-tilt-Slope/SAllPerception-tilt-SlopeBiasTimeGain.csv")
 over_bias_time_gain<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/OverUnder/SAllOverPercBiasTimeGain.csv")
 peak_bias_time_gain<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/SAllPeaksValleysBiasTimeGain.csv")
 
 #load data organized by motion profile
-mae_bias_time_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeFull.csv")
+mae_bias_time_full<-read.csv(file = "C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeFull.csv")
 perception_tilt_bias_time_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/Perception-tilt-Slope/SAllPerception-tilt-SlopeBiasTimeFull.csv")
 over_bias_time_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/OverUnder/SAllOverPercBiasTimeFull.csv")
 peak_bias_time_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/SAllPeaksValleysBiasTimeFull.csv")
 
-mae_bias_time_gain_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeGainFull.csv")
+mae_bias_time_gain_full<-read.csv(file = "C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeGainFull.csv")
 perception_tilt_bias_time_gain_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/Perception-tilt-Slope/SAllPerception-tilt-SlopeBiasTimeGainFull.csv")
 over_bias_time_gain_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/Plots/Measures/OverUnder/SAllOverPercBiasTimeGainFull.csv")
 peak_bias_time_gain_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - Motion Coupled GVS/DynamicGVSPlusTiltTesting/Data/SAllPeaksValleysBiasTimeGainFull.csv")
@@ -50,6 +51,7 @@ mae_bias_time %>%
   shapiro_test(Var)
 ggqqplot(mae_bias_time, "Var", facet.by = "CouplingScheme")
 
+# mae_bias_time[,2] <-as.character(mae_bias_time[,2])
 #compute one-way repeated measures anova
 res_mae.aov <- anova_test(data = mae_bias_time, dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_mae.aov)
