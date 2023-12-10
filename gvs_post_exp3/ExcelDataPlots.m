@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3030];  % Subject List 3001, 
+subnum = [3023:3032];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -138,18 +138,18 @@ for i = 1:height(raw_time)
     plot(k_val_fmt(i,:)/1000,raw_time(i,:), sub_symbols(i),'MarkerSize',15);
     hold on;
 end
-title("FMT Raw Completion Time Performance")
-ylabel("Time (s)")
-xlabel("GVS scaling factor")
+title("FMT Raw Completion Time Performance",'FontSize', 20)
+ylabel("Time (s)",'FontSize', 20)
+xlabel("GVS scaling factor",'FontSize', 20)
 
 figure;
 for i = 1:height(corrected_time)
     plot(k_val_fmt(i,:)/1000,corrected_time(i,:), sub_symbols(i),'MarkerSize',15);
     hold on;
 end
-title("FMT Corrected Completion Time Performance")
-ylabel("time(s)")
-xlabel("GVS scaling factor")
+title("FMT Corrected Completion Time Performance",'FontSize', 20)
+ylabel("time(s)",'FontSize', 20)
+xlabel("GVS scaling factor",'FontSize', 20)
 
 %%
 figure;
@@ -159,9 +159,9 @@ for i = 1:height(completion_time)
 end
 xticks([1 2 3 4 5 6 7 8 9 10 11 12]);
 xticklabels( Label.tandem);
-title("Tandem Walk Completion Time Performance")
-ylabel("Time (s)")
-xlabel("Condition")
+title("Tandem Walk Completion Time Performance",'FontSize', 20)
+ylabel("Time (s)",'FontSize', 20)
+xlabel("Condition",'FontSize', 20)
 %%
 figure;
 for i = 1:height(completion_time)
@@ -174,10 +174,10 @@ title("Tandem Walk Correct Steps")
 ylabel("Number of Correct Steps", 'FontSize', 20)
 xlabel("Condition", 'FontSize', 20)
 
-xlim ([9.5 12.5]);
-xticklabels( ["" "" "" "" "" "" "" "" ""  "No GVS"  "1mA @45 deg"  "2mA @45 deg" ]);
-ylim([0 10])
-title("Tandem Walk Correct Steps: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
+% xlim ([9.5 12.5]);
+% xticklabels( ["" "" "" "" "" "" "" "" ""  "No GVS"  "1mA @45 deg"  "2mA @45 deg" ]);
+% ylim([0 10])
+% title("Tandem Walk Correct Steps: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
 
 %%
 figure;
@@ -191,8 +191,8 @@ title("Romberg Fail Time")
 ylabel("Time (s)", 'FontSize', 20)
 xlabel("Condition", 'FontSize', 20)
 
-xlim ([13 24]);
-xticklabels( ["" "" "" "" "" "" "" "" "" "" "" "" "No GVS" "No GVS" "No GVS" "No GVS" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg"]);
-ylim([0 15.25])
-% title("Romberg Fail Time Eyes Closed With ~30 deg Head Tilts")
-title("Romberg Fail Time: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
+% xlim ([13 24]);
+% xticklabels( ["" "" "" "" "" "" "" "" "" "" "" "" "No GVS" "No GVS" "No GVS" "No GVS" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "1mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg" "2mA @45 deg"]);
+% ylim([0 15.25])
+% % title("Romberg Fail Time Eyes Closed With ~30 deg Head Tilts")
+% title("Romberg Fail Time: Eyes Closed With ~30 deg Head Tilts", 'FontSize', 25)
