@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3030:3031];  % Subject List 3001, 
+subnum = [3023:3023];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -84,9 +84,7 @@ plot_path = [file_path '/plots/'];
 % cd(code_path);
 
 
-%% Cut GIST FMT
-
-% Enter Loop for Each Participant
+%% Enter Loop for Each Participant
 participant_num = 0;
 for sub = 1:(numsub) 
     % get subject number info set up
@@ -111,6 +109,7 @@ for sub = 1:(numsub)
             % Increment Participant
             participant_num = participant_num + 1;
             sp_participant_list(participant_num) = current_participant;
+   %% Cut GIST FMT
             for trial = 1:width(fmt_EXCEL_sort)
                 %pull trial info and data 
                 trial_info = fmt_EXCEL_sort{trial};
@@ -119,7 +118,8 @@ for sub = 1:(numsub)
                 trial_length_G = round(raw_time*3.3);
                 XSENS_data = fmt_XSENS_sort{trial};
                 GIST_data = fmt_GIST_sort{trial};
-                Xsens_length = height(XSENS_data); 
+                XSENS_length = height(XSENS_data); 
+                GIST_length = height(GIST_data); 
                 
                 % initialize the trial variable (in case it does not get
                 % cut that way there aren't errors with saving)
@@ -128,18 +128,18 @@ for sub = 1:(numsub)
                 fmt_start_G{trial} = 0;
                 fmt_end_G{trial} =0;
     
-                if Xsens_length >1 % && we want to cut the XSENS data
+                if XSENS_length >1 % && we want to cut the XSENS data
                      clc; close all;
 
                     % plot data for visualization
                     fig = figure();
                     for i = 2: width(XSENS_data)
-                                    subplot(3,3,i-1)
-                                    plot(XSENS_data(:,i),'r'); 
-                                    title(Label.XSENS(i));
+                        subplot(3,3,i-1)
+                        plot(XSENS_data(:,i),'r'); 
+                        title(Label.XSENS(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut XSENS FMT Data; Expected Trial Length: " num2str(trial_length_X) " samples = " num2str(trial_length_X/30) " s"])) ;
+                    sgtitle(strjoin(["Uncut XSENS FMT Data; Expected Trial Length: " newline num2str(trial_length_X) " of " num2str(XSENS_length) " samples = "  num2str(trial_length_X/30) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -196,7 +196,7 @@ for sub = 1:(numsub)
                         title(Label.XSENS(i));
                         
                     end
-                    sgtitle(strjoin(["Cut XSENS FMT Data; Selected Trial Length: " num2str(fmt_end_X{trial}-fmt_start_X{trial}) " samples = " num2str((fmt_end_X{trial}-fmt_start_X{trial})/30) " s" ])) ;
+                    sgtitle(strjoin(["Cut XSENS FMT Data; Selected Trial Length: " newline num2str(fmt_end_X{trial}-fmt_start_X{trial}) " samples = " num2str((fmt_end_X{trial}-fmt_start_X{trial})/30) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -215,7 +215,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut GIST FMT Data; Expected Trial Length: " num2str(trial_length_G) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                    sgtitle(strjoin(["Uncut GIST FMT Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(GIST_length) "samples = " num2str(trial_length_G/3.3) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -231,7 +231,7 @@ for sub = 1:(numsub)
                         disp("Your start and end values do not match the expected trial length");
                     end
                     % Wait while the user to click
-                    disp('Click Initial Value, then press "Return"')
+                    disp(['Click Initial Value, then press "Return" estimated location: ' num2str(fmt_start_X{trial}/30*3.3) ])
                     pause
             
                     % Export cursor to workspace
@@ -271,7 +271,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                         
                     end
-                    sgtitle(strjoin(["Cut GIST FMT Data; Selected Trial Length: " num2str(fmt_end_G{trial}-fmt_start_G{trial}) " samples = " num2str((fmt_end_G{trial}-fmt_start_G{trial})/3.3) " s" ])) ;
+                    sgtitle(strjoin(["Cut GIST FMT Data; Selected Trial Length: " newline num2str(fmt_end_G{trial}-fmt_start_G{trial}) " samples = " num2str((fmt_end_G{trial}-fmt_start_G{trial})/3.3) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -281,35 +281,8 @@ for sub = 1:(numsub)
 
             end
 
-% end
-
 %% Cut Tandem
 
-% % Enter Loop for Each Participant
-% participant_num = 0;
-% for sub = 1:(numsub) 
-%     % get subject number info set up
-%     subject = subnum(sub);
-%     subject_str = num2str(subject);
-% 
-%     if subject < 3023 
-%         current_participant = string(['P' subject_str]);
-%     else
-%         current_participant = string(['S' subject_str]);
-%     end
-%     % skip participants intended to be skipped    
-%     if ismember(subject,subskip) == 1
-%        continue
-%     end
-%         % set up pathing and load data
-%         sub_path = strjoin([file_path, '/' , current_participant], '');
-%         cd(sub_path);
-%         load(strjoin([current_participant '.mat'],''));
-%         cd(code_path);
-% 
-%             % Increment Participant
-%             participant_num = participant_num + 1;
-%             sp_participant_list(participant_num) = current_participant;
             for trial = 1:width(tandem_EXCEL_sort)
                 %pull trial info and data 
                 trial_info = tandem_EXCEL_sort{trial};
@@ -318,7 +291,8 @@ for sub = 1:(numsub)
                 trial_length_G = round(raw_time*3.3);
                 XSENS_data = tandem_XSENS_sort{trial};
                 GIST_data = tandem_GIST_sort{trial};
-                Xsens_length = height(XSENS_data); 
+                XSENS_length = height(XSENS_data); 
+                GIST_length = height(GIST_data);
                 
                 % initialize the trial variable (in case it does not get
                 % cut that way there aren't errors with saving)
@@ -327,7 +301,7 @@ for sub = 1:(numsub)
                 tandem_start_G{trial} = 0;
                 tandem_end_G{trial} =0;
     
-                if Xsens_length >1 % && we want to cut the XSENS data
+                if XSENS_length >1 % && we want to cut the XSENS data
                      clc; close all;
 
                     % plot data for visualization
@@ -338,7 +312,7 @@ for sub = 1:(numsub)
                                     title(Label.XSENS(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut XSENS Tandem Data; Expected Trial Length: " num2str(trial_length_X) " samples = " num2str(trial_length_X/30) " s"])) ;
+                    sgtitle(strjoin(["Uncut XSENS Tandem Data; Expected Trial Length: " newline num2str(trial_length_X) " of " num2str(XSENS_length) " samples = " num2str(trial_length_X/30) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -395,7 +369,7 @@ for sub = 1:(numsub)
                         title(Label.XSENS(i));
                         
                     end
-                    sgtitle(strjoin(["Cut XSENS Tandem Data; Selected Trial Length: " num2str(tandem_end_X{trial}-tandem_start_X{trial}) " samples = " num2str((tandem_end_X{trial}-tandem_start_X{trial})/30) " s" ])) ;
+                    sgtitle(strjoin(["Cut XSENS Tandem Data; Selected Trial Length: " newline num2str(tandem_end_X{trial}-tandem_start_X{trial}) " samples = " num2str((tandem_end_X{trial}-tandem_start_X{trial})/30) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -414,7 +388,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut GIST Tandem Data; Expected Trial Length: " num2str(trial_length_G) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                    sgtitle(strjoin(["Uncut GIST Tandem Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(XSENS_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -430,7 +404,7 @@ for sub = 1:(numsub)
                         disp("Your start and end values do not match the expected trial length");
                     end
                     % Wait while the user to click
-                    disp('Click Initial Value, then press "Return"')
+                    disp(['Click Initial Value, then press "Return" estimated location: ' num2str(tandem_start_X{trial}/30*3.3) ])
                     pause
             
                     % Export cursor to workspace
@@ -470,7 +444,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                         
                     end
-                    sgtitle(strjoin(["Cut GIST Tandem Data; Selected Trial Length: " num2str(tandem_end_G{trial}-tandem_start_G{trial}) " samples = " num2str((tandem_end_G{trial}-tandem_start_G{trial})/3.3) " s" ])) ;
+                    sgtitle(strjoin(["Cut GIST Tandem Data; Selected Trial Length: " newline num2str(tandem_end_G{trial}-tandem_start_G{trial}) " samples = " num2str((tandem_end_G{trial}-tandem_start_G{trial})/3.3) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -480,36 +454,8 @@ for sub = 1:(numsub)
 
             end
 
-% end
-
-
 %% Cut GIST Romberg
 
-% % Enter Loop for Each Participant
-% participant_num = 0;
-% for sub = 1:(numsub) 
-%     % get subject number info set up
-%     subject = subnum(sub);
-%     subject_str = num2str(subject);
-% 
-%     if subject < 3023 
-%         current_participant = string(['P' subject_str]);
-%     else
-%         current_participant = string(['S' subject_str]);
-%     end
-%     % skip participants intended to be skipped    
-%     if ismember(subject,subskip) == 1
-%        continue
-%     end
-%         % set up pathing and load data
-%         sub_path = strjoin([file_path, '/' , current_participant], '');
-%         cd(sub_path);
-%         load(strjoin([current_participant '.mat'],''));
-%         cd(code_path);
-% 
-%             % Increment Participant
-%             participant_num = participant_num + 1;
-%             sp_participant_list(participant_num) = current_participant;
             for trial = 1:width(romberg_EXCEL_sort)
                 %pull trial info and data 
                 trial_info = romberg_EXCEL_sort{trial};
@@ -522,8 +468,9 @@ for sub = 1:(numsub)
                 trial_length_G = round(raw_time*3.3);
                 XSENS_data = romberg_XSENS_sort{trial};
                 GIST_data = romberg_GIST_sort{trial};
-                Xsens_length = height(XSENS_data); 
-                
+                XSENS_length = height(XSENS_data); 
+                GIST_length = height(GIST_data);
+
                 % initialize the trial variable (in case it does not get
                 % cut that way there aren't errors with saving)
                 romberg_start_X{trial} = 0;
@@ -531,7 +478,7 @@ for sub = 1:(numsub)
                 romberg_start_G{trial} = 0;
                 romberg_end_G{trial} =0;
     
-                if Xsens_length >1 % && we want to cut the XSENS data
+                if XSENS_length >1 % && we want to cut the XSENS data
                      clc; close all;
 
                     % plot data for visualization
@@ -542,7 +489,7 @@ for sub = 1:(numsub)
                                     title(Label.XSENS(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut XSENS Romberg Data; Expected Trial Length: " num2str(trial_length_X) " samples = " num2str(trial_length_X/30) " s"])) ;
+                    sgtitle(strjoin(["Uncut XSENS Romberg Data; Expected Trial Length: " newline num2str(trial_length_X) " of " num2str(XSENS_length) " samples = " num2str(trial_length_X/30) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -600,7 +547,7 @@ for sub = 1:(numsub)
                         title(Label.XSENS(i));
                         
                     end
-                    sgtitle(strjoin(["Cut XSENS Romberg Data; Selected Trial Length: " num2str(romberg_end_X{trial}-romberg_start_X{trial}) " samples = " num2str((romberg_end_X{trial}-romberg_start_X{trial})/30) " s" ])) ;
+                    sgtitle(strjoin(["Cut XSENS Romberg Data; Selected Trial Length: " newline num2str(romberg_end_X{trial}-romberg_start_X{trial}) " samples = " num2str((romberg_end_X{trial}-romberg_start_X{trial})/30) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -619,7 +566,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut GIST Romberg Data; Expected Trial Length: " num2str(trial_length_G) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                    sgtitle(strjoin(["Uncut GIST Romberg Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(XSENS_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -636,7 +583,7 @@ for sub = 1:(numsub)
                     end
     
                     % Wait while the user to click
-                    disp(['Click Final Value, then press "Return" '])
+                    disp(['Click Final Value, then press "Return" estimated location: ' num2str(romberg_end_X{trial}/30*3.3) ])
                     pause
              
                     % Export cursor to workspace
@@ -676,7 +623,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                         
                     end
-                    sgtitle(strjoin(["Cut GIST Romberg Data; Selected Trial Length: " num2str(romberg_end_G{trial}-romberg_start_G{trial}) " samples = " num2str((romberg_end_G{trial}-romberg_start_G{trial})/3.3) " s" ])) ;
+                    sgtitle(strjoin(["Cut GIST Romberg Data; Selected Trial Length: " newline num2str(romberg_end_G{trial}-romberg_start_G{trial}) " samples = " num2str((romberg_end_G{trial}-romberg_start_G{trial})/3.3) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
@@ -702,8 +649,7 @@ for sub = 1:(numsub)
     close all;
 end
 
-
-
+%%
     function output_txt = myupdatefcn(~,event_obj)
 
   % ~            Currently not used (empty)
