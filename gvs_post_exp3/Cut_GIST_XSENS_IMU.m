@@ -388,7 +388,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut GIST Tandem Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(XSENS_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                    sgtitle(strjoin(["Uncut GIST Tandem Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(GIST_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
@@ -566,7 +566,7 @@ for sub = 1:(numsub)
                         title(Label.GIST(i));
                                     
                     end
-                    sgtitle(strjoin(["Uncut GIST Romberg Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(XSENS_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                    sgtitle(strjoin(["Uncut GIST Romberg Data; Expected Trial Length: " newline num2str(trial_length_G) " of " num2str(GIST_length) " samples = " num2str(trial_length_G/3.3) " s"])) ;
                   
                     % Enable data cursor mode
                     datacursormode on
