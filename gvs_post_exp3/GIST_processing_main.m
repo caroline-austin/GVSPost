@@ -17,7 +17,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = 3023:3025;  % Subject List 3001, 
+subnum = [3023:3032];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -157,12 +157,13 @@ for sub = 1:numsub
     
     % Functional Mobility Test
     % Adjust for additional training trial for subject S3023
-    if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025')
+    if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025') || strcmp(sheet, 'S3027') || strcmp(sheet, 'S3028') || strcmp(sheet, 'S3030')|| strcmp(sheet, 'S3031')
         opts_fmt_mod.Sheet = sheet;
         sp_fmt_data_all = readtable(filename, opts_fmt_mod, "UseExcel", false);
 
         % Set range for training data
         fmt_training_range = 4;
+
 
         % Set Training and Trial Data Arrays for Plotting
         sp_fmt_data_training{participant_num} = sp_fmt_data_all(1:fmt_training_range,:);
@@ -400,7 +401,71 @@ for sub = 1:numsub
                 gyro_x = XSENS_data.GyroX;
                 gyro_y = XSENS_data.GyroY;
                 gyro_z = XSENS_data.GyroZ;
-        
+
+            %         figure; 
+            % subplot(3,3,1)
+            % plot(euler_x,'r'); title("Euler X");
+            % subplot(3,3,2)
+            % plot(euler_y,'b'); title("Euler y");
+            % subplot(3,3,3)
+            % plot(euler_z,'g'); title("Euler Z");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_x,'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_y,'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_z,'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_x,'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_y,'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_z,'g'); title("Gyro Z");
+            % sgtitle("Not Gravity Aligned") 
+
+                 acc_raw = [acc_x(2:end), acc_y(2:end), acc_z(2:end)]; % Must be m/s2
+                gyro_raw = pi/180*[gyro_x(2:end), gyro_y(2:end), gyro_z(2:end)]; % must be rad/s
+    
+                cd ..
+                [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc_raw, gyro_raw,0,30);
+                cd(code_path);
+    
+                time_data = time_data(2:end);
+                euler_x = roll;
+                euler_y = pitch;
+                euler_z = yaw;
+                acc_x = acc_aligned(:,1);
+                acc_y = acc_aligned(:,2);
+                acc_z = acc_aligned(:,3);          
+                gyro_x = gyro_aligned(:,1);
+                gyro_y = gyro_aligned(:,2);
+                gyro_z = gyro_aligned(:,3);
+
+            %     figure; 
+            % subplot(3,3,1)
+            % plot(roll, 'r'); title("Roll");
+            % subplot(3,3,2)
+            % plot(pitch, 'b'); title("Pitch");
+            % subplot(3,3,3)
+            % plot(yaw,'g'); title("Yaw");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_aligned(:,1),'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_aligned(:,2),'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_aligned(:,3),'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_aligned(:,1),'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_aligned(:,2),'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_aligned(:,3),'g'); title("Gyro Z");
+            % sgtitle("Gravity Aligned") 
+                        
                 % Add to Cell Array for Plotting
                 FMT_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
             end
@@ -424,6 +489,72 @@ for sub = 1:numsub
                 gyro_x = XSENS_data.GyroX;
                 gyro_y = XSENS_data.GyroY;
                 gyro_z = XSENS_data.GyroZ;
+
+            %     figure; 
+            % subplot(3,3,1)
+            % plot(euler_x,'r'); title("Euler X");
+            % subplot(3,3,2)
+            % plot(euler_y,'b'); title("Euler y");
+            % subplot(3,3,3)
+            % plot(euler_z,'g'); title("Euler Z");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_x,'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_y,'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_z,'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_x,'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_y,'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_z,'g'); title("Gyro Z");
+            % sgtitle("Not Gravity Aligned") 
+
+                acc_raw = [acc_x(2:end), acc_y(2:end), acc_z(2:end)]; % Must be m/s2
+                gyro_raw = pi/180*[gyro_x(2:end), gyro_y(2:end), gyro_z(2:end)]; % must be rad/s
+
+                cd ..
+                [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc_raw, gyro_raw,0,30);
+                cd(code_path);
+    
+                time_data = time_data(2:end);
+                euler_x = roll;
+                euler_y = pitch;
+                euler_z = yaw;
+                acc_x = acc_aligned(:,1);
+                acc_y = acc_aligned(:,2);
+                acc_z = acc_aligned(:,3);          
+                gyro_x = gyro_aligned(:,1);
+                gyro_y = gyro_aligned(:,2);
+                gyro_z = gyro_aligned(:,3);
+
+                
+
+            % figure; 
+            % subplot(3,3,1)
+            % plot(roll, 'r'); title("Roll");
+            % subplot(3,3,2)
+            % plot(pitch, 'b'); title("Pitch");
+            % subplot(3,3,3)
+            % plot(yaw,'g'); title("Yaw");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_aligned(:,1),'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_aligned(:,2),'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_aligned(:,3),'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_aligned(:,1),'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_aligned(:,2),'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_aligned(:,3),'g'); title("Gyro Z");
+            % sgtitle("Gravity Aligned") 
         
                 % Add to Cell Array for Plotting
                 tandem_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
@@ -466,6 +597,71 @@ for sub = 1:numsub
             gyro_x = XSENS_data.GyroX;
             gyro_y = XSENS_data.GyroY;
             gyro_z = XSENS_data.GyroZ;
+
+            acc_raw = [acc_x(2:end), acc_y(2:end), acc_z(2:end)]; % Must be m/s2
+            gyro_raw = pi/180*[gyro_x(2:end), gyro_y(2:end), gyro_z(2:end)]; % must be rad/s
+
+            cd ..
+            [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc_raw, gyro_raw,0,30);
+            cd(code_path);
+
+            time_data = time_data(2:end);
+            euler_x = roll;
+            euler_y = pitch;
+            euler_z = yaw;
+            acc_x = acc_aligned(:,1);
+            acc_y = acc_aligned(:,2);
+            acc_z = acc_aligned(:,3);          
+            gyro_x = gyro_aligned(:,1);
+            gyro_y = gyro_aligned(:,2);
+            gyro_z = gyro_aligned(:,3);
+
+            % figure; 
+            % subplot(3,3,1)
+            % plot(euler_x,'r'); title("Euler X");
+            % subplot(3,3,2)
+            % plot(euler_y,'b'); title("Euler y");
+            % subplot(3,3,3)
+            % plot(euler_z,'g'); title("Euler Z");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_x,'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_y,'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_z,'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_x,'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_y,'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_z,'g'); title("Gyro Z");
+            % sgtitle("Not Gravity Aligned") 
+            % 
+            % 
+            % figure; 
+            % subplot(3,3,1)
+            % plot(roll, 'r'); title("Roll");
+            % subplot(3,3,2)
+            % plot(pitch, 'b'); title("Pitch");
+            % subplot(3,3,3)
+            % plot(yaw,'g'); title("Yaw");
+            % 
+            % subplot(3,3,4)
+            % plot(acc_aligned(:,1),'r');  title("Acc X");
+            % subplot(3,3,5)
+            % plot(acc_aligned(:,2),'b'); title("Acc Y");
+            % subplot(3,3,6)
+            % plot(acc_aligned(:,3),'g'); title("Acc Z");
+            % 
+            % subplot(3,3,7)
+            % plot(gyro_aligned(:,1),'r'); title("Gyro X");
+            % subplot(3,3,8)
+            % plot(gyro_aligned(:,2),'b'); title("Gyro Y");
+            % subplot(3,3,9)
+            % plot(gyro_aligned(:,3),'g'); title("Gyro Z");
+            % sgtitle("Gravity Aligned") 
     
             % Add to Cell Array for Plotting
             romberg_dataX{num_XSENS_participants}{k, 1} = [time_data, euler_x, euler_y, euler_z, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z];
@@ -729,6 +925,7 @@ for sub= 1:numsub
         eval (['clear ' vars_2_save])
 end
     % save all of the trials for all subjects
+    % need to add subject number label
     cd(file_path);
     vars_2_save = ['fmt_GIST_all ' 'fmt_XSENS_all ' 'fmt_EXCEL_all ' ...
         'tandem_GIST_all ' 'tandem_XSENS_all ' 'tandem_EXCEL_all ' ... 
@@ -737,6 +934,7 @@ end
     eval(['  save All.mat ' vars_2_save  ' Label vars_2_save']);     
     cd(code_path);
     close all;
+
 
 %% Spreadsheet Plotting
 % I would like to put the plotting code in a new script where we load in
@@ -1205,3 +1403,4 @@ axis([0,40, -200, 200]);
 legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
 title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
 saveas(figure_save, [plot_path plot_title '.fig']);
+
