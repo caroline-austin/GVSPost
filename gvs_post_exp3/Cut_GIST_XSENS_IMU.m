@@ -281,66 +281,113 @@ for sub = 1:(numsub)
 
             end
 
-end
+% end
 
 %% Cut Tandem
 
-% Enter Loop for Each Participant
-participant_num = 0;
-for sub = 1:numsub 
-    subject = subnum(sub);
-    subject_str = num2str(subject);
-
-    if subject < 3023 
-        current_participant = string(['P' subject_str]);
-    else
-        current_participant = string(['S' subject_str]);
-    end
-
-    if ismember(subject,subskip) == 1
-       continue
-    end
-
-            % Increment Participant
-            participant_num = participant_num + 1;
-            sp_participant_list(participant_num) = current_participant;
+% % Enter Loop for Each Participant
+% participant_num = 0;
+% for sub = 1:(numsub) 
+%     % get subject number info set up
+%     subject = subnum(sub);
+%     subject_str = num2str(subject);
+% 
+%     if subject < 3023 
+%         current_participant = string(['P' subject_str]);
+%     else
+%         current_participant = string(['S' subject_str]);
+%     end
+%     % skip participants intended to be skipped    
+%     if ismember(subject,subskip) == 1
+%        continue
+%     end
+%         % set up pathing and load data
+%         sub_path = strjoin([file_path, '/' , current_participant], '');
+%         cd(sub_path);
+%         load(strjoin([current_participant '.mat'],''));
+%         cd(code_path);
+% 
+%             % Increment Participant
+%             participant_num = participant_num + 1;
+%             sp_participant_list(participant_num) = current_participant;
             for trial = 1:width(tandem_EXCEL_sort)
-                trial_info = tandem_EXCEL_sort{sub,trial};
+                %pull trial info and data 
+                trial_info = tandem_EXCEL_sort{trial};
                 raw_time = trial_info.CompletionTime;
                 trial_length_X = round(raw_time*30);
                 trial_length_G = round(raw_time*3.3);
-                XSENS_data = tandem_XSENS_sort{sub,trial};
-                GIST_data = tandem_GIST_sort{sub,trial};
+                XSENS_data = tandem_XSENS_sort{trial};
+                GIST_data = tandem_GIST_sort{trial};
                 Xsens_length = height(XSENS_data); 
                 
-                tandem_start_X{sub,trial} = 0;
-                tandem_end_X{sub,trial} =0;
-                tandem_start_G{sub,trial} = 0;
-                tandem_end_G{sub,trial} =0;
+                % initialize the trial variable (in case it does not get
+                % cut that way there aren't errors with saving)
+                tandem_start_X{trial} = 0;
+                tandem_end_X{trial} =0;
+                tandem_start_G{trial} = 0;
+                tandem_end_G{trial} =0;
     
                 if Xsens_length >1 % && we want to cut the XSENS data
-                    clc; close all;
-                figure; 
+                     clc; close all;
+
+                    % plot data for visualization
+                    fig = figure();
                     for i = 2: width(XSENS_data)
-                        subplot(3,3,i-1)
-                        plot(XSENS_data(:,i),'r'); 
-                        title(Label.XSENS(i));
-                        
+                                    subplot(3,3,i-1)
+                                    plot(XSENS_data(:,i),'r'); 
+                                    title(Label.XSENS(i));
+                                    
                     end
                     sgtitle(strjoin(["Uncut XSENS Tandem Data; Expected Trial Length: " num2str(trial_length_X) " samples = " num2str(trial_length_X/30) " s"])) ;
-
+                  
+                    % Enable data cursor mode
+                    datacursormode on
+                    dcm_obj = datacursormode(fig);
+                    % Set update function
+                    set(dcm_obj,'UpdateFcn',@myupdatefcn)
+    
+                    % user selects start and end points of the trial
                     % if your estimate is more than two seconds off the expected value it will flag it
                     iter = 0;
-                    while tandem_end_X{sub,trial} == 0 || abs(trial_length_X - abs(tandem_start_X{sub,trial}-tandem_end_X{sub,trial})) > 60 %note if a time is not recorded this will not work, but doesn't break the code
-                        if iter >=1
-                            disp("Your start and end values do not match the expected trial length");
-                        end
-                        tandem_start_X{sub,trial} = input("Enter the time (x-value integer) for the start of the trial: ");
-                        tandem_end_X{sub,trial} = input(strjoin(["Enter the time (x-value integer) for the end of the trial (estimated" num2str(tandem_start_X{sub,trial} + trial_length_X) ", enter 0 to reselect the start value): "]));
-                        iter= iter+1;
+                while tandem_end_X{trial} == 0 || abs(trial_length_X - abs(tandem_start_X{trial}-tandem_end_X{trial})) > 60 
+                    if iter >=1
+                        disp("Your start and end values do not match the expected trial length");
                     end
-                    Xsens_data_cut = XSENS_data(tandem_start_X{sub,trial}:tandem_end_X{sub,trial},:);
+                    % Wait while the user to click
+                    disp('Click Initial Value, then press "Return"')
+                    pause
+            
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+    
+                    % Set initial data point/index and save into an array
+                    tandem_start_X{trial} = info_struct.DataIndex;
+    
+                    % Wait while the user to click
+                    disp(['Click Final Value, then press "Return" (estimated x: ' num2str(tandem_start_X{trial} + trial_length_X) ', select a number less than ' num2str(tandem_start_X{trial}) ' to reselect the start value): '])
+                    pause
+             
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+                     % Set final data point/index and save into an array
+                    tandem_end_X{trial} = info_struct.DataIndex;
 
+                    iter= iter+1;
+                end
+
+                    % close figure and cut the data
+                    close(fig)
+                    Xsens_data_cut = XSENS_data(tandem_start_X{trial}:tandem_end_X{trial},:);
+
+                    % plot cut data and verify that it looks good
                     figure; 
                     for i = 2: width(Xsens_data_cut)
                         subplot(3,3,i-1)
@@ -348,36 +395,74 @@ for sub = 1:numsub
                         title(Label.XSENS(i));
                         
                     end
-                    sgtitle(strjoin(["Cut XSENS Tandem Data; Selected Trial Length: " num2str(tandem_end_X{sub,trial}-tandem_start_X{sub,trial}) " samples = " num2str((tandem_end_X{sub,trial}-tandem_start_X{sub,trial})/3.3) " s" ])) ;
+                    sgtitle(strjoin(["Cut XSENS Tandem Data; Selected Trial Length: " num2str(tandem_end_X{trial}-tandem_start_X{trial}) " samples = " num2str((tandem_end_X{trial}-tandem_start_X{trial})/30) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
-                    tandem_XSENS_sort{sub,trial}= Xsens_data_cut;
+                    %over write original data with cut data
+                    tandem_XSENS_sort{trial}= Xsens_data_cut;
                 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 if 1==1 % this is a placeholder for checking whether or not we want to cut the GIST data
                     clc; close all;
-                figure; 
+
+                    % plot data for visualization
+                    fig = figure();
                     for i = 2: width(GIST_data)
                         subplot(3,3,i-1)
                         plot(GIST_data(:,i),'r'); 
                         title(Label.GIST(i));
-                        
+                                    
                     end
                     sgtitle(strjoin(["Uncut GIST Tandem Data; Expected Trial Length: " num2str(trial_length_G) " samples = " num2str(trial_length_G/3.3) " s"])) ;
-
-                    % if your estimate is more than two seconds off the expected value it will flag it
+                  
+                    % Enable data cursor mode
+                    datacursormode on
+                    dcm_obj = datacursormode(fig);
+                    % Set update function
+                    set(dcm_obj,'UpdateFcn',@myupdatefcn)
+    
+                    % user selects start and end points of the trial
+                    % if your estimate is more than ~3 seconds off the expected value it will flag it
                     iter = 0;
-                    while tandem_end_G{sub,trial} == 0 || abs(trial_length_G - abs(tandem_start_G{sub,trial}-tandem_end_G{sub,trial})) > 60 
-                        if iter >=1
-                            disp("Your start and end values do not match the expected trial length");
-                        end
-                        tandem_start_G{sub,trial} = input("Enter the time (x-value integer) for the start of the trial: ");
-                        tandem_end_G{sub,trial} = input(strjoin(["Enter the time (x-value integer) for the end of the trial (estimated" num2str(tandem_start_G{sub,trial} + trial_length_G) ", enter 0 to reselect the start value): "]));
-                        iter= iter+1;
+                while tandem_end_G{trial} == 0 || abs(trial_length_G - abs(tandem_start_G{trial}-tandem_end_G{trial})) > 10 
+                    if iter >=1
+                        disp("Your start and end values do not match the expected trial length");
                     end
-                    GIST_data_cut = GIST_data(tandem_start_G{sub,trial}:tandem_end_G{sub,trial},:);
+                    % Wait while the user to click
+                    disp('Click Initial Value, then press "Return"')
+                    pause
+            
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+    
+                    % Set initial data point/index and save into an array
+                    tandem_start_G{trial} = info_struct.DataIndex;
+    
+                    % Wait while the user to click
+                    disp(['Click Final Value, then press "Return" (estimated x: ' num2str(tandem_start_G{trial} + trial_length_G) ', select a number less than ' num2str(tandem_start_G{trial}) ' to reselect the start value): '])
+                    pause
+             
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+                     % Set final data point/index and save into an array
+                    tandem_end_G{trial} = info_struct.DataIndex;
 
+                    iter= iter+1;
+                end
+                     % close figure and cut the data
+                    close(fig)
+                    GIST_data_cut = GIST_data(tandem_start_G{trial}:tandem_end_G{trial},:);
+
+                    % plot cut data and verify that it looks good
                     figure; 
                     for i = 2: width(GIST_data_cut)
                         subplot(3,3,i-1)
@@ -385,39 +470,239 @@ for sub = 1:numsub
                         title(Label.GIST(i));
                         
                     end
-                    sgtitle(strjoin(["Cut GIST Tandem Data; Selected Trial Length: " num2str(tandem_end_G{sub,trial}-tandem_start_G{sub,trial}) " samples = " num2str((tandem_end_G{sub,trial}-tandem_start_G{sub,trial})/3.3) " s" ])) ;
+                    sgtitle(strjoin(["Cut GIST Tandem Data; Selected Trial Length: " num2str(tandem_end_G{trial}-tandem_start_G{trial}) " samples = " num2str((tandem_end_G{trial}-tandem_start_G{trial})/3.3) " s" ])) ;
                      disp("\n Please verify plot and then press any key to continue");
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
-                    tandem_GIST_sort{sub,trial}= GIST_data_cut;
+                    %over write original data with cut data
+                    tandem_GIST_sort{trial}= GIST_data_cut;
                 end
 
             end
 
-end
+% end
 
 
 %% Cut GIST Romberg
 
-% loop through each subject
-% loop through each trial
-% get trial length
-% plot data
-% ask user for start time and/or end time 
-% cut to the trial length based on the start/end time the user specified
-% and the known length of the trial
+% % Enter Loop for Each Participant
+% participant_num = 0;
+% for sub = 1:(numsub) 
+%     % get subject number info set up
+%     subject = subnum(sub);
+%     subject_str = num2str(subject);
+% 
+%     if subject < 3023 
+%         current_participant = string(['P' subject_str]);
+%     else
+%         current_participant = string(['S' subject_str]);
+%     end
+%     % skip participants intended to be skipped    
+%     if ismember(subject,subskip) == 1
+%        continue
+%     end
+%         % set up pathing and load data
+%         sub_path = strjoin([file_path, '/' , current_participant], '');
+%         cd(sub_path);
+%         load(strjoin([current_participant '.mat'],''));
+%         cd(code_path);
+% 
+%             % Increment Participant
+%             participant_num = participant_num + 1;
+%             sp_participant_list(participant_num) = current_participant;
+            for trial = 1:width(romberg_EXCEL_sort)
+                %pull trial info and data 
+                trial_info = romberg_EXCEL_sort{trial};
+                if rem(trial,2) ==0
+                    raw_time = trial_info.TimeOfFailure2;
+                else
+                    raw_time = trial_info.TimeOfFailure1;
+                end
+                trial_length_X = round(raw_time*30);
+                trial_length_G = round(raw_time*3.3);
+                XSENS_data = romberg_XSENS_sort{trial};
+                GIST_data = romberg_GIST_sort{trial};
+                Xsens_length = height(XSENS_data); 
+                
+                % initialize the trial variable (in case it does not get
+                % cut that way there aren't errors with saving)
+                romberg_start_X{trial} = 0;
+                romberg_end_X{trial} =0;
+                romberg_start_G{trial} = 0;
+                romberg_end_G{trial} =0;
+    
+                if Xsens_length >1 % && we want to cut the XSENS data
+                     clc; close all;
+
+                    % plot data for visualization
+                    fig = figure();
+                    for i = 2: width(XSENS_data)
+                                    subplot(3,3,i-1)
+                                    plot(XSENS_data(:,i),'r'); 
+                                    title(Label.XSENS(i));
+                                    
+                    end
+                    sgtitle(strjoin(["Uncut XSENS Romberg Data; Expected Trial Length: " num2str(trial_length_X) " samples = " num2str(trial_length_X/30) " s"])) ;
+                  
+                    % Enable data cursor mode
+                    datacursormode on
+                    dcm_obj = datacursormode(fig);
+                    % Set update function
+                    set(dcm_obj,'UpdateFcn',@myupdatefcn)
+    
+                    % user selects start and end points of the trial
+                    % if your estimate is more than two seconds off the expected value it will flag it
+                    iter = 0;
+                while romberg_end_X{trial} == 0 || abs(trial_length_X - abs(romberg_start_X{trial}-romberg_end_X{trial})) > 60 
+                    if iter >=1
+                        disp("Your start and end values do not match the expected trial length");
+                    end
+    
+                    % Wait while the user to click
+                    disp(['Click Final Value, then press "Return" '])
+                    pause
+             
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+                     % Set final data point/index and save into an array
+                    romberg_end_X{trial} = info_struct.DataIndex;
+
+                    % Wait while the user to click
+                    disp(['Click Initial Value, then press "Return" (estimated x: ' num2str(romberg_end_X{trial} - trial_length_X) ', select a number greater than ' num2str(romberg_end_X{trial}) ' to reselect the start value): '])
+                    pause
+            
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+    
+                    % Set initial data point/index and save into an array
+                    romberg_start_X{trial} = info_struct.DataIndex;
+
+                    iter= iter+1;
+                end
+
+                    % close figure and cut the data
+                    close(fig)
+                    Xsens_data_cut = XSENS_data(romberg_start_X{trial}:romberg_end_X{trial},:);
+
+                    % plot cut data and verify that it looks good
+                    figure; 
+                    for i = 2: width(Xsens_data_cut)
+                        subplot(3,3,i-1)
+                        plot(Xsens_data_cut(:,i),'r'); 
+                        title(Label.XSENS(i));
+                        
+                    end
+                    sgtitle(strjoin(["Cut XSENS Romberg Data; Selected Trial Length: " num2str(romberg_end_X{trial}-romberg_start_X{trial}) " samples = " num2str((romberg_end_X{trial}-romberg_start_X{trial})/30) " s" ])) ;
+                     disp("\n Please verify plot and then press any key to continue");
+                    pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
+
+                    %over write original data with cut data
+                    romberg_XSENS_sort{trial}= Xsens_data_cut;
+                end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                if 1==1 % this is a placeholder for checking whether or not we want to cut the GIST data
+                    clc; close all;
+
+                    % plot data for visualization
+                    fig = figure();
+                    for i = 2: width(GIST_data)
+                        subplot(3,3,i-1)
+                        plot(GIST_data(:,i),'r'); 
+                        title(Label.GIST(i));
+                                    
+                    end
+                    sgtitle(strjoin(["Uncut GIST Romberg Data; Expected Trial Length: " num2str(trial_length_G) " samples = " num2str(trial_length_G/3.3) " s"])) ;
+                  
+                    % Enable data cursor mode
+                    datacursormode on
+                    dcm_obj = datacursormode(fig);
+                    % Set update function
+                    set(dcm_obj,'UpdateFcn',@myupdatefcn)
+    
+                    % user selects start and end points of the trial
+                    % if your estimate is more than ~3 seconds off the expected value it will flag it
+                    iter = 0;
+                while romberg_end_G{trial} == 0 || abs(trial_length_G - abs(romberg_start_G{trial}-romberg_end_G{trial})) > 10 
+                    if iter >=1
+                        disp("Your start and end values do not match the expected trial length");
+                    end
+    
+                    % Wait while the user to click
+                    disp(['Click Final Value, then press "Return" '])
+                    pause
+             
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+                     % Set final data point/index and save into an array
+                    romberg_end_G{trial} = info_struct.DataIndex;
+
+                                        % Wait while the user to click
+                    disp(['Click Initial Value, then press "Return" (estimated x: ' num2str(romberg_end_G{trial} - trial_length_G) ', select a number greater than ' num2str(romberg_end_G{trial}) ' to reselect the start value): '])
+                    pause
+            
+                    % Export cursor to workspace
+                    info_struct = getCursorInfo(dcm_obj);
+                    if isfield(info_struct, 'Position')
+                      disp('Clicked positioin is')
+                      disp(info_struct.Position)
+                    end
+    
+                    % Set initial data point/index and save into an array
+                    romberg_start_G{trial} = info_struct.DataIndex;
+
+                    iter= iter+1;
+                end
+                     % close figure and cut the data
+                    close(fig)
+                    GIST_data_cut = GIST_data(romberg_start_G{trial}:romberg_end_G{trial},:);
+
+                    % plot cut data and verify that it looks good
+                    figure; 
+                    for i = 2: width(GIST_data_cut)
+                        subplot(3,3,i-1)
+                        plot(GIST_data_cut(:,i),'r'); 
+                        title(Label.GIST(i));
+                        
+                    end
+                    sgtitle(strjoin(["Cut GIST Romberg Data; Selected Trial Length: " num2str(romberg_end_G{trial}-romberg_start_G{trial}) " samples = " num2str((romberg_end_G{trial}-romberg_start_G{trial})/3.3) " s" ])) ;
+                     disp("\n Please verify plot and then press any key to continue");
+                    pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
+
+                    %over write original data with cut data
+                    romberg_GIST_sort{trial}= GIST_data_cut;
+                end
+
+            end
 
 
-%% save data
+    %% save data
     % save all of the trials for all subjects
-    cd(file_path);
-    vars_2_save = ['fmt_GIST_sort ' 'fmt_XSENS_sort ' 'fmt_EXCEL_sort ' ...
+    cd(sub_path);
+    vars_2_save = [' fmt_GIST_sort ' 'fmt_XSENS_sort ' 'fmt_EXCEL_sort ' ...
         'tandem_GIST_sort ' 'tandem_XSENS_sort ' 'tandem_EXCEL_sort ' ... 
         'romberg_GIST_sort ' 'romberg_XSENS_sort ' 'romberg_EXCEL_sort '... 
-        'romberg_GIST_train_sort ' 'romberg_XSENS_train_sort ' 'romberg_EXCEL_train_sort '];
-    eval(['  save ' current_participant '_' datatype newdatatype '.mat ' vars_2_save  ' Label vars_2_save']);     
+        'romberg_GIST_train_sort ' 'romberg_XSENS_train_sort ' 'romberg_EXCEL_train_sort ' ...
+        'fmt_start_G ' 'fmt_end_G ' 'fmt_start_X ' 'fmt_end_X ' ...
+        'tandem_start_G ' 'tandem_end_G ' 'tandem_start_X ' 'tandem_end_X ' ...
+        'romberg_start_G ' 'romberg_end_G ' 'romberg_start_X ' 'romberg_end_X ' ];
+        eval( strjoin(['  save ' strjoin([current_participant '_' datatype newdatatype '.mat '],'') vars_2_save  ' Label vars_2_save' ]));     
     cd(code_path);
     close all;
+end
+
+
 
     function output_txt = myupdatefcn(~,event_obj)
 
