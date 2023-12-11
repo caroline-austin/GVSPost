@@ -27,7 +27,7 @@ subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % Romberg: 30 GIST files (6 training, 24 trials), 18 excel rows (6
 % training, 12 trials), 30 XSENS files (6 training, 24 trials)
 datatype = ''; % this tells the code which version of the data file to grab (ie. if other data processing has been done)
-newdatatype = '_Cut_All'; % this adds the CUT suffix plus the file types that have been cut (GFMT, GTDM, GROM, XFMT, XTDM, XROM or ALL)
+newdatatype = 'Cut_All'; % this adds the CUT suffix plus the file types that have been cut (GFMT, GTDM, GROM, XFMT, XTDM, XROM or ALL)
 
 %% Data Import setup
 
