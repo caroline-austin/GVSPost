@@ -936,471 +936,471 @@ end
     close all;
 
 
-%% Spreadsheet Plotting
-% I would like to put the plotting code in a new script where we load in
-% the files we've saved so we don't have to deal with the cutting /loading
-% naming code everytime we want to generate plots or do other things with
-% the data
-
-% if plot_fmt_data == 1
-% go to plotting function... feed in save_fmt_plots into function
-
-% Plot FMT Raw Completion time vs K
-figure_save = figure(); 
-plot_title = 'FMT_completion_time';
-for p = 1:length(sp_fmt_data)
-    scatter(sp_fmt_data{p}.KValue, sp_fmt_data{p}.RawTime, 60, 'filled', 'MarkerEdgeColor','k');
-    hold on
-    scatter(sp_fmt_data{p}.KValue + 10, sp_fmt_data{p}.CorrectedTime, 60, 'filled', 'MarkerEdgeColor','k');
-    hold on
-end
-xlabel('GVS Gain K');
-ylabel('Completion Time [s]');
-axis([0,1100, 0, 40]);
-legend(["Participant 1 Raw Time", "Participant 1 Corrected Time", "Participant 2 Raw Time", "Participant 2 Corrected Time"]);
-title('Functional Mobility Test Completion Time vs. K');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% Plot FMT Erros vs K
-figure_save = figure(); 
-plot_title = 'FMT_errors';
-for p = 1:length(sp_fmt_data)
-    scatter(sp_fmt_data{p}.KValue + 5*p, sp_fmt_data{p}.Errors, 60, 'filled', 'MarkerEdgeColor','k');
-    hold on
-end
-xlabel('GVS Gain K');
-ylabel('Errors');
-axis([0,1100, 0, 5]);
-legend(["Participant 1 Errors", "Participant 2 Errors"]);
-title('Functional Mobility Test Errors vs. K');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-%% IMU Plotting
-
-% if plot_GIST_raw == 1
-% go to plotting function... feed in save_GIST_plots into function
-
-% Raw Data Plots for FMT
-% roll
-figure_save = figure(); 
-plot_title = 'FMTRoll';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Roll');
-axis([0,60, -100, 100]);
-legend%(["Participant 1 Errors", "Participant 2 Errors"]);
-title('Functional Mobility Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% roll
-figure_save = figure(); 
-plot_title = 'FMTRoll_K';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,2)/1000,FMT_data{1,p}{f,1}(:,8))
-        hold on
-    end
-end
-xlabel('Current [m amps]');
-ylabel('Roll');
-axis([0,10, -40, 40]);
-legend%(["Participant 1 Errors", "Participant 2 Errors"]);
-title('Functional Mobility Test IMU Roll Data vs. Current Level');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% pitch
-figure_save = figure();
-plot_title = 'FMTPitch';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Pitch');
-axis([0,60, -100, 100]);
-legend
-title('Functional Mobility Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% yaw
-figure_save = figure();
-plot_title = 'FMTYaw';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,60, -200, 200]);
-legend
-title('Functional Mobility Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% Raw Data Plots for Tandem Walk
-% roll
-figure_save = figure(); 
-plot_title = 'TandemRoll';
-for p = 1:length(tandem_data)
-    for t = 1:length(tandem_data{1,p})
-        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,8))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Roll');
-axis([0,60, -100, 100]);
-legend
-title('Tandem Walk Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% pitch
-figure_save = figure();
-plot_title = 'TandemPitch';
-for p = 1:length(tandem_data)
-    for t = 1:length(tandem_data{1,p})
-        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,9))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Pitch');
-axis([0,60, -100, 100]);
-legend
-title('Tandem Walk Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% yaw
-figure_save = figure();
-plot_title = 'TandemYaw';
-for p = 1:length(tandem_data)
-    for t = 1:length(tandem_data{1,p})
-        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,10))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,60, -200, 200]);
-legend
-title('Tandem Walk Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% Raw Data Plots for Romberg
-% roll
-figure_save = figure(); 
-plot_title = 'RombergRoll';
-for p = 1:length(romberg_data)
-    for r = 1:length(romberg_data{1,p})
-        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,8));
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Roll');
-axis([0,60, -100, 100]);
-legend
-title('Romberg Balance Test IMU Roll Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% pitch
-figure_save = figure();
-plot_title = 'RombergPitch';
-for p = 1:length(romberg_data)
-    for r = 1:length(romberg_data{1,p})
-        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,9))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Pitch');
-axis([0,60, -100, 100]);
-legend
-title('Romberg Balance Test IMU Pitch Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% yaw
-figure_save = figure(); 
-plot_title = 'RombergYaw';
-for p = 1:length(romberg_data)
-    for r = 1:length(romberg_data{1,p})
-        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,10))
-        hold on
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,60, -100, 100]);
-legend
-title('Romberg Balance Test IMU Yaw Data vs. Time');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-%% Correlate Spreadsheet and GIST data files
-
-% Pre-Allocate Size of Each Variable
-trial_fmt = cell(numsub, length(FMT_Label));
-k_vals_all_fmt = cell(numsub, length(FMT_Label));
-gist_file_name_fmt = strings(length(FMT_Label), numsub);
-
-k_999_gist_files_fmt = cell(1, numsub);
-k_500_gist_files_fmt = cell(1, numsub);
-k_0_gist_files_fmt = cell(1, numsub);
-
-k_vals_all_tandem = cell(numsub, length(tandem_Label));
-gist_file_name_tandem = strings(length(tandem_Label), numsub);
-
-k_999_gist_files_tandem = cell(1, numsub);
-k_500_gist_files_tandem = cell(1, numsub);
-k_0_gist_files_tandem = cell(1, numsub);
-
-% Iterate through gist participants and correlate gist data to trial in
-% spreadsheet
-for gist_index = 1:length(GIST_participant_list)
-    current_GIST_participant_compare = GIST_participant_list(gist_index);
-    spreadsheet_index = find(strcmp(sp_participant_list, current_GIST_participant_compare));
-    
-
-    % Functional Mobility Test
-    % Initialize String
-    string_k_fmt = strings(size(1:length (sp_fmt_data{spreadsheet_index}.KValue)));
-
-    for fmt_index = 1:length (sp_fmt_data{spreadsheet_index}.KValue)
-        
-        string_k_fmt(fmt_index) = string(sp_fmt_data{spreadsheet_index}.KValue(fmt_index));
-
-        % If first k value 
-        repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
-        if length(repeat) ==  1
-            k_repeat = '_1';
-        else
-            k_repeat = '_2';
-        end
-
-        trial_fmt{gist_index, fmt_index} = k_repeat;
-        k_vals_all_fmt{gist_index, fmt_index} = string_k_fmt(fmt_index);
-        gist_file_name_fmt(fmt_index,gist_index) = strcat(current_GIST_participant_compare, '_functional_mobility_k_', string_k_fmt(fmt_index), k_repeat);
-        
-        % Output .mat files      
-    end
-
-    % Get k value array
-    k_999_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_999');
-    k_500_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_500');
-    k_0_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_0');
-    
-    
-    % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
-    % SWITCHES, # CORRECT STEPS, EACH INDIVIDUAL STEP, ETC....
-    % Tandem Walk Test
-    % Initialize String
-    string_k_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.KValue)));
-    string_headtilts_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Headtilts)));
-    string_eyes_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Eyes)));
-    for tandem_index = 1:length (sp_tandem_data{spreadsheet_index}.KValue)
-        
-        string_k_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.KValue(tandem_index));
-        string_headtilts_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Headtilts(tandem_index));
-        string_eyes_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Eyes(tandem_index));
-        % % If first k value 
-        % repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
-        % if length(repeat) ==  1
-        %     k_repeat = '_1';
-        % else
-        %     k_repeat = '_2';
-        % end
-
-        %trial_tandem{gist_index, tandem_index} = k_repeat;
-        k_vals_all_tandem{gist_index, tandem_index} = string_k_tandem(tandem_index);
-        gist_file_name_tandem(tandem_index,gist_index) = strcat(current_GIST_participant_compare, '_tandem_walk_k_', string_k_tandem(tandem_index),'_', string_headtilts_tandem(tandem_index),'_headtilts', '_eyes_',string_eyes_tandem(tandem_index));
-        
-        % Output .mat files      
-    end
-
-    % Get k value array
-    k_999_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_999');
-    k_500_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_500');
-    k_0_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_0');
-
-    % Romberg Balance Test
-    % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
-    % SWITCHES, TIME OF FAILURE 
-end
-
-%% Figures for FMT per Gain Value
-
-% if plot_fmt_data == 1
-% go to plotting function... feed in save_fmt_plots into function
-
-% 999 value
-% roll
-figure_save = figure(); 
-plot_title = 'FMT_Roll_K999';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_999_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Roll');
-axis([0,40, -100, 100]);
-legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-title('Functional Mobility Test IMU Roll Data vs. Time for K = 999');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-
-% pitch
-figure_save = figure(); 
-plot_title = 'FMT_Pitch_K999';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_999_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Pitch');
-axis([0,40, -100, 100]);
-legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-title('Functional Mobility Test IMU Pitch Data vs. Time for K = 999');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% yaw
-figure_save = figure(); 
-plot_title = 'FMT_Yaw_K999';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_999_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,40, -200, 200]);
-legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-title('Functional Mobility Test IMU Yaw Data vs. Time for K = 999');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-
-% 0 value
-
-% roll
-figure_save = figure(); 
-plot_title = 'FMT_Roll_K0';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_0_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Roll');
-axis([0,40, -100, 100]);
-legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-title('Functional Mobility Test IMU Roll Data vs. Time for K = 0');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-
-% pitch
-figure_save = figure(); 
-plot_title = 'FMT_Pitch_K0';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_0_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Pitch');
-axis([0,40, -100, 100]);
-legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-title('Functional Mobility Test IMU Pitch Data vs. Time for K = 0');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% yaw
-figure_save = figure(); 
-plot_title = 'FMT_Yaw_K0';
-for p = 1:length(FMT_data)
-    for f = 1:length(FMT_data{1,p})
-        if k_0_gist_files_fmt{p}(f,1)
-            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-            hold on
-        else
-            continue
-        end
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,40, -200, 200]);
-legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-title('Functional Mobility Test IMU Yaw Data vs. Time for K = 0');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-%% Figures per participant for all gain values
-
-% Pre-Allocate Size of Each Variable
-legend_names = strings(length(FMT_Label));
-
-% Participant 1
-figure_save = figure(); 
-plot_title = 'FMT_Yaw_Participant1';
-for p = 1:1
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-        hold on
-        legend_names(f) = strcat('Participant 1 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,40, -200, 200]);
-legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
-% Participant 2
-figure_save = figure(); 
-plot_title = 'FMT_Yaw_Participant2';
-for p = 2:2
-    for f = 1:length(FMT_data{1,p})
-        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-        hold on
-        legend_names(f) = strcat('Participant 2 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
-    end
-end
-xlabel('Time [s]');
-ylabel('Yaw');
-axis([0,40, -200, 200]);
-legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-saveas(figure_save, [plot_path plot_title '.fig']);
-
+% %% Spreadsheet Plotting
+% % I would like to put the plotting code in a new script where we load in
+% % the files we've saved so we don't have to deal with the cutting /loading
+% % naming code everytime we want to generate plots or do other things with
+% % the data
+% 
+% % if plot_fmt_data == 1
+% % go to plotting function... feed in save_fmt_plots into function
+% 
+% % Plot FMT Raw Completion time vs K
+% figure_save = figure(); 
+% plot_title = 'FMT_completion_time';
+% for p = 1:length(sp_fmt_data)
+%     scatter(sp_fmt_data{p}.KValue, sp_fmt_data{p}.RawTime, 60, 'filled', 'MarkerEdgeColor','k');
+%     hold on
+%     scatter(sp_fmt_data{p}.KValue + 10, sp_fmt_data{p}.CorrectedTime, 60, 'filled', 'MarkerEdgeColor','k');
+%     hold on
+% end
+% xlabel('GVS Gain K');
+% ylabel('Completion Time [s]');
+% axis([0,1100, 0, 40]);
+% legend(["Participant 1 Raw Time", "Participant 1 Corrected Time", "Participant 2 Raw Time", "Participant 2 Corrected Time"]);
+% title('Functional Mobility Test Completion Time vs. K');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % Plot FMT Erros vs K
+% figure_save = figure(); 
+% plot_title = 'FMT_errors';
+% for p = 1:length(sp_fmt_data)
+%     scatter(sp_fmt_data{p}.KValue + 5*p, sp_fmt_data{p}.Errors, 60, 'filled', 'MarkerEdgeColor','k');
+%     hold on
+% end
+% xlabel('GVS Gain K');
+% ylabel('Errors');
+% axis([0,1100, 0, 5]);
+% legend(["Participant 1 Errors", "Participant 2 Errors"]);
+% title('Functional Mobility Test Errors vs. K');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% %% IMU Plotting
+% 
+% % if plot_GIST_raw == 1
+% % go to plotting function... feed in save_GIST_plots into function
+% 
+% % Raw Data Plots for FMT
+% % roll
+% figure_save = figure(); 
+% plot_title = 'FMTRoll';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Roll');
+% axis([0,60, -100, 100]);
+% legend%(["Participant 1 Errors", "Participant 2 Errors"]);
+% title('Functional Mobility Test IMU Roll Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % roll
+% figure_save = figure(); 
+% plot_title = 'FMTRoll_K';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,2)/1000,FMT_data{1,p}{f,1}(:,8))
+%         hold on
+%     end
+% end
+% xlabel('Current [m amps]');
+% ylabel('Roll');
+% axis([0,10, -40, 40]);
+% legend%(["Participant 1 Errors", "Participant 2 Errors"]);
+% title('Functional Mobility Test IMU Roll Data vs. Current Level');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % pitch
+% figure_save = figure();
+% plot_title = 'FMTPitch';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Pitch');
+% axis([0,60, -100, 100]);
+% legend
+% title('Functional Mobility Test IMU Pitch Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % yaw
+% figure_save = figure();
+% plot_title = 'FMTYaw';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,60, -200, 200]);
+% legend
+% title('Functional Mobility Test IMU Yaw Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % Raw Data Plots for Tandem Walk
+% % roll
+% figure_save = figure(); 
+% plot_title = 'TandemRoll';
+% for p = 1:length(tandem_data)
+%     for t = 1:length(tandem_data{1,p})
+%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,8))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Roll');
+% axis([0,60, -100, 100]);
+% legend
+% title('Tandem Walk Test IMU Roll Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % pitch
+% figure_save = figure();
+% plot_title = 'TandemPitch';
+% for p = 1:length(tandem_data)
+%     for t = 1:length(tandem_data{1,p})
+%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,9))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Pitch');
+% axis([0,60, -100, 100]);
+% legend
+% title('Tandem Walk Test IMU Pitch Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % yaw
+% figure_save = figure();
+% plot_title = 'TandemYaw';
+% for p = 1:length(tandem_data)
+%     for t = 1:length(tandem_data{1,p})
+%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,10))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,60, -200, 200]);
+% legend
+% title('Tandem Walk Test IMU Yaw Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % Raw Data Plots for Romberg
+% % roll
+% figure_save = figure(); 
+% plot_title = 'RombergRoll';
+% for p = 1:length(romberg_data)
+%     for r = 1:length(romberg_data{1,p})
+%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,8));
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Roll');
+% axis([0,60, -100, 100]);
+% legend
+% title('Romberg Balance Test IMU Roll Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % pitch
+% figure_save = figure();
+% plot_title = 'RombergPitch';
+% for p = 1:length(romberg_data)
+%     for r = 1:length(romberg_data{1,p})
+%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,9))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Pitch');
+% axis([0,60, -100, 100]);
+% legend
+% title('Romberg Balance Test IMU Pitch Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % yaw
+% figure_save = figure(); 
+% plot_title = 'RombergYaw';
+% for p = 1:length(romberg_data)
+%     for r = 1:length(romberg_data{1,p})
+%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,10))
+%         hold on
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,60, -100, 100]);
+% legend
+% title('Romberg Balance Test IMU Yaw Data vs. Time');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% %% Correlate Spreadsheet and GIST data files
+% 
+% % Pre-Allocate Size of Each Variable
+% trial_fmt = cell(numsub, length(FMT_Label));
+% k_vals_all_fmt = cell(numsub, length(FMT_Label));
+% gist_file_name_fmt = strings(length(FMT_Label), numsub);
+% 
+% k_999_gist_files_fmt = cell(1, numsub);
+% k_500_gist_files_fmt = cell(1, numsub);
+% k_0_gist_files_fmt = cell(1, numsub);
+% 
+% k_vals_all_tandem = cell(numsub, length(tandem_Label));
+% gist_file_name_tandem = strings(length(tandem_Label), numsub);
+% 
+% k_999_gist_files_tandem = cell(1, numsub);
+% k_500_gist_files_tandem = cell(1, numsub);
+% k_0_gist_files_tandem = cell(1, numsub);
+% 
+% % Iterate through gist participants and correlate gist data to trial in
+% % spreadsheet
+% for gist_index = 1:length(GIST_participant_list)
+%     current_GIST_participant_compare = GIST_participant_list(gist_index);
+%     spreadsheet_index = find(strcmp(sp_participant_list, current_GIST_participant_compare));
+% 
+% 
+%     % Functional Mobility Test
+%     % Initialize String
+%     string_k_fmt = strings(size(1:length (sp_fmt_data{spreadsheet_index}.KValue)));
+% 
+%     for fmt_index = 1:length (sp_fmt_data{spreadsheet_index}.KValue)
+% 
+%         string_k_fmt(fmt_index) = string(sp_fmt_data{spreadsheet_index}.KValue(fmt_index));
+% 
+%         % If first k value 
+%         repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
+%         if length(repeat) ==  1
+%             k_repeat = '_1';
+%         else
+%             k_repeat = '_2';
+%         end
+% 
+%         trial_fmt{gist_index, fmt_index} = k_repeat;
+%         k_vals_all_fmt{gist_index, fmt_index} = string_k_fmt(fmt_index);
+%         gist_file_name_fmt(fmt_index,gist_index) = strcat(current_GIST_participant_compare, '_functional_mobility_k_', string_k_fmt(fmt_index), k_repeat);
+% 
+%         % Output .mat files      
+%     end
+% 
+%     % Get k value array
+%     k_999_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_999');
+%     k_500_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_500');
+%     k_0_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_0');
+% 
+% 
+%     % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
+%     % SWITCHES, # CORRECT STEPS, EACH INDIVIDUAL STEP, ETC....
+%     % Tandem Walk Test
+%     % Initialize String
+%     string_k_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.KValue)));
+%     string_headtilts_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Headtilts)));
+%     string_eyes_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Eyes)));
+%     for tandem_index = 1:length (sp_tandem_data{spreadsheet_index}.KValue)
+% 
+%         string_k_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.KValue(tandem_index));
+%         string_headtilts_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Headtilts(tandem_index));
+%         string_eyes_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Eyes(tandem_index));
+%         % % If first k value 
+%         % repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
+%         % if length(repeat) ==  1
+%         %     k_repeat = '_1';
+%         % else
+%         %     k_repeat = '_2';
+%         % end
+% 
+%         %trial_tandem{gist_index, tandem_index} = k_repeat;
+%         k_vals_all_tandem{gist_index, tandem_index} = string_k_tandem(tandem_index);
+%         gist_file_name_tandem(tandem_index,gist_index) = strcat(current_GIST_participant_compare, '_tandem_walk_k_', string_k_tandem(tandem_index),'_', string_headtilts_tandem(tandem_index),'_headtilts', '_eyes_',string_eyes_tandem(tandem_index));
+% 
+%         % Output .mat files      
+%     end
+% 
+%     % Get k value array
+%     k_999_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_999');
+%     k_500_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_500');
+%     k_0_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_0');
+% 
+%     % Romberg Balance Test
+%     % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
+%     % SWITCHES, TIME OF FAILURE 
+% end
+% 
+% %% Figures for FMT per Gain Value
+% 
+% % if plot_fmt_data == 1
+% % go to plotting function... feed in save_fmt_plots into function
+% 
+% % 999 value
+% % roll
+% figure_save = figure(); 
+% plot_title = 'FMT_Roll_K999';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_999_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Roll');
+% axis([0,40, -100, 100]);
+% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+% title('Functional Mobility Test IMU Roll Data vs. Time for K = 999');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% 
+% % pitch
+% figure_save = figure(); 
+% plot_title = 'FMT_Pitch_K999';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_999_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Pitch');
+% axis([0,40, -100, 100]);
+% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+% title('Functional Mobility Test IMU Pitch Data vs. Time for K = 999');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % yaw
+% figure_save = figure(); 
+% plot_title = 'FMT_Yaw_K999';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_999_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,40, -200, 200]);
+% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+% title('Functional Mobility Test IMU Yaw Data vs. Time for K = 999');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% 
+% % 0 value
+% 
+% % roll
+% figure_save = figure(); 
+% plot_title = 'FMT_Roll_K0';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_0_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Roll');
+% axis([0,40, -100, 100]);
+% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+% title('Functional Mobility Test IMU Roll Data vs. Time for K = 0');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% 
+% % pitch
+% figure_save = figure(); 
+% plot_title = 'FMT_Pitch_K0';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_0_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Pitch');
+% axis([0,40, -100, 100]);
+% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+% title('Functional Mobility Test IMU Pitch Data vs. Time for K = 0');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % yaw
+% figure_save = figure(); 
+% plot_title = 'FMT_Yaw_K0';
+% for p = 1:length(FMT_data)
+%     for f = 1:length(FMT_data{1,p})
+%         if k_0_gist_files_fmt{p}(f,1)
+%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+%             hold on
+%         else
+%             continue
+%         end
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,40, -200, 200]);
+% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+% title('Functional Mobility Test IMU Yaw Data vs. Time for K = 0');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% %% Figures per participant for all gain values
+% 
+% % Pre-Allocate Size of Each Variable
+% legend_names = strings(length(FMT_Label));
+% 
+% % Participant 1
+% figure_save = figure(); 
+% plot_title = 'FMT_Yaw_Participant1';
+% for p = 1:1
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+%         hold on
+%         legend_names(f) = strcat('Participant 1 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,40, -200, 200]);
+% legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+% title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
+% % Participant 2
+% figure_save = figure(); 
+% plot_title = 'FMT_Yaw_Participant2';
+% for p = 2:2
+%     for f = 1:length(FMT_data{1,p})
+%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+%         hold on
+%         legend_names(f) = strcat('Participant 2 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
+%     end
+% end
+% xlabel('Time [s]');
+% ylabel('Yaw');
+% axis([0,40, -200, 200]);
+% legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+% title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
+% saveas(figure_save, [plot_path plot_title '.fig']);
+% 
