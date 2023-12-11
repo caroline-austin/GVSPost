@@ -20,6 +20,21 @@ clc; clear; close all;
 subnum = [3023:3032];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
+
+% Include plots?
+plot_GIST_raw = 0;
+plot_XSENS_raw = 0;
+plot_fmt_data = 0;
+plot_tandem_data = 0;
+plot_romberg_data = 0;
+
+% Save plots?
+save_GIST_plots = 0;
+save_XSENS_plots= 0;
+save_fmt_plots = 0;
+save_tandem_plots = 0;
+save_romberg_plots = 0;
+
 % full subject data sets should have:
 % FMT: 6 GIST files, (9+ excel rows, 6 XSENS files(?)
 % tandem: 12 GIST files, 16(?) excel rows, 12 XSENS files (?)
@@ -35,7 +50,7 @@ code_path = strrep(pwd,'\','/'); %save code directory
 file_path =  strrep(uigetdir,'\','/'); %user selects file directory
 
 % Master Spreadsheet File Location
-filename = [ file_path '/FunctionalMobilityTesting.xlsx'];
+filename = fullfile(file_path, 'FunctionalMobilityTesting.xlsx');
 sheets = sheetnames(filename);
 
 % GIST File Locations
@@ -56,8 +71,7 @@ plot_folder_flag = strcmp(sub_folder_names, 'plots');
 sub_folder_names = sub_folder_names(~plot_folder_flag);
 
 %% Set Plot Locations
-
-plot_path = [file_path '/plots/'];
+plot_path = fullfile(file_path, 'plots');
 
 %% Reference Spreadsheet Vals
 
@@ -110,15 +124,16 @@ opts_romberg.DataRange = romberg_dataLines(1, :);
 
 %% Import Spreadsheet Data
 
-% Pre-Allocate Size of Each Cell Array
-% sp_fmt_data{}
-% sp_tandem_data{}
-% sp_romberg_data{}
+% Pre-Allocate Size of Each Variable
+sp_fmt_data = cell(1,numsub);
+sp_tandem_data = cell(1,numsub);
+sp_romberg_data = cell(1,numsub);
 
-% sp_fmt_training_data{}
-% sp_tandem_training_data{}
-% sp_romberg_training_data{}
+sp_fmt_data_training = cell(1,numsub);
+sp_tandem_data_training = cell(1,numsub);
+sp_romberg_data_training = cell(1,numsub);
 
+sp_participant_list = strings(numsub);
 
 % Enter Loop for Each Participant
 participant_num = 0;
@@ -136,70 +151,80 @@ for sub = 1:numsub
        continue
     end
 
-            % Increment Participant
-            participant_num = participant_num + 1;
-            sp_participant_list(participant_num) = sheet;
-            
-            % Functional Mobility Test
-            % Adjust for additional training trial for subject S3023
-            if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025') || strcmp(sheet, 'S3027') || strcmp(sheet, 'S3028') || strcmp(sheet, 'S3030')|| strcmp(sheet, 'S3031')
-                opts_fmt_mod.Sheet = sheet;
-                sp_fmt_data_all = readtable(filename, opts_fmt_mod, "UseExcel", false);
+    % Increment Participant
+    participant_num = participant_num + 1;
+    sp_participant_list(participant_num) = sheet;
+    
+    % Functional Mobility Test
+    % Adjust for additional training trial for subject S3023
+    if strcmp(sheet, 'S3023') || strcmp(sheet, 'S3025') || strcmp(sheet, 'S3027') || strcmp(sheet, 'S3028') || strcmp(sheet, 'S3030')|| strcmp(sheet, 'S3031')
+        opts_fmt_mod.Sheet = sheet;
+        sp_fmt_data_all = readtable(filename, opts_fmt_mod, "UseExcel", false);
 
-                % Set range for training data
-                fmt_training_range = 4;
+        % Set range for training data
+        fmt_training_range = 4;
 
-                % Set Training and Trial Data Arrays for Plotting
-                sp_fmt_data_training{participant_num} = sp_fmt_data_all(1:fmt_training_range,:);
-                sp_fmt_data{participant_num} = sp_fmt_data_all((fmt_training_range + 1):height(sp_fmt_data_all), :);
-            else
-                opts_fmt.Sheet = sheet;
-                sp_fmt_data_all = readtable(filename, opts_fmt, "UseExcel", false);
 
-                % Set range for training data
-                fmt_training_range = 3;
+        % Set Training and Trial Data Arrays for Plotting
+        sp_fmt_data_training{participant_num} = sp_fmt_data_all(1:fmt_training_range,:);
+        sp_fmt_data{participant_num} = sp_fmt_data_all((fmt_training_range + 1):height(sp_fmt_data_all), :);
+    else
+        opts_fmt.Sheet = sheet;
+        sp_fmt_data_all = readtable(filename, opts_fmt, "UseExcel", false);
 
-                % Set Training and Trial Data Arrays for Plotting
-                sp_fmt_data_training{participant_num} = sp_fmt_data_all(1:fmt_training_range,:);
-                sp_fmt_data{participant_num} = sp_fmt_data_all((fmt_training_range + 1):height(sp_fmt_data_all), :);
-            end
-          
+        % Set range for training data
+        fmt_training_range = 3;
 
-            % Tandem Walk Test
-            opts_tandem.Sheet = sheet;
-            sp_tandem_data_all = readtable(filename,opts_tandem, "UseExcel", false);
+        % Set Training and Trial Data Arrays for Plotting
+        sp_fmt_data_training{participant_num} = sp_fmt_data_all(1:fmt_training_range,:);
+        sp_fmt_data{participant_num} = sp_fmt_data_all((fmt_training_range + 1):height(sp_fmt_data_all), :);
+    end
+  
 
-            % Set range for training data
-            tandem_training_range = 4;
+    % Tandem Walk Test
+    opts_tandem.Sheet = sheet;
+    sp_tandem_data_all = readtable(filename,opts_tandem, "UseExcel", false);
 
-            % Set Training and Trial Data Arrays for Plotting
-            sp_tandem_data_training{participant_num} = sp_tandem_data_all(1:tandem_training_range,:);
-            sp_tandem_data{participant_num} = sp_tandem_data_all((tandem_training_range + 1):height(sp_tandem_data_all), :);
-            
+    % Set range for training data
+    tandem_training_range = 4;
 
-            % Romberg Balance Test
-            opts_romberg.Sheet = sheet;
-            sp_romberg_data_all = readtable(filename,opts_romberg, "UseExcel", false);
+    % Set Training and Trial Data Arrays for Plotting
+    sp_tandem_data_training{participant_num} = sp_tandem_data_all(1:tandem_training_range,:);
+    sp_tandem_data{participant_num} = sp_tandem_data_all((tandem_training_range + 1):height(sp_tandem_data_all), :);
+    
 
-            % Set range for training data
-            romberg_training_range = 6;
+    % Romberg Balance Test
+    opts_romberg.Sheet = sheet;
+    sp_romberg_data_all = readtable(filename,opts_romberg, "UseExcel", false);
 
-            % Set Training and Trial Data Arrays for Plotting
-            sp_romberg_data_training{participant_num} = sp_romberg_data_all(1:romberg_training_range,:);
-            sp_romberg_data{participant_num} = sp_romberg_data_all((romberg_training_range + 1):height(sp_romberg_data_all), :);
-        %end
-    %end
+    % Set range for training data
+    romberg_training_range = 6;
+
+    % Set Training and Trial Data Arrays for Plotting
+    sp_romberg_data_training{participant_num} = sp_romberg_data_all(1:romberg_training_range,:);
+    sp_romberg_data{participant_num} = sp_romberg_data_all((romberg_training_range + 1):height(sp_romberg_data_all), :);
 end
 
 %% GIST IMU Data Processing
 
 % Define Each Folder Structure
-fmt_folder = 'FMT/';
-tandem_folder = 'Tandem/';
-romberg_folder = 'Romberg/';
+fmt_folder = 'FMT';
+tandem_folder = 'Tandem';
+romberg_folder = 'Romberg';
 
 % Find Total Number of Data Folders in High Level Directory
 % GIST_participants = length(sub_folder_names);
+
+% Pre-Allocate Size of Each Variable
+GIST_participant_list = strings(numsub);
+
+GIST_files_FMT = cell(1,numsub);
+GIST_files_tandem = cell(1,numsub);
+GIST_files_romberg = cell(1,numsub);
+
+FMT_data = cell(1,numsub);
+tandem_data = cell(1,numsub);
+romberg_data = cell(1,numsub);
 
 % Iterate through all CSV Files in Folder
 num_GIST_participants = 0;
@@ -207,7 +232,7 @@ for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
 
-     % Current GIST Participant
+    % Current GIST Participant
     if subject < 3023 
         current_GIST_participant = string(['P' subject_str]);
     else
@@ -217,102 +242,109 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    sub_path = strjoin([file_path, '/' , current_GIST_participant], '');
+    sub_path = fullfile(file_path, current_GIST_participant);
 
-        % Generate GIST participant list
-        num_GIST_participants = num_GIST_participants + 1;
-        GIST_participant_list(num_GIST_participants) = string(current_GIST_participant);
+    % Generate GIST participant list
+    num_GIST_participants = num_GIST_participants + 1;
+    GIST_participant_list(num_GIST_participants) = string(current_GIST_participant);
 
-        % Length of FMT GIST Files for Current Participant
-        GIST_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
-        GIST_files_FMT{sub} = dir(fullfile(string(GIST_file_location_FMT), '*.csv')); %could use the get_filetype.m function
+    % Length of FMT GIST Files for Current Participant
+    GIST_file_location_FMT = fullfile(sub_path, fmt_folder);
+    GIST_files_FMT{sub} = dir(fullfile(string(GIST_file_location_FMT), '*.csv')); %could use the get_filetype.m function
+
+    % Length of Tandem Walk GIST Files for Current Participant
+    GIST_file_location_tandem = fullfile(sub_path, tandem_folder);
+    GIST_files_tandem{sub} = dir(fullfile(string(GIST_file_location_tandem), '*.csv'));
+
+    % Length of Romberg Balance GIST Files for Current Participant
+    GIST_file_location_romberg = fullfile(sub_path, romberg_folder);
+    GIST_files_romberg{sub} = dir(fullfile(string(GIST_file_location_romberg), '*.csv'));
     
-        % Length of Tandem Walk GIST Files for Current Participant
-        GIST_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
-        GIST_files_tandem{sub} = dir(fullfile(string(GIST_file_location_tandem), '*.csv'));
-    
-        % Length of Romberg Balance GIST Files for Current Participant
-        GIST_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
-        GIST_files_romberg{sub} = dir(fullfile(string(GIST_file_location_romberg), '*.csv'));
+    % Loop through FMT GIST files
+    for k = 1:length(GIST_files_FMT{sub})
+        current_datafile = GIST_files_FMT{sub}(k,1); 
+        current_filename = current_datafile.name;
         
-        % Loop through FMT GIST files
-        for k = 1:length(GIST_files_FMT{sub})
-            current_datafile = GIST_files_FMT{sub}(k,1); 
-            current_filename = current_datafile.name;
-            
-            % Read in GIST file
-            GIST_data = GISTfile_reader(strcat(GIST_file_location_FMT, current_filename));
-            
-            % Set Time, Roll, Pitch, and Yaw data
-            time_data = GIST_data.Time;
-            channel_1_current = GIST_data.Ch1CurrentuA;
-            channel_1_impedance = GIST_data.Ch1Impedance;
-            channel_1_voltage = GIST_data.Ch1VoltageV;
-            channel_2_current = GIST_data.Ch2CurrentuA;
-            channel_2_impedance = GIST_data.Ch2Impedance;
-            channel_2_voltage = GIST_data.Ch2VoltageV;            
-            roll_data = GIST_data.Roll;
-            pitch_data = GIST_data.Pitch;
-            yaw_data = GIST_data.Yaw;
-    
-            % Add to Cell Array for Plotting
-            FMT_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
-        end
-    
-        % Loop through Tandem Walk GIST files
-        for k = 1:length(GIST_files_tandem{sub})
-            current_datafile = GIST_files_tandem{sub}(k,1); 
-            current_filename = current_datafile.name;
-    
-            % Read in GIST file
-            GIST_data = GISTfile_reader(strcat(GIST_file_location_tandem, current_filename));
-    
-            % Set Time, Roll, Pitch, and Yaw data
-            time_data = GIST_data.Time;
-            channel_1_current = GIST_data.Ch1CurrentuA;
-            channel_1_impedance = GIST_data.Ch1Impedance;
-            channel_1_voltage = GIST_data.Ch1VoltageV;
-            channel_2_current = GIST_data.Ch2CurrentuA;
-            channel_2_impedance = GIST_data.Ch2Impedance;
-            channel_2_voltage = GIST_data.Ch2VoltageV;            
-            roll_data = GIST_data.Roll;
-            pitch_data = GIST_data.Pitch;
-            yaw_data = GIST_data.Yaw;
-    
-            % Add to Cell Array for Plotting
-            tandem_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
-        end
-    
-        % Loop through Romberg Balance GIST files
-        for k = 1:length(GIST_files_romberg{sub})
-            current_datafile = GIST_files_romberg{sub}(k,1); 
-            current_filename = current_datafile.name;
-    
-            % Read in GIST file
-            GIST_data = GISTfile_reader(strcat(GIST_file_location_romberg, current_filename));
-    
-            % Set Time, Roll, Pitch, and Yaw data
-            time_data = GIST_data.Time;
-            channel_1_current = GIST_data.Ch1CurrentuA;
-            channel_1_impedance = GIST_data.Ch1Impedance;
-            channel_1_voltage = GIST_data.Ch1VoltageV;
-            channel_2_current = GIST_data.Ch2CurrentuA;
-            channel_2_impedance = GIST_data.Ch2Impedance;
-            channel_2_voltage = GIST_data.Ch2VoltageV;            
-            roll_data = GIST_data.Roll;
-            pitch_data = GIST_data.Pitch;
-            yaw_data = GIST_data.Yaw;
-    
-            % Add to Cell Array for Plotting
-            romberg_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
-        end
-%     end
+        % Read in GIST file
+        GIST_data = GISTfile_reader(fullfile(GIST_file_location_FMT, current_filename));
+        
+        % Set Time, Roll, Pitch, and Yaw data
+        time_data = GIST_data.Time;
+        channel_1_current = GIST_data.Ch1CurrentuA;
+        channel_1_impedance = GIST_data.Ch1Impedance;
+        channel_1_voltage = GIST_data.Ch1VoltageV;
+        channel_2_current = GIST_data.Ch2CurrentuA;
+        channel_2_impedance = GIST_data.Ch2Impedance;
+        channel_2_voltage = GIST_data.Ch2VoltageV;            
+        roll_data = GIST_data.Roll;
+        pitch_data = GIST_data.Pitch;
+        yaw_data = GIST_data.Yaw;
+
+        % Add to Cell Array for Plotting
+        FMT_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+    end
+
+    % Loop through Tandem Walk GIST files
+    for k = 1:length(GIST_files_tandem{sub})
+        current_datafile = GIST_files_tandem{sub}(k,1); 
+        current_filename = current_datafile.name;
+
+        % Read in GIST file
+        GIST_data = GISTfile_reader(fullfile(GIST_file_location_tandem, current_filename));
+
+        % Set Time, Roll, Pitch, and Yaw data
+        time_data = GIST_data.Time;
+        channel_1_current = GIST_data.Ch1CurrentuA;
+        channel_1_impedance = GIST_data.Ch1Impedance;
+        channel_1_voltage = GIST_data.Ch1VoltageV;
+        channel_2_current = GIST_data.Ch2CurrentuA;
+        channel_2_impedance = GIST_data.Ch2Impedance;
+        channel_2_voltage = GIST_data.Ch2VoltageV;            
+        roll_data = GIST_data.Roll;
+        pitch_data = GIST_data.Pitch;
+        yaw_data = GIST_data.Yaw;
+
+        % Add to Cell Array for Plotting
+        tandem_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+    end
+
+    % Loop through Romberg Balance GIST files
+    for k = 1:length(GIST_files_romberg{sub})
+        current_datafile = GIST_files_romberg{sub}(k,1); 
+        current_filename = current_datafile.name;
+
+        % Read in GIST file
+        GIST_data = GISTfile_reader(fullfile(GIST_file_location_romberg, current_filename));
+
+        % Set Time, Roll, Pitch, and Yaw data
+        time_data = GIST_data.Time;
+        channel_1_current = GIST_data.Ch1CurrentuA;
+        channel_1_impedance = GIST_data.Ch1Impedance;
+        channel_1_voltage = GIST_data.Ch1VoltageV;
+        channel_2_current = GIST_data.Ch2CurrentuA;
+        channel_2_impedance = GIST_data.Ch2Impedance;
+        channel_2_voltage = GIST_data.Ch2VoltageV;            
+        roll_data = GIST_data.Roll;
+        pitch_data = GIST_data.Pitch;
+        yaw_data = GIST_data.Yaw;
+
+        % Add to Cell Array for Plotting
+        romberg_data{num_GIST_participants}{k, 1} = [time_data, channel_1_current, channel_1_impedance, channel_1_voltage, channel_2_current, channel_2_impedance, channel_2_voltage, roll_data, pitch_data, yaw_data];
+    end
 end
+
 %% Xsens IMU data processing 
-% Define Each Folder Structure
-fmt_folder = 'FMT/';
-tandem_folder = 'Tandem/';
-romberg_folder = 'Romberg/';
+
+% Pre-Allocate Size of Each Variable
+XSENS_participant_list = strings(numsub);
+
+XSENS_files_FMT = cell(1,numsub);
+XSENS_files_tandem = cell(1,numsub);
+XSENS_files_romberg = cell(1,numsub);
+
+FMT_dataX = cell(1,numsub);
+tandem_dataX = cell(1,numsub);
+romberg_dataX = cell(1,numsub);
 
 % Iterate through all subjects 
 num_XSENS_participants = 0;
@@ -330,22 +362,22 @@ for sub = 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    sub_path = strjoin([file_path, '/' , current_XSENS_participant, '/XSENS'], '');
+    sub_path = fullfile(file_path, current_XSENS_participant, 'XSENS');
 
         % Generate XSENS participant list
         num_XSENS_participants = num_XSENS_participants + 1;
         XSENS_participant_list(num_XSENS_participants) = string(current_XSENS_participant);
 
         % Length of FMT XSENS Files for Current Participant
-        XSENS_file_location_FMT = (strjoin([sub_path, '/', fmt_folder], ''));
+        XSENS_file_location_FMT = fullfile(sub_path, fmt_folder);
         XSENS_files_FMT{sub} = dir(fullfile(string(XSENS_file_location_FMT), '*.csv')); %could use the get_filetype.m function
 
         % Length of Tandem Walk XSENS Files for Current Participant
-        XSENS_file_location_tandem = (strjoin([sub_path, '/', tandem_folder], ''));
+        XSENS_file_location_tandem = fullfile(sub_path, tandem_folder);
         XSENS_files_tandem{sub} = dir(fullfile(string(XSENS_file_location_tandem), '*.csv'));
 
         % Length of Romberg Balance XSENS Files for Current Participant
-        XSENS_file_location_romberg = (strjoin([sub_path, '/', romberg_folder], ''));
+        XSENS_file_location_romberg = fullfile(sub_path, romberg_folder);
         XSENS_files_romberg{sub} = dir(fullfile(string(XSENS_file_location_romberg), '*.csv'));
 
 
@@ -356,7 +388,7 @@ for sub = 1:numsub
                 current_filename = current_datafile.name;
                 
                 % Read in XSENS file
-                XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_FMT, current_filename));
+                XSENS_data = XSENSfile_reader(fullfile(XSENS_file_location_FMT, current_filename));
                 
                 % Set Time, Roll, Pitch, and Yaw data
                 time_data = XSENS_data.Time;
@@ -444,7 +476,7 @@ for sub = 1:numsub
                 current_filename = current_datafile.name;
         
                 % Read in XSENS file
-                XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_tandem, current_filename));
+                XSENS_data = XSENSfile_reader(fullfile(XSENS_file_location_tandem, current_filename));
         
                % Set Time, Roll, Pitch, and Yaw data
                 time_data = XSENS_data.Time;
@@ -546,13 +578,13 @@ for sub = 1:numsub
                end
         end
 
-                % Loop through Romberg Balance XSENS files
+        % Loop through Romberg Balance XSENS files
         for k = 1:length(XSENS_files_romberg{sub})
             current_datafile = XSENS_files_romberg{sub}(k,1); 
             current_filename = current_datafile.name;
     
             % Read in XSENS file
-            XSENS_data = XSENSfile_reader(strcat(XSENS_file_location_romberg, current_filename),30);
+            XSENS_data = XSENSfile_reader(fullfile(XSENS_file_location_romberg, current_filename),30);
     
             % Set Time, Roll, Pitch, and Yaw data
             time_data = XSENS_data.Time;
@@ -656,6 +688,35 @@ romberg_Label = ["K000_NHeadTilt", "K000_NHeadTilt", "K000_NHeadTilt", ...
 romberg_training_Label = [ "K000_NHeadTilt_EO_HS", "K000_NHeadTilt_EC_HS", "K000_NHeadTilt_EO_FS", ... 
         "K000_NHeadTilt_EC_FS", "K000_YHeadTilt_EO_FS", "K000_YHeadTilt_EC_FS"]; 
 
+% Pre-Allocate Size of Each Variable
+fmt_GIST_sort = cell(1, length(FMT_Label));
+fmt_XSENS_sort = cell(1, length(FMT_Label));
+fmt_EXCEL_sort = cell(1, length(FMT_Label));
+fmt_GIST_all = cell(numsub, length(FMT_Label));
+fmt_XSENS_all = cell(numsub, length(FMT_Label));
+fmt_EXCEL_all = cell(numsub, length(FMT_Label));
+
+tandem_GIST_sort = cell(1, length(tandem_Label));
+tandem_XSENS_sort = cell(1, length(tandem_Label));
+tandem_EXCEL_sort = cell(1, length(tandem_Label));
+tandem_GIST_all = cell(numsub, length(tandem_Label));
+tandem_XSENS_all = cell(numsub, length(tandem_Label));
+tandem_EXCEL_all = cell(numsub, length(tandem_Label));
+
+romberg_GIST_sort = cell(1, length(romberg_Label));
+romberg_XSENS_sort = cell(1, length(romberg_Label));
+romberg_EXCEL_sort = cell(1, length(romberg_Label));
+romberg_GIST_all = cell(numsub, length(romberg_Label));
+romberg_XSENS_all = cell(numsub, length(romberg_Label));
+romberg_EXCEL_all = cell(numsub, length(romberg_Label));
+
+romberg_GIST_train_sort = cell(1, length(romberg_Label));
+romberg_XSENS_train_sort = cell(1, length(romberg_Label));
+romberg_EXCEL_train_sort = cell(1, length(romberg_Label));
+romberg_GIST_train_all = cell(numsub, length(romberg_Label));
+romberg_XSENS_train_all = cell(numsub, length(romberg_Label));
+romberg_EXCEL_train_all = cell(numsub, length(romberg_Label));
+
 %process data one participant at a time
 for sub= 1:numsub
     %set up subject info and pathing
@@ -672,7 +733,7 @@ for sub= 1:numsub
     if ismember(subject,subskip) == 1
        continue
     end
-    sub_path = strjoin([file_path, '/' , current_save_participant], '');
+    sub_path = fullfile(file_path, current_save_participant);
     
     %FMT
     check = zeros(1,height(sp_fmt_data{1,sub})); % one zero for each of the anticipated trials
@@ -687,7 +748,7 @@ for sub= 1:numsub
         fmt_XSENS = FMT_dataX{1,sub}{trial,1};
         fmt_EXCEL = sp_fmt_data{1,sub}(trial,:);
         %save individual trial data into a its own file
-        cd(strjoin([sub_path '/' fmt_folder],''));
+        cd(fullfile(sub_path, fmt_folder));
         vars_2_save = ['fmt_GIST ' 'fmt_XSENS ' 'fmt_EXCEL '];
         eval(strjoin(['  save ' strjoin([current_save_participant '_' fmt_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
         cd(code_path);
@@ -729,7 +790,7 @@ for sub= 1:numsub
         tandem_XSENS = tandem_dataX{1,sub}{trial,1};
         tandem_EXCEL = sp_tandem_data{1,sub}(trial,:);
         %save individual trial data into a its own file
-        cd(strjoin([sub_path '/' tandem_folder],''));
+        cd(fullfile(sub_path, tandem_folder));
         vars_2_save = ['tandem_GIST ' 'tandem_XSENS ' 'tandem_EXCEL '];
         eval(strjoin(['  save ' strjoin([current_save_participant '_' tandem_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
         cd(code_path);
@@ -776,7 +837,7 @@ for sub= 1:numsub
         romberg_XSENS = romberg_dataX{1,sub}{trial,1};
         romberg_EXCEL = sp_romberg_data{1,sub}(index,:);
         %save individual trial data into a its own file
-        cd(strjoin([sub_path '/' romberg_folder],''));
+        cd(fullfile(sub_path, romberg_folder));
         vars_2_save = ['romberg_GIST ' 'romberg_XSENS ' 'romberg_EXCEL '];
         eval(strjoin(['  save ' strjoin([current_save_participant '_' romberg_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
         cd(code_path);
@@ -821,7 +882,7 @@ for sub= 1:numsub
         romberg_XSENS_train = romberg_dataX{1,sub}{trial,1};
         romberg_EXCEL_train = sp_romberg_data_training{1,sub}(trial,:);
         %save individual trial data into a its own file
-        cd(strjoin([sub_path '/' romberg_folder],''));
+        cd(fullfile(sub_path, romberg_folder));
         vars_2_save = ['romberg_GIST_train ' 'romberg_XSENS_train ' 'romberg_EXCEL_train '];
         eval(strjoin(['  save ' strjoin([current_save_participant '_' romberg_trial_name '.mat '],'') vars_2_save  ' Label vars_2_save']));     
         cd(code_path);
@@ -874,442 +935,472 @@ end
     cd(code_path);
     close all;
 
-% %% Spreadsheet Plotting
-% % I would like to put the plotting code in a new script where we load in
-% % the files we've saved so we don't have to deal with the cutting /loading
-% % naming code everytime we want to generate plots or do other things with
-% % the data
-% 
-% % Plot FMT Raw Completion time vs K
-% figure_save = figure(); 
-% plot_title = 'FMT_completion_time';
-% for p = 1:length(sp_fmt_data)
-%     scatter(sp_fmt_data{p}.KValue, sp_fmt_data{p}.RawTime, 60, 'filled', 'MarkerEdgeColor','k');
-%     hold on
-%     scatter(sp_fmt_data{p}.KValue + 10, sp_fmt_data{p}.CorrectedTime, 60, 'filled', 'MarkerEdgeColor','k');
-%     hold on
-% end
-% xlabel('GVS Gain K');
-% ylabel('Completion Time [s]');
-% axis([0,1100, 0, 40]);
-% legend(["Participant 1 Raw Time", "Participant 1 Corrected Time", "Participant 2 Raw Time", "Participant 2 Corrected Time"]);
-% title('Functional Mobility Test Completion Time vs. K');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % Plot FMT Erros vs K
-% figure_save = figure(); 
-% plot_title = 'FMT_errors';
-% for p = 1:length(sp_fmt_data)
-%     scatter(sp_fmt_data{p}.KValue + 5*p, sp_fmt_data{p}.Errors, 60, 'filled', 'MarkerEdgeColor','k');
-%     hold on
-% end
-% xlabel('GVS Gain K');
-% ylabel('Errors');
-% axis([0,1100, 0, 5]);
-% legend(["Participant 1 Errors", "Participant 2 Errors"]);
-% title('Functional Mobility Test Errors vs. K');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% %% IMU Plotting
-% 
-% % Raw Data Plots for FMT
-% % roll
-% figure_save = figure(); 
-% plot_title = 'FMTRoll';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Roll');
-% axis([0,60, -100, 100]);
-% legend%(["Participant 1 Errors", "Participant 2 Errors"]);
-% title('Functional Mobility Test IMU Roll Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % roll
-% figure_save = figure(); 
-% plot_title = 'FMTRoll_K';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,2)/1000,FMT_data{1,p}{f,1}(:,8))
-%         hold on
-%     end
-% end
-% xlabel('Current [m amps]');
-% ylabel('Roll');
-% axis([0,10, -40, 40]);
-% legend%(["Participant 1 Errors", "Participant 2 Errors"]);
-% title('Functional Mobility Test IMU Roll Data vs. Current Level');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % pitch
-% figure_save = figure();
-% plot_title = 'FMTPitch';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Pitch');
-% axis([0,60, -100, 100]);
-% legend
-% title('Functional Mobility Test IMU Pitch Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % yaw
-% figure_save = figure();
-% plot_title = 'FMTYaw';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,60, -200, 200]);
-% legend
-% title('Functional Mobility Test IMU Yaw Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % Raw Data Plots for Tandem Walk
-% % roll
-% figure_save = figure(); 
-% plot_title = 'TandemRoll';
-% for p = 1:length(tandem_data)
-%     for t = 1:length(tandem_data{1,p})
-%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,8))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Roll');
-% axis([0,60, -100, 100]);
-% legend
-% title('Tandem Walk Test IMU Roll Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % pitch
-% figure_save = figure();
-% plot_title = 'TandemPitch';
-% for p = 1:length(tandem_data)
-%     for t = 1:length(tandem_data{1,p})
-%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,9))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Pitch');
-% axis([0,60, -100, 100]);
-% legend
-% title('Tandem Walk Test IMU Pitch Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % yaw
-% figure_save = figure();
-% plot_title = 'TandemYaw';
-% for p = 1:length(tandem_data)
-%     for t = 1:length(tandem_data{1,p})
-%         plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,10))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,60, -200, 200]);
-% legend
-% title('Tandem Walk Test IMU Yaw Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % Raw Data Plots for Romberg
-% % roll
-% figure_save = figure(); 
-% plot_title = 'RombergRoll';
-% for p = 1:length(romberg_data)
-%     for r = 1:length(romberg_data{1,p})
-%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,8));
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Roll');
-% axis([0,60, -100, 100]);
-% legend
-% title('Romberg Balance Test IMU Roll Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % pitch
-% figure_save = figure();
-% plot_title = 'RombergPitch';
-% for p = 1:length(romberg_data)
-%     for r = 1:length(romberg_data{1,p})
-%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,9))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Pitch');
-% axis([0,60, -100, 100]);
-% legend
-% title('Romberg Balance Test IMU Pitch Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % yaw
-% figure_save = figure(); 
-% plot_title = 'RombergYaw';
-% for p = 1:length(romberg_data)
-%     for r = 1:length(romberg_data{1,p})
-%         plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,10))
-%         hold on
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,60, -100, 100]);
-% legend
-% title('Romberg Balance Test IMU Yaw Data vs. Time');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% %% Correlate Spreadsheet and GIST data files
-% 
-% % Iterate through gist participants and correlate gist data to trial in
-% % spreadsheet
-% for gist_index = 1:length(GIST_participant_list)
-%     current_GIST_participant_compare = GIST_participant_list(gist_index);
-%     spreadsheet_index = find(strcmp(sp_participant_list, current_GIST_participant_compare));
-% 
-% 
-%     % Functional Mobility Test
-%     % Initialize String
-%     string_k_fmt = strings(size(1:length (sp_fmt_data{spreadsheet_index}.KValue)));
-% 
-%     for fmt_index = 1:length (sp_fmt_data{spreadsheet_index}.KValue)
-% 
-%         string_k_fmt(fmt_index) = string(sp_fmt_data{spreadsheet_index}.KValue(fmt_index));
-% 
-%         % If first k value 
-%         repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
-%         if length(repeat) ==  1
-%             k_repeat = '_1';
-%         else
-%             k_repeat = '_2';
-%         end
-% 
-%         trial_fmt{gist_index, fmt_index} = k_repeat;
-%         k_vals_all_fmt{gist_index, fmt_index} = string_k_fmt(fmt_index);
-%         gist_file_name_fmt(fmt_index,gist_index) = strcat(current_GIST_participant_compare, '_functional_mobility_k_', string_k_fmt(fmt_index), k_repeat);
-% 
-%         % Output .mat files      
-%     end
-% 
-%     % Get k value array
-%     k_999_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_999');
-%     k_500_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_500');
-%     k_0_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_0');
-% 
-% 
-%     % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
-%     % SWITCHES, # CORRECT STEPS, EACH INDIVIDUAL STEP, ETC....
-%     % Tandem Walk Test
-%     % Initialize String
-%     string_k_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.KValue)));
-%     string_headtilts_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Headtilts)));
-%     string_eyes_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Eyes)));
-%     for tandem_index = 1:length (sp_tandem_data{spreadsheet_index}.KValue)
-% 
-%         string_k_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.KValue(tandem_index));
-%         string_headtilts_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Headtilts(tandem_index));
-%         string_eyes_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Eyes(tandem_index));
-%         % % If first k value 
-%         % repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
-%         % if length(repeat) ==  1
-%         %     k_repeat = '_1';
-%         % else
-%         %     k_repeat = '_2';
-%         % end
-% 
-%         %trial_tandem{gist_index, tandem_index} = k_repeat;
-%         k_vals_all_tandem{gist_index, tandem_index} = string_k_tandem(tandem_index);
-%         gist_file_name_tandem(tandem_index,gist_index) = strcat(current_GIST_participant_compare, '_tandem_walk_k_', string_k_tandem(tandem_index),'_', string_headtilts_tandem(tandem_index),'_headtilts', '_eyes_',string_eyes_tandem(tandem_index));
-% 
-%         % Output .mat files      
-%     end
-% 
-%     % Get k value array
-%     k_999_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_999');
-%     k_500_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_500');
-%     k_0_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_0');
-% 
-%     % Romberg Balance Test
-%     % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
-%     % SWITCHES, TIME OF FAILURE 
-% end
-% 
-% %% Figures for FMT per Gain Value
-% 
-% % 999 value
-% % roll
-% figure_save = figure(); 
-% plot_title = 'FMT_Roll_K999';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_999_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Roll');
-% axis([0,40, -100, 100]);
-% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-% title('Functional Mobility Test IMU Roll Data vs. Time for K = 999');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% 
-% % pitch
-% figure_save = figure(); 
-% plot_title = 'FMT_Pitch_K999';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_999_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Pitch');
-% axis([0,40, -100, 100]);
-% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-% title('Functional Mobility Test IMU Pitch Data vs. Time for K = 999');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % yaw
-% figure_save = figure(); 
-% plot_title = 'FMT_Yaw_K999';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_999_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,40, -200, 200]);
-% legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-% title('Functional Mobility Test IMU Yaw Data vs. Time for K = 999');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% 
-% % 0 value
-% 
-% % roll
-% figure_save = figure(); 
-% plot_title = 'FMT_Roll_K0';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_0_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Roll');
-% axis([0,40, -100, 100]);
-% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-% title('Functional Mobility Test IMU Roll Data vs. Time for K = 0');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% 
-% % pitch
-% figure_save = figure(); 
-% plot_title = 'FMT_Pitch_K0';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_0_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Pitch');
-% axis([0,40, -100, 100]);
-% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-% title('Functional Mobility Test IMU Pitch Data vs. Time for K = 0');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % yaw
-% figure_save = figure(); 
-% plot_title = 'FMT_Yaw_K0';
-% for p = 1:length(FMT_data)
-%     for f = 1:length(FMT_data{1,p})
-%         if k_0_gist_files_fmt{p}(f,1)
-%             plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-%             hold on
-%         else
-%             continue
-%         end
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,40, -200, 200]);
-% legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
-% title('Functional Mobility Test IMU Yaw Data vs. Time for K = 0');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% %% Figures per participant for all gain values
-% 
-% % Participant 1
-% figure_save = figure(); 
-% plot_title = 'FMT_Yaw_Participant1';
-% for p = 1:1
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-%         hold on
-%         legend_names(f) = strcat('Participant 1 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,40, -200, 200]);
-% legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-% title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-% saveas(figure_save, [plot_path plot_title '.fig']);
-% 
-% % Participant 2
-% figure_save = figure(); 
-% plot_title = 'FMT_Yaw_Participant2';
-% for p = 2:2
-%     for f = 1:length(FMT_data{1,p})
-%         plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
-%         hold on
-%         legend_names(f) = strcat('Participant 2 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
-%     end
-% end
-% xlabel('Time [s]');
-% ylabel('Yaw');
-% axis([0,40, -200, 200]);
-% legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
-% title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
-% saveas(figure_save, [plot_path plot_title '.fig']);
+
+%% Spreadsheet Plotting
+% I would like to put the plotting code in a new script where we load in
+% the files we've saved so we don't have to deal with the cutting /loading
+% naming code everytime we want to generate plots or do other things with
+% the data
+
+% if plot_fmt_data == 1
+% go to plotting function... feed in save_fmt_plots into function
+
+% Plot FMT Raw Completion time vs K
+figure_save = figure(); 
+plot_title = 'FMT_completion_time';
+for p = 1:length(sp_fmt_data)
+    scatter(sp_fmt_data{p}.KValue, sp_fmt_data{p}.RawTime, 60, 'filled', 'MarkerEdgeColor','k');
+    hold on
+    scatter(sp_fmt_data{p}.KValue + 10, sp_fmt_data{p}.CorrectedTime, 60, 'filled', 'MarkerEdgeColor','k');
+    hold on
+end
+xlabel('GVS Gain K');
+ylabel('Completion Time [s]');
+axis([0,1100, 0, 40]);
+legend(["Participant 1 Raw Time", "Participant 1 Corrected Time", "Participant 2 Raw Time", "Participant 2 Corrected Time"]);
+title('Functional Mobility Test Completion Time vs. K');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% Plot FMT Erros vs K
+figure_save = figure(); 
+plot_title = 'FMT_errors';
+for p = 1:length(sp_fmt_data)
+    scatter(sp_fmt_data{p}.KValue + 5*p, sp_fmt_data{p}.Errors, 60, 'filled', 'MarkerEdgeColor','k');
+    hold on
+end
+xlabel('GVS Gain K');
+ylabel('Errors');
+axis([0,1100, 0, 5]);
+legend(["Participant 1 Errors", "Participant 2 Errors"]);
+title('Functional Mobility Test Errors vs. K');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+%% IMU Plotting
+
+% if plot_GIST_raw == 1
+% go to plotting function... feed in save_GIST_plots into function
+
+% Raw Data Plots for FMT
+% roll
+figure_save = figure(); 
+plot_title = 'FMTRoll';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Roll');
+axis([0,60, -100, 100]);
+legend%(["Participant 1 Errors", "Participant 2 Errors"]);
+title('Functional Mobility Test IMU Roll Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% roll
+figure_save = figure(); 
+plot_title = 'FMTRoll_K';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,2)/1000,FMT_data{1,p}{f,1}(:,8))
+        hold on
+    end
+end
+xlabel('Current [m amps]');
+ylabel('Roll');
+axis([0,10, -40, 40]);
+legend%(["Participant 1 Errors", "Participant 2 Errors"]);
+title('Functional Mobility Test IMU Roll Data vs. Current Level');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% pitch
+figure_save = figure();
+plot_title = 'FMTPitch';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Pitch');
+axis([0,60, -100, 100]);
+legend
+title('Functional Mobility Test IMU Pitch Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% yaw
+figure_save = figure();
+plot_title = 'FMTYaw';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,60, -200, 200]);
+legend
+title('Functional Mobility Test IMU Yaw Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% Raw Data Plots for Tandem Walk
+% roll
+figure_save = figure(); 
+plot_title = 'TandemRoll';
+for p = 1:length(tandem_data)
+    for t = 1:length(tandem_data{1,p})
+        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,8))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Roll');
+axis([0,60, -100, 100]);
+legend
+title('Tandem Walk Test IMU Roll Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% pitch
+figure_save = figure();
+plot_title = 'TandemPitch';
+for p = 1:length(tandem_data)
+    for t = 1:length(tandem_data{1,p})
+        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,9))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Pitch');
+axis([0,60, -100, 100]);
+legend
+title('Tandem Walk Test IMU Pitch Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% yaw
+figure_save = figure();
+plot_title = 'TandemYaw';
+for p = 1:length(tandem_data)
+    for t = 1:length(tandem_data{1,p})
+        plot(tandem_data{1,p}{t,1}(:,1)/1000,tandem_data{1,p}{t,1}(:,10))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,60, -200, 200]);
+legend
+title('Tandem Walk Test IMU Yaw Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% Raw Data Plots for Romberg
+% roll
+figure_save = figure(); 
+plot_title = 'RombergRoll';
+for p = 1:length(romberg_data)
+    for r = 1:length(romberg_data{1,p})
+        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,8));
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Roll');
+axis([0,60, -100, 100]);
+legend
+title('Romberg Balance Test IMU Roll Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% pitch
+figure_save = figure();
+plot_title = 'RombergPitch';
+for p = 1:length(romberg_data)
+    for r = 1:length(romberg_data{1,p})
+        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,9))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Pitch');
+axis([0,60, -100, 100]);
+legend
+title('Romberg Balance Test IMU Pitch Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% yaw
+figure_save = figure(); 
+plot_title = 'RombergYaw';
+for p = 1:length(romberg_data)
+    for r = 1:length(romberg_data{1,p})
+        plot(romberg_data{1,p}{r,1}(:,1)/1000,romberg_data{1,p}{r,1}(:,10))
+        hold on
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,60, -100, 100]);
+legend
+title('Romberg Balance Test IMU Yaw Data vs. Time');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+%% Correlate Spreadsheet and GIST data files
+
+% Pre-Allocate Size of Each Variable
+trial_fmt = cell(numsub, length(FMT_Label));
+k_vals_all_fmt = cell(numsub, length(FMT_Label));
+gist_file_name_fmt = strings(length(FMT_Label), numsub);
+
+k_999_gist_files_fmt = cell(1, numsub);
+k_500_gist_files_fmt = cell(1, numsub);
+k_0_gist_files_fmt = cell(1, numsub);
+
+k_vals_all_tandem = cell(numsub, length(tandem_Label));
+gist_file_name_tandem = strings(length(tandem_Label), numsub);
+
+k_999_gist_files_tandem = cell(1, numsub);
+k_500_gist_files_tandem = cell(1, numsub);
+k_0_gist_files_tandem = cell(1, numsub);
+
+% Iterate through gist participants and correlate gist data to trial in
+% spreadsheet
+for gist_index = 1:length(GIST_participant_list)
+    current_GIST_participant_compare = GIST_participant_list(gist_index);
+    spreadsheet_index = find(strcmp(sp_participant_list, current_GIST_participant_compare));
+    
+
+    % Functional Mobility Test
+    % Initialize String
+    string_k_fmt = strings(size(1:length (sp_fmt_data{spreadsheet_index}.KValue)));
+
+    for fmt_index = 1:length (sp_fmt_data{spreadsheet_index}.KValue)
+        
+        string_k_fmt(fmt_index) = string(sp_fmt_data{spreadsheet_index}.KValue(fmt_index));
+
+        % If first k value 
+        repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
+        if length(repeat) ==  1
+            k_repeat = '_1';
+        else
+            k_repeat = '_2';
+        end
+
+        trial_fmt{gist_index, fmt_index} = k_repeat;
+        k_vals_all_fmt{gist_index, fmt_index} = string_k_fmt(fmt_index);
+        gist_file_name_fmt(fmt_index,gist_index) = strcat(current_GIST_participant_compare, '_functional_mobility_k_', string_k_fmt(fmt_index), k_repeat);
+        
+        % Output .mat files      
+    end
+
+    % Get k value array
+    k_999_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_999');
+    k_500_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_500');
+    k_0_gist_files_fmt{gist_index} = contains(gist_file_name_fmt(:,gist_index), 'k_0');
+    
+    
+    % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
+    % SWITCHES, # CORRECT STEPS, EACH INDIVIDUAL STEP, ETC....
+    % Tandem Walk Test
+    % Initialize String
+    string_k_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.KValue)));
+    string_headtilts_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Headtilts)));
+    string_eyes_tandem = strings(size(1:length (sp_tandem_data{spreadsheet_index}.Eyes)));
+    for tandem_index = 1:length (sp_tandem_data{spreadsheet_index}.KValue)
+        
+        string_k_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.KValue(tandem_index));
+        string_headtilts_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Headtilts(tandem_index));
+        string_eyes_tandem(tandem_index) = string(sp_tandem_data{spreadsheet_index}.Eyes(tandem_index));
+        % % If first k value 
+        % repeat = find(strcmp(string_k_fmt, string_k_fmt(fmt_index)));
+        % if length(repeat) ==  1
+        %     k_repeat = '_1';
+        % else
+        %     k_repeat = '_2';
+        % end
+
+        %trial_tandem{gist_index, tandem_index} = k_repeat;
+        k_vals_all_tandem{gist_index, tandem_index} = string_k_tandem(tandem_index);
+        gist_file_name_tandem(tandem_index,gist_index) = strcat(current_GIST_participant_compare, '_tandem_walk_k_', string_k_tandem(tandem_index),'_', string_headtilts_tandem(tandem_index),'_headtilts', '_eyes_',string_eyes_tandem(tandem_index));
+        
+        % Output .mat files      
+    end
+
+    % Get k value array
+    k_999_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_999');
+    k_500_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_500');
+    k_0_gist_files_tandem{gist_index} = contains(gist_file_name_tandem(:,gist_index), 'k_0');
+
+    % Romberg Balance Test
+    % THIS IS A WORK IN PROGRESS!!!  NEED TO INCORPORATE EYES, HEAD
+    % SWITCHES, TIME OF FAILURE 
+end
+
+%% Figures for FMT per Gain Value
+
+% if plot_fmt_data == 1
+% go to plotting function... feed in save_fmt_plots into function
+
+% 999 value
+% roll
+figure_save = figure(); 
+plot_title = 'FMT_Roll_K999';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_999_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Roll');
+axis([0,40, -100, 100]);
+legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+title('Functional Mobility Test IMU Roll Data vs. Time for K = 999');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+
+% pitch
+figure_save = figure(); 
+plot_title = 'FMT_Pitch_K999';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_999_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Pitch');
+axis([0,40, -100, 100]);
+legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+title('Functional Mobility Test IMU Pitch Data vs. Time for K = 999');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% yaw
+figure_save = figure(); 
+plot_title = 'FMT_Yaw_K999';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_999_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,40, -200, 200]);
+legend(["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+title('Functional Mobility Test IMU Yaw Data vs. Time for K = 999');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+
+% 0 value
+
+% roll
+figure_save = figure(); 
+plot_title = 'FMT_Roll_K0';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_0_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,8), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Roll');
+axis([0,40, -100, 100]);
+legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+title('Functional Mobility Test IMU Roll Data vs. Time for K = 0');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+
+% pitch
+figure_save = figure(); 
+plot_title = 'FMT_Pitch_K0';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_0_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,9), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Pitch');
+axis([0,40, -100, 100]);
+legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+title('Functional Mobility Test IMU Pitch Data vs. Time for K = 0');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% yaw
+figure_save = figure(); 
+plot_title = 'FMT_Yaw_K0';
+for p = 1:length(FMT_data)
+    for f = 1:length(FMT_data{1,p})
+        if k_0_gist_files_fmt{p}(f,1)
+            plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+            hold on
+        else
+            continue
+        end
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,40, -200, 200]);
+legend(["Participant 1 Trial 1 at K = 0", "Participant 1 Trial 2 at K = 0", "Participant 2 Trial 1 at K = 0", "Participant 2 Trial 2 at K = 0"]);
+title('Functional Mobility Test IMU Yaw Data vs. Time for K = 0');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+%% Figures per participant for all gain values
+
+% Pre-Allocate Size of Each Variable
+legend_names = strings(length(FMT_Label));
+
+% Participant 1
+figure_save = figure(); 
+plot_title = 'FMT_Yaw_Participant1';
+for p = 1:1
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+        hold on
+        legend_names(f) = strcat('Participant 1 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,40, -200, 200]);
+legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
+% Participant 2
+figure_save = figure(); 
+plot_title = 'FMT_Yaw_Participant2';
+for p = 2:2
+    for f = 1:length(FMT_data{1,p})
+        plot(FMT_data{1,p}{f,1}(:,1)/1000,FMT_data{1,p}{f,1}(:,10), 'LineWidth',2)
+        hold on
+        legend_names(f) = strcat('Participant 2 Trial  ', erase(string(trial_fmt{p,f}), '_'), ' at K =  ', k_vals_all_fmt{p,f});
+    end
+end
+xlabel('Time [s]');
+ylabel('Yaw');
+axis([0,40, -200, 200]);
+legend(legend_names);%["Participant 1 Trial 1 at K = 999", "Participant 1 Trial 2 at K = 999", "Participant 2 Trial 1 at K = 999", "Participant 2 Trial 2 at K = 999"]);
+title('Functional Mobility Test IMU Yaw Data vs. Time');% for K = 999');
+saveas(figure_save, [plot_path plot_title '.fig']);
+
