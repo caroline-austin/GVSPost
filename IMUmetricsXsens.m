@@ -1,7 +1,7 @@
 close all;clear;clc; warning off;
 
 %% set up
-subnum = 1022;  % Subject List 
+subnum = 1017:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -69,7 +69,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
-        [Xlimit,Ylimit] = PlotScale(imu_data,time);
+        %[Xlimit,Ylimit] = PlotScale(imu_data,time);
 
         while strlength(string(TrialInfo(file_count,3))) ~= 5  % makes all trial names the same number of chars
             if strlength(string(TrialInfo(file_count,3))) == 1
@@ -221,8 +221,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 end   
 
-% [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
-[C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
+%  [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
+% [C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
 % [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
 % [C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
 % [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
