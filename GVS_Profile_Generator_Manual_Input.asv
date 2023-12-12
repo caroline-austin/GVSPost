@@ -2,7 +2,7 @@ clear; close all; clc;
 
 %mkdir('Profiles')
 
-%FilePath = uigetdir;
+FilePath = uigetdir;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Provide some time with zero motion at the beginnign and end, if desired
@@ -142,16 +142,14 @@ elseif Num_Electrode==4 && Electrode_Shape==2
 
     if Electrode_Shape == 2 && Profile_Type == 3
         if Electrode_SinkLocation == 2
-            %electrodes 1&2 are cathodes 3 is the anode (backward)
             Electrode_5_Sig=zeros(1,T);
-            Electrode_4_Sig(Pos_Index)=GVS_Signal(Pos_Index);
-            Electrode_3_Sig(Pos_Index)=0;
+            Electrode_4_Sig=GVS_Signal(Pos_Index);
+            Electrode_3_Sig=0;
             Electrode_2_Sig=GVS_Signal*(-.5);
             Electrode_1_Sig=Electrode_2_Sig;
-          
-            %electrodes 1&2 are cathodes 4 is the anode (forward)
-            Electrode_4_Sig(Neg_Index)=0;
-            Electrode_3_Sig(Neg_Index)=GVS_Signal(Neg_Index);
+ 
+            Electrode_4_Sig(Neg_Index)=GVS_Signal(Neg_Index);
+            Electrode_3_Sig(Neg_Index)=0;
         end
     end
  
@@ -231,9 +229,9 @@ grid on;
 title('GVS Signal Periodogram Using FFT');
 xlabel('Frequency (Hz)');
 ylabel('Power/Frequency (dB/Hz)');
-% cd('Profiles/');
-% saveas(gcf, Filename);
-% cd('../');
+cd('Profiles/');
+saveas(gcf, Filename);
+cd('../');
 
 %% Create CSV file that removes decimals and adds +/- sign.
 X=num2str(NewElectM,'%+04g '); %% Create 5 character string with 3-digit number + symbol, then space after.
