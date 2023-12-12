@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3023];  % Subject List 3001, 
+subnum = [3031:3031];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -111,6 +111,7 @@ for sub = 1:(numsub)
             sp_participant_list(participant_num) = current_participant;
    %% Cut GIST FMT
             for trial = 1:width(fmt_EXCEL_sort)
+                disp(['FMT Proccessing Trial: ' num2str(trial)])
                 %pull trial info and data 
                 trial_info = fmt_EXCEL_sort{trial};
                 raw_time = trial_info.RawTime;
@@ -169,7 +170,7 @@ for sub = 1:(numsub)
                     fmt_start_X{trial} = info_struct.DataIndex;
     
                     % Wait while the user to click
-                    disp(['Click Final Value, then press "Return" (estimated x: ' num2str(fmt_start_X{trial} + trial_length_X) ', select a number less than ' num2str(fmt_start_X{trial}) ' to reselect the start value): '])
+                    disp(strjoin(['Click Final Value, then press "Return" (estimated x: ' num2str(fmt_start_X{trial} + trial_length_X) ', select a number less than ' num2str(fmt_start_X{trial}) ' to reselect the start value): ']))
                     pause
              
                     % Export cursor to workspace
@@ -197,7 +198,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut XSENS FMT Data; Selected Trial Length: " newline num2str(fmt_end_X{trial}-fmt_start_X{trial}) " samples = " num2str((fmt_end_X{trial}-fmt_start_X{trial})/30) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continueThis was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
@@ -272,7 +273,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut GIST FMT Data; Selected Trial Length: " newline num2str(fmt_end_G{trial}-fmt_start_G{trial}) " samples = " num2str((fmt_end_G{trial}-fmt_start_G{trial})/3.3) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continueThis was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
@@ -284,6 +285,7 @@ for sub = 1:(numsub)
 %% Cut Tandem
 
             for trial = 1:width(tandem_EXCEL_sort)
+                disp(['Tandem Proccessing Trial: ' num2str(trial)])
                 %pull trial info and data 
                 trial_info = tandem_EXCEL_sort{trial};
                 raw_time = trial_info.CompletionTime;
@@ -370,7 +372,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut XSENS Tandem Data; Selected Trial Length: " newline num2str(tandem_end_X{trial}-tandem_start_X{trial}) " samples = " num2str((tandem_end_X{trial}-tandem_start_X{trial})/30) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continue. This was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
@@ -445,7 +447,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut GIST Tandem Data; Selected Trial Length: " newline num2str(tandem_end_G{trial}-tandem_start_G{trial}) " samples = " num2str((tandem_end_G{trial}-tandem_start_G{trial})/3.3) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continue This was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
@@ -457,6 +459,7 @@ for sub = 1:(numsub)
 %% Cut GIST Romberg
 
             for trial = 1:width(romberg_EXCEL_sort)
+                disp(['Romberg Proccessing Trial: ' num2str(trial)])
                 %pull trial info and data 
                 trial_info = romberg_EXCEL_sort{trial};
                 if rem(trial,2) ==0
@@ -548,7 +551,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut XSENS Romberg Data; Selected Trial Length: " newline num2str(romberg_end_X{trial}-romberg_start_X{trial}) " samples = " num2str((romberg_end_X{trial}-romberg_start_X{trial})/30) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continue This was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
@@ -624,7 +627,7 @@ for sub = 1:(numsub)
                         
                     end
                     sgtitle(strjoin(["Cut GIST Romberg Data; Selected Trial Length: " newline num2str(romberg_end_G{trial}-romberg_start_G{trial}) " samples = " num2str((romberg_end_G{trial}-romberg_start_G{trial})/3.3) " s" ])) ;
-                     disp("\n Please verify plot and then press any key to continue");
+                     disp(strjoin(["\n Please verify plot and then press any key to continue This was processing trial: " num2str(trial) "actual trial: " num2str(trial_info.trialOrder)]));
                     pause; % ideally would put this in a while loop where here the user can check again whether they are satisfied 
 
                     %over write original data with cut data
