@@ -302,14 +302,14 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(i,Y,time,sub,trial_name)
         minline = f(rangeloc(1)); maxline = f(rangeloc(end));
         
 
-        % figure;
-        % plot(f,P1,'-o','MarkerIndices',locmax,'MarkerFaceColor','red','MarkerSize',8,"LineWidth",3); hold on;
-        % xline(maxline,'--','Color','red'); xline(minline,'--','Color','red');
-        % 
-        % sgtitle(strrep(trial_name,'_','.'));
-        % %title("Single-Sided Amplitude Spectrum")
-        % xlabel("f (Hz)")
-        % ylabel("|P1(f)|")
+        figure;
+        plot(f,P1,'',"LineWidth",3); hold on;
+        xline(maxline); xline(minline);
+
+        sgtitle(strrep(trial_name,'_','.'));
+        %title("Single-Sided Amplitude Spectrum")
+        xlabel("f (Hz)")
+        ylabel("|P1(f)|")
 end
  
 
