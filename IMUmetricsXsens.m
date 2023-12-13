@@ -1,7 +1,7 @@
 close all;clear;clc; warning off;
 
 %% set up
-subnum = 1017:1022;  % Subject List 
+subnum = 1022;  % Subject List 
 numsub = length(subnum);
 subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -155,64 +155,64 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         %% Gravity Aligned Plots
 
-        % figure();
-        % sgtitle(strrep(trial_name,'_','.'));
-        % 
-        % for k=1:width(acc_aligned)
-        %     subplot(3,3,k+3)
-        %     plot(time(time_cut),cutacc(:,k))
-        %     ylim([-8 10])
-        %     %xlim(Xlimit)
-        %     direction_title_1 = strcat("Acc Aligned ", direction(k));
-        %     title(direction_title_1)
-        %     xlabel("seconds");
-        %     ylabel("m/s^2")
-        % end
-        % 
-        % for l=1:width(gyro_aligned)
-        %     subplot(3,3,l+6)
-        %     plot(time(time_cut),cutgyro(:,l))
-        %     ylim([-8 8])
-        %     %xlim(Xlimit)
-        %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
-        %     title(direction_title_2)
-        %     xlabel("seconds");
-        %     ylabel("deg/sec")
-        % end
-        % 
-        % subplot(3,3,1)
-        % plot(time(time_cut),cutyaw)
-        % %xlim(Xlimit)
-        % ylim([-10 10])
-        % title("Yaw")
-        % xlabel("seconds");
-        % ylabel("degrees")
-        % 
-        % subplot(3,3,2)
-        % plot(time(time_cut),cutpitch)
-        % %xlim(Xlimit)
-        % ylim([-10 10])
-        % title("Pitch")
-        % xlabel("seconds");
-        % ylabel("degrees")
-        % 
-        % subplot(3,3,3)
-        % plot(time(time_cut),cutroll)
-        % %xlim(Xlimit)
-        % ylim([-10 10])
-        % title("Roll")
-        % xlabel("seconds");
-        % ylabel("degrees")
-        % 
-        % Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
-        % cd(plots_path)
-        % saveas(gcf, [char(Filename) '.fig']);
-        % cd(code_path)
-        % 
-        % cd(subject_path);
-        % vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-        % eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-        % cd(code_path);
+        figure();
+        sgtitle(strrep(trial_name,'_','.'));
+
+        for k=1:width(acc_aligned)
+            subplot(3,3,k+3)
+            plot(time(time_cut),cutacc(:,k))
+            ylim([-8 10])
+            %xlim(Xlimit)
+            direction_title_1 = strcat("Acc Aligned ", direction(k));
+            title(direction_title_1)
+            xlabel("seconds");
+            ylabel("m/s^2")
+        end
+
+        for l=1:width(gyro_aligned)
+            subplot(3,3,l+6)
+            plot(time(time_cut),cutgyro(:,l))
+            ylim([-8 8])
+            %xlim(Xlimit)
+            direction_title_2 = strcat("Gyro Aligned ", direction(l));
+            title(direction_title_2)
+            xlabel("seconds");
+            ylabel("deg/sec")
+        end
+
+        subplot(3,3,1)
+        plot(time(time_cut),cutyaw)
+        %xlim(Xlimit)
+        ylim([-10 10])
+        title("Yaw")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        subplot(3,3,2)
+        plot(time(time_cut),cutpitch)
+        %xlim(Xlimit)
+        ylim([-10 10])
+        title("Pitch")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        subplot(3,3,3)
+        plot(time(time_cut),cutroll)
+        %xlim(Xlimit)
+        ylim([-10 10])
+        title("Roll")
+        xlabel("seconds");
+        ylabel("degrees")
+
+        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        cd(plots_path)
+        saveas(gcf, [char(Filename) '.fig']);
+        cd(code_path)
+
+        cd(subject_path);
+        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        cd(code_path);
 %         close all;
 
     end
@@ -238,7 +238,7 @@ end
 % [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 % [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
  %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
- [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+ %[C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
 
 
 
