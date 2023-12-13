@@ -5,6 +5,7 @@ function  [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gy
     [yaw, pitch, roll] = quat2angle(q);
 
     acc_aligned = zeros(length(acc),3);
+    gyro_aligned = zeros(length(gyro),3);
     for i = 1:length(acc)
         theta = Eulers(i,3);
         phi = Eulers(i,2);
