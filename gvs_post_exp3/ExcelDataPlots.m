@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3032];  % Subject List 3001, 
+subnum = [3023:3033];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -36,10 +36,10 @@ purple = [0.4196    0.3059    0.4431];
 red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
-sub_symbols = [">k"; "vk";"ok";"+k"; "*k"; "xk"; "squarek"; "^k"; "<k"; "pentagramk"];
-
-yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1]; 
-xoffset = [-0.2;-0.1;0;0.1;0.2;-0.2;-0.1;0;0.1;0.2]; 
+% sub_symbols = [">-k"; "v-k";"o-k";"+-k"; "*-k"; "x-k"; "square-k"; "^-k"; "<-k"; "pentagram-k"; "diamond-k"];
+sub_symbols = [">k"; "vk";"ok";"+k"; "*k"; "xk"; "squarek"; "^k"; "<k"; "pentagramk"; "diamondk"];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+xoffset = [-0.02;-0.01;0;0.01;0.02;-0.02;-0.01;0;0.01;0.02;0]; 
 
 %% Data Import setup
 
@@ -135,7 +135,7 @@ end
 %%
 figure;
 for i = 1:height(raw_time)
-    plot(k_val_fmt(i,:)/1000,raw_time(i,:), sub_symbols(i),'MarkerSize',15);
+    plot(k_val_fmt(i,:)/1000+xoffset(i),raw_time(i,:), sub_symbols(i),'MarkerSize',15);
     hold on;
 end
 title("FMT Raw Completion Time Performance",'FontSize', 20)
@@ -144,7 +144,7 @@ xlabel("GVS scaling factor",'FontSize', 20)
 
 figure;
 for i = 1:height(corrected_time)
-    plot(k_val_fmt(i,:)/1000,corrected_time(i,:), sub_symbols(i),'MarkerSize',15);
+    plot(k_val_fmt(i,:)/1000+xoffset(i),corrected_time(i,:), sub_symbols(i),'MarkerSize',15);
     hold on;
 end
 title("FMT Corrected Completion Time Performance",'FontSize', 20)
