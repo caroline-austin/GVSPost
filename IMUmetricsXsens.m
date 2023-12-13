@@ -160,7 +160,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         for k=1:width(acc_aligned)
             subplot(3,3,k+3)
-            plot(time(time_cut),cutacc(:,k))
+            %plot(time(time_cut),cutacc(:,k))
+            plot(time,acc_aligned)
             ylim([-8 10])
             %xlim(Xlimit)
             direction_title_1 = strcat("Acc Aligned ", direction(k));
@@ -171,7 +172,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         for l=1:width(gyro_aligned)
             subplot(3,3,l+6)
-            plot(time(time_cut),cutgyro(:,l))
+            %plot(time(time_cut),cutgyro(:,l))
+            plot(time,gyro_aligned)
             ylim([-8 8])
             %xlim(Xlimit)
             direction_title_2 = strcat("Gyro Aligned ", direction(l));
@@ -181,7 +183,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         end
 
         subplot(3,3,1)
-        plot(time(time_cut),cutyaw)
+        %plot(time(time_cut),cutyaw)
+        plot(time,yaw)
         %xlim(Xlimit)
         ylim([-10 10])
         title("Yaw")
@@ -189,7 +192,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         ylabel("degrees")
 
         subplot(3,3,2)
-        plot(time(time_cut),cutpitch)
+        %plot(time(time_cut),cutpitch)
+        plot(time,pitch)
         %xlim(Xlimit)
         ylim([-10 10])
         title("Pitch")
@@ -197,7 +201,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         ylabel("degrees")
 
         subplot(3,3,3)
-        plot(time(time_cut),cutroll)
+        %plot(time(time_cut),cutroll)
+        plot(time,roll)
         %xlim(Xlimit)
         ylim([-10 10])
         title("Roll")
