@@ -18,7 +18,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3031:3031];  % Subject List 3001, 
+subnum = [3033:3033];  % Subject List 3001, 
 numsub = length(subnum);
 subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
@@ -170,7 +170,7 @@ for sub = 1:(numsub)
                     fmt_start_X{trial} = info_struct.DataIndex;
     
                     % Wait while the user to click
-                    disp(strjoin(['Click Final Value, then press "Return" (estimated x: ' num2str(fmt_start_X{trial} + trial_length_X) ', select a number less than ' num2str(fmt_start_X{trial}) ' to reselect the start value): ']))
+                    disp(['Click Final Value, then press "Return" (estimated x: ' num2str(fmt_start_X{trial} + trial_length_X) ', select a number less than ' num2str(fmt_start_X{trial}) ' to reselect the start value): '])
                     pause
              
                     % Export cursor to workspace
