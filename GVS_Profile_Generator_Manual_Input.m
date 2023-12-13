@@ -1,8 +1,7 @@
 clear; close all; clc;
 
-%mkdir('Profiles')
-
-%FilePath = uigetdir;
+Folder = uigetdir;
+code_path = pwd;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Provide some time with zero motion at the beginnign and end, if desired
@@ -18,6 +17,7 @@ if PmA>4 %can now go up to 4 mA instead of just 3mA
     error('Error: Peak current cannot exceed 4 mA.')
 end
 
+% Takes in Number of Electrodes and Cathodes
 Num_Electrode=input('4) Enter number of electrodes using (2-5): ');
 if Num_Electrode>3 && Num_Electrode<=5
     Electrode_Config=input('4b) Enter number of cathodes (1 or 2): ');
@@ -25,10 +25,17 @@ elseif Num_Electrode<2 && Num_Electrode>5
     error('Error: Number of electrodes cannot be <2 or >5.');
 end
 
+% Takes in the sink location for Cevette
+if Num_Electrode==3
+    Electrode_SinkLocation=input('4c) Enter the elecrode sink location (1 = forhead or 2 = neck): ');
+end
+
+% Takes in the shape of electrodes for 4 electrode configurations 
 if Num_Electrode==4
     Electrode_Shape=input('4c) Enter shape of configuration (Aoyama = 1 or Diamond = 2): ');
 end
 
+% Determines waveform, polarity, and current direction
 Profile_Type=input('5) Enter profile signal type (1 = Sinusoidal or 2 = Noise 3 = DC): ');
 if Profile_Type < 3
     Polarity_Type=input('6) Enter polarity type (1 = Unipolar or 2 = Bipolar): ');
@@ -40,10 +47,7 @@ else
     Current_Direction=input('6) Enter sway direction (1 = left/backward or 2 = right/forward): ');
 end 
 
-if Electrode_Shape == 2 && Profile_Type == 3
-    Electrode_SinkLocation=input('4d) Enter the elecrode sink location (1 = forhead or 2 = neck): ');
-end
-
+% Takes in file name
 Filename= (input('7) Enter file name (no spaces and in ''quotes''): '));
 
 dt=1/fs;  %%% seconds per sample.
@@ -72,9 +76,10 @@ psdx(2:end-1)=2*psdx(2:end-1);
 %% Create GVS signals for all electrodes.
 Electrode_1_Sig=GVS_Signal;
 
+% Bilateral GVS
 if Num_Electrode==2
     Electrode_2_Sig=GVS_Signal*(-1);
-    if Current_Direction ==2
+    if Current_Direction == 2
         Electrode_1_Sig=GVS_Signal*(-1);
         Electrode_2_Sig=GVS_Signal;
     end
@@ -82,7 +87,8 @@ if Num_Electrode==2
     Electrode_4_Sig=Electrode_3_Sig;
     Electrode_5_Sig=Electrode_3_Sig;
 
-elseif Num_Electrode==3
+% Cevette Forehead 
+elseif Num_Electrode==3 && Electrode_SinkLocation==1
     if Current_Direction == 1
         %electrodes 1&2 are cathodes 3 is the anode (backward)
         Electrode_3_Sig = GVS_Signal;
@@ -100,6 +106,26 @@ elseif Num_Electrode==3
     Electrode_4_Sig=zeros(1,T);
     Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
 
+% Cevette Neck
+elseif Num_Electrode==3 && Electrode_SinkLocation==2
+    if Current_Direction == 1
+        %electrodes 1&2 are cathodes 3 is the anode (backward)
+        Electrode_4_Sig = GVS_Signal;
+        Electrode_2_Sig=GVS_Signal*(-.5);
+        Electrode_1_Sig=Electrode_2_Sig;
+    elseif Current_Direction == 2
+        %electrodes 1&2 are anodes 3 is the cathode (forward)
+        Electrode_4_Sig = -GVS_Signal;
+        Electrode_2_Sig=GVS_Signal*(.5);
+        Electrode_1_Sig=Electrode_2_Sig;
+    else
+        Electrode_2_Sig=GVS_Signal*(-.5);
+        Electrode_4_Sig=Electrode_2_Sig;
+    end
+    Electrode_3_Sig=zeros(1,T);
+    Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
+
+% Aoyama
 elseif Num_Electrode==4 && Electrode_Shape==1
     if Electrode_Config==1
         Electrode_2_Sig=GVS_Signal*(-1/3);
@@ -121,6 +147,7 @@ elseif Num_Electrode==4 && Electrode_Shape==1
         Electrode_4_Sig=Electrode_3_Sig;
     end
 
+% Diamond Configuration
 elseif Num_Electrode==4 && Electrode_Shape==2
     Pos_Index = find(GVS_Signal>0);
     Neg_Index = find(GVS_Signal<=0);
@@ -245,7 +272,7 @@ Y(4,:)=strsplit(X(4,:)," ");
 Y(5,:)=strsplit(X(5,:)," ");
 Profile = Y;
 %%% Write matlab file and save plot
-% cd('../Profiles');
-% save([Filename '.mat'], 'Profile');
-% cd('../..');
+cd(Folder);
+save([Filename '.mat'], 'Profile');
+cd(code_path);
 %writecell(Y,"CHAIR_GVS_Profile_.csv");
