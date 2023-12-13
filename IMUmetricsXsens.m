@@ -67,9 +67,16 @@ for sub = 1:numsub % first for loop that iterates through subject files
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(acc)/30)-1/30);
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
+        time_cut = timeimu > 1 & timeimu < 11.5;
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
         %[Xlimit,Ylimit] = PlotScale(imu_data,time);
+        cutacc = acc_aligned(time_cut,:);
+        cutgyro = gyro_aligned(time_cut,:);
+        cutyaw = yaw(time_cut);
+        cutroll = roll(time_cut);
+        cutpitch = pitch(time_cut);
+
 
         while strlength(string(TrialInfo(file_count,3))) ~= 5  % makes all trial names the same number of chars
             if strlength(string(TrialInfo(file_count,3))) == 1
@@ -89,9 +96,9 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % magnitude of gyro and acc 
         mag_acc = sqrt((acc_aligned(:,1).^2) + (acc_aligned(:,2).^2));
         mag_gyro = sqrt((gyro_aligned(:,1).^2) + (gyro_aligned(:,2).^2));
-        Y_gyroz = fft(gyro_aligned(:,3));
-        Y_gyrox = fft(gyro_aligned(:,1));
-        Y_gyroy = fft(gyro_aligned(:,2));
+        Y_accz = fft(cutacc(:,1));
+        Y_accx = fft(cutacc(:,3));
+        Y_accy = fft(cutacc(:,2));
         Y_acc = fft(mag_acc); Y_gyro = fft(mag_gyro);
 
         % fft: roll, pitch, yaw 
@@ -99,14 +106,14 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 
         % fft func.:
-        [fft_SpHz_gyro(i,sub),freq_SpHz,P1g,fg] = fftcalc(i,Y_gyro,time,sub,trial_name);
-        [fft_SpHz_acc(i,sub),freq_SpHz,P1a,fa] = fftcalc(i,Y_acc,time,sub,trial_name);
-        [fft_SpHz_yaw(i,sub),freq_SpHz,P1y,fy] = fftcalc(i,Y_yaw,time,sub,trial_name);
-        [fft_SpHz_pitch(i,sub),freq_SpHz,P1p,fp] = fftcalc(i,Y_pitch,time,sub,trial_name);
-        [fft_SpHz_roll(i,sub),freq_SpHz,P1r,fr] = fftcalc(i,Y_roll,time,sub,trial_name);
-        [fft_SpHz_gyroz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_gyroz,time,sub,trial_name);
-        [fft_SpHz_gyrox(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_gyrox,time,sub,trial_name);
-        [fft_SpHz_gyroy(i,sub),freq_SpHz,P1gy,fgy] = fftcalc(i,Y_gyroy,time,sub,trial_name);
+        %[fft_SpHz_gyro(i,sub),freq_SpHz,P1g,fg] = fftcalc(i,Y_gyro,time,sub,trial_name);
+        % [fft_SpHz_acc(i,sub),freq_SpHz,P1a,fa] = fftcalc(i,Y_acc,time,sub,trial_name);
+        % [fft_SpHz_yaw(i,sub),freq_SpHz,P1y,fy] = fftcalc(i,Y_yaw,time,sub,trial_name);
+        % [fft_SpHz_pitch(i,sub),freq_SpHz,P1p,fp] = fftcalc(i,Y_pitch,time,sub,trial_name);
+        % [fft_SpHz_roll(i,sub),freq_SpHz,P1r,fr] = fftcalc(i,Y_roll,time,sub,trial_name);
+         %[fft_SpHz_accz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
+        %[fft_SpHz_accx(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
+         [fft_SpHz_accy(i,sub),freq_SpHz,P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
 
         % figure;
         % plot(fgz,P1gz,"LineWidth",3)
@@ -151,7 +158,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % 
         % for k=1:width(acc_aligned)
         %     subplot(3,3,k+3)
-        %     plot(time,acc_aligned(:,k))
+        %     plot(time(time_cut),cutacc(:,k))
         %     ylim([-8 10])
         %     %xlim(Xlimit)
         %     direction_title_1 = strcat("Acc Aligned ", direction(k));
@@ -162,17 +169,17 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % 
         % for l=1:width(gyro_aligned)
         %     subplot(3,3,l+6)
-        %     plot(time,gyro_aligned(:,l))
+        %     plot(time(time_cut),cutgyro(:,l))
         %     ylim([-8 8])
         %     %xlim(Xlimit)
         %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
         %     title(direction_title_2)
         %     xlabel("seconds");
-        %     ylabel("degrees")
+        %     ylabel("deg/sec")
         % end
         % 
         % subplot(3,3,1)
-        % plot(time,yaw)
+        % plot(time(time_cut),cutyaw)
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Yaw")
@@ -180,7 +187,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % ylabel("degrees")
         % 
         % subplot(3,3,2)
-        % plot(time,pitch)
+        % plot(time(time_cut),cutpitch)
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Pitch")
@@ -188,7 +195,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % ylabel("degrees")
         % 
         % subplot(3,3,3)
-        % plot(time,roll)
+        % plot(time(time_cut),cutroll)
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Roll")
@@ -228,7 +235,9 @@ end
 % [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
 % [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 % [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
-% [C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
+ %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
+ [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+
 
 
 
@@ -301,10 +310,11 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(i,Y,time,sub,trial_name)
         rangeloc = find(accept_range);
         minline = f(rangeloc(1)); maxline = f(rangeloc(end));
         
-
+        % 
         % figure;
         % plot(f,P1,'-o','MarkerIndices',locmax,'MarkerFaceColor','red','MarkerSize',8,"LineWidth",3); hold on;
         % xline(maxline,'--','Color','red'); xline(minline,'--','Color','red');
+        % ylim([0 1.5]);
         % 
         % sgtitle(strrep(trial_name,'_','.'));
         % %title("Single-Sided Amplitude Spectrum")
