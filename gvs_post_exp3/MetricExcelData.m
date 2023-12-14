@@ -73,17 +73,19 @@ metric_path = [file_path '/Metrics/'];
 
 % Initialize variables for balance metrics
 % fmt_EXCEL_all = NaN(numsub,numtrials);
-raw_time = NaN(numsub,numtrials); corrected_time= raw_time;
-k_val_fmt = raw_time; 
+raw_time = NaN(numsub,6); corrected_time= raw_time;
+k_val_fmt = raw_time; fmt_order = raw_time; errors = raw_time;
 % tandem_EXCEL_all = fmt_EXCEL_all;
-completion_time = raw_time; correct_steps = raw_time;
-k_val_tdm = raw_time; condition_tdm = raw_time;
+completion_time = NaN(numsub,12); correct_steps = completion_time;
+k_val_tdm = completion_time; 
+% condition_tdm = completion_time;
+tdm_order = completion_time;
 % romberg_EXCEL_all = fmt_EXCEL_all; 
-failtime = raw_time;
-head_tilts_rom = raw_time; k_val_rom = raw_time;
-condition_rom = raw_time; errors = raw_time;
-fmt_order = raw_time; rom_order = raw_time;
-tdm_order = raw_time;
+failtime = NaN(numsub,24);
+head_tilts_rom = failtime; k_val_rom = failtime;
+% condition_rom = failtime; 
+rom_order = failtime;
+
 
 %% Enter Loop for Each Participant
 participant_num = 0;
@@ -231,6 +233,7 @@ xlabel("Condition", 'FontSize', 20)
         % 'tandem_start_G ' 'tandem_end_G ' 'tandem_start_X ' 'tandem_end_X ' ...
         % 'romberg_start_G ' 'romberg_end_G ' 'romberg_start_X ' 'romberg_end_X ' ];
         %can add other data aggregation saving later
-        eval( strjoin(['  save ' strjoin([ "ExcelData_" datatype newdatatype '.mat '],'') vars_2_save  ' Label vars_2_save' ]));     
+        eval( strjoin(['  save ' strjoin([ "ExcelData_" datatype newdatatype '.mat '],'') vars_2_save  ' Label vars_2_save' ]));    
+        % eval(['clear ' vars_2_save])
     cd(code_path);
     % close all;
