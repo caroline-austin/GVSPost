@@ -27,7 +27,7 @@ end
 
 % Takes in the sink location for Cevette
 if Num_Electrode==3
-    Electrode_SinkLocation=input('4c) Enter the elecrode sink location (1 = forhead or 2 = neck): ');
+    Electrode_SinkLocation=input('4c) Enter the elecrode sink location (1 = forhead or 2 = neck or 3 = shoulder): ');
 end
 
 % Takes in the shape of electrodes for 4 electrode configurations 
@@ -124,6 +124,25 @@ elseif Num_Electrode==3 && Electrode_SinkLocation==2
     end
     Electrode_3_Sig=zeros(1,T);
     Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
+
+% Cevette Neck
+elseif Num_Electrode==3 && Electrode_SinkLocation==3
+    if Current_Direction == 1
+        %electrodes 1&2 are cathodes 3 is the anode (backward)
+        Electrode_5_Sig = GVS_Signal;
+        Electrode_2_Sig=GVS_Signal*(-.5);
+        Electrode_1_Sig=Electrode_2_Sig;
+    elseif Current_Direction == 2
+        %electrodes 1&2 are anodes 3 is the cathode (forward)
+        Electrode_5_Sig = -GVS_Signal;
+        Electrode_2_Sig=GVS_Signal*(.5);
+        Electrode_1_Sig=Electrode_2_Sig;
+    else
+        Electrode_2_Sig=GVS_Signal*(-.5);
+        Electrode_5_Sig=Electrode_2_Sig;
+    end
+    Electrode_3_Sig=zeros(1,T);
+    Electrode_4_Sig=zeros(1,T); %Electrode_4_Sig;
 
 % Aoyama
 elseif Num_Electrode==4 && Electrode_Shape==1
