@@ -19,12 +19,27 @@ subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
 % tandem: 12 GIST files, 16(?) excel rows, 12 XSENS files (?)
 % Romberg: 30 GIST files (6 training, 24 trials), 18 excel rows (6
 % training, 12 trials), 30 XSENS files (6 training, 24 trials)
-datatype = '_Cut_All'; % this tells the code which version of the data file to grab (ie. if other data processing has been done)
+datatype = 'Cut_All'; % this tells the code which version of the data file to grab (ie. if other data processing has been done)
 newdatatype = ''; % this adds the CUT suffix plus the file types that have been cut (GFMT, GTDM, GROM, XFMT, XTDM, XROM or ALL)
 
 fsX = 30; %Hz = sampling freq of the XSENS IMU
 fsG = 3.3; % Hz = approximate sampling frequency of the GIST
 numtrials = 24;
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+% sub_symbols = [">-k"; "v-k";"o-k";"+-k"; "*-k"; "x-k"; "square-k"; "^-k"; "<-k"; "pentagram-k"; "diamond-k"];
+sub_symbols = [">k"; "vk";"ok";"+k"; "*k"; "xk"; "squarek"; "^k"; "<k"; "pentagramk"; "diamondk"];
+sub_symbols_2 = [">m"; "vm";"om";"+m"; "*m"; "xm"; "squarem"; "^m"; "<m"; "pentagramm"; "diamondm"];
+sub_symbols_3 = [">r"; "vr";"or";"+r"; "*r"; "xr"; "squarer"; "^r"; "<r"; "pentagramr"; "diamondr"];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+xoffset = [-0.02;-0.01;0;0.01;0.02;-0.02;-0.01;0;0.01;0.02;0]; 
 
 %% Data Import setup
 
@@ -53,6 +68,7 @@ sub_folder_names = sub_folder_names(~plot_folder_flag);
 %% Set Plot Locations
 
 plot_path = [file_path '/plots/'];        
+metric_path = [file_path '/Metrics/'];  
 
 %% Initialize Storage Variables
 numsub = length(subnum);
@@ -95,7 +111,7 @@ for sub = 1:(numsub)
         % set up pathing and load data
         sub_path = strjoin([file_path, '/' , current_participant], '');
         cd(sub_path);
-        load(strjoin([current_participant datatype '.mat'],''));
+        load(strjoin([current_participant '_' datatype '.mat'],''));
         cd(code_path);
 
         % Increment Participant
@@ -180,4 +196,50 @@ for sub = 1:(numsub)
         end
 
 end
+%% plot results
+figure;
+for i = 1:height(p2pXa)
+    plot(p2pXa(i,:), sub_symbols(i),'MarkerSize',15);
+    hold on;
+    plot(p2pXa_fail(i,:), sub_symbols_2(i),'MarkerSize',15);
+    hold on;
+    plot(p2pXa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15);
+    hold on;
+end
+xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
+xticklabels( strrep(Label.romberg, '_',''));
+title("Romberg Peak 2 Peak X")
+ylabel("distance ", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
 
+figure;
+for i = 1:height(rmsXa)
+    plot(rmsXa(i,:), sub_symbols(i),'MarkerSize',15);
+    hold on;
+    plot(rmsXa_fail(i,:), sub_symbols_2(i),'MarkerSize',15);
+    hold on;
+    plot(rmsXa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15);
+    hold on;
+end
+xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
+xticklabels( strrep(Label.romberg, '_',''));
+title("Romberg RMS X")
+ylabel("distance ", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
+
+%% save
+
+    cd(metric_path);
+    vars_2_save = [' rmsXYa ' ' rmsXa ' ' rmsYa ' ' p2pXa ' ' p2pYa '...
+        ' rmsXYa_fail ' ' rmsXa_fail ' ' rmsYa_fail '  ' p2pXa_fail ' ' p2pYa_fail '...
+        ' rmsXYa_fail_2 ' ' rmsXa_fail_2 ' ' rmsYa_fail_2 '  ' p2pXa_fail_2 ' ' p2pYa_fail_2 ' ];
+        % 'tandem_GIST_sort ' 'tandem_XSENS_sort ' 'tandem_EXCEL_sort ' ... 
+        % 'romberg_GIST_sort ' 'romberg_XSENS_sort ' 'romberg_EXCEL_sort '... 
+        % 'romberg_GIST_train_sort ' 'romberg_XSENS_train_sort ' 'romberg_EXCEL_train_sort ' ...
+        % 'fmt_start_G ' 'fmt_end_G ' 'fmt_start_X ' 'fmt_end_X ' ...
+        % 'tandem_start_G ' 'tandem_end_G ' 'tandem_start_X ' 'tandem_end_X ' ...
+        % 'romberg_start_G ' 'romberg_end_G ' 'romberg_start_X ' 'romberg_end_X ' ];
+        %can add data aggregation saving later
+        eval( strjoin(['  save ' strjoin([ "RombergIMU_" datatype newdatatype '.mat '],'') vars_2_save  ' Label vars_2_save' ]));     
+    cd(code_path);
+    close all;
