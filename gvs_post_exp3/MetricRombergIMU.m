@@ -167,6 +167,9 @@ for sub = 1:(numsub)
             p2pXa(sub,trial) = p2pa(1); 
             p2pYa(sub,trial) = p2pa(2); 
 
+            % fftX(sub,trial,:) = fft(XSENS_acc(fsX:14*fsX,1));
+            % fftY(sub,trial,:) = fft(XSENS_acc(fsX:14*fsX,2));
+            
             elseif XSENS_length > 2*fsX
                 rmsxy = rms([XSENS_acc(end-1.5*fsX:end-0.5*fsX,1), XSENS_acc(end-1.5*fsX: end-0.5*fsX,2)]); % cut one second off the start and end of the trial
                 p2pa = peak2peak(XSENS_acc(end-1.5*fsX:end-.5*fsX,:));
@@ -242,4 +245,7 @@ xlabel("Condition", 'FontSize', 20)
         %can add data aggregation saving later
         eval( strjoin(['  save ' strjoin([ "RombergIMU_" datatype newdatatype '.mat '],'') vars_2_save  ' Label vars_2_save' ]));     
     cd(code_path);
-    close all;
+
+    % close all;
+
+    %%
