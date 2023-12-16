@@ -1,0 +1,22 @@
+%%Timothy Behrer
+%% HouseKeeping
+clc; clear; close all;
+%% Main Script
+
+
+%% FMT
+FMT_Data = analyzeFMT('ExcelData_Cut_ALL.mat',0,0);
+for ii = 1:11
+    FMT_DATA_RM = table(FMT_Data((6*ii - 5):(6*ii),:)',...
+        'VariableNames',{'Raw Time'});
+end
+
+anova_RT = anovan(FMT_Data(:,1),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
+anova_ER = anovan(FMT_Data(:,2),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
+anova_NT = anovan(FMT_Data(:,3),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
+%% Romberg
+Rom_Data = analyzeRomberg('ExcelData_Cut_ALL.mat',1);
+FMT_Table = table(Rom_Data(:,1),Rom_Data(:,2),num2str(Rom_Data(:,3)),num2str(Rom_Data(:,4)),...
+    'VariableNames',{'Failure Time','Head Tilt','GVS','Order'});
+
+anova_FT = anovan(Rom_Data(:,1),{num2str(Rom_Data(:,2)),num2str(Rom_Data(:,3)),num2str(Rom_Data(:,4))},'model','interaction','varnames',{'Head Tilt','GVS Admin','Trial Order'});
