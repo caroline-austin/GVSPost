@@ -121,11 +121,24 @@ if individual == 0
     
     net_time_data = raw_time_data + 2*error_data;
     data_compiled = [raw_time_data error_data net_time_data GVS_admin trial_order];
+
+              
+    %organize data for the trial order box plots
+    for subj= 1:11
+        for trial = 1:6
+            trial_info_fmt = fmt_EXCEL_all{subj, trial};
+            order = trial_info_fmt.trialOrder;
+            raw_time_order(subj,order) = trial_info_fmt.RawTime;
+            errors_order(subj,order) = trial_info_fmt.Errors;
+            corrected_time_order(subj,order) = trial_info_fmt.CorrectedTime;
+            k_val_fmt_order(subj,order) = trial_info_fmt.KValue;
+        end
+    end
     
-    %%%Plotting
+    %% Plotting
     if plotB == 1
 
-        %%% Pure Data Visualization
+        %% GVS Effects on Raw time and Errors
         % define figure
         fig = figure(); hold on;
         % used tiledlayout so that we can adjust the margin setting
@@ -180,29 +193,129 @@ if individual == 0
         
         
 
-        %%% Learning Effect over time
-        figure(); hold on;
-        sgtitle('FMT Perfomance Data over Time')
-        subplot(2,1,1)
-        scatter(trial_order, raw_time_data);
-        xlabel('Trial Sequence');
-        ylabel('Raw Time of Course Completion (s)')
-        subplot(2,1,2)
-        scatter(trial_order, error_data);
-        xlabel('Trial Sequence');
-        ylabel('Amount of Errors');
+        %% Learning Effects on Raw time and Errors
 
-        %%% Net Time of completion 
-        figure(); hold on;
-        sgtitle('FMT Summed Perfomance Data')
-        subplot(2,1,1)
-        scatter(GVS_admin, net_time_data);
-        xlabel('GVS Gain Value');
-        ylabel('Net Time of Course Completion (s)')
-        subplot(2,1,2)
-        scatter(trial_order, net_time_data);
+        % define figure
+        fig = figure(); hold on;
+        % used tiledlayout so that we can adjust the margin setting
+        t=tiledlayout(2,1,'TileSpacing','tight');
+        sgtitle('FMT Perfomance Data Over Time')
+        
+        %top tile is raw time data
+        nexttile
+        %use error sorted data for boxplot
+        boxchart(raw_time_order)
+        hold on;
+        % plot individual subject data, divide by 500 so that values are 0,
+        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+        % boxplots
+        % use x offset to separate subject symbols from each other
+        for i = 1:11
+            plot(trial_order((i*6)-5: (i*6))+ xoffset2(i), raw_time_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % no labels for the top plot to save space
+        set(gca,'Xticklabel',[])
+        % xlabel('GVS Gain');
+        % y axis settings
+        yticks([5 10 15 20 25])
+        ylim([10 28])
+        ylabel('Raw Time (s)')
+        grid on;
+        % lower plot is the errors 
+        nexttile
+        %use the order sorted errors
+        boxchart(errors_order)
+        hold on;
+        % plot indv subj data using with same xoffset calcs as above 
+        for i = 1:11
+            plot(trial_order((i*6)-5: (i*6))+ xoffset2(i), error_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % add x and y labels
+        xticklabels( ["1"; "2"; "3"; "4"; "5"; "6"]);
         xlabel('Trial Order');
-        ylabel('Net Time of Course Completion (s)');
+        ylim([-0.5 5.5])
+        ylabel('Errors');
+        %set font size for the figure so it's legible
+        fontsize(fig, 32, "points")
+
+        % figure(); hold on;
+        % sgtitle('FMT Perfomance Data over Time')
+        % subplot(2,1,1)
+        % scatter(trial_order, raw_time_data);
+        % xlabel('Trial Sequence');
+        % ylabel('Raw Time of Course Completion (s)')
+        % subplot(2,1,2)
+        % scatter(trial_order, error_data);
+        % xlabel('Trial Sequence');
+        % ylabel('Amount of Errors');
+
+        %% Corrected completion time GVS and Learning Effects 
+        % define figure
+        fig = figure(); hold on;
+        % used tiledlayout so that we can adjust the margin setting
+        t=tiledlayout(2,1,'TileSpacing','tight');
+        sgtitle('FMT Perfomance Data')
+        
+        %top tile is for GVS effects
+        nexttile
+        % string together 1st and 2nd iterations of condition into single
+        % column
+        corrected_time_plot = [corrected_time(:, [1 3 5]); corrected_time(:, [2 4 6]) ];
+        %make box plot
+        boxchart(corrected_time_plot)
+        hold on;
+        % plot individual subject data, divide by 500 so that values are 0,
+        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+        % boxplots
+        % use x offset to separate subject symbols from each other
+        for i = 1:11
+            plot(GVS_admin((i*6)-5: (i*6))/500+ 1+ xoffset2(i), net_time_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % no labels for the top plot to save space
+        % set(gca,'Xticklabel',[])
+        xticklabels(["0" "500" "999"])
+        xlabel('GVS Gain');
+        % y axis settings
+        yticks([5 10 15 20 25])
+        ylim([10 28])
+        ylabel('Net Time (s)')
+        grid on;
+
+        % lower plot is for learning effects
+        nexttile
+        %use the order sorted errors
+        boxchart(corrected_time_order)
+        hold on;
+        % plot indv subj data using with same xoffset calcs as above 
+        for i = 1:11
+            plot(trial_order((i*6)-5: (i*6))+ xoffset2(i), net_time_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % add x and y labels
+        xticklabels( ["1"; "2"; "3"; "4"; "5"; "6"]);
+        xlabel('Trial Order');
+        yticks([5 10 15 20 25])
+        ylim([10 28])
+        ylabel('Net Time (s)')
+        grid on;
+        %set font size for the figure so it's legible
+        fontsize(fig, 32, "points")
+
+
+        % %%% Net Time of completion 
+        % figure(); hold on;
+        % sgtitle('FMT Summed Perfomance Data')
+        % subplot(2,1,1)
+        % scatter(GVS_admin, net_time_data);
+        % xlabel('GVS Gain Value');
+        % ylabel('Net Time of Course Completion (s)')
+        % subplot(2,1,2)
+        % scatter(trial_order, net_time_data);
+        % xlabel('Trial Order');
+        % ylabel('Net Time of Course Completion (s)');
 
     end
 
