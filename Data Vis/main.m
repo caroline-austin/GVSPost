@@ -1,6 +1,6 @@
 %%Timothy Behrer
 %% HouseKeeping
-clc; clear; close all;
+%clc; clear; close all;
 %% Main Script
 
 
@@ -29,6 +29,10 @@ FMT_Data = analyzeFMT('ExcelData_Cut_ALL.mat',0,0);
 subj = cat(1, ones(6,1), ones(6,1)*2, ones(6,1)*3, ones(6,1)*4, ones(6,1)*5, ...
     ones(6,1)*6, ones(6,1)*7, ones(6,1)*8, ones(6,1)*9, ones(6,1)*10, ones(6,1)*11);
 FMT_Data = [FMT_Data,subj];
+% Check Normality
+[H, pValue, W] = swtest(FMT_Data(:,1),0.05)
+[H, pValue, W] = swtest(FMT_Data(:,2),0.05)
+[H, pValue, W] = swtest(FMT_Data(:,3),0.05)
 % then convert the data into an array
 FMT_Data_tbl = array2table(FMT_Data);
 FMT_Data_tbl.Properties.VariableNames = {'RawTime', 'Errors', 'CorrectedTime', 'GVS', 'Order', 'Subj'};
@@ -41,10 +45,46 @@ FMT_Data_tbl.Subj = categorical(FMT_Data_tbl.Subj);
 % random effects (so our within subjects) 
 lme = fitlme(FMT_Data_tbl,'RawTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 FMT_RT_AN = anova(lme) % left the ; off so that it prints the results to the command window
+%%%Post-HOC Correlation
+% H = [0,0,0,1,0,0,0,0;
+%     0,0,0,0,1,0,0,0;
+%     0,0,0,0,0,1,0,0;
+%     0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,1;];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+H = [0,1,0,0,0,0,0,0;
+    0,0,1,0,0,0,0,0;
+    0,0,0,1,0,0,0,0;
+    0,0,0,0,1,0,0,0;
+    0,0,0,0,0,1,0,0;
+    0,0,0,0,0,0,1,0;
+    0,0,0,0,0,0,0,1;];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
+% H = [0,1,0,0,0,0,0,0;
+%     0,0,1,0,0,0,0,0;];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+
+
 lme = fitlme(FMT_Data_tbl,'Errors ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 FMT_ER_AN = anova(lme) % left the ; off so that it prints the results to the command window
+H = [0,1,0,0,0,0,0,0;
+    0,0,1,0,0,0,0,0;
+    0,0,0,1,0,0,0,0;
+    0,0,0,0,1,0,0,0;
+    0,0,0,0,0,1,0,0;
+    0,0,0,0,0,0,1,0;
+    0,0,0,0,0,0,0,1;];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
 lme = fitlme(FMT_Data_tbl,'CorrectedTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 FMT_NT_AN = anova(lme) % left the ; off so that it prints the results to the command window
+H = [0,1,0,0,0,0,0,0;
+    0,0,1,0,0,0,0,0;
+    0,0,0,1,0,0,0,0;
+    0,0,0,0,1,0,0,0;
+    0,0,0,0,0,1,0,0;
+    0,0,0,0,0,0,1,0;
+    0,0,0,0,0,0,0,1;];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
 
 % %this was me checking single effects models but they are set up pretty
 % %much the same way
@@ -82,6 +122,8 @@ Rom_Data = analyzeRomberg('ExcelData_Cut_ALL.mat',0);
 subj = cat(1, ones(24,1), ones(24,1)*2, ones(24,1)*3, ones(24,1)*4, ones(24,1)*5, ...
     ones(24,1)*6, ones(24,1)*7, ones(24,1)*8, ones(24,1)*9, ones(24,1)*10, ones(24,1)*11);
 Rom_Data = [Rom_Data,subj];
+% Check normality
+[H, pValue, W] = swtest(Rom_Data(:,1),0.05)
 % then convert the data into an array
 ROM_Data_tbl = array2table(Rom_Data);
 ROM_Data_tbl.Properties.VariableNames = {'FailTime', 'headTilt', 'GVS', 'Order', 'Subj'};
@@ -94,19 +136,32 @@ ROM_Data_tbl.Subj = categorical(ROM_Data_tbl.Subj);
 % random effects (so our within subjects) 
 lme = fitlme(ROM_Data_tbl,'FailTime ~ headTilt + GVS*headTilt + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 ROM_FT_AN = anova(lme) % left the ; off so that it prints the results to the command window
-
+H = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
+H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
+    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
+H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+    0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+    0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+[pVal,F,DF1,DF2] = coefTest(lme,H)
 % anova_FT = anovan(Rom_Data(:,1),{num2str(Rom_Data(:,2)),num2str(Rom_Data(:,3)),num2str(Rom_Data(:,4))},'model','interaction','varnames',{'Head Tilt','GVS Admin','Trial Order'});
 
 
 %% Tandem
-Tan_Data = analyzeTandem('ExcelData_Cut_ALL.mat',0);
+Tan_Data = analyzeTandem('ExcelData_Cut_ALL.mat',1);
 % first add a subject column to the data
 subj = cat(1, ones(12,1), ones(12,1)*2, ones(12,1)*3, ones(12,1)*4, ones(12,1)*5, ...
     ones(12,1)*6, ones(12,1)*7, ones(12,1)*8, ones(12,1)*9, ones(12,1)*10, ones(12,1)*11);
 Tan_Data = [Tan_Data,subj];
+% Check Normality
+[H, pValue, W] = swtest(Tan_Data(:,1),0.05)
+[H, pValue, W] = swtest(Tan_Data(:,2),0.05)
 % then convert the data into an array
 Tan_Data_tbl = array2table(Tan_Data);
-Tan_Data_tbl.Properties.VariableNames = {'testTime', 'goodSteps','eyesOpen','headTilt', 'GVS', 'Order', 'Subj'};
+Tan_Data_tbl.Properties.VariableNames = {'testTime', 'goodSteps','eyesOpen','headTilt', 'GVS', 'Order', 'Subj','zoneFinish'};
 % make indep. var's categorical 
 Tan_Data_tbl.eyesOpen = categorical(Tan_Data_tbl.eyesOpen);
 Tan_Data_tbl.headTilt = categorical(Tan_Data_tbl.headTilt);
