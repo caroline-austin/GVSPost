@@ -1,6 +1,6 @@
 %%Timothy Behrer
 %% HouseKeeping
-%clc; clear; close all;
+clc; clear; close all;
 %% Main Script
 
 
@@ -30,9 +30,22 @@ subj = cat(1, ones(6,1), ones(6,1)*2, ones(6,1)*3, ones(6,1)*4, ones(6,1)*5, ...
     ones(6,1)*6, ones(6,1)*7, ones(6,1)*8, ones(6,1)*9, ones(6,1)*10, ones(6,1)*11);
 FMT_Data = [FMT_Data,subj];
 % Check Normality
-[H, pValue, W] = swtest(FMT_Data(:,1),0.05)
-[H, pValue, W] = swtest(FMT_Data(:,2),0.05)
-[H, pValue, W] = swtest(FMT_Data(:,3),0.05)
+%%Create difference array
+diffArray = cat(1,diff(FMT_Data(1:6,1)),diff(FMT_Data(7:12,1)),diff(FMT_Data(13:18,1)),diff(FMT_Data(19:24,1)),diff(FMT_Data(25:30,1)),diff(FMT_Data(31:36,1)),...
+    diff(FMT_Data(37:42,1)),diff(FMT_Data(43:48,1)),diff(FMT_Data(49:54,1)),diff(FMT_Data(55:60,1)),diff(FMT_Data(61:66,1)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for FMT Raw Time')
+diffArray = cat(1,diff(FMT_Data(1:6,2)),diff(FMT_Data(7:12,2)),diff(FMT_Data(13:18,2)),diff(FMT_Data(19:24,2)),diff(FMT_Data(25:30,2)),diff(FMT_Data(31:36,2)),...
+    diff(FMT_Data(37:42,2)),diff(FMT_Data(43:48,2)),diff(FMT_Data(49:54,2)),diff(FMT_Data(55:60,2)),diff(FMT_Data(61:66,2)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for FMT Errors Time')
+diffArray = cat(1,diff(FMT_Data(1:6,3)),diff(FMT_Data(7:12,3)),diff(FMT_Data(13:18,3)),diff(FMT_Data(19:24,3)),diff(FMT_Data(25:30,3)),diff(FMT_Data(31:36,3)),...
+    diff(FMT_Data(37:42,3)),diff(FMT_Data(43:48,3)),diff(FMT_Data(49:54,3)),diff(FMT_Data(55:60,3)),diff(FMT_Data(61:66,3)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for FMT Net Time')
 % then convert the data into an array
 FMT_Data_tbl = array2table(FMT_Data);
 FMT_Data_tbl.Properties.VariableNames = {'RawTime', 'Errors', 'CorrectedTime', 'GVS', 'Order', 'Subj'};
@@ -43,6 +56,7 @@ FMT_Data_tbl.Subj = categorical(FMT_Data_tbl.Subj);
 
 % create linear mixed effect model with dependent ~ independent (1|Var) =
 % random effects (so our within subjects) 
+%%Raw Time ANOVA
 lme = fitlme(FMT_Data_tbl,'RawTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 FMT_RT_AN = anova(lme) % left the ; off so that it prints the results to the command window
 %%%Post-HOC Correlation
@@ -64,17 +78,18 @@ H = [0,1,0,0,0,0,0,0;
 %     0,0,1,0,0,0,0,0;];
 % [pVal,F,DF1,DF2] = coefTest(lme,H)
 
-
-lme = fitlme(FMT_Data_tbl,'Errors ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-FMT_ER_AN = anova(lme) % left the ; off so that it prints the results to the command window
-H = [0,1,0,0,0,0,0,0;
-    0,0,1,0,0,0,0,0;
-    0,0,0,1,0,0,0,0;
-    0,0,0,0,1,0,0,0;
-    0,0,0,0,0,1,0,0;
-    0,0,0,0,0,0,1,0;
-    0,0,0,0,0,0,0,1;];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
+%%%%%Not Normal!%%%%%%%%
+% lme = fitlme(FMT_Data_tbl,'Errors ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+% FMT_ER_AN = anova(lme) % left the ; off so that it prints the results to the command window
+% H = [0,1,0,0,0,0,0,0;
+%     0,0,1,0,0,0,0,0;
+%     0,0,0,1,0,0,0,0;
+%     0,0,0,0,1,0,0,0;
+%     0,0,0,0,0,1,0,0;
+%     0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,1;];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+%%Net Time ANOVA
 lme = fitlme(FMT_Data_tbl,'CorrectedTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 FMT_NT_AN = anova(lme) % left the ; off so that it prints the results to the command window
 H = [0,1,0,0,0,0,0,0;
@@ -123,43 +138,173 @@ subj = cat(1, ones(24,1), ones(24,1)*2, ones(24,1)*3, ones(24,1)*4, ones(24,1)*5
     ones(24,1)*6, ones(24,1)*7, ones(24,1)*8, ones(24,1)*9, ones(24,1)*10, ones(24,1)*11);
 Rom_Data = [Rom_Data,subj];
 % Check normality
-[H, pValue, W] = swtest(Rom_Data(:,1),0.05)
-% then convert the data into an array
+%%Create difference array
+n = 24;
+diffArray = cat(1,diff(Rom_Data(1:n,1)),diff(Rom_Data(n*1+1:n*2,1)),diff(Rom_Data(n*2+1:n*3,1)),diff(Rom_Data(n*3+1:n*4,1)),diff(Rom_Data(n*4+1:n*5,1)),diff(Rom_Data(n*5+1:n*6,1)),...
+    diff(Rom_Data(n*6+1:n*7,1)),diff(Rom_Data(n*7+1:n*8,1)),diff(Rom_Data(n*8+1:n*9,1)),diff(Rom_Data(n*9+1:n*10,1)),diff(Rom_Data(n*10+1:n*11,1)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for Romberg Failure Time')
+
+%%Begin Friedman Analysis
+%%%Data Parsage
+%%No Head Tilts
+c = 0;
+NHT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) == c,1,'last'),1)';
+    Rom_Data((n*1)+find(Rom_Data(n*1+1:n*2,2) == c,1,'first'):(n*1)+find(Rom_Data(n*1+1:n*2,2) == c,1,'last'),1)';
+    Rom_Data((n*2)+find(Rom_Data(n*2+1:n*3,2) == c,1,'first'):(n*2)+find(Rom_Data(n*2+1:n*3,2) == c,1,'last'),1)';
+    Rom_Data((n*3)+find(Rom_Data(n*3+1:n*4,2) == c,1,'first'):(n*3)+find(Rom_Data(n*3+1:n*4,2) == c,1,'last'),1)';
+    Rom_Data((n*4)+find(Rom_Data(n*4+1:n*5,2) == c,1,'first'):(n*4)+find(Rom_Data(n*4+1:n*5,2) == c,1,'last'),1)';
+    Rom_Data((n*5)+find(Rom_Data(n*5+1:n*6,2) == c,1,'first'):(n*5)+find(Rom_Data(n*5+1:n*6,2) == c,1,'last'),1)';
+    Rom_Data((n*6)+find(Rom_Data(n*6+1:n*7,2) == c,1,'first'):(n*6)+find(Rom_Data(n*6+1:n*7,2) == c,1,'last'),1)';
+    Rom_Data((n*7)+find(Rom_Data(n*7+1:n*8,2) == c,1,'first'):(n*7)+find(Rom_Data(n*7+1:n*8,2) == c,1,'last'),1)';
+    Rom_Data((n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'first'):(n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'last'),1)';
+    Rom_Data((n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'first'):(n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'last'),1)';
+    Rom_Data((n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'first'):(n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'last'),1)'];
+NHT_p = friedman(NHT_data);hold on;
+sgtitle('Friedman ANOVA test for No Head Tilts - Romberg');
+hold off;
+
+
+%%Head tilts
+c = 1;
+HT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) == c,1,'last'),1)';
+    Rom_Data((n*1)+find(Rom_Data(n*1+1:n*2,2) == c,1,'first'):(n*1)+find(Rom_Data(n*1+1:n*2,2) == c,1,'last'),1)';
+    Rom_Data((n*2)+find(Rom_Data(n*2+1:n*3,2) == c,1,'first'):(n*2)+find(Rom_Data(n*2+1:n*3,2) == c,1,'last'),1)';
+    Rom_Data((n*3)+find(Rom_Data(n*3+1:n*4,2) == c,1,'first'):(n*3)+find(Rom_Data(n*3+1:n*4,2) == c,1,'last'),1)';
+    Rom_Data((n*4)+find(Rom_Data(n*4+1:n*5,2) == c,1,'first'):(n*4)+find(Rom_Data(n*4+1:n*5,2) == c,1,'last'),1)';
+    Rom_Data((n*5)+find(Rom_Data(n*5+1:n*6,2) == c,1,'first'):(n*5)+find(Rom_Data(n*5+1:n*6,2) == c,1,'last'),1)';
+    Rom_Data((n*6)+find(Rom_Data(n*6+1:n*7,2) == c,1,'first'):(n*6)+find(Rom_Data(n*6+1:n*7,2) == c,1,'last'),1)';
+    Rom_Data((n*7)+find(Rom_Data(n*7+1:n*8,2) == c,1,'first'):(n*7)+find(Rom_Data(n*7+1:n*8,2) == c,1,'last'),1)';
+    Rom_Data((n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'first'):(n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'last'),1)';
+    Rom_Data((n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'first'):(n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'last'),1)';
+    Rom_Data((n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'first'):(n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'last'),1)'];
+
+HT_p = friedman(HT_data);
+
+
+
+
+%%%%Parametric - NOT VALID %%%%%%%%%%%%%%%%
+% % then convert the data into an array
 ROM_Data_tbl = array2table(Rom_Data);
 ROM_Data_tbl.Properties.VariableNames = {'FailTime', 'headTilt', 'GVS', 'Order', 'Subj'};
-% make indep. var's categorical 
-ROM_Data_tbl.headTilt = categorical(ROM_Data_tbl.headTilt);
-ROM_Data_tbl.GVS = categorical(ROM_Data_tbl.GVS);
-ROM_Data_tbl.Order = categorical(ROM_Data_tbl.Order);
-ROM_Data_tbl.Subj = categorical(ROM_Data_tbl.Subj);
-% create linear mixed effect model with dependent ~ independent (1|Var) =
-% random effects (so our within subjects) 
-lme = fitlme(ROM_Data_tbl,'FailTime ~ headTilt + GVS*headTilt + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-ROM_FT_AN = anova(lme) % left the ; off so that it prints the results to the command window
-H = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
-H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
-    0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
-H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
-    0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
-    0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
-% anova_FT = anovan(Rom_Data(:,1),{num2str(Rom_Data(:,2)),num2str(Rom_Data(:,3)),num2str(Rom_Data(:,4))},'model','interaction','varnames',{'Head Tilt','GVS Admin','Trial Order'});
+% % make indep. var's categorical 
+% ROM_Data_tbl.headTilt = categorical(ROM_Data_tbl.headTilt);
+% ROM_Data_tbl.GVS = categorical(ROM_Data_tbl.GVS);
+% ROM_Data_tbl.Order = categorical(ROM_Data_tbl.Order);
+% ROM_Data_tbl.Subj = categorical(ROM_Data_tbl.Subj);
+% % create linear mixed effect model with dependent ~ independent (1|Var) =
+% % random effects (so our within subjects) 
+% lme = fitlme(ROM_Data_tbl,'FailTime ~ headTilt + GVS*headTilt + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+% ROM_FT_AN = anova(lme) % left the ; off so that it prints the results to the command window
+% H = [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+% H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+%     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+% H = [0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+%     0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0;
+%     0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
+% % anova_FT = anovan(Rom_Data(:,1),{num2str(Rom_Data(:,2)),num2str(Rom_Data(:,3)),num2str(Rom_Data(:,4))},'model','interaction','varnames',{'Head Tilt','GVS Admin','Trial Order'});
 
 
 %% Tandem
-Tan_Data = analyzeTandem('ExcelData_Cut_ALL.mat',1);
+Tan_Data = analyzeTandem('ExcelData_Cut_ALL.mat',0);
 % first add a subject column to the data
 subj = cat(1, ones(12,1), ones(12,1)*2, ones(12,1)*3, ones(12,1)*4, ones(12,1)*5, ...
     ones(12,1)*6, ones(12,1)*7, ones(12,1)*8, ones(12,1)*9, ones(12,1)*10, ones(12,1)*11);
 Tan_Data = [Tan_Data,subj];
 % Check Normality
-[H, pValue, W] = swtest(Tan_Data(:,1),0.05)
-[H, pValue, W] = swtest(Tan_Data(:,2),0.05)
-% then convert the data into an array
+%%Create difference array
+n = 12;
+diffArray = cat(1,diff(Tan_Data(1:n,1)),diff(Tan_Data(n*1+1:n*2,1)),diff(Tan_Data(n*2+1:n*3,1)),diff(Tan_Data(n*3+1:n*4,1)),diff(Tan_Data(n*4+1:n*5,1)),diff(Tan_Data(n*5+1:n*6,1)),...
+    diff(Tan_Data(n*6+1:n*7,1)),diff(Tan_Data(n*7+1:n*8,1)),diff(Tan_Data(n*8+1:n*9,1)),diff(Tan_Data(n*9+1:n*10,1)),diff(Tan_Data(n*10+1:n*11,1)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for Tandem Completion Time')
+%%Create difference array
+n = 12;
+diffArray = cat(1,diff(Tan_Data(1:n,2)),diff(Tan_Data(n*1+1:n*2,2)),diff(Tan_Data(n*2+1:n*3,2)),diff(Tan_Data(n*3+1:n*4,2)),diff(Tan_Data(n*4+1:n*5,2)),diff(Tan_Data(n*5+1:n*6,2)),...
+    diff(Tan_Data(n*6+1:n*7,2)),diff(Tan_Data(n*7+1:n*8,2)),diff(Tan_Data(n*8+1:n*9,2)),diff(Tan_Data(n*9+1:n*10,2)),diff(Tan_Data(n*10+1:n*11,2)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for Tandem Good Steps')
+
+%%Begin Friedman Analysis
+%%%Data Parsage
+%%No Head tilts Eyes open
+c = 0; %Head Tilt Condition
+b = 1; %Eyes Condition
+NHT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),1)'];
+NHT_EO_p = friedman(NHT_EO_Data);
+
+%%Head tilts Eyes open
+c = 1; %Head Tilt Condition
+b = 1; %Eyes Condition
+HT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),1)'];
+HT_EO_p = friedman(HT_EO_Data);
+
+%%No Head tilts Eyes Closed
+c = 0; %Head Tilt Condition
+b = 0; %Eyes Condition
+NHT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),1)'];
+NHT_EC_p = friedman(NHT_EC_Data);
+
+%%Head tilts Eyes Closed
+c = 1; %Head Tilt Condition
+b = 0; %Eyes Condition
+HT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),1)'];
+HT_EC_p = friedman(HT_EC_Data);
+
+
+
+
+%%%%Parametric - NOT VALID FOR GOOD STEPS %%%%%%%%%%%%%%%%
+% % then convert the data into an array
 Tan_Data_tbl = array2table(Tan_Data);
 Tan_Data_tbl.Properties.VariableNames = {'testTime', 'goodSteps','eyesOpen','headTilt', 'GVS', 'Order', 'Subj','zoneFinish'};
 % make indep. var's categorical 
@@ -172,6 +317,6 @@ Tan_Data_tbl.Subj = categorical(Tan_Data_tbl.Subj);
 % random effects (so our within subjects) 
 lme = fitlme(Tan_Data_tbl,'testTime ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
 Tan_TT_AN = anova(lme) % left the ; off so that it prints the results to the command window
-lme = fitlme(Tan_Data_tbl,'goodSteps ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-Tan_GS_AN = anova(lme) % left the ; off so that it prints the results to the command window
+% lme = fitlme(Tan_Data_tbl,'goodSteps ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+% Tan_GS_AN = anova(lme) % left the ; off so that it prints the results to the command window
 
