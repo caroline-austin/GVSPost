@@ -7,42 +7,31 @@ clc; clear; close all;
 %% FMT
 FMT_Data = analyzeFMT('ExcelData_Cut_ALL.mat',0,0);
 
-% this was for my attempt at using ranova and needing to reformat the data
-% FMT_Data_RM_RT = NaN(11,18);
-% for ii = 1:length(FMT_Data)
-%     current_sub = ceil(ii/6);
-%     if FMT_Data(ii,4) == 0
-%         combo = FMT_Data(ii,5);
-%     elseif FMT_Data(ii,4) == 500
-%          combo = FMT_Data(ii,5)+6;
-%     elseif FMT_Data(ii,4) == 999
-%         combo = FMT_Data(ii,5)+12;
-%     end
-% 
-%     FMT_Data_RM_RT(current_sub,combo) = FMT_Data(ii,1);
-% 
-%     % FMT_DATA_RM = table(FMT_Data((6*ii - 5):(6*ii),:)',...
-%         % 'VariableNames',{'Raw Time'});
-% end
-
 % first add a subject column to the data
 subj = cat(1, ones(6,1), ones(6,1)*2, ones(6,1)*3, ones(6,1)*4, ones(6,1)*5, ...
     ones(6,1)*6, ones(6,1)*7, ones(6,1)*8, ones(6,1)*9, ones(6,1)*10, ones(6,1)*11);
 FMT_Data = [FMT_Data,subj];
 % Check Normality
 %%Create difference array
-diffArray = cat(1,diff(FMT_Data(1:6,1)),diff(FMT_Data(7:12,1)),diff(FMT_Data(13:18,1)),diff(FMT_Data(19:24,1)),diff(FMT_Data(25:30,1)),diff(FMT_Data(31:36,1)),...
-    diff(FMT_Data(37:42,1)),diff(FMT_Data(43:48,1)),diff(FMT_Data(49:54,1)),diff(FMT_Data(55:60,1)),diff(FMT_Data(61:66,1)));
+% diffArray = cat(1,diff(FMT_Data(1:6,1)),diff(FMT_Data(7:12,1)),diff(FMT_Data(13:18,1)),diff(FMT_Data(19:24,1)),diff(FMT_Data(25:30,1)),diff(FMT_Data(31:36,1)),...
+%     diff(FMT_Data(37:42,1)),diff(FMT_Data(43:48,1)),diff(FMT_Data(49:54,1)),diff(FMT_Data(55:60,1)),diff(FMT_Data(61:66,1)));
+diffArray = cat(1,(FMT_Data(1:6,1)- mean(FMT_Data(1:6,1))),(FMT_Data(7:12,1)- mean(FMT_Data(7:12,1))),(FMT_Data(13:18,1)- mean(FMT_Data(13:18,1))),(FMT_Data(19:24,1)-mean(FMT_Data(19:24,1))),(FMT_Data(25:30,1)- mean(FMT_Data(25:30,1))),(FMT_Data(31:36,1)-mean(FMT_Data(31:36,1))),...
+    (FMT_Data(37:42,1)-mean(FMT_Data(37:42,1))),(FMT_Data(43:48,1)-mean(FMT_Data(43:48,1))),(FMT_Data(49:54,1)-mean(FMT_Data(49:54,1))),(FMT_Data(55:60,1)-mean(FMT_Data(55:60,1))),(FMT_Data(61:66,1)-mean(FMT_Data(61:66,1))));
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for FMT Raw Time')
-diffArray = cat(1,diff(FMT_Data(1:6,2)),diff(FMT_Data(7:12,2)),diff(FMT_Data(13:18,2)),diff(FMT_Data(19:24,2)),diff(FMT_Data(25:30,2)),diff(FMT_Data(31:36,2)),...
-    diff(FMT_Data(37:42,2)),diff(FMT_Data(43:48,2)),diff(FMT_Data(49:54,2)),diff(FMT_Data(55:60,2)),diff(FMT_Data(61:66,2)));
+% diffArray = cat(1,diff(FMT_Data(1:6,2)),diff(FMT_Data(7:12,2)),diff(FMT_Data(13:18,2)),diff(FMT_Data(19:24,2)),diff(FMT_Data(25:30,2)),diff(FMT_Data(31:36,2)),...
+    % diff(FMT_Data(37:42,2)),diff(FMT_Data(43:48,2)),diff(FMT_Data(49:54,2)),diff(FMT_Data(55:60,2)),diff(FMT_Data(61:66,2)));
+diffArray = cat(1,(FMT_Data(1:6,2)- mean(FMT_Data(1:6,2))),(FMT_Data(7:12,2)- mean(FMT_Data(7:12,2))),(FMT_Data(13:18,2)- mean(FMT_Data(13:18,2))),(FMT_Data(19:24,2)-mean(FMT_Data(19:24,2))),(FMT_Data(25:30,2)- mean(FMT_Data(25:30,2))),(FMT_Data(31:36,2)-mean(FMT_Data(31:36,2))),...
+    (FMT_Data(37:42,2)-mean(FMT_Data(37:42,2))),(FMT_Data(43:48,2)-mean(FMT_Data(43:48,2))),(FMT_Data(49:54,2)-mean(FMT_Data(49:54,2))),(FMT_Data(55:60,2)-mean(FMT_Data(55:60,2))),(FMT_Data(61:66,2)-mean(FMT_Data(61:66,2))));
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for FMT Errors Time')
-diffArray = cat(1,diff(FMT_Data(1:6,3)),diff(FMT_Data(7:12,3)),diff(FMT_Data(13:18,3)),diff(FMT_Data(19:24,3)),diff(FMT_Data(25:30,3)),diff(FMT_Data(31:36,3)),...
-    diff(FMT_Data(37:42,3)),diff(FMT_Data(43:48,3)),diff(FMT_Data(49:54,3)),diff(FMT_Data(55:60,3)),diff(FMT_Data(61:66,3)));
+% diffArray = cat(1,diff(FMT_Data(1:6,3)),diff(FMT_Data(7:12,3)),diff(FMT_Data(13:18,3)),diff(FMT_Data(19:24,3)),diff(FMT_Data(25:30,3)),diff(FMT_Data(31:36,3)),...
+%     diff(FMT_Data(37:42,3)),diff(FMT_Data(43:48,3)),diff(FMT_Data(49:54,3)),diff(FMT_Data(55:60,3)),diff(FMT_Data(61:66,3)));
+diffArray = cat(1,(FMT_Data(1:6,3)- mean(FMT_Data(1:6,3))),(FMT_Data(7:12,3)- mean(FMT_Data(7:12,3))),(FMT_Data(13:18,3)- mean(FMT_Data(13:18,3))),(FMT_Data(19:24,3)-mean(FMT_Data(19:24,3))),(FMT_Data(25:30,3)- mean(FMT_Data(25:30,3))),(FMT_Data(31:36,3)-mean(FMT_Data(31:36,3))),...
+    (FMT_Data(37:42,3)-mean(FMT_Data(37:42,3))),(FMT_Data(43:48,3)-mean(FMT_Data(43:48,3))),(FMT_Data(49:54,3)-mean(FMT_Data(49:54,3))),(FMT_Data(55:60,3)-mean(FMT_Data(55:60,3))),(FMT_Data(61:66,3)-mean(FMT_Data(61:66,3))));
+
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for FMT Net Time')
@@ -122,10 +111,10 @@ lme_simplified = fitlme(FMT_Data_tbl, 'CorrectedTime ~ Order + (1|Subj)', 'FitMe
 compare(lme_simplified,lme_model)
 %%%%%%%This shows that the simplified model better describes the data set
 compare(lme_simplified,int_model)
-%%%%%%%This shows that the simplified model better describes the data set
+%%%%%%%This shows that the model with interaction effects better describes the data set
 %%%Final anova
 FMT_NT_AN_SIMP = anova(lme_simplified) % left the ; off so that it prints the results to the command window
-
+FMT_NT_AN_INT = anova(int_model)
 
 % Define custom contrasts for pairwise comparisons for 'Order'
 contrasts = eye(6) - circshift(eye(6), [0, 1]);
@@ -146,32 +135,6 @@ disp(contrast_results)
 %     0,0,0,0,0,0,0,1;];
 % [pVal,F,DF1,DF2] = coefTest(lme,H)
 
-% %this was me checking single effects models but they are set up pretty
-% %much the same way
-% lme = fitlme(FMT_Data_tbl,'RawTime ~ GVS  + (1|Subj)','FitMethod','REML','DummyVarCoding','effects');
-% FMT_RT_AN2 = anova(lme)
-% lme = fitlme(FMT_Data_tbl,'RawTime ~  Order +  (1|Subj)','FitMethod','REML','DummyVarCoding','effects');
-% FMT_RT_AN3 = anova(lme)
-
-% % this was my attempt at using ranova but I think it didn't work because
-% we don't have all the OrderXGVS combos (ie. not enough data)
-% dv = array2table(FMT_Data_RM_RT);
-% dv.Properties.VariableNames = {'A1_000', 'A2_000', 'A3_000', 'A4_000', 'A5_000', 'A6_000', 'A1_500', 'A2_500', 'A3_500', 'A4_500', 'A5_500', 'A6_500', 'A1_999', 'A2_999', 'A3_999', 'A4_999', 'A5_999', 'A6_999' };
-% % create the within-subjects design
-% withinDesign = table([1 2 3 4 5 6 1 2 3 4 5 6 1 2 3 4 5 6]',[1 1 1 1 1 1 2 2 2 2 2 2 3 3 3 3 3 3]','VariableNames',{'Order','GVS'});
-% withinDesign.Order = categorical(withinDesign.Order);
-% withinDesign.GVS = categorical(withinDesign.GVS);
-% 
-% rm = fitrm(dv, "A1_000-A6_999 ~ 1", 'WithinDesign', withinDesign);
-% AT = ranova(rm,'WithinModel', 'Order*GVS')
-
-% %This is my attempt at using the anovan, but I don't think it works right
-% %unless I make the order variable continuous which it is not
-% subj = cat(1, ones(6,1), ones(6,1)*2, ones(6,1)*3, ones(6,1)*4, ones(6,1)*5, ones(6,1)*6, ones(6,1)*7, ones(6,1)*8, ones(6,1)*9, ones(6,1)*10, ones(6,1)*11);
-% 
-% anovan(FMT_Data(:,1),{num2str(FMT_Data(:,4)),subj},'model',1,'random',2,'varnames',{'GVS','Subj'});
-% anovan(FMT_Data(:,1),{num2str(FMT_Data(:,5)),subj},'model',1,'random',2,'varnames',{'Order','Subj'});
-% anovan(FMT_Data(:,1),{(FMT_Data(:,5)),(FMT_Data(:,4)),subj},'model','interaction','continuous',[1],'random',3,'varnames',{'Order','GVS','Subj'});
 
 % anova_RT = anovan(FMT_Data(:,1),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
 % anova_ER = anovan(FMT_Data(:,2),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
@@ -185,8 +148,16 @@ Rom_Data = [Rom_Data,subj];
 % Check normality
 %%Create difference array
 n = 24;
-diffArray = cat(1,diff(Rom_Data(1:n,1)),diff(Rom_Data(n*1+1:n*2,1)),diff(Rom_Data(n*2+1:n*3,1)),diff(Rom_Data(n*3+1:n*4,1)),diff(Rom_Data(n*4+1:n*5,1)),diff(Rom_Data(n*5+1:n*6,1)),...
-    diff(Rom_Data(n*6+1:n*7,1)),diff(Rom_Data(n*7+1:n*8,1)),diff(Rom_Data(n*8+1:n*9,1)),diff(Rom_Data(n*9+1:n*10,1)),diff(Rom_Data(n*10+1:n*11,1)));
+diffArray = cat(1,(Rom_Data(1:n,1)- mean(Rom_Data(1:n,1))), ...
+    (Rom_Data(n*1+1:n*2,1)- mean(Rom_Data(n*1+1:n*2,1))),(Rom_Data(n*2+1:n*3,1)- mean(Rom_Data(n*2+1:n*3,1))), ...
+    (Rom_Data(n*3+1:n*4,1)-mean(Rom_Data(n*3+1:n*4,1))),(Rom_Data(n*4+1:n*5,1)- mean(Rom_Data(n*4+1:n*5,1))), ...
+    (Rom_Data(n*5+1:n*6,1)-mean(Rom_Data(n*5+1:n*6,1))),...
+    (Rom_Data(n*6+1:n*7,1)-mean(Rom_Data(n*6+1:n*7,1))),(Rom_Data(n*7+1:n*8,1)-mean(Rom_Data(n*7+1:n*8,1))), ...
+    (Rom_Data(n*8+1:n*9,1)-mean(Rom_Data(n*8+1:n*9,1))),(Rom_Data(n*9+1:n*10,1)-mean(Rom_Data(n*9+1:n*10,1))), ...
+    (Rom_Data(n*10+1:n*11,1)-mean(Rom_Data(n*10+1:n*11,1))));
+
+% diffArray = cat(1,diff(Rom_Data(1:n,1)),diff(Rom_Data(n*1+1:n*2,1)),diff(Rom_Data(n*2+1:n*3,1)),diff(Rom_Data(n*3+1:n*4,1)),diff(Rom_Data(n*4+1:n*5,1)),diff(Rom_Data(n*5+1:n*6,1)),...
+%     diff(Rom_Data(n*6+1:n*7,1)),diff(Rom_Data(n*7+1:n*8,1)),diff(Rom_Data(n*8+1:n*9,1)),diff(Rom_Data(n*9+1:n*10,1)),diff(Rom_Data(n*10+1:n*11,1)));
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for Romberg Failure Time')
@@ -212,6 +183,17 @@ NHT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) =
 % Display the results
 tbl = array2table(c,"VariableNames", ...
     ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% no significant relationships
+
+%pool the data across all 4 trials because no significant diff
+NHT_data_pooled = [NHT_data(:,[1 5 9]); NHT_data(:,[2 6 10]); NHT_data(:,[3 7 11]); NHT_data(:,[4 8 12])];
+[NHT_p, tbl, stats] = friedman(NHT_data_pooled);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+%no significant realtionships 
 
 %%Head tilts
 c = 1;
@@ -233,8 +215,21 @@ HT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) ==
 % Display the results
 tbl = array2table(c,"VariableNames", ...
     ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% only trial 9 is signf different than some of the ones less than 8 (this
+% makes sense as 9 is the first 999 GVS trial where everyone fell so it
+% should be considered different than most other conditions where fewer or
+% no people fell
 
-
+% because no differences between the same condition type can pool across
+% condition 
+HT_data_pooled = [HT_data(:,[1 5 9]); HT_data(:,[2 6 10]); HT_data(:,[3 7 11]); HT_data(:,[4 8 12])];
+[HT_p, tbl, stats] = friedman(HT_data_pooled);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% 999 GVS is significantly different from No GVS and 500 GVS
 
 %%%%Parametric - NOT VALID %%%%%%%%%%%%%%%%
 % % then convert the data into an array
@@ -272,15 +267,29 @@ Tan_Data = [Tan_Data,subj];
 % Check Normality
 %%Create difference array
 n = 12;
-diffArray = cat(1,diff(Tan_Data(1:n,1)),diff(Tan_Data(n*1+1:n*2,1)),diff(Tan_Data(n*2+1:n*3,1)),diff(Tan_Data(n*3+1:n*4,1)),diff(Tan_Data(n*4+1:n*5,1)),diff(Tan_Data(n*5+1:n*6,1)),...
-    diff(Tan_Data(n*6+1:n*7,1)),diff(Tan_Data(n*7+1:n*8,1)),diff(Tan_Data(n*8+1:n*9,1)),diff(Tan_Data(n*9+1:n*10,1)),diff(Tan_Data(n*10+1:n*11,1)));
+diffArray = cat(1,(Tan_Data(1:n,1)- mean(Tan_Data(1:n,1))), ...
+    (Tan_Data(n*1+1:n*2,1)- mean(Tan_Data(n*1+1:n*2,1))),(Tan_Data(n*2+1:n*3,1)- mean(Tan_Data(n*2+1:n*3,1))), ...
+    (Tan_Data(n*3+1:n*4,1)-mean(Tan_Data(n*3+1:n*4,1))),(Tan_Data(n*4+1:n*5,1)- mean(Tan_Data(n*4+1:n*5,1))), ...
+    (Tan_Data(n*5+1:n*6,1)-mean(Tan_Data(n*5+1:n*6,1))),...
+    (Tan_Data(n*6+1:n*7,1)-mean(Tan_Data(n*6+1:n*7,1))),(Tan_Data(n*7+1:n*8,1)-mean(Tan_Data(n*7+1:n*8,1))), ...
+    (Tan_Data(n*8+1:n*9,1)-mean(Tan_Data(n*8+1:n*9,1))),(Tan_Data(n*9+1:n*10,1)-mean(Tan_Data(n*9+1:n*10,1))), ...
+    (Tan_Data(n*10+1:n*11,1)-mean(Tan_Data(n*10+1:n*11,1))));
+% diffArray = cat(1,diff(Tan_Data(1:n,1)),diff(Tan_Data(n*1+1:n*2,1)),diff(Tan_Data(n*2+1:n*3,1)),diff(Tan_Data(n*3+1:n*4,1)),diff(Tan_Data(n*4+1:n*5,1)),diff(Tan_Data(n*5+1:n*6,1)),...
+%     diff(Tan_Data(n*6+1:n*7,1)),diff(Tan_Data(n*7+1:n*8,1)),diff(Tan_Data(n*8+1:n*9,1)),diff(Tan_Data(n*9+1:n*10,1)),diff(Tan_Data(n*10+1:n*11,1)));
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for Tandem Completion Time')
 %%Create difference array
 n = 12;
-diffArray = cat(1,diff(Tan_Data(1:n,2)),diff(Tan_Data(n*1+1:n*2,2)),diff(Tan_Data(n*2+1:n*3,2)),diff(Tan_Data(n*3+1:n*4,2)),diff(Tan_Data(n*4+1:n*5,2)),diff(Tan_Data(n*5+1:n*6,2)),...
-    diff(Tan_Data(n*6+1:n*7,2)),diff(Tan_Data(n*7+1:n*8,2)),diff(Tan_Data(n*8+1:n*9,2)),diff(Tan_Data(n*9+1:n*10,2)),diff(Tan_Data(n*10+1:n*11,2)));
+diffArray = cat(1,(Tan_Data(1:n,2)- mean(Tan_Data(1:n,2))), ...
+    (Tan_Data(n*1+1:n*2,2)- mean(Tan_Data(n*1+1:n*2,2))),(Tan_Data(n*2+1:n*3,2)- mean(Tan_Data(n*2+1:n*3,2))), ...
+    (Tan_Data(n*3+1:n*4,2)-mean(Tan_Data(n*3+1:n*4,2))),(Tan_Data(n*4+1:n*5,2)- mean(Tan_Data(n*4+1:n*5,2))), ...
+    (Tan_Data(n*5+1:n*6,2)-mean(Tan_Data(n*5+1:n*6,2))),...
+    (Tan_Data(n*6+1:n*7,2)-mean(Tan_Data(n*6+1:n*7,2))),(Tan_Data(n*7+1:n*8,2)-mean(Tan_Data(n*7+1:n*8,2))), ...
+    (Tan_Data(n*8+1:n*9,2)-mean(Tan_Data(n*8+1:n*9,2))),(Tan_Data(n*9+1:n*10,2)-mean(Tan_Data(n*9+1:n*10,2))), ...
+    (Tan_Data(n*10+1:n*11,2)-mean(Tan_Data(n*10+1:n*11,2))));
+% diffArray = cat(1,diff(Tan_Data(1:n,2)),diff(Tan_Data(n*1+1:n*2,2)),diff(Tan_Data(n*2+1:n*3,2)),diff(Tan_Data(n*3+1:n*4,2)),diff(Tan_Data(n*4+1:n*5,2)),diff(Tan_Data(n*5+1:n*6,2)),...
+%     diff(Tan_Data(n*6+1:n*7,2)),diff(Tan_Data(n*7+1:n*8,2)),diff(Tan_Data(n*8+1:n*9,2)),diff(Tan_Data(n*9+1:n*10,2)),diff(Tan_Data(n*10+1:n*11,2)));
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for Tandem Good Steps')
@@ -403,10 +412,149 @@ HT_EC_Data(idx,:) = [];
 % Display the results
 tbl = array2table(c,"VariableNames", ...
     ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% significant difference between no GVS and 999 GVS - approaching signif
+% for 500 and 999 GVS
+%% Number of Good Steps
+%%No Head tilts Eyes open
+c = 0; %Head Tilt Condition
+b = 1; %Eyes Condition
+NHT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+NHT_EO_Data = [Tan_Data([1 2 3],2)'; Tan_Data([13 14 15],2)'; Tan_Data([25 26 27],2)'; ...
+    Tan_Data([37 38 39],2)'; Tan_Data([49 50 51],2)'; Tan_Data([61 62 63],2)'; ...
+    Tan_Data([73 74 75],2)'; Tan_Data([85 86 87],2)'; ...
+    Tan_Data([97 98 99],2)'; Tan_Data([109 110 111],2)';Tan_Data([121 122 123],2)'];
+%%Remove NaN Rows
+idx = isnan(NHT_EO_Data(:,1));
+NHT_EO_Data(idx,:) = [];
+idx = isnan(NHT_EO_Data(:,2));
+NHT_EO_Data(idx,:) = [];
+idx = isnan(NHT_EO_Data(:,3));
+NHT_EO_Data(idx,:) = [];
+%%Friedman Analysis
+[NHT_EO_p, tbl, stats] = friedman(NHT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% No significant diff
+
+%%Head tilts Eyes open
+c = 1; %Head Tilt Condition
+b = 1; %Eyes Condition
+HT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+HT_EO_Data = [Tan_Data([4:6],2)'; Tan_Data([16:18],2)'; Tan_Data([28:30],2)'; ...
+    Tan_Data([40:42],2)'; Tan_Data([52:54],2)'; Tan_Data([64:66],2)'; ...
+    Tan_Data([76:78],2)'; Tan_Data([88:90],2)'; ...
+    Tan_Data([100:102],2)'; Tan_Data([112:114],2)';Tan_Data([124:126],2)'];
+
+%%Remove NaN Rows
+idx = isnan(HT_EO_Data(:,1));
+HT_EO_Data(idx,:) = [];
+idx = isnan(HT_EO_Data(:,2));
+HT_EO_Data(idx,:) = [];
+idx = isnan(HT_EO_Data(:,3));
+HT_EO_Data(idx,:) = [];
+%%Friedman Analysis
+[HT_EO_p, tbl, stats] = friedman(HT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+%significant difference between 500 GVS and 999 GVS
+
+%%No Head tilts Eyes Closed
+c = 0; %Head Tilt Condition
+b = 0; %Eyes Condition
+NHT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+NHT_EC_Data = [Tan_Data([7:9],2)'; Tan_Data([19:21],2)'; Tan_Data([31:33],2)'; ...
+    Tan_Data([43:45],2)'; Tan_Data([55:57],2)'; Tan_Data([67:69],2)'; ...
+    Tan_Data([79:81],2)'; Tan_Data([91:93],2)'; ...
+    Tan_Data([103:105],2)'; Tan_Data([115:117],2)';Tan_Data([127:129],2)'];
+%%Remove NaN Rows
+idx = isnan(NHT_EC_Data(:,1));
+NHT_EC_Data(idx,:) = [];
+idx = isnan(NHT_EC_Data(:,2));
+NHT_EC_Data(idx,:) = [];
+idx = isnan(NHT_EC_Data(:,3));
+NHT_EC_Data(idx,:) = [];
+%%Friedman Analysis
+[NHT_EC_p, tbl, stats] = friedman(NHT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+%no significance
+
+%%Head tilts Eyes Closed
+c = 1; %Head Tilt Condition
+b = 0; %Eyes Condition
+HT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+HT_EC_Data = [Tan_Data([10:12],2)'; Tan_Data([22:24],2)'; Tan_Data([34:36],2)'; ...
+    Tan_Data([46:48],2)'; Tan_Data([58:60],2)'; Tan_Data([70:72],2)'; ...
+    Tan_Data([82:84],2)'; Tan_Data([94:96],2)'; ...
+    Tan_Data([106:108],2)'; Tan_Data([118:120],2)';Tan_Data([130:132],2)'];
+%%Remove NaN Rows
+idx = isnan(HT_EC_Data(:,1));
+HT_EC_Data(idx,:) = [];
+idx = isnan(HT_EC_Data(:,2));
+HT_EC_Data(idx,:) = [];
+idx = isnan(HT_EC_Data(:,3));
+HT_EC_Data(idx,:) = [];
+%%Friedman Analysis
+[HT_EC_p , tbl, stats] = friedman(HT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% significant difference between 500 GVS and 999 GVS, approaching signif
+% for No GVS and 999 GVS
 
 
-
-
+%%
 %%%%Parametric - NOT VALID FOR GOOD STEPS %%%%%%%%%%%%%%%%
 % % then convert the data into an array
 Tan_Data_tbl = array2table(Tan_Data);
