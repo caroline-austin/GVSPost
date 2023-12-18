@@ -293,6 +293,20 @@ diffArray = cat(1,(Tan_Data(1:n,2)- mean(Tan_Data(1:n,2))), ...
 [H, pValue, W] = swtest(diffArray,0.05)
 figure();
 qqplot(diffArray);title('QQ Plot for Tandem Good Steps')
+Zone = abs(Tan_Data);
+diffArray = cat(1,(Zone(1:n,7)- mean(Zone(1:n,7))), ...
+    (Zone(n*1+1:n*2,7)- mean(Zone(n*1+1:n*2,7))),(Zone(n*2+1:n*3,7)- mean(Zone(n*2+1:n*3,7))), ...
+    (Zone(n*3+1:n*4,7)-mean(Zone(n*3+1:n*4,7))),(Zone(n*4+1:n*5,7)- mean(Zone(n*4+1:n*5,7))), ...
+    (Zone(n*5+1:n*6,7)-mean(Zone(n*5+1:n*6,7))),...
+    (Zone(n*6+1:n*7,7)-mean(Zone(n*6+1:n*7,7))),(Zone(n*7+1:n*8,7)-mean(Zone(n*7+1:n*8,7))), ...
+    (Zone(n*8+1:n*9,7)-mean(Zone(n*8+1:n*9,7))),(Zone(n*9+1:n*10,7)-mean(Zone(n*9+1:n*10,7))), ...
+    (Zone(n*10+1:n*11,7)-mean(Zone(n*10+1:n*11,7))));
+% diffArray = cat(1,diff(Tan_Data(1:n,2)),diff(Tan_Data(n*1+1:n*2,2)),diff(Tan_Data(n*2+1:n*3,2)),diff(Tan_Data(n*3+1:n*4,2)),diff(Tan_Data(n*4+1:n*5,2)),diff(Tan_Data(n*5+1:n*6,2)),...
+%     diff(Tan_Data(n*6+1:n*7,2)),diff(Tan_Data(n*7+1:n*8,2)),diff(Tan_Data(n*8+1:n*9,2)),diff(Tan_Data(n*9+1:n*10,2)),diff(Tan_Data(n*10+1:n*11,2)));
+[H, pValue, W] = swtest(diffArray,0.05)
+figure();
+qqplot(diffArray);title('QQ Plot for Tandem Zone')
+
 
 %%Begin Friedman Analysis
 %%%Data Parsage
@@ -553,6 +567,144 @@ tbl = array2table(c,"VariableNames", ...
 % significant difference between 500 GVS and 999 GVS, approaching signif
 % for No GVS and 999 GVS
 
+
+%% Zone
+%%No Head tilts Eyes open
+c = 0; %Head Tilt Condition
+b = 1; %Eyes Condition
+NHT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+NHT_EO_Data = [Zone([1 2 3],7)'; Zone([13 14 15],7)'; Zone([25 26 27],7)'; ...
+    Zone([37 38 39],7)'; Zone([49 50 51],7)'; Zone([61 62 63],7)'; ...
+    Zone([73 74 75],7)'; Zone([85 86 87],7)'; ...
+    Zone([97 98 99],7)'; Zone([109 110 111],7)';Zone([121 122 123],7)'];
+%%Remove NaN Rows
+idx = isnan(NHT_EO_Data(:,1));
+NHT_EO_Data(idx,:) = [];
+idx = isnan(NHT_EO_Data(:,2));
+NHT_EO_Data(idx,:) = [];
+idx = isnan(NHT_EO_Data(:,3));
+NHT_EO_Data(idx,:) = [];
+%%Friedman Analysis
+[NHT_EO_p, tbl, stats] = friedman(NHT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% No significant diff
+
+%%Head tilts Eyes open
+c = 1; %Head Tilt Condition
+b = 1; %Eyes Condition
+HT_EO_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+HT_EO_Data = [Zone([4:6],7)'; Zone([16:18],7)'; Zone([28:30],7)'; ...
+    Zone([40:42],7)'; Zone([52:54],7)'; Zone([64:66],7)'; ...
+    Zone([76:78],7)'; Zone([88:90],7)'; ...
+    Zone([100:102],7)'; Zone([112:114],7)';Zone([124:126],7)'];
+
+%%Remove NaN Rows
+idx = isnan(HT_EO_Data(:,1));
+HT_EO_Data(idx,:) = [];
+idx = isnan(HT_EO_Data(:,2));
+HT_EO_Data(idx,:) = [];
+idx = isnan(HT_EO_Data(:,3));
+HT_EO_Data(idx,:) = [];
+%%Friedman Analysis
+[HT_EO_p, tbl, stats] = friedman(HT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+%no significance
+
+%%No Head tilts Eyes Closed
+c = 0; %Head Tilt Condition
+b = 0; %Eyes Condition
+NHT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+NHT_EC_Data = [Zone([7:9],7)'; Zone([19:21],7)'; Zone([31:33],7)'; ...
+    Zone([43:45],7)'; Zone([55:57],7)'; Zone([67:69],7)'; ...
+    Zone([79:81],7)'; Zone([91:93],7)'; ...
+    Zone([103:105],7)'; Zone([115:117],7)';Zone([127:129],7)'];
+%%Remove NaN Rows
+idx = isnan(NHT_EC_Data(:,1));
+NHT_EC_Data(idx,:) = [];
+idx = isnan(NHT_EC_Data(:,2));
+NHT_EC_Data(idx,:) = [];
+idx = isnan(NHT_EC_Data(:,3));
+NHT_EC_Data(idx,:) = [];
+%%Friedman Analysis
+[NHT_EC_p, tbl, stats] = friedman(NHT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+%no significance
+
+%%Head tilts Eyes Closed
+c = 1; %Head Tilt Condition
+b = 0; %Eyes Condition
+HT_EC_Data = [Tan_Data(find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'first'):find((Tan_Data(1:n,4) == c & Tan_Data(1:n,3) == b),1,'last'),1)';
+    Tan_Data((n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'first'):(n*1)+find((Tan_Data(n*1+1:n*2,4) == c & Tan_Data(n*1+1:n*2,3) == b),1,'last'),1)';
+    Tan_Data((n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'first'):(n*2)+find((Tan_Data(n*2+1:n*3,4) == c & Tan_Data(n*2+1:n*3,3) == b),1,'last'),1)';
+    Tan_Data((n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'first'):(n*3)+find((Tan_Data(n*3+1:n*4,4) == c & Tan_Data(n*3+1:n*4,3) == b),1,'last'),1)';
+    Tan_Data((n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'first'):(n*4)+find((Tan_Data(n*4+1:n*5,4) == c & Tan_Data(n*4+1:n*5,3) == b),1,'last'),1)';
+    Tan_Data((n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'first'):(n*5)+find((Tan_Data(n*5+1:n*6,4) == c & Tan_Data(n*5+1:n*6,3) == b),1,'last'),1)';
+    Tan_Data((n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'first'):(n*6)+find((Tan_Data(n*6+1:n*7,4) == c & Tan_Data(n*6+1:n*7,3) == b),1,'last'),1)';
+    Tan_Data((n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'first'):(n*7)+find((Tan_Data(n*7+1:n*8,4) == c & Tan_Data(n*7+1:n*8,3) == b),1,'last'),1)';
+    Tan_Data((n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'first'):(n*8)+find((Tan_Data(n*8+1:n*9,4) == c & Tan_Data(n*8+1:n*9,3) == b),1,'last'),1)';
+    Tan_Data((n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'first'):(n*9)+find((Tan_Data(n*9+1:n*10,4) == c & Tan_Data(n*9+1:n*10,3) == b),1,'last'),1)';
+    Tan_Data((n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'first'):(n*10)+find((Tan_Data(n*10+1:n*11,4) == c & Tan_Data(n*10+1:n*11,3) == b),1,'last'),2)'];
+HT_EC_Data = [Zone([10:12],7)'; Zone([22:24],7)'; Zone([34:36],7)'; ...
+    Zone([46:48],7)'; Zone([58:60],7)'; Zone([70:72],7)'; ...
+    Zone([82:84],7)'; Zone([94:96],7)'; ...
+    Zone([106:108],7)'; Zone([118:120],7)';Zone([130:132],7)'];
+%%Remove NaN Rows
+idx = isnan(HT_EC_Data(:,1));
+HT_EC_Data(idx,:) = [];
+idx = isnan(HT_EC_Data(:,2));
+HT_EC_Data(idx,:) = [];
+idx = isnan(HT_EC_Data(:,3));
+HT_EC_Data(idx,:) = [];
+%%Friedman Analysis
+[HT_EC_p , tbl, stats] = friedman(HT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% no significance
 
 %%
 %%%%Parametric - NOT VALID FOR GOOD STEPS %%%%%%%%%%%%%%%%
