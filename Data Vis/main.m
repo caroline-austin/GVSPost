@@ -57,23 +57,44 @@ FMT_Data_tbl.Subj = categorical(FMT_Data_tbl.Subj);
 % create linear mixed effect model with dependent ~ independent (1|Var) =
 % random effects (so our within subjects) 
 %%Raw Time ANOVA
-lme = fitlme(FMT_Data_tbl,'RawTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-FMT_RT_AN = anova(lme) % left the ; off so that it prints the results to the command window
+lme_model = fitlme(FMT_Data_tbl,'RawTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+FMT_RT_AN = anova(lme_model) % left the ; off so that it prints the results to the command window
+int_model = fitlme(FMT_Data_tbl, 'RawTime ~ GVS + Order + GVS:Order + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects'); %  test whether there is a significant interaction effect between 'GVS' and 'Order'.
+% Refit the model without the non-significant terms
+lme_simplified = fitlme(FMT_Data_tbl, 'RawTime ~ Order + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects');
+
 %%%Post-HOC Correlation
+% Compare the two models
+compare(lme_simplified, lme_model)
+%%%%%%%This shows that the simplified model better describes the data set
+compare(lme_simplified,int_model)
+%%%%%%%This shows that the simplified model better describes the data set
+
+% Define custom contrasts for pairwise comparisons for 'Order'
+contrasts = eye(6) - circshift(eye(6), [0, 1]);
+% Perform custom contrasts
+contrast_results = coefTest(lme_simplified, contrasts);
+disp(contrast_results)
+%%Indicates that there are significant differences between the levels of
+%%order
+
+%%%Final anova
+FMT_RT_AN_simp = anova(lme_model) % left the ; off so that it prints the results to the command window
+
 % H = [0,0,0,1,0,0,0,0;
 %     0,0,0,0,1,0,0,0;
 %     0,0,0,0,0,1,0,0;
 %     0,0,0,0,0,0,1,0;
 %     0,0,0,0,0,0,0,1;];
 % [pVal,F,DF1,DF2] = coefTest(lme,H)
-H = [0,1,0,0,0,0,0,0;
-    0,0,1,0,0,0,0,0;
-    0,0,0,1,0,0,0,0;
-    0,0,0,0,1,0,0,0;
-    0,0,0,0,0,1,0,0;
-    0,0,0,0,0,0,1,0;
-    0,0,0,0,0,0,0,1;];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
+% H = [0,1,0,0,0,0,0,0;
+%     0,0,1,0,0,0,0,0;
+%     0,0,0,1,0,0,0,0;
+%     0,0,0,0,1,0,0,0;
+%     0,0,0,0,0,1,0,0;
+%     0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,1;];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
 % H = [0,1,0,0,0,0,0,0;
 %     0,0,1,0,0,0,0,0;];
 % [pVal,F,DF1,DF2] = coefTest(lme,H)
@@ -90,16 +111,40 @@ H = [0,1,0,0,0,0,0,0;
 %     0,0,0,0,0,0,0,1;];
 % [pVal,F,DF1,DF2] = coefTest(lme,H)
 %%Net Time ANOVA
-lme = fitlme(FMT_Data_tbl,'CorrectedTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-FMT_NT_AN = anova(lme) % left the ; off so that it prints the results to the command window
-H = [0,1,0,0,0,0,0,0;
-    0,0,1,0,0,0,0,0;
-    0,0,0,1,0,0,0,0;
-    0,0,0,0,1,0,0,0;
-    0,0,0,0,0,1,0,0;
-    0,0,0,0,0,0,1,0;
-    0,0,0,0,0,0,0,1;];
-[pVal,F,DF1,DF2] = coefTest(lme,H)
+lme_model = fitlme(FMT_Data_tbl,'CorrectedTime ~ GVS + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+FMT_NT_AN = anova(lme_model) % left the ; off so that it prints the results to the command window
+int_model = fitlme(FMT_Data_tbl, 'CorrectedTime ~ GVS + Order + GVS:Order + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects'); %  test whether there is a significant interaction effect between 'GVS' and 'Order'.
+% Refit the model without the non-significant terms
+lme_simplified = fitlme(FMT_Data_tbl, 'CorrectedTime ~ Order + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects');
+
+%%%Post-HOC Correlation
+% Compare the two models
+compare(lme_simplified,lme_model)
+%%%%%%%This shows that the simplified model better describes the data set
+compare(lme_simplified,int_model)
+%%%%%%%This shows that the simplified model better describes the data set
+%%%Final anova
+FMT_NT_AN_SIMP = anova(lme_simplified) % left the ; off so that it prints the results to the command window
+
+
+% Define custom contrasts for pairwise comparisons for 'Order'
+contrasts = eye(6) - circshift(eye(6), [0, 1]);
+% Perform custom contrasts
+contrast_results = coefTest(lme_simplified, contrasts);
+disp(contrast_results)
+%%Indicates that there are significant differences between the levels of
+%%order
+
+
+
+% H = [0,1,0,0,0,0,0,0;
+%     0,0,1,0,0,0,0,0;
+%     0,0,0,1,0,0,0,0;
+%     0,0,0,0,1,0,0,0;
+%     0,0,0,0,0,1,0,0;
+%     0,0,0,0,0,0,1,0;
+%     0,0,0,0,0,0,0,1;];
+% [pVal,F,DF1,DF2] = coefTest(lme,H)
 
 % %this was me checking single effects models but they are set up pretty
 % %much the same way
@@ -161,10 +206,12 @@ NHT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) =
     Rom_Data((n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'first'):(n*8)+find(Rom_Data(n*8+1:n*9,2) == c,1,'last'),1)';
     Rom_Data((n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'first'):(n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'last'),1)';
     Rom_Data((n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'first'):(n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'last'),1)'];
-NHT_p = friedman(NHT_data);hold on;
-sgtitle('Friedman ANOVA test for No Head Tilts - Romberg');
-hold off;
-
+[NHT_p, tbl, stats] = friedman(NHT_data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 %%Head tilts
 c = 1;
@@ -180,8 +227,12 @@ HT_data = [Rom_Data(find(Rom_Data(1:n,2) == c,1,'first'):find(Rom_Data(1:n,2) ==
     Rom_Data((n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'first'):(n*9)+find(Rom_Data(n*9+1:n*10,2) == c,1,'last'),1)';
     Rom_Data((n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'first'):(n*10)+find(Rom_Data(n*10+1:n*11,2) == c,1,'last'),1)'];
 
-HT_p = friedman(HT_data);
-
+[HT_p, tbl, stats] = friedman(HT_data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 
 
@@ -258,7 +309,12 @@ NHT_EO_Data(idx,:) = [];
 idx = isnan(NHT_EO_Data(:,3));
 NHT_EO_Data(idx,:) = [];
 %%Friedman Analysis
-NHT_EO_p = friedman(NHT_EO_Data);
+[NHT_EO_p, tbl, stats] = friedman(NHT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 %%Head tilts Eyes open
 c = 1; %Head Tilt Condition
@@ -282,7 +338,12 @@ HT_EO_Data(idx,:) = [];
 idx = isnan(HT_EO_Data(:,3));
 HT_EO_Data(idx,:) = [];
 %%Friedman Analysis
-HT_EO_p = friedman(HT_EO_Data);
+[HT_EO_p, tbl, stats] = friedman(HT_EO_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 %%No Head tilts Eyes Closed
 c = 0; %Head Tilt Condition
@@ -307,7 +368,12 @@ NHT_EC_Data(idx,:) = [];
 idx = isnan(NHT_EC_Data(:,3));
 NHT_EC_Data(idx,:) = [];
 %%Friedman Analysis
-NHT_EC_p = friedman(NHT_EC_Data);
+[NHT_EC_p, tbl, stats] = friedman(NHT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 %%Head tilts Eyes Closed
 c = 1; %Head Tilt Condition
@@ -331,7 +397,12 @@ HT_EC_Data(idx,:) = [];
 idx = isnan(HT_EC_Data(:,3));
 HT_EC_Data(idx,:) = [];
 %%Friedman Analysis
-HT_EC_p = friedman(HT_EC_Data);
+[HT_EC_p , tbl, stats] = friedman(HT_EC_Data);
+% Use multcompare for post hoc tests
+[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% Display the results
+tbl = array2table(c,"VariableNames", ...
+    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 
 
 
@@ -348,8 +419,50 @@ Tan_Data_tbl.Order = categorical(Tan_Data_tbl.Order);
 Tan_Data_tbl.Subj = categorical(Tan_Data_tbl.Subj);
 % create linear mixed effect model with dependent ~ independent (1|Var) =
 % random effects (so our within subjects) 
-lme = fitlme(Tan_Data_tbl,'testTime ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-Tan_TT_AN = anova(lme) % left the ; off so that it prints the results to the command window
-% lme = fitlme(Tan_Data_tbl,'goodSteps ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
-% Tan_GS_AN = anova(lme) % left the ; off so that it prints the results to the command window
+lme_model = fitlme(Tan_Data_tbl,'testTime ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + Order + (1|Subj)','FitMethod','REML','DummyVarCoding','effects'); % can also add GVS*Order, but the effect is not significant, so should probably exclude
+Tan_TT_AN = anova(lme_model) % left the ; off so that it prints the results to the command window
+ind_model = fitlme(Tan_Data_tbl, 'testTime ~ headTilt + eyesOpen + Order + GVS + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects');
+Tan_TT_AN = anova(int_model) % left the ; off so that it prints the results to the command window
+% Refit the model without the non-significant terms
+lme_simplified = fitlme(Tan_Data_tbl, 'testTime ~ headTilt + eyesOpen + GVS*headTilt*eyesOpen + (1|Subj)', 'FitMethod', 'REML', 'DummyVarCoding', 'effects');
+Tan_TT_AN = anova(lme_simplified) % left the ; off so that it prints the results to the command window
+%%%Post-HOC Correlation
+% Compare the two models
+compare(lme_simplified,lme_model)
+%%%%%%%This shows that the lme model better describes the data set
+compare(lme_model,ind_model)
+%%%%%%%This shows that the lme model better describes the data set
+%%%Final anova
+Tan_TT_AN = anova(lme_model) % left the ; off so that it prints the results to the command window
+
+
+% Define custom contrasts for pairwise comparisons
+
+% Define custom contrasts for pairwise comparisons
+
+% Main effects for categorical variables
+contrast1 = [0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare eyesOpen_0 and headtilt_0
+contrast2 = [0 1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare eyesOpen_0 and GVS_0
+contrast3 = [0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare headtilt_0 and GVS_0
+contrast4 = [0 1 0 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare eyesOpen_0 and GVS_500
+contrast5 = [0 0 1 0 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare headtilt_0 and GVS_500
+contrast6 = [0 0 0 1 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]; % Compare GVS_0 and GVS_500
+
+
+% Perform custom contrasts
+contrast_results1 = coefTest(lme_model, contrast1);
+contrast_results2 = coefTest(lme_model, contrast2);
+contrast_results3 = coefTest(lme_model, contrast3);
+contrast_results4 = coefTest(lme_model, contrast4);
+contrast_results5 = coefTest(lme_model, contrast5);
+contrast_results6 = coefTest(lme_model, contrast6);
+
+% Display contrast results
+disp(contrast_results1);
+disp(contrast_results2);
+disp(contrast_results3);
+disp(contrast_results4);
+disp(contrast_results5);
+disp(contrast_results6);
+
 
