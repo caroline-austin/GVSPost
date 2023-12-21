@@ -243,7 +243,7 @@ end
 % [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 % [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
  %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
- %[C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+ [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
 
 
 
