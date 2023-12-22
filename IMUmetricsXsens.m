@@ -277,15 +277,24 @@ findloc = find(C(:,1) == 0);
 for rem = 1:length(findloc)
     C(findloc(rem),:) = NaN;
 end
+find0 = find(C(:,2) == 0); find0_1 = find(C(:,2) == 0.1);
+find0_25 = find(C(:,2) == 0.25); find0_5 = find(C(:,2) == 0.5);
+find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
+find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
+find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
 figure();
-h = boxplot(C(:,1),C(:,2));
-set(h, 'linewidth', 2); hold on;
+boxplot(C(:,1),C(:,2)); hold on;
+scatter(1,C(find0,1),'magenta'); scatter(2,C(find0_1,1),'magenta');
+scatter(3,C(find0_25,1),'magenta'); scatter(4,C(find0_5,1),'magenta');
+scatter(5,C(find0_75,1),'magenta'); scatter(6,C(find1,1),'magenta');
+scatter(7,C(find1_25,1),'magenta'); scatter(8,C(find1_5,1),'magenta');
+scatter(9,C(find2,1),'magenta'); scatter(10,C(find4,1),'magenta');
 
-xCenter = 1:length(C(:,1));
-spread = 0.5;
+hold off;
 
-plot(rand(size(C(:,1)))*spread - spread/2 + xCenter,C(:,1),'mo','LineWidth',2);
+
+%plot(rand(size(C(:,1)))*spread - spread/2 + xCenter,C(:,1),'mo','LineWidth',2);
 
 
 xlabel('mA'); ylabel('P1 amplitude spectrum');
