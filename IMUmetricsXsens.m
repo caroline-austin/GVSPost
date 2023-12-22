@@ -1,7 +1,7 @@
 close all;clear;clc; warning off;
 
 %% set up
-subnum = 1022;  % Subject List 
+subnum = 1017:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -155,74 +155,74 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         %% Gravity Aligned Plots
 
-        figure();
-        sgtitle(strrep(trial_name,'_','.'));
-
-        for k=1:width(acc_aligned)
-            subplot(3,3,k+3)
-            %plot(time(time_cut),cutacc(:,k))
-            plot(time,acc_aligned(:,k))
-            xline(1); xline(11.5);
-            ylim([-8 10])
-            %xlim(Xlimit)
-            direction_title_1 = strcat("Acc Aligned ", direction(k));
-            title(direction_title_1)
-            xlabel("seconds");
-            ylabel("m/s^2")
-        end
-
-        for l=1:width(gyro_aligned)
-            subplot(3,3,l+6)
-            %plot(time(time_cut),cutgyro(:,l))
-            plot(time,gyro_aligned(:,l))
-            xline(1); xline(11.5);
-            ylim([-8 8])
-            %xlim(Xlimit)
-            direction_title_2 = strcat("Gyro Aligned ", direction(l));
-            title(direction_title_2)
-            xlabel("seconds");
-            ylabel("deg/sec")
-        end
-
-        subplot(3,3,1)
-        %plot(time(time_cut),cutyaw)
-        plot(time,yaw)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Yaw")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,2)
-        %plot(time(time_cut),cutpitch)
-        plot(time,pitch)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Pitch")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,3)
-        %plot(time(time_cut),cutroll)
-        plot(time,roll)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Roll")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
-        cd(plots_path)
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path)
-
-        cd(subject_path);
-        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-        cd(code_path);
+        % figure();
+        % sgtitle(strrep(trial_name,'_','.'));
+        % 
+        % for k=1:width(acc_aligned)
+        %     subplot(3,3,k+3)
+        %     %plot(time(time_cut),cutacc(:,k))
+        %     plot(time,acc_aligned(:,k))
+        %     xline(1); xline(11.5);
+        %     ylim([-8 10])
+        %     %xlim(Xlimit)
+        %     direction_title_1 = strcat("Acc Aligned ", direction(k));
+        %     title(direction_title_1)
+        %     xlabel("seconds");
+        %     ylabel("m/s^2")
+        % end
+        % 
+        % for l=1:width(gyro_aligned)
+        %     subplot(3,3,l+6)
+        %     %plot(time(time_cut),cutgyro(:,l))
+        %     plot(time,gyro_aligned(:,l))
+        %     xline(1); xline(11.5);
+        %     ylim([-8 8])
+        %     %xlim(Xlimit)
+        %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
+        %     title(direction_title_2)
+        %     xlabel("seconds");
+        %     ylabel("deg/sec")
+        % end
+        % 
+        % subplot(3,3,1)
+        % %plot(time(time_cut),cutyaw)
+        % plot(time,yaw)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Yaw")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,2)
+        % %plot(time(time_cut),cutpitch)
+        % plot(time,pitch)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Pitch")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,3)
+        % %plot(time(time_cut),cutroll)
+        % plot(time,roll)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Roll")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        % cd(plots_path)
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path)
+        % 
+        % cd(subject_path);
+        % vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        % eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        % cd(code_path);
 %         close all;
 
     end
@@ -248,7 +248,7 @@ end
 % [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
 % [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
  %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
- %[C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+ [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
 
 
 
@@ -288,6 +288,15 @@ find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
 find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
 find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
+[x,h] = hist(C(:,1),100);
+h = smooth(h,5);
+h = h./max(h);
+
+dataRC = tiedrank(C)./2000;
+IQR = iqr(C);
+clf
+patch([y -y(end:-1:1)] , [x x(end:-1:1)], 'm', 'facealpha', 0.5)
+
 figure();
 boxplot(C(:,1),C(:,2)); hold on;
 scatter(1,C(find0,1),'magenta'); scatter(2,C(find0_1,1),'magenta');
@@ -295,13 +304,7 @@ scatter(3,C(find0_25,1),'magenta'); scatter(4,C(find0_5,1),'magenta');
 scatter(5,C(find0_75,1),'magenta'); scatter(6,C(find1,1),'magenta');
 scatter(7,C(find1_25,1),'magenta'); scatter(8,C(find1_5,1),'magenta');
 scatter(9,C(find2,1),'magenta'); scatter(10,C(find4,1),'magenta');
-
 hold off;
-
-
-%plot(rand(size(C(:,1)))*spread - spread/2 + xCenter,C(:,1),'mo','LineWidth',2);
-
-
 xlabel('mA'); ylabel('P1 amplitude spectrum');
 end
 
