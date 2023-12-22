@@ -273,6 +273,8 @@ for bp = 1:12
  C = [C;switchmat(:,:,bp)];
 end
 
+if C(:,1) == 0
+
 figure();
 h = boxplot(C(:,1),C(:,2));
 set(h, 'linewidth', 2); hold on;
@@ -280,7 +282,7 @@ set(h, 'linewidth', 2); hold on;
 xCenter = 1:length(C(:,1));
 spread = 0.5;
 
-for indp = 1:
+plot(rand(size(C(:,1)))*spread - spread/2 + xCenter,C(:,1),'mo','LineWidth',2);
 
 
 xlabel('mA'); ylabel('P1 amplitude spectrum');

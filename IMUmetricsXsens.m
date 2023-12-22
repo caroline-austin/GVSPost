@@ -273,6 +273,11 @@ for bp = 1:12
  C = [C;switchmat(:,:,bp)];
 end
 
+findloc = find(C(:,1) == 0);
+for rem = 1:length(findloc)
+    C(findloc(rem),:) = NaN;
+end
+
 figure();
 h = boxplot(C(:,1),C(:,2));
 set(h, 'linewidth', 2); hold on;
