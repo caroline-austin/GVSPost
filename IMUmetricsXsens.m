@@ -18,6 +18,7 @@ end
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 for sub = 1:numsub % first for loop that iterates through subject files
+    close all;
     subject = subnum(sub);
     subject_str = num2str(subject);
     % skip subjects that DNF'd or there is no data for
@@ -41,7 +42,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
     TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
     cd(code_path);
 
-    imu_list = file_path_info2(code_path, subject_path); % get files from file folder
+    file_names = file_path_info2(code_path, subject_path); % get files from file folder
+    imu_list = file_names;
 
     for i=1:length(imu_list) % nested for loop that iterates through IMU files in the subject folder
 
@@ -119,7 +121,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % [fft_SpHz_roll(i,sub),freq_SpHz,P1r,fr] = fftcalc(i,Y_roll,time,sub,trial_name);
          %[fft_SpHz_accz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
         %[fft_SpHz_accx(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
-         [fft_SpHz_accy(i,sub),freq_SpHz,P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+         [fft_SpHz_accy(file_count,sub),freq_SpHz(file_count,sub),P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
         % 
         % figure;
         % plot(fgz,P1gz,"LineWidth",3)
@@ -244,6 +246,15 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 end   
 
+trialinfo_mAval= trialinfo_mAval';
+
+for trial = 1:length(trialinfo_mAval)
+    for subject = 1:width(trialinfo_mAval)
+
+        
+    end
+end
+
 %  [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
 % [C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
 % [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
@@ -264,13 +275,13 @@ fft_SpHz(fft_SpHz == 0) = NaN; % setting non-recorded values to NaN
 for mHz = 1:numsub
     trls = fft_SpHz(~isnan(fft_SpHz(:,mHz)),mHz);
     if length(trls) == length(trialinfo_mAval)
-        val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(:,mHz)];
     elseif length(trls) == (length(trialinfo_mAval) - 1)
         trls1 = [NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(:,mHz)];
     elseif length(trls) == (length(trialinfo_mAval) - 2)
         trls2 = [NaN;NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(:,mHz)];
     end
 end
 
