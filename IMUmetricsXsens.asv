@@ -280,7 +280,7 @@ set(h, 'linewidth', 2); hold on;
 xCenter = 1:length(C(:,1));
 spread = 0.5;
 
-plot(rand(size(C(:,1)))*spread - spread/2 + xCenter,C(:,1),'mo','LineWidth',2);
+for indp = 1:
 
 
 xlabel('mA'); ylabel('P1 amplitude spectrum');
