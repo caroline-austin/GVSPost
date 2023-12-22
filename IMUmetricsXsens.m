@@ -271,13 +271,13 @@ fft_SpHz(fft_SpHz == 0) = NaN; % setting non-recorded values to NaN
 for mHz = 1:numsub
     trls = fft_SpHz(~isnan(fft_SpHz(:,mHz)),mHz);
     if length(trls) == length(trialinfo_mAval)
-        val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(:,mHz)];
     elseif length(trls) == (length(trialinfo_mAval) - 1)
         trls1 = [NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(:,mHz)];
     elseif length(trls) == (length(trialinfo_mAval) - 2)
         trls2 = [NaN;NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(mHz,:)'];
+        val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(:,mHz)];
     end
 end
 
