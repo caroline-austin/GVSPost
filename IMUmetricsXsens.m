@@ -3,7 +3,7 @@ close all;clear;clc; warning off;
 %% set up
 subnum = 1017:1022;  % Subject List 
 numsub = length(subnum);
-subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [0,1071];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
 
@@ -69,7 +69,11 @@ for sub = 1:numsub % first for loop that iterates through subject files
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(acc)/30)-1/30);
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
-        time_cut = timeimu > 1 & timeimu < 9.5;
+        if length(timeimu) > 345
+            time_cut = timeimu > 2 & timeimu < 11.5;
+        else
+            continue;
+        end
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
         %[Xlimit,Ylimit] = PlotScale(imu_data,time);
