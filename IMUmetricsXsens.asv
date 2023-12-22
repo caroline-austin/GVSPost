@@ -288,13 +288,18 @@ find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
 find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
 find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
-viodatx = C(:,1);
-xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
+[y,x] = hist(C(:,1));
 
-[f,xi] = ksdensity( viodatx(:),xval,'Bandwidth',0.05,'BoundaryCorrection','reflection');
+dR = tiedrank(C(:,1)./length(C(:,1)));
+IQR = iqr(C(:,1));
 
 figure();
-patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
+clf;
+patch([y -y(end:-1:1)] , [x x(end:-1:1)], 'm', 'facealpha', 0.5); hold on;
+plot([0 0],IQR, 'k','LineWidth',3);
+plot(0,mean(C(:,1)),'ks','MarkerFaceColor','r','MarkerSize',10);
+plot(0,median(C(:,1)),'ko','MarkerFaceColor','r','MarkerSize',10);
+hold off;
 
 figure();
 boxplot(C(:,1),C(:,2)); hold on;
@@ -307,7 +312,7 @@ hold off;
 xlabel('mA'); ylabel('P1 amplitude spectrum');
 end
 
-function [] = violinfunc(C,fstart,fstop)
+function [viodat] = violinfunc(C,fstart,fstop)
 viodatx = C(:,1);
 xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
 
