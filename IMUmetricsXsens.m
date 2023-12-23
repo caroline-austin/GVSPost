@@ -102,11 +102,12 @@ for sub = 1:numsub % first for loop that iterates through subject files
         direction = ["Z", "Y", "X"];
 
         % magnitude of gyro and acc 
-        mag_acc = sqrt((acc_aligned(:,1).^2) + (acc_aligned(:,2).^2));
+        %mag_acc = sqrt((acc_aligned(:,1).^2) + (acc_aligned(:,2).^2));
         mag_gyro = sqrt((gyro_aligned(:,1).^2) + (gyro_aligned(:,2).^2));
         Y_accz = fft(cutacc(:,1));
         Y_accx = fft(cutacc(:,3));
         Y_accy = fft(cutacc(:,2));
+        mag_acc = sqrt(Y_accy.^2 + Y_accx.^2);
         Y_acc = fft(mag_acc); Y_gyro = fft(mag_gyro);
 
         % fft: roll, pitch, yaw 
@@ -122,6 +123,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
          %[fft_SpHz_accz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
         %[fft_SpHz_accx(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
          [fft_SpHz_accy(file_count,sub),freq_SpHz(file_count,sub),P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+         [fft_SpHz_accymag(file_count,sub),freq_SpHzmag(file_count,sub),P1gymag,fgymag] = fftcalc(i,Y_acc,time,sub,trial_name);
         % 
         % figure;
         % plot(fgz,P1gz,"LineWidth",3)
@@ -255,15 +257,9 @@ for trial = 1:length(trialinfo_mAval)
     end
 end
 
-%  [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
-% [C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
-% [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
-% [C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
-% [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
-% [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
-% [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
- %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
+
  [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+ [C_accmag] = boxplotfft(fft_SpHz_accymag,numsub,trialinfo_mAval);
 
 
 
