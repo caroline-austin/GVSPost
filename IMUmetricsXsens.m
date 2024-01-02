@@ -6,6 +6,7 @@ numsub = length(subnum);
 subskip = [0,1071];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
+match_list = [0 0 0.1 0.1 0.25 0.5 0.75 1 1.25 1.5 2 4];
 
 % set up pathing
 code_path = pwd; %save code directory
@@ -121,7 +122,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % [fft_SpHz_roll(i,sub),freq_SpHz,P1r,fr] = fftcalc(i,Y_roll,time,sub,trial_name);
          %[fft_SpHz_accz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
         %[fft_SpHz_accx(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
-         [fft_SpHz_accy(file_count,sub),freq_SpHz(file_count,sub),P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+         [fft_SpHz_accy(file_count,sub),freq_SpHzy(file_count,sub),P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+         [fft_SpHz_acc(file_count,sub),freq_SpHz(file_count,sub),P1g,fg] = fftcalc(i,Y_acc,time,sub,trial_name);
         % 
         % figure;
         % plot(fgz,P1gz,"LineWidth",3)
@@ -248,9 +250,27 @@ end
 
 trialinfo_mAval= trialinfo_mAval';
 
-for trial = 1:length(trialinfo_mAval)
-    for subject = 1:width(trialinfo_mAval)
-
+%%
+fft_SpHz_acc_sort = NaN(numsub,length(match_list));
+for subject = 1:width(trialinfo_mAval)
+    check_0 = 0;
+    check_01 = 0;
+    for trial = 1:length(trialinfo_mAval)
+        for match = 1:length(match_list)
+            if trialinfo_mAval(trial,subject) == match_list(match)
+            
+                if match ==1 && check_0 ~= 0
+                    continue
+                elseif match ==3 && check_01 ~= 0
+                    continue
+                elseif match ==1
+                    check_0 =1;
+                elseif match == 3
+                    check_01 =1;
+                end
+                fft_SpHz_acc_sort(subject,match) = fft_SpHz_acc(trial,subject);
+            end
+        end
         
     end
 end
@@ -264,7 +284,7 @@ end
 % [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
  %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
  [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
-
+ [C_gy] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
 
 
 
