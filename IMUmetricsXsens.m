@@ -257,6 +257,7 @@ trialinfo_mAval= trialinfo_mAval';
 
 %%
 fft_SpHz_acc_sort = NaN(numsub,length(match_list));
+fft_SpHz_accy_sort = NaN(numsub,length(match_list));
 for subject = 1:width(trialinfo_mAval)
     check_0 = 0;
     check_01 = 0;
@@ -274,6 +275,7 @@ for subject = 1:width(trialinfo_mAval)
                     check_01 =1;
                 end
                 fft_SpHz_acc_sort(subject,match) = fft_SpHz_acc(trial,subject);
+                fft_SpHz_accy_sort(subject,match) = fft_SpHz_accy(trial,subject);
             end
         end
         
