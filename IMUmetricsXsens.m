@@ -1,8 +1,8 @@
 close all;clear;clc; warning off;
 
 %% set up
-%subnum = 1017:1022;  % Subject List 
-subnum = 1021;
+subnum = 1017:1022;  % Subject List 
+%subnum = 1021;
 numsub = length(subnum);
 subskip = [0,1071];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
@@ -74,7 +74,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         time = 0:1/30:((height(acc)/30)-1/30);
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
         if length(timeimu) > 345
-            time_cut = timeimu > 2 & timeimu < 1.5;
+            time_cut = timeimu > 2 & timeimu < 9.5;
         else
             continue;
         end
