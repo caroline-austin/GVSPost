@@ -1,10 +1,10 @@
 close all;clear;clc; warning off;
 
 %% set up
-%subnum = 1017:1022;  % Subject List 
-subnum = 1021;
+subnum = 1017:1022;  % Subject List 
+%subnum = 1022;
 numsub = length(subnum);
-subskip = [0,1071];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
 match_list = [0 0 0.1 0.1 0.25 0.5 0.75 1 1.25 1.5 2 4];
@@ -307,9 +307,9 @@ for mHz = 1:numsub
         trls2 = [NaN;NaN;trls];
         val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(:,mHz)];
     end
+    sortval(:,:,mHz) = sortrows(val_mat_mA(:,:,mHz),2);
 end
 
-sortval = sort(val_mat_mA);
 switchmat = permute(sortval,[3 2 1]);
 
 C = [];
