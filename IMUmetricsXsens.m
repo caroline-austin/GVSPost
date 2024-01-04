@@ -1,8 +1,8 @@
 close all;clear;clc; warning off;
 
 %% set up
-subnum = 1017:1022;  % Subject List 
-%subnum = 1021;
+%subnum = 1017:1022;  % Subject List 
+subnum = 1021;
 numsub = length(subnum);
 subskip = [0,1071];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
