@@ -4,7 +4,7 @@ close all;clear;clc; warning off;
 subnum = 1017:1022;  % Subject List 
 %subnum = 1022;
 numsub = length(subnum);
-subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [0,1028];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
 match_list = [0 0 0.1 0.1 0.25 0.5 0.75 1 1.25 1.5 2 4];
