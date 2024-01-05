@@ -310,11 +310,7 @@ fft_SpHz(fft_SpHz == 0) = NaN; % setting non-recorded values to NaN
 %     sortval(:,:,mHz) = sortrows(val_mat_mA(:,:,mHz),2);
 % end
 
-for mHz = 1:numsub
-    val_mat_mA = [fft_SpHz(:,mHz),trialinfo_mAval(:,mHz)];
-    sortval(:,:,mHz) = sortrows(val_mat_mA,2);
-end
-
+for mHz = 1:num
 switchmat = permute(sortval,[3 2 1]);
 
 C = [];
