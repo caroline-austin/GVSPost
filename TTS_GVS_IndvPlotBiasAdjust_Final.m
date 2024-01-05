@@ -110,6 +110,7 @@ for sub = 1:numsub
         shot_6B = shot_6B + bias_correction;
 
 
+        all_bias(sub) = bias_correction;
 %% save files
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
@@ -122,6 +123,8 @@ for sub = 1:numsub
 
 
 end
+mean_bias = mean(abs(all_bias));
+std_bias = std(abs(all_bias));
 
 function bias=calc_bias(motion, report)
         %find average for each signal

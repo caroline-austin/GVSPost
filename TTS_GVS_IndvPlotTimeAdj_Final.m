@@ -153,7 +153,8 @@ for sub = 1:numsub
 
 
 end
-
+ mean_time_shift = mean(cell2mat(Time_shift_sub), 'omitnan');
+ std_time_shift = std(cell2mat(Time_shift_sub), 'omitnan');
 plotadj=1;
 if plotadj == 1
     figure;
