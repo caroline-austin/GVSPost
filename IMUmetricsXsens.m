@@ -400,7 +400,7 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(i,Y,time,sub,trial_name)
         rangeloc = find(accept_range);
         minline = f(rangeloc(1)); maxline = f(rangeloc(end));
         
-        % 
+
         % figure;
         % plot(f,P1,'-o','MarkerIndices',locmax,'MarkerFaceColor','red','MarkerSize',8,"LineWidth",3); hold on;
         % xline(maxline,'--','Color','red'); xline(minline,'--','Color','red');
