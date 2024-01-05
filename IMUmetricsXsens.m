@@ -227,16 +227,16 @@ for sub = 1:numsub % first for loop that iterates through subject files
         title("Roll")
         xlabel("seconds");
         ylabel("degrees")
-
-        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
-        cd(plots_path)
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path)
-
-        cd(subject_path);
-        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-        cd(code_path);
+        % 
+        % Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        % cd(plots_path)
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path)
+        % 
+        % cd(subject_path);
+        % vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        % eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        % cd(code_path);
 %         close all;
 
     end
