@@ -3,6 +3,12 @@ clc;clear;close all;
 
 %%
 % PreProcess
+	% TTS_GVS_Files_Final.m
+	% TTS_GVS_IndvGroupByProfile_Final.m
+	% TTS_GVS_Trial_Check_Final.m
+	% TTS_GVS_IndvPlotBiasAdjust_Final.m
+	% TTS_GVS_IndvPlotTimeAdjust_Final.m
+
 % Aggregate Data
 TTS_GVS_GainAdjust_Final
 TTS_GVS_Aggregate_Final
