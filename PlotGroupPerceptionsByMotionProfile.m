@@ -2,7 +2,11 @@ Type = '4A';
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
-Var = load("DynamicData.mat");
+% modified by Caroline 1/5/24
+DataName = "DynamicDataGain.mat";
+
+%% Load
+Var = load("./data/"+DataName);
 
 % User Definied
 %Type = 'Angle' (7.0), 'Velocity' (8.0), or 'Semi' (7.5)
