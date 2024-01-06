@@ -285,9 +285,9 @@ end
 
 
  [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
- [C_gx] = boxplotfft(fft_SpHz_accx,numsub,trialinfo_mAval);
- [C_gz] = boxplotfft(fft_SpHz_accz,numsub,trialinfo_mAval);
- [C_accmag] = boxplotfft(fft_SpHz_accymag,numsub,trialinfo_mAval);
+ % [C_gx] = boxplotfft(fft_SpHz_accx,numsub,trialinfo_mAval);
+ % [C_gz] = boxplotfft(fft_SpHz_accz,numsub,trialinfo_mAval);
+ % [C_accmag] = boxplotfft(fft_SpHz_accymag,numsub,trialinfo_mAval);
 
 
 
@@ -332,6 +332,11 @@ find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
 find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
 find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
+findvec = {find0;find0_1;find0_25;find0_5;find0_75;find1;find1_25;find1_5;find2;find4};
+
+subcode = ["o" "+" "*" "x" "square" "^"];
+
+
 % viodatx = C(:,1);
 % xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
 % 
@@ -342,13 +347,20 @@ find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
 figure();
 boxplot(C(:,1),C(:,2)); hold on;
-scatter(1,C(find0,1),'magenta'); scatter(2,C(find0_1,1),'magenta');
-scatter(3,C(find0_25,1),'magenta'); scatter(4,C(find0_5,1),'magenta');
-scatter(5,C(find0_75,1),'magenta'); scatter(6,C(find1,1),'magenta');
-scatter(7,C(find1_25,1),'magenta'); scatter(8,C(find1_5,1),'magenta');
-scatter(9,C(find2,1),'magenta'); scatter(10,C(find4,1),'magenta');
+for rot2 = 1:10
+    plcmnt = linspace(-0.2,0.2,length(findvec{rot2})) + rot2;
+    for rot = 1:length(plcmnt)
+        hold on;
+        plot(plcmnt(rot),C(find0(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find0_1(rot),1),subcode(rot));
+        plot(plcmnt(rot) ,C(find0_25(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find0_5(rot),1),subcode(rot));
+        plot(plcmnt(rot) ,C(find0_75(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find1(rot),1),subcode(rot));
+        plot(plcmnt(rot) ,C(find1_25(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find1_5(rot),1),subcode(rot));
+        plot(plcmnt(rot) ,C(find2(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find4(rot),1),subcode(rot));
+    end
+end
 hold off;
 xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
+title('Amount of Medial-Lateral Sway at 1Hz','Interpreter','latex','FontSize',17);
 end
 
 function [] = violinfunc(C,fstart,fstop)
