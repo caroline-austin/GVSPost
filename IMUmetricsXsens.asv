@@ -348,7 +348,7 @@ scatter(5,C(find0_75,1),'magenta'); scatter(6,C(find1,1),'magenta');
 scatter(7,C(find1_25,1),'magenta'); scatter(8,C(find1_5,1),'magenta');
 scatter(9,C(find2,1),'magenta'); scatter(10,C(find4,1),'magenta');
 hold off;
-xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
+xlabel('Current (mA)'); ylabel('FFT Amplitude Near 1Hz');
 end
 
 function [] = violinfunc(C,fstart,fstop)
