@@ -150,7 +150,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
         %     subplot(3,3,j);
         %     plot(timeimu, imu_data(:,j));
-        %     xline(1); xline(9.5);
+        %     xline(2); xline(9.5);
         %     title(data_type(j));
         % end
         % 
@@ -176,7 +176,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         %     subplot(3,3,k+3)
         %     %plot(time(time_cut),cutacc(:,k))
         %     plot(time,acc_aligned(:,k))
-        %     xline(1); xline(9.5);
+        %     xline(2); xline(9.5);
         %     ylim([-8 10])
         %     %xlim(Xlimit)
         %     direction_title_1 = strcat("Acc Aligned ", direction(k));
@@ -189,7 +189,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         %     subplot(3,3,l+6)
         %     %plot(time(time_cut),cutgyro(:,l))
         %     plot(time,gyro_aligned(:,l))
-        %     xline(1); xline(9.5);
+        %     xline(2); xline(9.5);
         %     ylim([-8 8])
         %     %xlim(Xlimit)
         %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
@@ -201,7 +201,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % subplot(3,3,1)
         % %plot(time(time_cut),cutyaw)
         % plot(time,yaw)
-        % xline(1); xline(9.5);
+        % xline(2); xline(9.5);
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Yaw")
@@ -211,7 +211,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % subplot(3,3,2)
         % %plot(time(time_cut),cutpitch)
         % plot(time,pitch)
-        % xline(1); xline(9.5);
+        % xline(2); xline(9.5);
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Pitch")
@@ -221,7 +221,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % subplot(3,3,3)
         % %plot(time(time_cut),cutroll)
         % plot(time,roll)
-        % xline(1); xline(9.5);
+        % xline(2); xline(9.5);
         % %xlim(Xlimit)
         % ylim([-10 10])
         % title("Roll")
