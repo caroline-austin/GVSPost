@@ -169,64 +169,64 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         %% Gravity Aligned Plots
 
-        figure();
-        sgtitle(strrep(trial_name,'_','.'));
-
-        for k=1:width(acc_aligned)
-            subplot(3,3,k+3)
-            %plot(time(time_cut),cutacc(:,k))
-            plot(time,acc_aligned(:,k))
-            xline(1); xline(11.5);
-            ylim([-8 10])
-            %xlim(Xlimit)
-            direction_title_1 = strcat("Acc Aligned ", direction(k));
-            title(direction_title_1)
-            xlabel("seconds");
-            ylabel("m/s^2")
-        end
-
-        for l=1:width(gyro_aligned)
-            subplot(3,3,l+6)
-            %plot(time(time_cut),cutgyro(:,l))
-            plot(time,gyro_aligned(:,l))
-            xline(1); xline(11.5);
-            ylim([-8 8])
-            %xlim(Xlimit)
-            direction_title_2 = strcat("Gyro Aligned ", direction(l));
-            title(direction_title_2)
-            xlabel("seconds");
-            ylabel("deg/sec")
-        end
-
-        subplot(3,3,1)
-        %plot(time(time_cut),cutyaw)
-        plot(time,yaw)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Yaw")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,2)
-        %plot(time(time_cut),cutpitch)
-        plot(time,pitch)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Pitch")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,3)
-        %plot(time(time_cut),cutroll)
-        plot(time,roll)
-        xline(1); xline(11.5);
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Roll")
-        xlabel("seconds");
-        ylabel("degrees")
+        % figure();
+        % sgtitle(strrep(trial_name,'_','.'));
+        % 
+        % for k=1:width(acc_aligned)
+        %     subplot(3,3,k+3)
+        %     %plot(time(time_cut),cutacc(:,k))
+        %     plot(time,acc_aligned(:,k))
+        %     xline(1); xline(11.5);
+        %     ylim([-8 10])
+        %     %xlim(Xlimit)
+        %     direction_title_1 = strcat("Acc Aligned ", direction(k));
+        %     title(direction_title_1)
+        %     xlabel("seconds");
+        %     ylabel("m/s^2")
+        % end
+        % 
+        % for l=1:width(gyro_aligned)
+        %     subplot(3,3,l+6)
+        %     %plot(time(time_cut),cutgyro(:,l))
+        %     plot(time,gyro_aligned(:,l))
+        %     xline(1); xline(11.5);
+        %     ylim([-8 8])
+        %     %xlim(Xlimit)
+        %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
+        %     title(direction_title_2)
+        %     xlabel("seconds");
+        %     ylabel("deg/sec")
+        % end
+        % 
+        % subplot(3,3,1)
+        % %plot(time(time_cut),cutyaw)
+        % plot(time,yaw)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Yaw")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,2)
+        % %plot(time(time_cut),cutpitch)
+        % plot(time,pitch)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Pitch")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,3)
+        % %plot(time(time_cut),cutroll)
+        % plot(time,roll)
+        % xline(1); xline(11.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Roll")
+        % xlabel("seconds");
+        % ylabel("degrees")
         % 
         % Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
         % cd(plots_path)
@@ -332,13 +332,13 @@ find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
 find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
 find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
 
-viodatx = C(:,1);
-xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
-
-[f,xi] = ksdensity( viodatx(:),xval,'Bandwidth',0.05,'BoundaryCorrection','reflection');
-
-figure();
-patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
+% viodatx = C(:,1);
+% xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
+% 
+% [f,xi] = ksdensity( viodatx(:),xval,'Bandwidth',0.05,'BoundaryCorrection','reflection');
+% 
+% figure();
+% patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
 
 figure();
 boxplot(C(:,1),C(:,2)); hold on;
