@@ -24,6 +24,12 @@ Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -252,24 +258,35 @@ end
 
 %% create box plot
 figure;
-boxplot(slope_save_all(:, [1:3,5:7]));
+b = boxchart(slope_save_all(:, [1:3,5:7]));
+b.BoxFaceColor = blue;
 plot_label = ["- Velocity";"- Semi";"- Angle"; "+ Velocity"; "+ Semi";"+ Angle" ];
-xticks([1 2 3 4 5 6 7]);
+% xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
+hold on;
+slope_save_all_plot = slope_save_all(:, [1:3,5:7]);
+for j = 1:numsub
+    for i = 1:width(slope_save_all_plot)
+        
+        plot(i+xoffset2(j), slope_save_all_plot(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
 xlabel("GVS Coupling Scheme")
-ylabel("Perception/Tilt - Sham (Deg/Deg)")
+ylabel("Normalized Perception/Tilt (Deg/Deg)")
 ax = gca;
-ax.XAxis.FontSize = 30;
-ax.YAxis.FontSize = 30;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
 hold on; 
-% sgtitle(['GVS Effect' ],fontsize = 35); % for nice pretty plots
-sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
+sgtitle(['GVS Effect' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
 
  cd(plots_path);
     saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
     cd(code_path);
     hold off;
-% 
+%%
 figure;
 
 for p = 1: length(prof)
