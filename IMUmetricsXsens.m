@@ -364,7 +364,7 @@ end
 
 hold off;
 xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
-title('Amount of Medial-Lateral Sway at 1Hz','Interpreter','latex','FontSize',17);
+title('Amount of Medial-Lateral Sway Near 1Hz','Interpreter','latex','FontSize',17);
 end
 
 function [] = violinfunc(C,fstart,fstop)
