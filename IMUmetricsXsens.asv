@@ -326,11 +326,13 @@ findloc = find(C(:,1) == 0);
 for rem = 1:length(findloc)
     C(findloc(rem),:) = NaN;
 end
-find0 = find(C(:,2) == 0); find0_1 = find(C(:,2) == 0.1);
-find0_25 = find(C(:,2) == 0.25); find0_5 = find(C(:,2) == 0.5);
-find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
-find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
-find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
+% find0 = find(sortval(:,2,:) == 0); find0_1 = find(C(:,2) == 0.1);
+% find0_25 = find(C(:,2) == 0.25); find0_5 = find(C(:,2) == 0.5);
+% find0_75 = find(C(:,2) == 0.75); find1 = find(C(:,2) == 1);
+% find1_25 = find(C(:,2) == 1.25); find1_5 = find(C(:,2) == 1.5);
+% find2 = find(C(:,2) == 2); find4 = find(C(:,2) == 4);
+
+%findvec = {find0;find0_1;find0_25;find0_5;find0_75;find1;find1_25;find1_5;find2;find4};
 
 subcode = ["o" "+" "*" "x" "square" "^"];
 
@@ -345,16 +347,43 @@ subcode = ["o" "+" "*" "x" "square" "^"];
 
 figure();
 boxplot(C(:,1),C(:,2)); hold on;
-for rot2 = 1:length(C)
-    plcmnt = linspace(0.8,1.2,length(find0) + rot2;
-    for rot = 1:length(plcmnt)
-        plot(plcmnt(rot),C(find0(rot),1),'magenta'); plot(plcmnt(rot) ,C(find0_1(rot),1),'magenta');
-        plot(plcmnt(rot) ,C(find0_25,1),'magenta'); scatter(plcmnt(rot) ,C(find0_5,1),'magenta');
-        scatter(plcmnt(rot) ,C(find0_75,1),'magenta'); scatter(plcmnt(rot) ,C(find1,1),'magenta');
-        scatter(plcmnt(rot) ,C(find1_25,1),'magenta'); scatter(plcmnt(rot) ,C(find1_5,1),'magenta');
-        scatter(plcmnt(rot) ,C(find2,1),'magenta'); scatter(plcmnt(rot) ,C(find4,1),'magenta');
-    end
+for rot = 1:numsub
+    find0 = find(sortval(:,2,rot) == 0); find0_1 = find(sortval(:,2,rot) == 0.1);
+    find0_25 = find(sortval(:,2,rot) == 0.25); find0_5 = find(sortval(:,2,rot) == 0.5);
+    find0_75 = find(sortval(:,2,rot) == 0.75); find1 = find(sortval(:,2,rot) == 1);
+    find1_25 = find(sortval(:,2,rot) == 1.25); find1_5 = find(sortval(:,2,rot) == 1.5);
+    find2 = find(sortval(:,2,rot) == 2); find4 = find(sortval(:,2,rot) == 4);
+    
+    subplot = sortval(:,:,rot);
+    plcmnt = linspace(0.8,1.2,sum); col = 0:9;
+    repplc = repmat(plcmnt,[10 1]); repplc = repplc';
+    ocol = repmat(col,[length(subplot) 1]); matocal = repplc + ocol; 
+    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot)); 
+    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot));
+    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot));
+    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot));
+    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot));
+    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot));
+    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot));
+    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot));
+    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot));
+    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot));
 end
+
+
+
+
+% for rot2 = 1:10
+%     plcmnt = linspace(-0.2,0.2,length(findvec{rot2})) + rot2;
+%     for rot = 1:length(plcmnt)
+%         hold on;
+%         plot(plcmnt(rot),C(find0(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find0_1(rot),1),subcode(rot));
+%         plot(plcmnt(rot) ,C(find0_25(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find0_5(rot),1),subcode(rot));
+%         plot(plcmnt(rot) ,C(find0_75(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find1(rot),1),subcode(rot));
+%         plot(plcmnt(rot) ,C(find1_25(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find1_5(rot),1),subcode(rot));
+%         plot(plcmnt(rot) ,C(find2(rot),1),subcode(rot)); plot(plcmnt(rot) ,C(find4(rot),1),subcode(rot));
+%     end
+% end
 hold off;
 xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
 title('Amount of Medial-Lateral Sway at 1Hz','Interpreter','latex','FontSize',17);
