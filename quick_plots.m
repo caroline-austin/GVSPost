@@ -272,6 +272,7 @@ legend(Label.shot_4A(4:end))
 %% plot tilt slope against rating with subject symbols
 
 %load  GVS Susceptibility and perception v. GVS and perception v. tilt
+%(sham removed)
  tilt_slope = slope_save_all;
 
 sub_symbols = [ "pentagram";"<";"hexagram";">"; "diamond";"v";"o";"+"; "*"; "x"; "square"; "^"; ];
