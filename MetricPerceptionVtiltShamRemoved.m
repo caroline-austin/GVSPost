@@ -258,8 +258,8 @@ end
 
 %% create box plot
 figure;
-b = boxchart(slope_save_all(:, [1:3,5:7]));
-b.BoxFaceColor = blue;
+b = boxplot(slope_save_all(:, [1:3,5:7]));
+% b.BoxFaceColor = blue;
 plot_label = ["- Velocity";"- Semi";"- Angle"; "+ Velocity"; "+ Semi";"+ Angle" ];
 % xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
