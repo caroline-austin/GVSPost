@@ -9,6 +9,15 @@ file_count = 0;
 sensorpositionplot = 0;
 match_list = [0 0 0.1 0.1 0.25 0.5 0.75 1 1.25 1.5 2 4];
 
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -73,7 +82,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(acc)/30)-1/30);
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
-        if length(timeimu) > 345
+        if length(timeimu) > 285
             time_cut = timeimu > 2 & timeimu < 9.5;
         else
             continue;
@@ -283,12 +292,17 @@ for subject = 1:width(trialinfo_mAval)
     end
 end
 
-
+%%
  [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
  % [C_gx] = boxplotfft(fft_SpHz_accx,numsub,trialinfo_mAval);
  % [C_gz] = boxplotfft(fft_SpHz_accz,numsub,trialinfo_mAval);
  % [C_accmag] = boxplotfft(fft_SpHz_accymag,numsub,trialinfo_mAval);
 
+ % %%
+ % figure;
+ % % boxchart(fft_SpHz_accy_sort)
+ % fft_SpHz_accy_sort(fft_SpHz_accy_sort == 0) = NaN;
+ %  boxplot(fft_SpHz_accy_sort)
 
 
 
@@ -337,8 +351,12 @@ subcode = ["o" "+" "*" "x" "square" "^"];
 % figure();
 % patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
 
-figure();
-boxplot(C(:,1),C(:,2),"Symbol",''); hold on;
+fig = figure();
+
+b = boxplot(C(:,1),C(:,2),"Symbol",'.'); hold on;
+% blue = [ 0.2118    0.5255    0.6275];
+% b.BoxFaceColor = blue;
+% boxchart(C(:,2),C(:,1));  hold on;
 for rot = 1:numsub
     find0 = find(sortval(:,2,rot) == 0); find0_1 = find(sortval(:,2,rot) == 0.1);
     find0_25 = find(sortval(:,2,rot) == 0.25); find0_5 = find(sortval(:,2,rot) == 0.5);
@@ -350,21 +368,24 @@ for rot = 1:numsub
     plcmnt = linspace(0.8,1.2,numsub); col = 0:9;
     repplc = repmat(plcmnt,[10 1]); repplc = repplc';
     ocol = repmat(col,[numsub 1]); matocal = repplc + ocol; 
-    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot),'Color','black'); 
-    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot),'Color','black');
-    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot),'Color','black');
+    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot),'Color','black', 'MarkerSize', 15, 'LineWidth', 1.5); 
+    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
 end
 
 hold off;
 xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
 title('Amount of Medial-Lateral Sway Near 1Hz','Interpreter','latex','FontSize',17);
+%set font size for the figure so it's legible
+        fontsize(fig, 32, "points")
+        set(gca, 'FontName', 'Arial')
 end
 
 function [] = violinfunc(C,fstart,fstop)
