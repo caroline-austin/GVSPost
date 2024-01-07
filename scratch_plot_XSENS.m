@@ -40,3 +40,23 @@ fontsize(fig, 32, "points")
 
 figure;
 plot(fft_SpHz_acc_sort(:,12),Gain_sub(5:10),"o");
+
+%%
+% load SubjectKGVS.mat
+sub_symbols = ["kpentagram";"k<";"k>"; "kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+xoffset2 = [-0.075;-0.06; -0.045; -0.03; -0.015;  0.015; 0.03; 0.045; 0.06; 0.075]; 
+fig = figure;hold on;
+boxplot(Gain_sub);
+xticks([1])
+xticklabels(['']);
+xlim([0.75 1.25])
+for i = 1:length(Gain_sub)
+    plot(1+xoffset2(i),Gain_sub(i),sub_symbols(i),'MarkerSize',20, LineWidth= 2);
+    hold on;
+end
+title('KGVS GVS Effect');
+xlabel('');
+xticks([1])
+xticklabels(['']);
+ylabel('KGVS (Deg/mA)');
+fontsize(fig, 32, "points")
