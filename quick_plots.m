@@ -270,7 +270,7 @@ ylim([-20 20])
 legend(Label.shot_4A(4:end))
 
 %% plot tilt slope against rating with subject symbols
-
+% used for IEEE paper
 %load  GVS Susceptibility and perception v. GVS and perception v. tilt
 %(sham removed)
  tilt_slope = slope_save_all;
@@ -294,10 +294,10 @@ for j = 1:7
     xlim([1,4.1])
     xticks([1,2,3,4])
     if j == 1 
-            ylabel('Attenuating ',FontSize=35)
+            ylabel({'';'Attenuating'},FontSize=30)
             yticks([-.5 0 ])
     elseif j ==5
-            ylabel('Amplifying',FontSize=35)
+            ylabel({'                                  Normalized Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
             
             yticks([ 0 0.5])
     else
@@ -348,6 +348,7 @@ for j = 1:7
 
     end
 end
+sgtitle("GVS Effect vs. GVS Susceptibility", "FontSize", 36)
 % lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
 %         lgd.Layout.Tile = 8;
 % xlabel("Minimum Current (mA) for Moderate Motion",FontSize=30);
