@@ -274,12 +274,12 @@ for j = 1:numsub
 end
 
 xlabel("GVS Coupling Scheme")
-ylabel("Normalized Perception/Tilt (Deg/Deg)")
+ylabel("Normalized Perception/Actual (deg/deg)")
 ax = gca;
 ax.XAxis.FontSize = 32;
 ax.YAxis.FontSize = 32;
 hold on; 
-sgtitle(['GVS Effect' ],fontsize = 36); % for nice pretty plots
+sgtitle(['Perception/Actual Tilt Slope GVS Effect' ],fontsize = 36); % for nice pretty plots
 % sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
 
  cd(plots_path);

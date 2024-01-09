@@ -381,11 +381,16 @@ for rot = 1:numsub
 end
 
 hold off;
-xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
-title('Amount of Medial-Lateral Sway Near 1Hz','Interpreter','latex','FontSize',17);
+% xlabel('Current (mA)','Interpreter','latex','FontSize',25,'FontName','Arial'); 
+ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',25,'FontWeight','bold');
+xlabel('Current (mA)','FontSize',17,'FontName','Arial'); 
+% ylabel('FFT Amplitude Near 1Hz (m/s^2)','FontSize',17,'FontName','Arial');
+% title('Amount of Medial-Lateral Sway Near 1Hz','Interpreter','latex','FontSize',17, 'FontName','Arial');
+title('Amount of Medial-Lateral Sway Near 1Hz','FontSize',32, 'FontName','Arial');
 %set font size for the figure so it's legible
-        fontsize(fig, 32, "points")
+        
         set(gca, 'FontName', 'Arial')
+        fontsize(fig, 36, "points")
 end
 
 function [] = violinfunc(C,fstart,fstop)
