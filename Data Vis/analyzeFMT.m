@@ -317,6 +317,67 @@ if individual == 0
         % xlabel('Trial Order');
         % ylabel('Net Time of Course Completion (s)');
 
+        %% Corrected completion time GVS
+        fig = figure(); hold on;
+        % used tiledlayout so that we can adjust the margin setting
+        t=tiledlayout(2,1,'TileSpacing','tight');
+        
+        
+        %top tile is for GVS effects
+        nexttile
+        % string together 1st and 2nd iterations of condition into single
+        % column
+        corrected_time_plot = [corrected_time(:, [1 3 5]); corrected_time(:, [2 4 6]) ];
+        %make box plot
+        boxchart(corrected_time_plot)
+        title('Functional Mobility Obstacle Course Perfomance')
+        hold on;
+        % plot individual subject data, divide by 500 so that values are 0,
+        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+        % boxplots
+        % use x offset to separate subject symbols from each other
+        for i = 1:11
+            plot(GVS_admin((i*6)-5: (i*6))/500+ 1+ xoffset2(i), net_time_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % no labels for the top plot to save space
+        % set(gca,'Xticklabel',[])
+        xticklabels(["0mA" "1mA" "2mA"])
+        xlabel('Maximum GVS at 45 Deg');
+        % y axis settings
+        yticks([5 10 15 20 25])
+        ylim([10 28])
+        ylabel('Net Time (s)')
+        grid on;
+        fontsize(fig, 32, "points")
+        
+        % lower plot is for learning effects
+        % fig = figure(); hold on;
+        % % used tiledlayout so that we can adjust the margin setting
+        % t=tiledlayout(1,1,'TileSpacing','tight');
+        % sgtitle('Functional Mobility Obstacle Course Perfomance Data')
+
+        nexttile
+        title('Functional Mobility Obstacle Course Perfomance Data')
+        %use the order sorted errors
+        boxchart(corrected_time_order)
+        title('Functional Mobility Obstacle Course Perfomance Data')
+        hold on;
+        % plot indv subj data using with same xoffset calcs as above 
+        for i = 1:11
+            plot(trial_order((i*6)-5: (i*6))+ xoffset2(i), net_time_data((i*6)-5: (i*6)),sub_symbols(i),'MarkerSize',15);
+            hold on;
+        end
+        % add x and y labels
+        xticklabels( ["1"; "2"; "3"; "4"; "5"; "6"]);
+        xlabel('Trial Order');
+        yticks([5 10 15 20 25])
+        ylim([10 28])
+        ylabel('Net Time (s)')
+        grid on;
+        %set font size for the figure so it's legible
+        fontsize(fig, 32, "points")
+
     end
 
 end
