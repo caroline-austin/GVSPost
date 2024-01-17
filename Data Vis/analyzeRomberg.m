@@ -107,21 +107,21 @@ end
  %%%Plotting
 if plotB == 1
 
-    %%% Pure Dasa Visualization
-    figure(); hold on;
-    title('Romberg Perfomance Data')
-    scatter(GVS_admin, failTime);
-    xlabel('GVS Gain Value');
-    ylabel('Time to Fail (s)')
-    
-    
-    %%% Learning Effect over time
-    figure(); hold on;
-    title('Romberg Perfomance Data over Time')
-    scatter(trial_order, failTime);
-    xlabel('Trial Sequence');
-    ylabel('Time to Fail (s)')
-
+    % %%% Pure Dasa Visualization
+    % figure(); hold on;
+    % title('Romberg Perfomance Data')
+    % scatter(GVS_admin, failTime);
+    % xlabel('GVS Gain Value');
+    % ylabel('Time to Fail (s)')
+    % 
+    % 
+    % %%% Learning Effect over time
+    % figure(); hold on;
+    % title('Romberg Perfomance Data over Time')
+    % scatter(trial_order, failTime);
+    % xlabel('Trial Sequence');
+    % ylabel('Time to Fail (s)')
+    % 
      %% Plotting set up
     % colors- first 5 are color blind friendly colors
     blue = [ 0.2118    0.5255    0.6275];
@@ -138,51 +138,105 @@ if plotB == 1
     xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
     xoffset2 = [-0.25;-0.2;-0.15;-0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
-    fig = figure();
-    violin(violin_plot_input_time, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
-    ylabel('Time to Failure (s)')
-    xlabel('GVS Gain')
-    boxplot(violin_plot_input_time)
-    xticklabels({'0','500','999'})
-    bx = findobj('Tag','boxplot');
-    set(bx.Children,'LineWidth',1, 'Color', blue)
-    lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
-    set(lines, 'Color', red_cb);
-    outliers = findobj(gcf,'tag','Outliers');
-    set(outliers,'MarkerEdgeColor', red_cb);
-    fontsize(fig, 24, "points")
-    title('Romberg Balance Test Performance- All Treatments');
-    clear bx outliers lines
+    % fig = figure();
+    % violin(violin_plot_input_time, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
+    % ylabel('Time to Failure (s)')
+    % xlabel('GVS Gain')
+    % boxplot(violin_plot_input_time)
+    % xticklabels({'0','500','999'})
+    % bx = findobj('Tag','boxplot');
+    % set(bx.Children,'LineWidth',1, 'Color', blue)
+    % lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
+    % set(lines, 'Color', red_cb);
+    % outliers = findobj(gcf,'tag','Outliers');
+    % set(outliers,'MarkerEdgeColor', red_cb);
+    % fontsize(fig, 24, "points")
+    % title('Romberg Balance Test Performance- All Treatments');
+    % clear bx outliers lines
 
-    %% Plot all Time to Failure Data
+    % %% Plot all Time to Failure Data
+    % fig = figure(); hold on;
+    % % used tiledlayout so that we can adjust the margin setting
+    % t=tiledlayout(1,2,'TileSpacing','tight');
+    % sgtitle('Romberg Balance Test Perfomance Data- Time to Failure')
+    % nexttile
+    % completion_zone_plot = [nHT_data_time_to_failure];
+    % boxchart(completion_zone_plot)
+    % hold on;
+    % % plot individual subject data, divide by 500 so that values are 0,
+    % % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    % % boxplots
+    % % use x offset to separate subject symbols from each other
+    % for i = 1:11
+    %     plot(GVS_matrix_nHT(((i*4-3):i*4), :)/500+ 1+ xoffset2(i), nHT_data_time_to_failure(((i*4-3):i*4),:) + yoffset2,sub_symbols(i),'MarkerSize',15);            
+    %     hold on;
+    % end
+    % % no labels for the top plot to save space
+    % set(gca,'Xticklabel',[])
+    % % xlabel('GVS Gain');
+    % % y axis settings
+    % yticks([0 2.5 5 7.5 10 12.5 15])
+    % ylim([-1 16])
+    % ylabel('Time to Failure (s)')
+    % grid on;
+    % title('No Head Tilts')
+    % fontsize(fig, 24, "points")
+    % xticklabels( ["0"; "500"; "999"]);
+    % xlabel('GVS Gain');
+    % 
+    % nexttile
+    % completion_zone_plot = [HT_data_time_to_failure];
+    % boxchart(completion_zone_plot)
+    % hold on;
+    % % plot individual subject data, divide by 500 so that values are 0,
+    % % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    % % boxplots
+    % % use x offset to separate subject symbols from each other
+    % for i = 1:11
+    %     plot(GVS_matrix_HT(((i*4-3):i*4), :)/500+ 1+ xoffset2(i), HT_data_time_to_failure(((i*4-3):i*4),:) + yoffset2,sub_symbols(i),'MarkerSize',15);            
+    %     hold on;
+    % end
+    % % no labels for the top plot to save space
+    % set(gca,'Xticklabel',[])
+    % % xlabel('GVS Gain');
+    % % y axis settings
+    % yticks([0 2.5 5 7.5 10 12.5 15])
+    % ylim([-1 16])
+    % grid on;
+    % title('Head Tilts')
+    % fontsize(fig, 24, "points")
+    % xticklabels( ["0"; "500"; "999"]);
+    % xlabel('GVS Gain');
+
+      %% Plot Time to Failure Data for Head tilts only
     fig = figure(); hold on;
     % used tiledlayout so that we can adjust the margin setting
-    t=tiledlayout(1,2,'TileSpacing','tight');
-    sgtitle('Romberg Balance Test Perfomance Data- Time to Failure')
-    nexttile
-    completion_zone_plot = [nHT_data_time_to_failure];
-    boxchart(completion_zone_plot)
-    hold on;
-    % plot individual subject data, divide by 500 so that values are 0,
-    % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-    % boxplots
-    % use x offset to separate subject symbols from each other
-    for i = 1:11
-        plot(GVS_matrix_nHT(((i*4-3):i*4), :)/500+ 1+ xoffset2(i), nHT_data_time_to_failure(((i*4-3):i*4),:) + yoffset2,sub_symbols(i),'MarkerSize',15);            
-        hold on;
-    end
-    % no labels for the top plot to save space
-    set(gca,'Xticklabel',[])
+    t=tiledlayout(1,1,'TileSpacing','tight');
+    
+    % nexttile
+    % completion_zone_plot = [nHT_data_time_to_failure];
+    % boxchart(completion_zone_plot)
+    % hold on;
+    % % plot individual subject data, divide by 500 so that values are 0,
+    % % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    % % boxplots
+    % % use x offset to separate subject symbols from each other
+    % for i = 1:11
+    %     plot(GVS_matrix_nHT(((i*4-3):i*4), :)/500+ 1+ xoffset2(i), nHT_data_time_to_failure(((i*4-3):i*4),:) + yoffset2,sub_symbols(i),'MarkerSize',15);            
+    %     hold on;
+    % end
+    % % no labels for the top plot to save space
+    % set(gca,'Xticklabel',[])
+    % % xlabel('GVS Gain');
+    % % y axis settings
+    % yticks([0 2.5 5 7.5 10 12.5 15])
+    % ylim([-1 16])
+    % ylabel('Time to Failure (s)')
+    % grid on;
+    % title('No Head Tilts')
+    % fontsize(fig, 24, "points")
+    % xticklabels( ["0"; "500"; "999"]);
     % xlabel('GVS Gain');
-    % y axis settings
-    yticks([0 2.5 5 7.5 10 12.5 15])
-    ylim([-1 16])
-    ylabel('Time to Failure (s)')
-    grid on;
-    title('No Head Tilts')
-    fontsize(fig, 24, "points")
-    xticklabels( ["0"; "500"; "999"]);
-    xlabel('GVS Gain');
 
     nexttile
     completion_zone_plot = [HT_data_time_to_failure];
@@ -203,11 +257,11 @@ if plotB == 1
     yticks([0 2.5 5 7.5 10 12.5 15])
     ylim([-1 16])
     grid on;
-    title('Head Tilts')
+    title('Romberg Balance Test Time to Failure with Head Tilts')
+    % title('Head Tilts')
     fontsize(fig, 24, "points")
     xticklabels( ["0"; "500"; "999"]);
     xlabel('GVS Gain');
-
 end
     
 end
