@@ -83,7 +83,7 @@ for j = 1:3
                 % plot GVS stuff
                 GVS_name = "All_GVS_"+Type;
                 GVS_data = Var.(GVS_name);
-                stimulations = GVS_data(:,condition);
+                stimulations = -1*GVS_data(:,condition);
 
                 timeplot = 0:dt*2:T;
                 angplot = interp1(time,tiltang(:,1),timeplot);
@@ -121,7 +121,7 @@ for j = 1:3
             title('Perceptions')
         end
         if k == 1 && j ==1
-            title('Coupled GVS Profiles')
+            title('Coupled GVS Waveforms')
             ylabel('Velocity (mA)')
         elseif k == 1 && j ==2
             ylabel('Semi (mA)')
