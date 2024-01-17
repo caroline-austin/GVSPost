@@ -342,8 +342,8 @@ if individual == 0
         end
         % no labels for the top plot to save space
         % set(gca,'Xticklabel',[])
-        xticklabels(["0mA" "1mA" "2mA"])
-        xlabel('Maximum GVS at 45 Deg');
+        xticklabels(["0" "500" "999"])
+        xlabel('GVS Gain');
         % y axis settings
         yticks([5 10 15 20 25])
         ylim([10 28])
