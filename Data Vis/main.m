@@ -140,7 +140,7 @@ disp(contrast_results)
 % anova_ER = anovan(FMT_Data(:,2),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
 % anova_NT = anovan(FMT_Data(:,3),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
 %% Romberg
-Rom_Data = analyzeRomberg('ExcelData_Cut_ALL.mat',0);
+
 % first add a subject column to the data
 subj = cat(1, ones(24,1), ones(24,1)*2, ones(24,1)*3, ones(24,1)*4, ones(24,1)*5, ...
     ones(24,1)*6, ones(24,1)*7, ones(24,1)*8, ones(24,1)*9, ones(24,1)*10, ones(24,1)*11);
@@ -491,8 +491,17 @@ idx = isnan(HT_EO_Data(:,3));
 HT_EO_Data(idx,:) = [];
 %%Friedman Analysis
 [HT_EO_p, tbl, stats] = friedman(HT_EO_Data);
-% Use multcompare for post hoc tests
+% Use multcompare for post hoc tests - not sure if this is valid if not
+% normally distributed
 [c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% need to use wilcoxon signed rank test instead - correction factor
+% calculated manually based on the number of comparisons
+% 3 corrections so multipy p by 3
+bonf_corr = 3;
+p_TDM_HT_EO_0_500 = signrank(HT_EO_Data(:,1),HT_EO_Data(:,2))*3;
+p_TDM_HT_EO_0_999 = signrank(HT_EO_Data(:,1),HT_EO_Data(:,3))*3;
+p_TDM_HT_EO_500_999 = signrank(HT_EO_Data(:,2),HT_EO_Data(:,3))*3;
+
 % Display the results
 tbl = array2table(c,"VariableNames", ...
     ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
@@ -525,11 +534,16 @@ idx = isnan(NHT_EC_Data(:,3));
 NHT_EC_Data(idx,:) = [];
 %%Friedman Analysis
 [NHT_EC_p, tbl, stats] = friedman(NHT_EC_Data);
-% Use multcompare for post hoc tests
-[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% % Use multcompare for post hoc tests -
+% [c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% use manually corrected Wilcoxn signed rank tests
+bonf_corr = 3;
+p_TDM_NHT_EC_0_500 = signrank(NHT_EC_Data(:,1),HT_EO_Data(:,2))*3;
+p_TDM_NHT_EC_0_999 = signrank(NHT_EC_Data(:,1),HT_EO_Data(:,3))*3;
+p_TDM_NHT_EC_500_999 = signrank(NHT_EC_Data(:,2),HT_EO_Data(:,3))*3;
 % Display the results
-tbl = array2table(c,"VariableNames", ...
-    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% tbl = array2table(c,"VariableNames", ...
+    % ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 %no significance
 
 %%Head tilts Eyes Closed
@@ -559,11 +573,17 @@ idx = isnan(HT_EC_Data(:,3));
 HT_EC_Data(idx,:) = [];
 %%Friedman Analysis
 [HT_EC_p , tbl, stats] = friedman(HT_EC_Data);
-% Use multcompare for post hoc tests
-[c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+% % Use multcompare for post hoc tests
+% [c,m,h,gnames] = multcompare(stats, 'CType', 'bonferroni');
+
+% use manually corrected Wilcoxn signed rank tests
+bonf_corr = 3;
+p_TDM_HT_EC_0_500 = signrank(HT_EC_Data(:,1),HT_EO_Data(:,2))*3;
+p_TDM_HT_EC_0_999 = signrank(HT_EC_Data(:,1),HT_EO_Data(:,3))*3;
+p_TDM_HT_EC_500_999 = signrank(HT_EC_Data(:,2),HT_EO_Data(:,3))*3;
 % Display the results
-tbl = array2table(c,"VariableNames", ...
-    ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
+% tbl = array2table(c,"VariableNames", ...
+%     ["Group","Control Group","Lower Limit","Difference","Upper Limit","P-value"])
 % significant difference between 500 GVS and 999 GVS, approaching signif
 % for No GVS and 999 GVS
 
