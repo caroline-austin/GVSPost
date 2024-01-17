@@ -243,61 +243,45 @@ end
 
  if plotB == 1
 
-    %%% Pure Data Visualization
-    figure(); hold on;
-    sgtitle('Tandem Perfomance Data')
-    subplot(2,1,1)
-    scatter(GVS_admin, testTime);
-    xlabel('GVS Gain Value');
-    ylabel('Time to Completion (s)')
-    subplot(2,1,2)
-    scatter(GVS_admin, goodSteps);
-    xlabel('GVS Gain Value');
-    ylabel('Number of Good Steps')
-    
-    %%% Learning Effect over time
-    figure(); hold on;
-    sgtitle('Tandem Perfomance Data over Time')
-    subplot(2,1,1)
-    scatter(trial_order, testTime);
-    xlabel('Trial Sequence');
-    ylabel('Time to Completion (s)')
-    subplot(2,1,2)
-    scatter(trial_order, goodSteps);
-    xlabel('Trial Sequence');
-    ylabel('Number of Good Steps')
-
-    %%% Zone finish
-    figure(); hold on;
-    sgtitle('Tandem Perfomance Data')
-    scatter(GVS_admin, zoneFinish);
-    xlabel('GVS Gain Value');
-    ylabel('Zone Finish')
-
-    fig = figure();
-    violin(violin_plot_input_time, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
-    ylabel('Time to Completion (s)')
-    xlabel('GVS Gain')
-    boxplot(violin_plot_input_time)
-    xticklabels({'0','500','999'})
-    bx = findobj('Tag','boxplot');
-    set(bx(2).Children,'LineWidth',1, 'Color', blue)
-    lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
-    set(lines, 'Color', red_cb);
-    outliers = findobj(gcf,'tag','Outliers');
-    set(outliers,'MarkerEdgeColor', red_cb);
-    fontsize(fig, 24, "points")
-    title('Tandem Walk Performance- All Treatments');
-    clear bx outliers lines
-
+    % %%% Pure Data Visualization
+    % figure(); hold on;
+    % sgtitle('Tandem Perfomance Data')
+    % subplot(2,1,1)
+    % scatter(GVS_admin, testTime);
+    % xlabel('GVS Gain Value');
+    % ylabel('Time to Completion (s)')
+    % subplot(2,1,2)
+    % scatter(GVS_admin, goodSteps);
+    % xlabel('GVS Gain Value');
+    % ylabel('Number of Good Steps')
+    % 
+    % %%% Learning Effect over time
+    % figure(); hold on;
+    % sgtitle('Tandem Perfomance Data over Time')
+    % subplot(2,1,1)
+    % scatter(trial_order, testTime);
+    % xlabel('Trial Sequence');
+    % ylabel('Time to Completion (s)')
+    % subplot(2,1,2)
+    % scatter(trial_order, goodSteps);
+    % xlabel('Trial Sequence');
+    % ylabel('Number of Good Steps')
+    % 
+    % %%% Zone finish
+    % figure(); hold on;
+    % sgtitle('Tandem Perfomance Data')
+    % scatter(GVS_admin, zoneFinish);
+    % xlabel('GVS Gain Value');
+    % ylabel('Zone Finish')
+    % 
     % fig = figure();
-    % violin(violin_plot_input_goodsteps, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
-    % ylabel('Good Steps')
+    % violin(violin_plot_input_time, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
+    % ylabel('Time to Completion (s)')
     % xlabel('GVS Gain')
-    % boxplot(violin_plot_input_goodsteps)
+    % boxplot(violin_plot_input_time)
     % xticklabels({'0','500','999'})
     % bx = findobj('Tag','boxplot');
-    % set(bx(2).Children,'LineWidth',2, 'Color', blue)
+    % set(bx(2).Children,'LineWidth',1, 'Color', blue)
     % lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
     % set(lines, 'Color', red_cb);
     % outliers = findobj(gcf,'tag','Outliers');
@@ -306,459 +290,475 @@ end
     % title('Tandem Walk Performance- All Treatments');
     % clear bx outliers lines
     % 
-    % fig = figure();
-    % violin(violin_plot_input_zone, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
-    % ylabel('Zone')
-    % xlabel('GVS Gain')
-    % boxplot(violin_plot_input_zone)
-    % xticklabels({'0','500','999'})
-    % bx = findobj('Tag','boxplot');
-    % set(bx(3).Children,'LineWidth',2, 'Color', blue)
-    % lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
-    % set(lines, 'Color', red_cb);
-    % outliers = findobj(gcf,'tag','Outliers');
-    % set(outliers,'MarkerEdgeColor', red_cb);
-    % fontsize(fig, 24, "points")
-    % title('Tandem Walk Performance- All Treatments');
-
-    if plotB == 1
-        %% No HT, Eyes Open
-        % GVS Effects on Completion time and Good Steps
-        % define figure
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,1,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data (No Head Tilts, Eyes Open)')
-        
-        %top tile is raw time data
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column
-        completion_time_plot = [nHTeO_data_completion_time];
-        %make box plot
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 5 10 15 20])
-        ylim([0 20])
-        ylabel('Completion Time (s)')
-        grid on;
-        % lower plot is the errors 
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column for the box plot
-        good_steps = [nHTeO_data_completion_goodsteps];
-        boxchart(good_steps)
-        hold on;
-        % plot indv subj data using with same xoffset calcs as above and y
-        % offset since both values for a subj could be the same 
-        for i = 1:11
-            plot(GVS_matrix_nHTeO(i,:)/500 +1+ xoffset2(i), nHTeO_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
-            hold on;
-        end
-
-        % add x and y labels
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        yticks([0 2 4 6 8 10])
-        ylim([-1 11])
-        ylabel('Good Steps');
-        %set font size for the figure so it's legible
-        fontsize(fig, 24, "points")
-
-        %% No HT, Eyes Closed
-        % GVS Effects on Completion time and Good Steps
-        % define figure
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,1,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data (No Head Tilts, Eyes Closed)')
-        
-        %top tile is raw time data
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column
-        completion_time_plot = [nHTeC_data_completion_time];
-        %make box plot
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 5 10 15 20 25 30])
-        ylim([0 30])
-        ylabel('Completion Time (s)')
-        grid on;
-        % lower plot is the errors 
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column for the box plot
-        good_steps = [nHTeC_data_completion_goodsteps];
-        boxchart(good_steps)
-        hold on;
-        % plot indv subj data using with same xoffset calcs as above and y
-        % offset since both values for a subj could be the same 
-        for i = 1:11
-            plot(GVS_matrix_nHTeC(i,:)/500 +1+ xoffset2(i), nHTeC_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
-            hold on;
-        end
-
-        % add x and y labels
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        yticks([0 2 4 6 8 10])
-        ylim([-1 11])
-        ylabel('Good Steps');
-        %set font size for the figure so it's legible
-        fontsize(fig, 24, "points")
-        %% HT, Eyes Open
-        % GVS Effects on Completion time and Good Steps
-        % define figure
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,1,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data (Head Tilts, Eyes Open)')
-        
-        %top tile is raw time data
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column
-        completion_time_plot = [HTeO_data_completion_time];
-        %make box plot
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 5 10 15 20 25 30])
-        ylim([0 30])
-        ylabel('Completion Time (s)')
-        grid on;
-        % lower plot is the errors 
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column for the box plot
-        good_steps = [HTeO_data_completion_goodsteps];
-        boxchart(good_steps)
-        hold on;
-        % plot indv subj data using with same xoffset calcs as above and y
-        % offset since both values for a subj could be the same 
-        for i = 1:11
-            plot(GVS_matrix_HTeO(i,:)/500 +1+ xoffset2(i), HTeO_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
-            hold on;
-        end
-
-        % add x and y labels
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        yticks([0 2 4 6 8 10])
-        ylim([-1 11])
-        ylabel('Good Steps');
-        %set font size for the figure so it's legible
-        fontsize(fig, 24, "points")
-
-        %% HT, Eyes Closed
-        
-        % GVS Effects on Completion time and Good Steps
-        % define figure
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,1,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data (Head Tilts, Eyes Closed)')
-        
-        %top tile is raw time data
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column
-        completion_time_plot = [HTeC_data_completion_time];
-        %make box plot
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 10 20 30 40 50 60])
-        ylim([0 60])
-        ylabel('Completion Time (s)')
-        grid on;
-        % lower plot is the errors 
-        nexttile
-        % string together 1st and 2nd iterations of condition into single
-        % column for the box plot
-        good_steps = [HTeC_data_completion_goodsteps];
-        boxchart(good_steps)
-        hold on;
-        % plot indv subj data using with same xoffset calcs as above and y
-        % offset since both values for a subj could be the same 
-        for i = 1:11
-            plot(GVS_matrix_HTeC(i,:)/500 +1+ xoffset2(i), HTeC_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
-            hold on;
-        end
-
-        % add x and y labels
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        yticks([0 2 4 6 8 10])
-        ylim([-1 11])
-        ylabel('Good Steps');
-        %set font size for the figure so it's legible
-        fontsize(fig, 24, "points")
-
-        %% Plot all Zone Data
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,2,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data- Zone')
-        nexttile
-        completion_zone_plot = [nHTeO_data_completion_zone];
-        boxchart(completion_zone_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([-4 -3 -2 -1 0 1 2 3 4])
-        ylim([-5 5])
-        ylabel({'No Head Tilts','Zone'})
-        grid on;
-        title('Eyes Open')
-        fontsize(fig, 24, "points")
-        
-
-
-        nexttile
-        completion_zone_plot = [nHTeC_data_completion_zone];
-        boxchart(completion_zone_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([-4 -3 -2 -1 0 1 2 3 4])
-        ylim([-5 5])
-        grid on;
-        title('Eyes Closed')        
-        fontsize(fig, 24, "points")
-        set(gca,'Yticklabel',[])
-
-
-        nexttile
-        completion_zone_plot = [HTeO_data_completion_zone];
-        boxchart(completion_zone_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([-4 -3 -2 -1 0 1 2 3 4])
-        ylim([-5 5])
-        ylabel({'Head Tilts','Zone'})
-        grid on;
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        %title('Head Tilts, Eyes Open')
-        fontsize(fig, 24, "points")
-
-
-        nexttile
-        completion_zone_plot = [HTeC_data_completion_zone];
-        boxchart(completion_zone_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([-4 -3 -2 -1 0 1 2 3 4])
-        ylim([-5 5])
-        grid on;
-        fontsize(fig, 24, "points")
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        %title('Head Tilts, Eyes Closed')
-        set(gca,'Yticklabel',[])
-
-
-
-        %% Plot all Completion Time Data
-        fig = figure(); hold on;
-        % used tiledlayout so that we can adjust the margin setting
-        t=tiledlayout(2,2,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data- Completion Time')
-        nexttile
-        completion_time_plot = [nHTeO_data_completion_time];
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 10 20 30 40 50 60])
-        ylim([0 60])
-        ylabel({'No Head Tilts','Completion Time (s)'})
-        grid on;
-        title('Eyes Open')
-        fontsize(fig, 24, "points")
-        
-
-
-        nexttile
-        completion_time_plot = [nHTeC_data_completion_time];
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 10 20 30 40 50 60])
-        ylim([0 60])
-        grid on;
-        title('Eyes Closed')        
-        fontsize(fig, 24, "points")
-        set(gca,'Yticklabel',[])
-
-
-        nexttile
-        completion_time_plot = [HTeO_data_completion_time];
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 10 20 30 40 50 60])
-        ylim([0 60])
-        ylabel({'Head Tilts','Completion Time(s)'})
-        grid on;
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        %title('Head Tilts, Eyes Open')
-        fontsize(fig, 24, "points")
-
-
-        nexttile
-        completion_time_plot = [HTeC_data_completion_time];
-        boxchart(completion_time_plot)
-        hold on;
-        % plot individual subject data, divide by 500 so that values are 0,
-        % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
-        % boxplots
-        % use x offset to separate subject symbols from each other
-        for i = 1:11
-            plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
-            hold on;
-        end
-        % no labels for the top plot to save space
-        set(gca,'Xticklabel',[])
-        % xlabel('GVS Gain');
-        % y axis settings
-        yticks([0 10 20 30 40 50 60])
-        ylim([0 60])
-        grid on;
-        fontsize(fig, 24, "points")
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
-        %title('Head Tilts, Eyes Closed')
-        set(gca,'Yticklabel',[])
+    % % fig = figure();
+    % % violin(violin_plot_input_goodsteps, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
+    % % ylabel('Good Steps')
+    % % xlabel('GVS Gain')
+    % % boxplot(violin_plot_input_goodsteps)
+    % % xticklabels({'0','500','999'})
+    % % bx = findobj('Tag','boxplot');
+    % % set(bx(2).Children,'LineWidth',2, 'Color', blue)
+    % % lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
+    % % set(lines, 'Color', red_cb);
+    % % outliers = findobj(gcf,'tag','Outliers');
+    % % set(outliers,'MarkerEdgeColor', red_cb);
+    % % fontsize(fig, 24, "points")
+    % % title('Tandem Walk Performance- All Treatments');
+    % % clear bx outliers lines
+    % % 
+    % % fig = figure();
+    % % violin(violin_plot_input_zone, 'xlabel',{'0','500','999'}, 'facecolor',[green_cb;green_cb;green_cb], 'medc', red_cb);
+    % % ylabel('Zone')
+    % % xlabel('GVS Gain')
+    % % boxplot(violin_plot_input_zone)
+    % % xticklabels({'0','500','999'})
+    % % bx = findobj('Tag','boxplot');
+    % % set(bx(3).Children,'LineWidth',2, 'Color', blue)
+    % % lines = findobj(gcf, 'type', 'line', 'Tag', 'Median');
+    % % set(lines, 'Color', red_cb);
+    % % outliers = findobj(gcf,'tag','Outliers');
+    % % set(outliers,'MarkerEdgeColor', red_cb);
+    % % fontsize(fig, 24, "points")
+    % % title('Tandem Walk Performance- All Treatments');
+    % 
+    % if plotB == 1
+    %     %% No HT, Eyes Open
+    %     % GVS Effects on Completion time and Good Steps
+    %     % define figure
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,1,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data (No Head Tilts, Eyes Open)')
+    % 
+    %     %top tile is raw time data
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column
+    %     completion_time_plot = [nHTeO_data_completion_time];
+    %     %make box plot
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 5 10 15 20])
+    %     ylim([0 20])
+    %     ylabel('Completion Time (s)')
+    %     grid on;
+    %     % lower plot is the errors 
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column for the box plot
+    %     good_steps = [nHTeO_data_completion_goodsteps];
+    %     boxchart(good_steps)
+    %     hold on;
+    %     % plot indv subj data using with same xoffset calcs as above and y
+    %     % offset since both values for a subj could be the same 
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeO(i,:)/500 +1+ xoffset2(i), nHTeO_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
+    %         hold on;
+    %     end
+    % 
+    %     % add x and y labels
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     yticks([0 2 4 6 8 10])
+    %     ylim([-1 11])
+    %     ylabel('Good Steps');
+    %     %set font size for the figure so it's legible
+    %     fontsize(fig, 24, "points")
+    % 
+    %     %% No HT, Eyes Closed
+    %     % GVS Effects on Completion time and Good Steps
+    %     % define figure
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,1,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data (No Head Tilts, Eyes Closed)')
+    % 
+    %     %top tile is raw time data
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column
+    %     completion_time_plot = [nHTeC_data_completion_time];
+    %     %make box plot
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 5 10 15 20 25 30])
+    %     ylim([0 30])
+    %     ylabel('Completion Time (s)')
+    %     grid on;
+    %     % lower plot is the errors 
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column for the box plot
+    %     good_steps = [nHTeC_data_completion_goodsteps];
+    %     boxchart(good_steps)
+    %     hold on;
+    %     % plot indv subj data using with same xoffset calcs as above and y
+    %     % offset since both values for a subj could be the same 
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeC(i,:)/500 +1+ xoffset2(i), nHTeC_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
+    %         hold on;
+    %     end
+    % 
+    %     % add x and y labels
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     yticks([0 2 4 6 8 10])
+    %     ylim([-1 11])
+    %     ylabel('Good Steps');
+    %     %set font size for the figure so it's legible
+    %     fontsize(fig, 24, "points")
+    %     %% HT, Eyes Open
+    %     % GVS Effects on Completion time and Good Steps
+    %     % define figure
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,1,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data (Head Tilts, Eyes Open)')
+    % 
+    %     %top tile is raw time data
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column
+    %     completion_time_plot = [HTeO_data_completion_time];
+    %     %make box plot
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 5 10 15 20 25 30])
+    %     ylim([0 30])
+    %     ylabel('Completion Time (s)')
+    %     grid on;
+    %     % lower plot is the errors 
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column for the box plot
+    %     good_steps = [HTeO_data_completion_goodsteps];
+    %     boxchart(good_steps)
+    %     hold on;
+    %     % plot indv subj data using with same xoffset calcs as above and y
+    %     % offset since both values for a subj could be the same 
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeO(i,:)/500 +1+ xoffset2(i), HTeO_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
+    %         hold on;
+    %     end
+    % 
+    %     % add x and y labels
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     yticks([0 2 4 6 8 10])
+    %     ylim([-1 11])
+    %     ylabel('Good Steps');
+    %     %set font size for the figure so it's legible
+    %     fontsize(fig, 24, "points")
+    % 
+    %     %% HT, Eyes Closed
+    % 
+    %     % GVS Effects on Completion time and Good Steps
+    %     % define figure
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,1,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data (Head Tilts, Eyes Closed)')
+    % 
+    %     %top tile is raw time data
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column
+    %     completion_time_plot = [HTeC_data_completion_time];
+    %     %make box plot
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 10 20 30 40 50 60])
+    %     ylim([0 60])
+    %     ylabel('Completion Time (s)')
+    %     grid on;
+    %     % lower plot is the errors 
+    %     nexttile
+    %     % string together 1st and 2nd iterations of condition into single
+    %     % column for the box plot
+    %     good_steps = [HTeC_data_completion_goodsteps];
+    %     boxchart(good_steps)
+    %     hold on;
+    %     % plot indv subj data using with same xoffset calcs as above and y
+    %     % offset since both values for a subj could be the same 
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeC(i,:)/500 +1+ xoffset2(i), HTeC_data_completion_goodsteps(i,:),sub_symbols(i),'MarkerSize',15);
+    %         hold on;
+    %     end
+    % 
+    %     % add x and y labels
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     yticks([0 2 4 6 8 10])
+    %     ylim([-1 11])
+    %     ylabel('Good Steps');
+    %     %set font size for the figure so it's legible
+    %     fontsize(fig, 24, "points")
+    % 
+    %     %% Plot all Zone Data
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,2,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data- Zone')
+    %     nexttile
+    %     completion_zone_plot = [nHTeO_data_completion_zone];
+    %     boxchart(completion_zone_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([-4 -3 -2 -1 0 1 2 3 4])
+    %     ylim([-5 5])
+    %     ylabel({'No Head Tilts','Zone'})
+    %     grid on;
+    %     title('Eyes Open')
+    %     fontsize(fig, 24, "points")
+    % 
+    % 
+    % 
+    %     nexttile
+    %     completion_zone_plot = [nHTeC_data_completion_zone];
+    %     boxchart(completion_zone_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([-4 -3 -2 -1 0 1 2 3 4])
+    %     ylim([-5 5])
+    %     grid on;
+    %     title('Eyes Closed')        
+    %     fontsize(fig, 24, "points")
+    %     set(gca,'Yticklabel',[])
+    % 
+    % 
+    %     nexttile
+    %     completion_zone_plot = [HTeO_data_completion_zone];
+    %     boxchart(completion_zone_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([-4 -3 -2 -1 0 1 2 3 4])
+    %     ylim([-5 5])
+    %     ylabel({'Head Tilts','Zone'})
+    %     grid on;
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     %title('Head Tilts, Eyes Open')
+    %     fontsize(fig, 24, "points")
+    % 
+    % 
+    %     nexttile
+    %     completion_zone_plot = [HTeC_data_completion_zone];
+    %     boxchart(completion_zone_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_zone(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([-4 -3 -2 -1 0 1 2 3 4])
+    %     ylim([-5 5])
+    %     grid on;
+    %     fontsize(fig, 24, "points")
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     %title('Head Tilts, Eyes Closed')
+    %     set(gca,'Yticklabel',[])
+    % 
+    % 
+    % 
+    %     %% Plot all Completion Time Data
+    %     fig = figure(); hold on;
+    %     % used tiledlayout so that we can adjust the margin setting
+    %     t=tiledlayout(2,2,'TileSpacing','tight');
+    %     sgtitle('Tandem Walk Perfomance Data- Completion Time')
+    %     nexttile
+    %     completion_time_plot = [nHTeO_data_completion_time];
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeO(i,:)/500+ 1+ xoffset2(i), nHTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 10 20 30 40 50 60])
+    %     ylim([0 60])
+    %     ylabel({'No Head Tilts','Completion Time (s)'})
+    %     grid on;
+    %     title('Eyes Open')
+    %     fontsize(fig, 24, "points")
+    % 
+    % 
+    % 
+    %     nexttile
+    %     completion_time_plot = [nHTeC_data_completion_time];
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_nHTeC(i,:)/500+ 1+ xoffset2(i), nHTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 10 20 30 40 50 60])
+    %     ylim([0 60])
+    %     grid on;
+    %     title('Eyes Closed')        
+    %     fontsize(fig, 24, "points")
+    %     set(gca,'Yticklabel',[])
+    % 
+    % 
+    %     nexttile
+    %     completion_time_plot = [HTeO_data_completion_time];
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeO(i,:)/500+ 1+ xoffset2(i), HTeO_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 10 20 30 40 50 60])
+    %     ylim([0 60])
+    %     ylabel({'Head Tilts','Completion Time(s)'})
+    %     grid on;
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     %title('Head Tilts, Eyes Open')
+    %     fontsize(fig, 24, "points")
+    % 
+    % 
+    %     nexttile
+    %     completion_time_plot = [HTeC_data_completion_time];
+    %     boxchart(completion_time_plot)
+    %     hold on;
+    %     % plot individual subject data, divide by 500 so that values are 0,
+    %     % 1 and 2 then add 1 so that it is 1, 2, 3 and lines up with
+    %     % boxplots
+    %     % use x offset to separate subject symbols from each other
+    %     for i = 1:11
+    %         plot(GVS_matrix_HTeC(i,:)/500+ 1+ xoffset2(i), HTeC_data_completion_time(i,:),sub_symbols(i),'MarkerSize',15);            
+    %         hold on;
+    %     end
+    %     % no labels for the top plot to save space
+    %     set(gca,'Xticklabel',[])
+    %     % xlabel('GVS Gain');
+    %     % y axis settings
+    %     yticks([0 10 20 30 40 50 60])
+    %     ylim([0 60])
+    %     grid on;
+    %     fontsize(fig, 24, "points")
+    %     xticklabels( ["0"; "500"; "999"]);
+    %     xlabel('GVS Gain');
+    %     %title('Head Tilts, Eyes Closed')
+    %     set(gca,'Yticklabel',[])
 
         %% Plot all Good Steps Data
         fig = figure(); hold on;
         % used tiledlayout so that we can adjust the margin setting
         t=tiledlayout(2,2,'TileSpacing','tight');
-        sgtitle('Tandem Walk Perfomance Data- Good Steps')
+        sgtitle('Tandem Walk Perfomance')
         nexttile
         goodsteps_plot = [nHTeO_data_completion_goodsteps];
         boxchart(goodsteps_plot)
@@ -777,10 +777,10 @@ end
         % y axis settings
         yticks([0 2 4 6 8 10])
         ylim([-1 11])
-        ylabel({'No Head Tilts','Good Steps'})
+        ylabel({'No Head Tilts','Correct Steps'})
         grid on;
         title('Eyes Open')
-        fontsize(fig, 24, "points")
+        fontsize(fig, 36, "points")
         
 
 
@@ -804,7 +804,7 @@ end
         ylim([-1 11])
         grid on;
         title('Eyes Closed')        
-        fontsize(fig, 24, "points")
+        fontsize(fig, 36, "points")
         set(gca,'Yticklabel',[])
 
 
@@ -826,12 +826,12 @@ end
         % y axis settings
         yticks([0 2 4 6 8 10])
         ylim([-1 11])
-        ylabel({'Head Tilts','Good Steps'})
+        ylabel({'Head Tilts','Correct Steps'})
         grid on;
         xticklabels( ["0"; "500"; "999"]);
         xlabel('GVS Gain');
         %title('Head Tilts, Eyes Open')
-        fontsize(fig, 24, "points")
+        fontsize(fig, 36, "points")
 
 
         nexttile
@@ -853,12 +853,12 @@ end
         yticks([0 2 4 6 8 10])
         ylim([-1 11])
         grid on;
-        fontsize(fig, 24, "points")
+        fontsize(fig, 36, "points")
         xticklabels( ["0"; "500"; "999"]);
         xlabel('GVS Gain');
         %title('Head Tilts, Eyes Closed')
         set(gca,'Yticklabel',[])
-    end
+    % end
 end
 
 
