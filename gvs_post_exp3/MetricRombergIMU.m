@@ -84,11 +84,14 @@ pos(numsub,numtrials).y = 0;
 pos(numsub,numtrials).z = 0;
 
 % Initialize variables for balance metrics
+% because of how the inputs got changed around during processing I think
+% that Y corresponds to medial lateral
 rmsXYa = NaN(numsub,numtrials);
 rmsXa = rmsXYa; rmsYa = rmsXYa;
 p2pXa = rmsXYa; p2pYa = p2pXa;
 rmsXa_fail = rmsXYa; rmsYa_fail = rmsXYa;
 p2pXa_fail = rmsXYa; p2pYa_fail = p2pXa;
+rmsXYa_fail = rmsXYa; rmsXYa_fail_2 = rmsXYa;
 rmsXa_fail_2 = rmsXYa; rmsYa_fail_2 = rmsXYa;
 p2pXa_fail_2 = rmsXYa; p2pYa_fail_2 = p2pXa;
 
@@ -155,8 +158,8 @@ for sub = 1:(numsub)
 
             % METRICS
             if XSENS_length > 14.5*fsX && raw_time == 15
-                rmsxy = rms([XSENS_acc(fsX:14*fsX,1), XSENS_acc(fsX:14*fsX,2)]); % cut one second off the start and end of the trial
-                p2pa = peak2peak(XSENS_acc(fsX:14*fsX,:));
+                rmsxy = rms([XSENS_acc(0.5*fsX:14.5*fsX,1), XSENS_acc(0.5*fsX:14.5*fsX,2)]); % cut half a second off the start and end of the trial
+                p2pa = peak2peak(XSENS_acc(0.5*fsX:14.5*fsX,:));
             %%% Acceleration metrics
             % rms metrics
 %             rmsXYa(sub,trial) = sqrt(1/2*(rmsxy(1)^2+rmsxy(2)^2));
@@ -171,8 +174,8 @@ for sub = 1:(numsub)
             % fftY(sub,trial,:) = fft(XSENS_acc(fsX:14*fsX,2));
             
             elseif XSENS_length > 2*fsX
-                rmsxy = rms([XSENS_acc(end-1.5*fsX:end-0.5*fsX,1), XSENS_acc(end-1.5*fsX: end-0.5*fsX,2)]); % cut one second off the start and end of the trial
-                p2pa = peak2peak(XSENS_acc(end-1.5*fsX:end-.5*fsX,:));
+                rmsxy = rms([XSENS_acc(0.5*fsX:end-0.05*fsX,1), XSENS_acc(0.5*fsX: end-0.05*fsX,2)]); % cut half a second off the start and end of the trial
+                p2pa = peak2peak(XSENS_acc(0.5*fsX:end-.05*fsX,:));
                 %%% Acceleration metrics
                 % rms metrics
     %             rmsXYa(sub,trial) = sqrt(1/2*(rmsxy(1)^2+rmsxy(2)^2));
@@ -183,7 +186,7 @@ for sub = 1:(numsub)
                 p2pXa_fail(sub,trial) = p2pa(1); 
                 p2pYa_fail(sub,trial) = p2pa(2); 
             else
-               rmsxy = rms([XSENS_acc(:,1), XSENS_acc(:,2)]); % cut one second off the start and end of the trial
+               rmsxy = rms([XSENS_acc(:,1), XSENS_acc(:,2)]); % use entire trial
                 p2pa = peak2peak(XSENS_acc);
                 %%% Acceleration metrics
                 % rms metrics
@@ -216,12 +219,43 @@ ylabel("distance ", 'FontSize', 20)
 xlabel("Condition", 'FontSize', 20)
 
 figure;
+for i = 1:height(p2pXa)
+    plot(p2pYa(i,:), sub_symbols(i),'MarkerSize',15);
+    hold on;
+    plot(p2pYa_fail(i,:), sub_symbols_2(i),'MarkerSize',15);
+    hold on;
+    plot(p2pYa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15);
+    hold on;
+end
+xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
+xticklabels( strrep(Label.romberg, '_',''));
+ylim([0 35])
+title("Romberg Peak 2 Peak Y")
+ylabel("distance ", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
+
+figure;
 for i = 1:height(rmsXa)
-    plot(rmsXa(i,:), sub_symbols(i),'MarkerSize',15);
+    plot(rmsXYa(i,:), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
     hold on;
-    plot(rmsXa_fail(i,:), sub_symbols_2(i),'MarkerSize',15);
+    plot(rmsXYa_fail(i,:), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
     hold on;
-    plot(rmsXa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15);
+    plot(rmsXYa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+    hold on;
+end
+xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
+xticklabels( strrep(Label.romberg, '_',''));
+title("Romberg RMS XY")
+ylabel("distance ", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
+%% X
+figure;
+for i = 1:height(rmsXa)
+    plot(rmsXa(i,:), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+    hold on;
+    plot(rmsXa_fail(i,:), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+    hold on;
+    plot(rmsXa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
     hold on;
 end
 xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
@@ -229,6 +263,22 @@ xticklabels( strrep(Label.romberg, '_',''));
 title("Romberg RMS X")
 ylabel("distance ", 'FontSize', 20)
 xlabel("Condition", 'FontSize', 20)
+%% Y
+figure;
+for i = 1:height(rmsXa)
+    plot(rmsYa(i,:), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+    hold on;
+    plot(rmsYa_fail(i,:), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+    hold on;
+    plot(rmsYa_fail_2(i,:), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+    hold on;
+end
+xticks([1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24]);
+xticklabels( strrep(Label.romberg, '_',''));
+title("Romberg RMS Y")
+ylabel("distance ", 'FontSize', 20)
+xlabel("Condition", 'FontSize', 20)
+
 
 %% save
 
@@ -249,3 +299,25 @@ xlabel("Condition", 'FontSize', 20)
     % close all;
 
     %%
+    rmsYa_fail_2(isnan(rmsYa_fail_2))=0;
+    rmsYa_fail(isnan(rmsYa_fail))=0;
+    rmsYa_fail_2(isnan(rmsYa_fail_2))=0;
+    rmsYa(isnan(rmsYa))=0;
+
+rmsYa_all = rmsYa_fail_2+rmsYa_fail+rmsYa;
+rmsYa_all_sort = [rmsYa_all(:, [1,5,9,13,17,21]); rmsYa_all(:, [2,6,10,14,18,22]); rmsYa_all(:, [3,7,11,15,19,23]); rmsYa_all(:, [4,8,12,16,20,24]);];
+figure; 
+tiledlayout(2,1)
+sgtitle("Romberg Medial-Lateral RMS")
+nexttile
+boxchart(rmsYa_all_sort(:,1:3))
+% xticks([1 2 3 ]);
+% xticklabels(['0' '500' '999']);
+ylabel([ "No Head Tilts","RMS (m/s^2)" ], 'FontSize', 20)
+nexttile
+boxchart(rmsYa_all_sort(:,4:6))
+% xticks([1 2 3 ]);
+xticklabels(['0' '500' '999']);
+
+ylabel(["Head Tilts", "RMS (m/s^2)" ], 'FontSize', 20)
+xlabel("GVS Gain", 'FontSize', 20)
