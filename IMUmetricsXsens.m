@@ -1,11 +1,22 @@
 close all;clear;clc; warning off;
 
 %% set up
-subnum = 1022;  % Subject List 
+subnum = 1017:1022;  % Subject List 
+%subnum = 1022;
 numsub = length(subnum);
-subskip = [0,1021];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [0,1028];  %DNF'd subjects or subjects that didn't complete this part
 file_count = 0;
 sensorpositionplot = 0;
+match_list = [0 0 0.1 0.1 0.25 0.5 0.75 1 1.25 1.5 2 4];
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
 
 % set up pathing
 code_path = pwd; %save code directory
@@ -18,6 +29,7 @@ end
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
 for sub = 1:numsub % first for loop that iterates through subject files
+    close all;
     subject = subnum(sub);
     subject_str = num2str(subject);
     % skip subjects that DNF'd or there is no data for
@@ -41,7 +53,8 @@ for sub = 1:numsub % first for loop that iterates through subject files
     TrialInfo(cellfun(@(x) any(ismissing(x)), TrialInfo)) = {''};
     cd(code_path);
 
-    imu_list = file_path_info2(code_path, subject_path); % get files from file folder
+    file_names = file_path_info2(code_path, subject_path); % get files from file folder
+    imu_list = file_names;
 
     for i=1:length(imu_list) % nested for loop that iterates through IMU files in the subject folder
 
@@ -69,7 +82,11 @@ for sub = 1:numsub % first for loop that iterates through subject files
         Label.imu = imu_table.Properties.VariableNames(3:11);
         time = 0:1/30:((height(acc)/30)-1/30);
         timeimu = 0:1/30:((height(imu_data)/30)-1/30);
-        time_cut = timeimu > 1 & timeimu < 11.5;
+        if length(timeimu) > 285
+            time_cut = timeimu > 2 & timeimu < 9.5;
+        else
+            continue;
+        end
 
         [acc_aligned, gyro_aligned, yaw, pitch, roll] = GravityAligned(acc, gyro,sensorpositionplot);
         %[Xlimit,Ylimit] = PlotScale(imu_data,time);
@@ -96,7 +113,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         direction = ["Z", "Y", "X"];
 
         % magnitude of gyro and acc 
-        mag_acc = sqrt((acc_aligned(:,1).^2) + (acc_aligned(:,2).^2));
+        mag_acc = sqrt((cutacc(:,2).^2) + (cutacc(:,3).^2));
         mag_gyro = sqrt((gyro_aligned(:,1).^2) + (gyro_aligned(:,2).^2));
         Y_accz = fft(cutacc(:,1));
         Y_accx = fft(cutacc(:,3));
@@ -115,8 +132,14 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % [fft_SpHz_roll(i,sub),freq_SpHz,P1r,fr] = fftcalc(i,Y_roll,time,sub,trial_name);
          %[fft_SpHz_accz(i,sub),freq_SpHz,P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
         %[fft_SpHz_accx(i,sub),freq_SpHz,P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
-         [fft_SpHz_accy(i,sub),freq_SpHz,P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+        [fft_SpHz_acc(file_count,sub),freq_SpHz(file_count,sub),P1g,fg] = fftcalc(i,Y_acc,time,sub,trial_name);
 
+         [fft_SpHz_accx(file_count,sub),freq_SpHzx(file_count,sub),P1gx,fgx] = fftcalc(i,Y_accx,time,sub,trial_name);
+         [fft_SpHz_accz(file_count,sub),freq_SpHzz(file_count,sub),P1gz,fgz] = fftcalc(i,Y_accz,time,sub,trial_name);
+         [fft_SpHz_accy(file_count,sub),freq_SpHz(file_count,sub),P1gy,fgy] = fftcalc(i,Y_accy,time,sub,trial_name);
+         [fft_SpHz_accymag(file_count,sub),freq_SpHzmag(file_count,sub),P1gymag,fgymag] = fftcalc(i,Y_acc,time,sub,trial_name);
+
+        % 
         % figure;
         % plot(fgz,P1gz,"LineWidth",3)
         % sgtitle(strrep(trial_name,'_','.'));
@@ -136,7 +159,7 @@ for sub = 1:numsub % first for loop that iterates through subject files
         % for j=1:width(imu_data) % nested for loop that plots each column inside of an IMU file 
         %     subplot(3,3,j);
         %     plot(timeimu, imu_data(:,j));
-        %     %xlim(Xlimit)
+        %     xline(2); xline(9.5);
         %     title(data_type(j));
         % end
         % 
@@ -155,69 +178,74 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
         %% Gravity Aligned Plots
 
-        figure();
-        sgtitle(strrep(trial_name,'_','.'));
-
-        for k=1:width(acc_aligned)
-            subplot(3,3,k+3)
-            %plot(time(time_cut),cutacc(:,k))
-            plot(time,acc_aligned)
-            ylim([-8 10])
-            %xlim(Xlimit)
-            direction_title_1 = strcat("Acc Aligned ", direction(k));
-            title(direction_title_1)
-            xlabel("seconds");
-            ylabel("m/s^2")
-        end
-
-        for l=1:width(gyro_aligned)
-            subplot(3,3,l+6)
-            %plot(time(time_cut),cutgyro(:,l))
-            plot(time,gyro_aligned)
-            ylim([-8 8])
-            %xlim(Xlimit)
-            direction_title_2 = strcat("Gyro Aligned ", direction(l));
-            title(direction_title_2)
-            xlabel("seconds");
-            ylabel("deg/sec")
-        end
-
-        subplot(3,3,1)
-        %plot(time(time_cut),cutyaw)
-        plot(time,yaw)
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Yaw")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,2)
-        %plot(time(time_cut),cutpitch)
-        plot(time,pitch)
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Pitch")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        subplot(3,3,3)
-        %plot(time(time_cut),cutroll)
-        plot(time,roll)
-        %xlim(Xlimit)
-        ylim([-10 10])
-        title("Roll")
-        xlabel("seconds");
-        ylabel("degrees")
-
-        Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
-        cd(plots_path)
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path)
-
-        cd(subject_path);
-        vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
-        eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
-        cd(code_path);
+        % figure();
+        % sgtitle(strrep(trial_name,'_','.'));
+        % 
+        % for k=1:width(acc_aligned)
+        %     subplot(3,3,k+3)
+        %     %plot(time(time_cut),cutacc(:,k))
+        %     plot(time,acc_aligned(:,k))
+        %     xline(2); xline(9.5);
+        %     ylim([-8 10])
+        %     %xlim(Xlimit)
+        %     direction_title_1 = strcat("Acc Aligned ", direction(k));
+        %     title(direction_title_1)
+        %     xlabel("seconds");
+        %     ylabel("m/s^2")
+        % end
+        % 
+        % for l=1:width(gyro_aligned)
+        %     subplot(3,3,l+6)
+        %     %plot(time(time_cut),cutgyro(:,l))
+        %     plot(time,gyro_aligned(:,l))
+        %     xline(2); xline(9.5);
+        %     ylim([-8 8])
+        %     %xlim(Xlimit)
+        %     direction_title_2 = strcat("Gyro Aligned ", direction(l));
+        %     title(direction_title_2)
+        %     xlabel("seconds");
+        %     ylabel("deg/sec")
+        % end
+        % 
+        % subplot(3,3,1)
+        % %plot(time(time_cut),cutyaw)
+        % plot(time,yaw)
+        % xline(2); xline(9.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Yaw")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,2)
+        % %plot(time(time_cut),cutpitch)
+        % plot(time,pitch)
+        % xline(2); xline(9.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Pitch")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % subplot(3,3,3)
+        % %plot(time(time_cut),cutroll)
+        % plot(time,roll)
+        % xline(2); xline(9.5);
+        % %xlim(Xlimit)
+        % ylim([-10 10])
+        % title("Roll")
+        % xlabel("seconds");
+        % ylabel("degrees")
+        % 
+        % Filename=(['S' subject_str 'IMU' trial_name '_GravityAligned']);
+        % cd(plots_path)
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path)
+        % 
+        % cd(subject_path);
+        % vars_2_save = ['Label ' 'original_filename ' 'imu_data ' 'time'];
+        % eval(['  save ' ['S' subject_str 'IMU' trial_name '.mat '] vars_2_save ' vars_2_save']);     
+        % cd(code_path);
 %         close all;
 
     end
@@ -235,16 +263,46 @@ for sub = 1:numsub % first for loop that iterates through subject files
 
 end   
 
-%  [C_acc] = boxplotfft(fft_SpHz_acc,numsub,trialinfo_mAval);
-% [C_gyro] = boxplotfft(fft_SpHz_gyro,numsub,trialinfo_mAval);
-% [C_yaw] = boxplotfft(fft_SpHz_yaw,numsub,trialinfo_mAval);
-% [C_pitch] = boxplotfft(fft_SpHz_pitch,numsub,trialinfo_mAval);
-% [C_roll] = boxplotfft(fft_SpHz_roll,numsub,trialinfo_mAval);
-% [C_gz] = boxplotfft(fft_SpHz_gyroz,numsub,trialinfo_mAval);
-% [C_gx] = boxplotfft(fft_SpHz_gyroy,numsub,trialinfo_mAval);
- %[C_gy] = boxplotfft(fft_SpHz_gyrox,numsub,trialinfo_mAval);
- %[C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+trialinfo_mAval= trialinfo_mAval';
 
+%%
+fft_SpHz_acc_sort = NaN(numsub,length(match_list));
+fft_SpHz_accy_sort = NaN(numsub,length(match_list));
+for subject = 1:width(trialinfo_mAval)
+    check_0 = 0;
+    check_01 = 0;
+    for trial = 1:length(trialinfo_mAval)
+        for match = 1:length(match_list)
+            if trialinfo_mAval(trial,subject) == match_list(match)
+            
+                if match ==1 && check_0 ~= 0
+                    continue
+                elseif match ==3 && check_01 ~= 0
+                    continue
+                elseif match ==1
+                    check_0 =1;
+                elseif match == 3
+                    check_01 =1;
+                end
+                fft_SpHz_acc_sort(subject,match) = fft_SpHz_acc(trial,subject);
+                fft_SpHz_accy_sort(subject,match) = fft_SpHz_accy(trial,subject);
+            end
+        end
+        
+    end
+end
+
+%%
+ [C_gy] = boxplotfft(fft_SpHz_accy,numsub,trialinfo_mAval);
+ % [C_gx] = boxplotfft(fft_SpHz_accx,numsub,trialinfo_mAval);
+ % [C_gz] = boxplotfft(fft_SpHz_accz,numsub,trialinfo_mAval);
+ % [C_accmag] = boxplotfft(fft_SpHz_accymag,numsub,trialinfo_mAval);
+
+ % %%
+ % figure;
+ % % boxchart(fft_SpHz_accy_sort)
+ % fft_SpHz_accy_sort(fft_SpHz_accy_sort == 0) = NaN;
+ %  boxplot(fft_SpHz_accy_sort)
 
 
 
@@ -252,20 +310,25 @@ end
 function [C] = boxplotfft(fft_SpHz,numsub,trialinfo_mAval)
 fft_SpHz(fft_SpHz == 0) = NaN; % setting non-recorded values to NaN
 
+% for mHz = 1:numsub
+%     trls = fft_SpHz(~isnan(fft_SpHz(:,mHz)),mHz);
+%     if length(trls) == length(trialinfo_mAval)
+%         val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(:,mHz)];
+%     elseif length(trls) == (length(trialinfo_mAval) - 1)
+%         trls1 = [NaN;trls];
+%         val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(:,mHz)];
+%     elseif length(trls) == (length(trialinfo_mAval) - 2)
+%         trls2 = [NaN;NaN;trls];
+%         val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(:,mHz)];
+%     end
+%     sortval(:,:,mHz) = sortrows(val_mat_mA(:,:,mHz),2);
+% end
+
 for mHz = 1:numsub
-    trls = fft_SpHz(~isnan(fft_SpHz(:,mHz)),mHz);
-    if length(trls) == length(trialinfo_mAval)
-        val_mat_mA(:,:,mHz) = [trls,trialinfo_mAval(mHz,:)'];
-    elseif length(trls) == (length(trialinfo_mAval) - 1)
-        trls1 = [NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls1,trialinfo_mAval(mHz,:)'];
-    elseif length(trls) == (length(trialinfo_mAval) - 2)
-        trls2 = [NaN;NaN;trls];
-        val_mat_mA(:,:,mHz) = [trls2,trialinfo_mAval(mHz,:)'];
-    end
+    val_mat_mA = [fft_SpHz(:,mHz),trialinfo_mAval(:,mHz)];
+    sortval(:,:,mHz) = sortrows(val_mat_mA,2);
 end
 
-sortval = sort(val_mat_mA);
 switchmat = permute(sortval,[3 2 1]);
 
 C = [];
@@ -273,9 +336,66 @@ for bp = 1:12
  C = [C;switchmat(:,:,bp)];
 end
 
+findloc = find(C(:,1) == 0);
+for rem = 1:length(findloc)
+    C(findloc(rem),:) = NaN;
+end
+
+subcode = ["o" "+" "*" "x" "square" "^"];
+
+% viodatx = C(:,1);
+% xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
+% 
+% [f,xi] = ksdensity( viodatx(:),xval,'Bandwidth',0.05,'BoundaryCorrection','reflection');
+% 
+% figure();
+% patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
+
+fig = figure();
+
+b = boxplot(C(:,1),C(:,2),"Symbol",'.'); hold on;
+% blue = [ 0.2118    0.5255    0.6275];
+% b.BoxFaceColor = blue;
+% boxchart(C(:,2),C(:,1));  hold on;
+for rot = 1:numsub
+    find0 = find(sortval(:,2,rot) == 0); find0_1 = find(sortval(:,2,rot) == 0.1);
+    find0_25 = find(sortval(:,2,rot) == 0.25); find0_5 = find(sortval(:,2,rot) == 0.5);
+    find0_75 = find(sortval(:,2,rot) == 0.75); find1 = find(sortval(:,2,rot) == 1);
+    find1_25 = find(sortval(:,2,rot) == 1.25); find1_5 = find(sortval(:,2,rot) == 1.5);
+    find2 = find(sortval(:,2,rot) == 2); find4 = find(sortval(:,2,rot) == 4);
+    
+    subplot = sortval(:,:,rot);
+    plcmnt = linspace(0.8,1.2,numsub); col = 0:9;
+    repplc = repmat(plcmnt,[10 1]); repplc = repplc';
+    ocol = repmat(col,[numsub 1]); matocal = repplc + ocol; 
+    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot),'Color','black', 'MarkerSize', 15, 'LineWidth', 1.5); 
+    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+end
+
+hold off;
+xlabel('Current (mA)','Interpreter','latex','FontSize',17); ylabel('FFT Amplitude Near 1Hz ($\frac{m}{s^2}$)','Interpreter','latex','FontSize',17);
+title('Amount of Medial-Lateral Sway Near 1Hz','Interpreter','latex','FontSize',17);
+%set font size for the figure so it's legible
+        fontsize(fig, 32, "points")
+        set(gca, 'FontName', 'Arial')
+end
+
+function [] = violinfunc(C,fstart,fstop)
+viodatx = C(:,1);
+xval = linspace(prctile(viodatx,1),prctile(viodatx,99), 100);
+
+[f,xi] = ksdensity( viodatx(:),xval,'Bandwidth',0.05,'BoundaryCorrection','reflection');
+
 figure();
-boxplot(C(:,1),C(:,2));
-xlabel('mA'); ylabel('P1 amplitude spectrum');
+patch( 0-[f,zeros(1,numel(xi),1),0],[xi,fliplr(xi),xi(1)],'r' );
 end
 
 
@@ -317,7 +437,7 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(i,Y,time,sub,trial_name)
         rangeloc = find(accept_range);
         minline = f(rangeloc(1)); maxline = f(rangeloc(end));
         
-        % 
+
         % figure;
         % plot(f,P1,'-o','MarkerIndices',locmax,'MarkerFaceColor','red','MarkerSize',8,"LineWidth",3); hold on;
         % xline(maxline,'--','Color','red'); xline(minline,'--','Color','red');
