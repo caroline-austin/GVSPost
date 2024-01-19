@@ -125,7 +125,7 @@ elseif Num_Electrode==3 && Electrode_SinkLocation==2
     Electrode_3_Sig=zeros(1,T);
     Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
 
-% Cevette Neck
+% Cevette Shoulder
 elseif Num_Electrode==3 && Electrode_SinkLocation==3
     if Current_Direction == 1
         %electrodes 1&2 are cathodes 3 is the anode (backward)
