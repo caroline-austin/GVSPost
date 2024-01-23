@@ -140,7 +140,7 @@ disp(contrast_results)
 % anova_ER = anovan(FMT_Data(:,2),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
 % anova_NT = anovan(FMT_Data(:,3),{num2str(FMT_Data(:,4)),num2str(FMT_Data(:,5))},'model','interaction','varnames',{'GVS Admin','Trial Order'});
 %% Romberg
-
+Rom_Data = analyzeRomberg('ExcelData_Cut_ALL.mat',0);
 % first add a subject column to the data
 subj = cat(1, ones(24,1), ones(24,1)*2, ones(24,1)*3, ones(24,1)*4, ones(24,1)*5, ...
     ones(24,1)*6, ones(24,1)*7, ones(24,1)*8, ones(24,1)*9, ones(24,1)*10, ones(24,1)*11);
