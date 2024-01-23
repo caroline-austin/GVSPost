@@ -144,7 +144,7 @@ if individual == 0
         % used tiledlayout so that we can adjust the margin setting
         t=tiledlayout(2,1,'TileSpacing','tight');
         sgtitle('FMT Perfomance Data')
-        
+
         %top tile is raw time data
         nexttile
         % string together 1st and 2nd iterations of condition into single
@@ -189,9 +189,9 @@ if individual == 0
         ylabel('Errors');
         %set font size for the figure so it's legible
         fontsize(fig, 32, "points")
-        
-        
-        
+
+
+
 
         %% Learning Effects on Raw time and Errors
 
@@ -200,7 +200,7 @@ if individual == 0
         % used tiledlayout so that we can adjust the margin setting
         t=tiledlayout(2,1,'TileSpacing','tight');
         sgtitle('FMT Perfomance Data Over Time')
-        
+
         %top tile is raw time data
         nexttile
         %use error sorted data for boxplot
@@ -257,7 +257,7 @@ if individual == 0
         % used tiledlayout so that we can adjust the margin setting
         t=tiledlayout(2,1,'TileSpacing','tight');
         sgtitle('FMT Perfomance Data')
-        
+
         %top tile is for GVS effects
         nexttile
         % string together 1st and 2nd iterations of condition into single
@@ -342,8 +342,8 @@ if individual == 0
         end
         % no labels for the top plot to save space
         % set(gca,'Xticklabel',[])
-        xticklabels(["0" "500" "999"])
-        xlabel('GVS Gain');
+        xticklabels(["0" "Low" "High"])
+        xlabel('GVS Condition');
         % y axis settings
         yticks([5 10 15 20 25])
         ylim([10 28])
@@ -358,10 +358,10 @@ if individual == 0
         % sgtitle('Functional Mobility Obstacle Course Perfomance Data')
 
         nexttile
-        title('Functional Mobility Obstacle Course Perfomance Data')
+        % title('Functional Mobility Obstacle Course Perfomance Data')
         %use the order sorted errors
         boxchart(corrected_time_order)
-        title('Functional Mobility Obstacle Course Perfomance Data')
+        % title('Functional Mobility Obstacle Course Perfomance Data')
         hold on;
         % plot indv subj data using with same xoffset calcs as above 
         for i = 1:11
@@ -376,7 +376,7 @@ if individual == 0
         ylabel('Net Time (s)')
         grid on;
         %set font size for the figure so it's legible
-        fontsize(fig, 32, "points")
+        fontsize(fig, 50, "points")
 
     end
 
