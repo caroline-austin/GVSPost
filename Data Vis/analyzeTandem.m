@@ -775,9 +775,9 @@ end
         set(gca,'Xticklabel',[])
         % xlabel('GVS Gain');
         % y axis settings
-        yticks([0 2 4 6 8 10])
+        yticks([0 5 10])
         ylim([-1 11])
-        ylabel({'No Head Tilts','Correct Steps'})
+        ylabel({'       No Head Tilts',''})
         grid on;
         title('Eyes Open')
         fontsize(fig, 36, "points")
@@ -800,7 +800,7 @@ end
         set(gca,'Xticklabel',[])
         % xlabel('GVS Gain');
         % y axis settings
-        yticks([0 2 4 6 8 10])
+        yticks([0 5 10])
         ylim([-1 11])
         grid on;
         title('Eyes Closed')        
@@ -824,14 +824,14 @@ end
         set(gca,'Xticklabel',[])
         % xlabel('GVS Gain');
         % y axis settings
-        yticks([0 2 4 6 8 10])
+        yticks([0 5 10])
         ylim([-1 11])
-        ylabel({'Head Tilts','Correct Steps'})
+        ylabel({'Head Tilts -    ','                Correct Steps'})
         grid on;
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
+        xticklabels( ["0"; "Low"; "High"]);
+        xlabel('GVS Condition');
         %title('Head Tilts, Eyes Open')
-        fontsize(fig, 36, "points")
+        fontsize(fig, 50, "points")
 
 
         nexttile
@@ -850,12 +850,12 @@ end
         set(gca,'Xticklabel',[])
         % xlabel('GVS Gain');
         % y axis settings
-        yticks([0 2 4 6 8 10])
+        yticks([0 5 10])
         ylim([-1 11])
         grid on;
-        fontsize(fig, 36, "points")
-        xticklabels( ["0"; "500"; "999"]);
-        xlabel('GVS Gain');
+        fontsize(fig, 50, "points")
+        xticklabels( ["0"; "Low"; "High"]);
+        xlabel('GVS Condition');
         %title('Head Tilts, Eyes Closed')
         set(gca,'Yticklabel',[])
     % end
