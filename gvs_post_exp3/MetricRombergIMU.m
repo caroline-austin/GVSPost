@@ -36,10 +36,12 @@ yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
 % sub_symbols = [">-k"; "v-k";"o-k";"+-k"; "*-k"; "x-k"; "square-k"; "^-k"; "<-k"; "pentagram-k"; "diamond-k"];
 sub_symbols = [">k"; "vk";"ok";"+k"; "*k"; "xk"; "squarek"; "^k"; "<k"; "pentagramk"; "diamondk"];
+
 sub_symbols_2 = [">m"; "vm";"om";"+m"; "*m"; "xm"; "squarem"; "^m"; "<m"; "pentagramm"; "diamondm"];
 sub_symbols_3 = [">r"; "vr";"or";"+r"; "*r"; "xr"; "squarer"; "^r"; "<r"; "pentagramr"; "diamondr"];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 xoffset = [-0.02;-0.01;0;0.01;0.02;-0.02;-0.01;0;0.01;0.02;0]; 
+xoffset2 = [-0.25;-0.2;-0.15;-0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
 %% Data Import setup
 
@@ -172,7 +174,19 @@ for sub = 1:(numsub)
 
             % fftX(sub,trial,:) = fft(XSENS_acc(fsX:14*fsX,1));
             % fftY(sub,trial,:) = fft(XSENS_acc(fsX:14*fsX,2));
-            
+            elseif XSENS_length > 2*fsX && raw_time == 15
+
+                rmsxy = rms([XSENS_acc(0.5*fsX:end-0.05*fsX,1), XSENS_acc(0.5*fsX:end-0.05*fsX,2)]); % cut half a second off the start and end of the trial
+                p2pa = peak2peak(XSENS_acc(0.5*fsX:end-0.05*fsX,:));
+            %%% Acceleration metrics
+            % rms metrics
+            rmsXYa(sub,trial) = sqrt((rmsxy(1)^2+rmsxy(2)^2));
+            rmsXa(sub,trial) = rmsxy(1);
+            rmsYa(sub,trial) = rmsxy(2);
+            % peak-to-peak metrics
+            p2pXa(sub,trial) = p2pa(1); 
+            p2pYa(sub,trial) = p2pa(2); 
+
             elseif XSENS_length > 2*fsX
                 rmsxy = rms([XSENS_acc(0.5*fsX:end-0.05*fsX,1), XSENS_acc(0.5*fsX: end-0.05*fsX,2)]); % cut half a second off the start and end of the trial
                 p2pa = peak2peak(XSENS_acc(0.5*fsX:end-.05*fsX,:));
@@ -299,25 +313,111 @@ xlabel("Condition", 'FontSize', 20)
     % close all;
 
     %%
-    rmsYa_fail_2(isnan(rmsYa_fail_2))=0;
-    rmsYa_fail(isnan(rmsYa_fail))=0;
-    rmsYa_fail_2(isnan(rmsYa_fail_2))=0;
-    rmsYa(isnan(rmsYa))=0;
+    rmsYa_fail_2_0 = rmsYa_fail_2;
+    rmsYa_fail_0 = rmsYa_fail;
+    rmsYa_0 = rmsYa;
+    rmsYa_fail_2_0(isnan(rmsYa_fail_2_0))=0;
+    rmsYa_fail_0(isnan(rmsYa_fail_0))=0;
+    rmsYa_0(isnan(rmsYa_0))=0;
+    
 
-rmsYa_all = rmsYa_fail_2+rmsYa_fail+rmsYa;
+rmsYa_all = rmsYa_fail_2_0+rmsYa_fail_0+rmsYa_0;
 rmsYa_all_sort = [rmsYa_all(:, [1,5,9,13,17,21]); rmsYa_all(:, [2,6,10,14,18,22]); rmsYa_all(:, [3,7,11,15,19,23]); rmsYa_all(:, [4,8,12,16,20,24]);];
-figure; 
-tiledlayout(2,1)
-sgtitle("Romberg Medial-Lateral RMS")
+fig=figure; 
+tiledlayout(2,1,'TileSpacing','tight')
+% sgtitle("Romberg Medial-Lateral Sway RMS")
 nexttile
 boxchart(rmsYa_all_sort(:,1:3))
+title("Romberg Medial-Lateral Sway RMS")
+hold on;
+
+for i = 1:height(rmsXa)
+    for j = 1:4
+        plot([1,2,3]+xoffset2(i),rmsYa(i,[j, j+4, j+8]), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+        hold on;
+        plot([1,2,3]+xoffset2(i),rmsYa_fail(i,[j, j+4, j+8]), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+        plot([1,2,3]+xoffset2(i),rmsYa_fail_2(i,[j, j+4, j+8]), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+    end
+end
 % xticks([1 2 3 ]);
 % xticklabels(['0' '500' '999']);
+set(gca,'Xticklabel',[])
 ylabel([ "No Head Tilts","RMS (m/s^2)" ], 'FontSize', 20)
+ylim([0 1.75])
 nexttile
 boxchart(rmsYa_all_sort(:,4:6))
+hold on;
+for i = 1:height(rmsXa)
+    for j = 1:4
+        plot([1,2,3]+xoffset2(i),rmsYa(i,[j+12, j+16, j+20]), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+        hold on;
+        plot([1,2,3]+xoffset2(i),rmsYa_fail(i,[j+12, j+16, j+20]), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+        plot([1,2,3]+xoffset2(i),rmsYa_fail_2(i,[j+12, j+16, j+20]), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+    end
+end
 % xticks([1 2 3 ]);
-xticklabels(['0' '500' '999']);
+xticklabels( ["0"; "Low"; "High"]);
+% boxchart
+ylabel(["Head Tilts", "RMS (m/s^2)" ], 'FontSize', 25)
+xlabel("GVS ", 'FontSize', 25)
+ylim([0 1.75])
+fontsize(fig, 45, "points")
 
-ylabel(["Head Tilts", "RMS (m/s^2)" ], 'FontSize', 20)
+%%
+   %%
+    p2pXa_fail_2_0 = p2pXa_fail_2;
+    p2pXa_fail_0 = p2pXa_fail;
+    p2pXa_0 = p2pXa;
+    p2pXa_fail_2_0(isnan(p2pXa_fail_2_0))=0;
+    p2pXa_fail_0(isnan(p2pXa_fail_0))=0;
+    p2pXa_0(isnan(p2pXa_0))=0;
+    
+
+p2pXa_all = p2pXa_fail_2_0+p2pXa_fail_0+p2pXa_0;
+p2pXa_all_sort = [p2pXa_all(:, [1,5,9,13,17,21]); p2pXa_all(:, [2,6,10,14,18,22]); p2pXa_all(:, [3,7,11,15,19,23]); p2pXa_all(:, [4,8,12,16,20,24]);];
+fig=figure; 
+tiledlayout(2,1,'TileSpacing','tight')
+sgtitle("Romberg Medial-Lateral Sway p2p")
+nexttile
+boxchart(p2pXa_all_sort(:,1:3))
+hold on;
+
+for i = 1:height(p2pXa)
+    for j = 1:4
+        plot([1,2,3]+xoffset2(i),p2pXa(i,[j, j+4, j+8]), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+        hold on;
+        plot([1,2,3]+xoffset2(i),p2pXa_fail(i,[j, j+4, j+8]), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+        plot([1,2,3]+xoffset2(i),p2pXa_fail_2(i,[j, j+4, j+8]), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+    end
+end
+% xticks([1 2 3 ]);
+% xticklabels(['0' '500' '999']);
+set(gca,'Xticklabel',[])
+ylabel([ "No Head Tilts","p2p (m/s^2)" ], 'FontSize', 20)
+ylim([0 1.75])
+nexttile
+boxchart(p2pXa_all_sort(:,4:6))
+hold on;
+for i = 1:height(p2pXa)
+    for j = 1:4
+        plot([1,2,3]+xoffset2(i),p2pXa(i,[j+12, j+16, j+20]), sub_symbols(i),'MarkerSize',15, 'MarkerEdgeColor', green);
+        hold on;
+        plot([1,2,3]+xoffset2(i),p2pXa_fail(i,[j+12, j+16, j+20]), sub_symbols_2(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+        plot([1,2,3]+xoffset2(i),p2pXa_fail_2(i,[j+12, j+16, j+20]), sub_symbols_3(i),'MarkerSize',15, 'MarkerEdgeColor', red);
+        hold on;
+    end
+end
+% xticks([1 2 3 ]);
+xticklabels( ["0"; "500"; "999"]);
+
+ylabel(["Head Tilts", "p2p (m/s^2)" ], 'FontSize', 20)
 xlabel("GVS Gain", 'FontSize', 20)
+ylim([0 1.75])
+fontsize(fig, 32, "points")
