@@ -257,11 +257,12 @@ if plotB == 1
     yticks([0 2.5 5 7.5 10 12.5 15])
     ylim([-1 16])
     grid on;
-    title('Romberg Balance Test Time to Failure with Head Tilts')
+    title('Romberg with Head Tilts Time to Failure ')
     % title('Head Tilts')
-    fontsize(fig, 24, "points")
-    xticklabels( ["0"; "500"; "999"]);
-    xlabel('GVS Gain');
+    fontsize(fig, 48, "points")
+    xticklabels( ["0"; "Low"; "High"]);
+    xlabel('GVS Condition');
+    ylabel('Time (s)');
 end
     
 end
