@@ -363,7 +363,7 @@ end
 xticklabels( ["0"; "Low"; "High"]);
 % boxchart
 ylabel(["Head Tilts", "RMS (m/s^2)" ], 'FontSize', 25)
-xlabel("GVS ", 'FontSize', 25)
+xlabel("GVS Condition", 'FontSize', 25)
 ylim([0 1.75])
 fontsize(fig, 45, "points")
 
