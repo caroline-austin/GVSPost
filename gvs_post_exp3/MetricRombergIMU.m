@@ -11,9 +11,10 @@
 clc; clear; close all;
 
 %% set up
-subnum = [3023:3033];  % Subject List 3001, 
+subnum = [3023:3033];  % Subject List 3001, \
+% subnum = [3028:3030];  % Subject List 3001, 
 numsub = length(subnum);
-subskip = [3002,0];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [];  %3028,3029, 3030%DNF'd subjects or subjects that didn't complete this part
 % full subject data sets should have:
 % FMT: 6 GIST files, (9+ excel rows, 6 XSENS files(?)
 % tandem: 12 GIST files, 16(?) excel rows, 12 XSENS files (?)
