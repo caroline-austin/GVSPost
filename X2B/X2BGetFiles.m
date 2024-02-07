@@ -1,6 +1,8 @@
 % Created by: Caroline Austin 2/6/24
 % Script 1 of X2B data processing 
-% This script reads in the files for each subject in experiment 2B 
+% This script reads in the excel data for each subject in experiment 2B and
+% processes all of the IMU data to turn the csv files into nicely labeled
+% .mat files
 
 close all; 
 clear all; 
@@ -43,10 +45,10 @@ for sub = 1:numsub
         % issues with Sparky meant we had to flip the order of the final
         % match ups for S2034 (because we re-ran first set again)
         final_match_ups = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','A34:N35'); 
-        best_motion =  readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','035:035');        
+        best_motion =  readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','O35:O35');        
     else
         final_match_ups = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','A33:N34');
-        best_motion =  readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','033:033');
+        best_motion =  readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','O33:O33');
     end
     best_tingling = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','P34:P34');
     
@@ -68,7 +70,9 @@ for sub = 1:numsub
             trial_col = 2+rem(trial,2); % the column changes based on the first v. second trial in the set
             %
             cd([file_path, '/' , subject_str, '/IMU']);
-            IMU_data = readtable(IMU_files{file});
+            imu_table = readtable(IMU_files{file});
+            imu_data = table2array(imu_table(:,3:11));
+            
 
     % assemble save file name - use Label.TrialInfo to map what the columns
     % are
@@ -80,7 +84,7 @@ for sub = 1:numsub
         % save file
 
         cd([file_path, '/' , subject_str, '/IMU']);
-        vars_2_save = ['IMU_data '];
+        vars_2_save = ['imu_data imu_table'];
         eval(strjoin(['  save ' strjoin([imu_filename ".mat "],'') vars_2_save  '  vars_2_save']));     
         cd(code_path);
         
@@ -88,7 +92,7 @@ for sub = 1:numsub
 
     cd([file_path, '/' , subject_str]);
     vars_2_save = ['Label main_match_ups main_results final_match_ups best_tingling best_motion start_impedance end_impedance'];
-    eval(strjoin(['  save ' strjoin([subject_str ".mat "],'') vars_2_save  '  vars_2_save']));     
+    eval(strjoin(['  save ' strjoin(['S' subject_str ".mat "],'') vars_2_save  '  vars_2_save']));     
     cd(code_path);
 
 end
