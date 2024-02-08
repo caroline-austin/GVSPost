@@ -25,6 +25,26 @@ gvsStr = "GVS";
 tiltStr = "tilt";
 numsub = length(subnum);
 count = 0;
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
+Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
+match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
+plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
+prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Instantiate the arrays for saving Data
 for i = 1:numel(ttsProfileNums)
@@ -310,6 +330,41 @@ xlabel("GVS Coupling Condition")
 ylabel("Slope of Linear Regression Line")
 title("Change in Perception Vs Change in Tilt","Peaks Valleys Metric");
 
+%%%%%
+ figure;
+b = boxplot(peak_save_all);
+% b.BoxFaceColor = blue;
+plot_label = ["- Velocity";"- Semi";"- Angle"; "No GVS"; "+ Velocity"; "+ Semi";"+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(peak_save_all)
+        
+        plot(i+xoffset2(j), peak_save_all(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Perception/Actual (deg/deg)")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
+hold on; 
+sgtitle(['Perception/Actual Change Slope' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
+
+ cd(plots_path);
+    saveas(gcf, [ 'Perception-change-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;   
+    %%%%%%
+
+    %%
+    peak_means = mean(peak_save_all, 'omitnan');
+    peak_std = std(peak_save_all, 'omitnan');
 
 %% Plotting Function (grouped by GVS Coupling)
 function [b] = plottingFx(outerLoop,innerLoop,xInput,yInput,sgTitleString,plotOrNot)

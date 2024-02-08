@@ -24,6 +24,12 @@ Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -255,19 +261,51 @@ for p = 1: length(prof)
 end 
 
 
-%create box plot
-figure;
-boxplot(slope_save_all);
-xticks([1 2 3 4 5 6 7]);
-xticklabels(plot_list);
+% %create box plot
+% figure;
+% boxplot(slope_save_all);
+% xticks([1 2 3 4 5 6 7]);
+% xticklabels(plot_list);
+% hold on; 
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+% 
+%  cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+%     cd(code_path);
+%     hold off;
+
+%%%%%
+ figure;
+b = boxplot(slope_save_all);
+% b.BoxFaceColor = blue;
+plot_label = ["- Velocity";"- Semi";"- Angle"; "No GVS"; "+ Velocity"; "+ Semi";"+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(slope_save_all)
+        
+        plot(i+xoffset2(j), slope_save_all(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Perception/Actual (deg/deg)")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
 hold on; 
-sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+sgtitle(['Perception/Actual Tilt Slope GVS Effect' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
 
- cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
-    cd(code_path);
-    hold off;
-
+ % cd(plots_path);
+ %    saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+ %    cd(code_path);
+ %    hold off;   
+    
+ %%%%%%%%   
 figure;
 
 for p = 1: length(prof)
@@ -311,13 +349,18 @@ end
     saveas(gcf, [ 'Perception-tilt-SlopeAllSubjects' datatype  ]); 
     cd(code_path);
     hold off; 
+    %%
+
+    slope_means = mean(slope_save_all, 'omitnan');
+    slope_std = std(slope_save_all, 'omitnan');
+
 
     %% save files
    cd(plots_path);
    vars_2_save = ['Label_slope slope_save_4A slope_save_4B slope_save_5A slope_save_5B slope_save_6A slope_save_6B slope_save_all' ];
    eval(['  save ' ['SAllPerception-tilt-Slope' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
+   % eval (['clear ' vars_2_save])
    close all;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)

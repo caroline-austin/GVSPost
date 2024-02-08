@@ -26,6 +26,26 @@ end
 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
+Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
+match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
+plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
+prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+
+
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -154,13 +174,76 @@ Label_over = match_list;
 lp = ['N7 ','N75 ','N8 ','P0 ','P7 ','P75 ','P8 '];
 lt = {'N7','N75','N8','P0','P7','P75','P8'};
 
-figure();
-boxplot(sub_sham','Labels',{'N7','N75','N8','P7','P75','P8'});
-title('Combined Overestimate Subtracted from Sham'); ylabel('Percentage');
+% figure();
+% boxplot(sub_sham','Labels',{'N7','N75','N8','P7','P75','P8'});
+% title('Combined Overestimate Subtracted from Sham'); ylabel('Percentage');
 
-figure();
-boxplot(over_mat_perc','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
-title('Combined Overestimate'); ylabel('Percentage');
+ figure;
+b = boxplot(sub_sham');
+% b.BoxFaceColor = blue;
+plot_label = ["- Velocity";"- Semi";"- Angle"; "+ Velocity"; "+ Semi";"+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(sub_sham')
+        
+        plot(i+xoffset2(j), sub_sham(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Percentage of Time Over Estimating Compared to No GVS")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
+hold on; 
+sgtitle(['Time with Over Estimation' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
+
+ cd(plots_path);
+    saveas(gcf, [ 'Over-Est-ShamRemoved-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;   
+
+% figure();
+% boxplot(over_mat_perc','Labels',{'N7','N75','N8','P0','P7','P75','P8'});
+% title('Combined Overestimate'); ylabel('Percentage');
+%%%%%%
+
+ figure;
+b = boxplot(over_mat_perc');
+% b.BoxFaceColor = blue;
+plot_label = ["- Velocity";"- Semi";"- Angle"; "No GVS"; "+ Velocity"; "+ Semi";"+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(over_mat_perc')
+        
+        plot(i+xoffset2(j), over_mat_perc(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Percentage of Time Over Estimating")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
+hold on; 
+sgtitle(['Time with Over Estimation' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
+
+ cd(plots_path);
+    saveas(gcf, [ 'Over-Est-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+    cd(code_path);
+    hold off;   
+
+%%%%%%%%
 
 figure();
 subplot(2,3,1)
@@ -231,13 +314,17 @@ title('6B');
 legend('underestimate','overestimate');
 ylabel('percentage'); xlabel(lp);
 
+%%
+    over_means = mean(over_save_all, 'omitnan');
+    over_std = std(over_save_all, 'omitnan');
+
     %% save files
    cd(plots_path);
    vars_2_save = ['Label_over over_save_4A over_save_4B over_save_5A over_save_5B over_save_6A over_save_6B over_save_all over_save_all_norm' ];
    eval(['  save ' ['SAllOverPerc' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
-   close all;
+   % eval (['clear ' vars_2_save])
+   % close all;
 
 % s4A = [N74A;N724A;N754A;N7524A;N84A;N824A;P04Ap;P024Ap;P034Ap;P74Ap;P724Ap;P754Ap;P7524Ap;P84Ap;P824Ap];
 % s4A((s4A == 0)) = NaN; s4A((s4A == 1)) = NaN;

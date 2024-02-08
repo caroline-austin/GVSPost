@@ -9,7 +9,7 @@ clc;
 subnum = 1011:1022;  % Subject List 
 numsub = length(subnum);
 subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
-datatype = 'BiasTime';
+datatype = 'BiasTimeGain';
 
 % colors- first 5 are color blind friendly colors
 blue = [ 0.2118    0.5255    0.6275];
