@@ -16,7 +16,7 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2034:2035;  % Subject List 
+subnum = 2034:2036;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -146,10 +146,11 @@ for sub = 1:numsub
 end
 
 %% plot results
-% figure; boxplot([forhead_fft_SpHz_accx shoulder_fft_SpHz_accx  neck_fft_SpHz_accx]);
+figure; boxplot([forhead_fft_SpHz_accx shoulder_fft_SpHz_accx  neck_fft_SpHz_accx]);
 figure; boxplot([forhead_fft_SpHz_accy shoulder_fft_SpHz_accy  neck_fft_SpHz_accy]);
-% figure; boxplot([forhead_fft_SpHz_accz shoulder_fft_SpHz_accz  neck_fft_SpHz_accz]);
+figure; boxplot([forhead_fft_SpHz_accz shoulder_fft_SpHz_accz  neck_fft_SpHz_accz]);
 
+cd(code_path);
 
 function [mfftsphz,freq_SpHz,P1,f] = fftcalc(Y,time)
         %fourier_calc = (fft(gyro_aligned(:,1))); 
