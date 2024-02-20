@@ -146,9 +146,21 @@ for sub = 1:numsub
 end
 
 %% plot results
-figure; boxplot([forhead_fft_SpHz_accx shoulder_fft_SpHz_accx  neck_fft_SpHz_accx]);
-figure; boxplot([forhead_fft_SpHz_accy shoulder_fft_SpHz_accy  neck_fft_SpHz_accy]);
-figure; boxplot([forhead_fft_SpHz_accz shoulder_fft_SpHz_accz  neck_fft_SpHz_accz]);
+figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accx); xticklabels([]); title("Forehead"); ylim([0 20*10^-3]);
+subplot(3,1,2);boxplot(shoulder_fft_SpHz_accx); xticklabels([]); title("Shoulder"); ylim([0 20*10^-3]);
+subplot(3,1,3); boxplot(neck_fft_SpHz_accx); title("Neck");ylim([0 20*10^-3]);
+xticklabels(subnum);
+sgtitle("X sway near 0.5Hz");
+figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accy); xticklabels([]); title("Forehead"); ylim([0 0.3]);
+subplot(3,1,2);boxplot(shoulder_fft_SpHz_accy); xticklabels([]); title("Shoulder"); ylim([0 0.3]);
+subplot(3,1,3); boxplot(neck_fft_SpHz_accy); title("Neck"); ylim([0 0.3]);
+xticklabels(subnum);
+sgtitle("Y sway near 0.5Hz");
+figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accz); xticklabels([]); title("Forehead"); ylim([0 0.4]);
+subplot(3,1,2);boxplot(shoulder_fft_SpHz_accz); xticklabels([]); title("Shoulder"); ylim([0 0.4]);
+subplot(3,1,3); boxplot(neck_fft_SpHz_accz); title("Neck"); ylim([0 0.4]);
+xticklabels(subnum);
+sgtitle("Z sway near 0.5Hz");
 
 cd(code_path);
 
