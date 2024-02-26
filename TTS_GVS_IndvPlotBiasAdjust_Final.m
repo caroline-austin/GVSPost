@@ -109,6 +109,8 @@ for sub = 1:numsub
         shot_6A = shot_6A + bias_correction;
         shot_6B = shot_6B + bias_correction;
 
+        max_bis(sub) = max([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
+         min_bis(sub) = min([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
 
         all_bias(sub) = bias_correction;
 %% save files
