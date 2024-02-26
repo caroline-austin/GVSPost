@@ -76,7 +76,7 @@ ylim ([0 used_sub])
 lgd = legend('none','slight', 'moderate', '', 'FontSize', 35, 'Location', 'southwest' );
 lgd.Color =  [1 1 1];
 Filename = char(strjoin(["TingleRatingsSin1HzAllCurrentAreaPlot"]));
-        
+
 %save plot
 cd(plots_path);
 saveas(gcf, [char(Filename) '.fig']);
@@ -110,7 +110,7 @@ lgd = legend('none','slight', 'moderate', '', 'FontSize', 35, 'Location', 'south
 lgd.Color =  [1 1 1];
 
 Filename = char(strjoin(["MetallicRatingsSin1HzAllCurrentAreaPlot"]));
-        
+
 %save plot
 cd(plots_path);
 saveas(gcf, [char(Filename) '.fig']);
@@ -144,13 +144,13 @@ lgd = legend('none','slight', 'moderate', '', 'FontSize', 35, 'Location', 'south
 lgd.Color =  [1 1 1];
 
 Filename = char(strjoin(["VisFlashRatingsSin1HzAllCurrentAreaPlot"]));
-        
+
 %save plot
 cd(plots_path);
 saveas(gcf, [char(Filename) '.fig']);
 cd(code_path);
 %% Motion Sensation
-figure;
+f=figure;
 % subplot(2,2,1)
 Title = "Reported Motion Sensation";
 MapAreaPlot(All_MotionRating_map([1,3:8],:),Title,numsub, ["none", "slight", "moderate", ""],Color_list)
@@ -171,11 +171,12 @@ hold on;
 [y_val,used_sub] = GetSubjectSymbolLocation(num_sub,subnum,subskip, file_path,'text', 'MotionRating_map([1 3:8],:)', All_MotionRating_map([1 3:8],:), yoffset);
 ylim ([0 used_sub])
     for sub = 1:used_sub
-        plot([1 2 3 4 5 6 7]+xoffset(sub), y_val(:,sub), sub_symbols(sub), 'MarkerSize',15); %Label.CurrentAmp([1 3:8])
+        plot([1 2 3 4 5 6 7]+xoffset(sub), y_val(:,sub), sub_symbols(sub), 'MarkerSize',15,"LineWidth", 1.5); %Label.CurrentAmp([1 3:8])
     end
 
 lgd = legend('none','slight', 'moderate', '', 'FontSize', 35, 'Location', 'southwest' );
 lgd.Color =  [1 1 1];
+f.Position= [100 100 1200 600]
 
 Filename = char(strjoin(["MotionRatingsSin1HzAllCurrentAreaPlot"]));
 %   Filename = char(strjoin(["AllRatingsSin1HzAllCurrentAreaPlot"]));      
