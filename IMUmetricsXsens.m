@@ -368,16 +368,16 @@ for rot = 1:numsub
     plcmnt = linspace(0.8,1.2,numsub); col = 0:9;
     repplc = repmat(plcmnt,[10 1]); repplc = repplc';
     ocol = repmat(col,[numsub 1]); matocal = repplc + ocol; 
-    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot),'Color','black', 'MarkerSize', 15, 'LineWidth', 1.5); 
-    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
-    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 1.5);
+    plot(matocal(rot,1),sortval(find0,1,rot),subcode(rot),'Color','black', 'MarkerSize', 15, 'LineWidth', 2); 
+    plot(matocal(rot,2),sortval(find0_1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,3),sortval(find0_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,4),sortval(find0_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,5),sortval(find0_75,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,6),sortval(find1,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,7),sortval(find1_25,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,8),sortval(find1_5,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,9),sortval(find2,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
+    plot(matocal(rot,10),sortval(find4,1,rot),subcode(rot),'Color','black','MarkerSize', 15, 'LineWidth', 2);
 end
 
 hold off;
@@ -391,6 +391,8 @@ title('Amount of Medial-Lateral Sway Near 1Hz','FontSize',32, 'FontName','Arial'
         
         set(gca, 'FontName', 'Arial')
         fontsize(fig, 36, "points")
+        fig.Position = [100 100 1600 750];
+        ylim([0 .9])
 end
 
 function [] = violinfunc(C,fstart,fstop)
