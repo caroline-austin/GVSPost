@@ -103,75 +103,76 @@ for j = 1:length(match_list)
     eval(["slope_all(j)= LM.X" + match_list(j) + ".Coefficients.Estimate;"]);
 end
 
-%% curve fitting plots
-x_current = linspace(-8,8);
-for j = 1:length(slope_all)
-    y_slope(:,j) = x_current.*slope_all(j);
-end
-
-figure;
-plot(tilt_N_4_00mA_7_00,shot_N_4_00mA_7_00, '^','MarkerEdgeColor', blue);
-hold on; plot(tilt_N_4_00mA_7_50,shot_N_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
-hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'v','MarkerEdgeColor', red);
-hold on; plot(tilt_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
-hold on; plot(x_current,y_slope(:,1),"Color", "#0072BD", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,2),"Color", "#7E2F8E", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,3),"Color", 	"red", "LineWidth", 3);
-title(["Tilt Perception V. tilt Attenuating" subject_str])
-xlabel("Current mA")
-ylabel ("Percieved Tilt Angle")
-ylim([-20 20])
-legend([match_list(4) match_list(1:3)'])
-hold off;
-cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope-Fit-Negative' datatype subject_str ]); 
-    cd(code_path);
-    hold off; 
-figure;
-plot(tilt_P_4_00mA_7_00,shot_P_4_00mA_7_00, '^','MarkerEdgeColor', blue);
-hold on; plot(tilt_P_4_00mA_7_50,shot_P_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
-hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'v','MarkerEdgeColor', red);
-hold on; plot(tilt_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
-hold on; plot(x_current,y_slope(:,5),"Color", "#0072BD", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,6),"Color", "#7E2F8E", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,7),"Color", "red", "LineWidth", 3);
-%plot slopes
-title(["Tilt Perception V. tilt  Amplifying" subject_str])
-xlabel("Current mA")
-ylabel ("Percieved Tilt Angle")
-ylim([-20 20]);
-legend(match_list(4:end));
-cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope-Fit-Positive' datatype subject_str ]); 
-    cd(code_path);
-    hold off; 
-
-    LC = [226 107 109;128 128 128;90 160 163]/255;
-%%
-
-figure;
-hold on; plot(tilt_0_00mA,shot_0_00mA, 'o','MarkerEdgeColor', LC(2,:));
-hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'o','MarkerEdgeColor', LC(1,:));
-hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'o','MarkerEdgeColor', LC(3,:));
-hold on; plot(x_current,y_slope(:,4),"Color","black", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,7),'--',"Color", "black", "LineWidth", 3);
-hold on; plot(x_current,y_slope(:,3),':',"Color", "black", "LineWidth", 3);
-
-%plot slopes
-title(["Tilt Perception V. Actual Tilt " ], FontSize=35)
-xlabel("Actual Tilt Angle (deg)", FontSize=30)
-ylabel ("Percieved Tilt Angle (deg)", FontSize=30)
-ax = gca;
-ax.XAxis.FontSize = 30;
-ax.YAxis.FontSize = 30;
-ylim([-20 20]);
-legend(["No GVS"; "Amplifying"; "Attenuating"; "No GVS"; "Amplifying"; "Attenuating" ], "Location", "northwest", FontSize=25);
-
-%%
-cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope-Fit-Pos-Neg-Angle' datatype subject_str ]); 
-    cd(code_path);
-    hold off; 
+% %% curve fitting plots % commented out because don't need to recreate
+% %everytime
+% x_current = linspace(-8,8);
+% for j = 1:length(slope_all)
+%     y_slope(:,j) = x_current.*slope_all(j);
+% end
+% 
+% figure;
+% plot(tilt_N_4_00mA_7_00,shot_N_4_00mA_7_00, '^','MarkerEdgeColor', blue);
+% hold on; plot(tilt_N_4_00mA_7_50,shot_N_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
+% hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'v','MarkerEdgeColor', red);
+% hold on; plot(tilt_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
+% hold on; plot(x_current,y_slope(:,1),"Color", "#0072BD", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,2),"Color", "#7E2F8E", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,3),"Color", 	"red", "LineWidth", 3);
+% title(["Tilt Perception V. tilt Attenuating" subject_str])
+% xlabel("Current mA")
+% ylabel ("Percieved Tilt Angle")
+% ylim([-20 20])
+% legend([match_list(4) match_list(1:3)'])
+% hold off;
+% cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Negative' datatype subject_str ]); 
+%     cd(code_path);
+%     hold off; 
+% figure;
+% plot(tilt_P_4_00mA_7_00,shot_P_4_00mA_7_00, '^','MarkerEdgeColor', blue);
+% hold on; plot(tilt_P_4_00mA_7_50,shot_P_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
+% hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'v','MarkerEdgeColor', red);
+% hold on; plot(tilt_0_00mA,shot_0_00mA, 'square','MarkerEdgeColor', green);
+% hold on; plot(x_current,y_slope(:,5),"Color", "#0072BD", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,6),"Color", "#7E2F8E", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,7),"Color", "red", "LineWidth", 3);
+% %plot slopes
+% title(["Tilt Perception V. tilt  Amplifying" subject_str])
+% xlabel("Current mA")
+% ylabel ("Percieved Tilt Angle")
+% ylim([-20 20]);
+% legend(match_list(4:end));
+% cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Positive' datatype subject_str ]); 
+%     cd(code_path);
+%     hold off; 
+% 
+%     LC = [226 107 109;128 128 128;90 160 163]/255;
+% %%
+% 
+% figure;
+% hold on; plot(tilt_0_00mA,shot_0_00mA, 'o','MarkerEdgeColor', LC(2,:));
+% hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'o','MarkerEdgeColor', LC(1,:));
+% hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'o','MarkerEdgeColor', LC(3,:));
+% hold on; plot(x_current,y_slope(:,4),"Color","black", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,7),'--',"Color", "black", "LineWidth", 3);
+% hold on; plot(x_current,y_slope(:,3),':',"Color", "black", "LineWidth", 3);
+% 
+% %plot slopes
+% title(["Tilt Perception V. Actual Tilt " ], FontSize=35)
+% xlabel("Actual Tilt Angle (deg)", FontSize=30)
+% ylabel ("Percieved Tilt Angle (deg)", FontSize=30)
+% ax = gca;
+% ax.XAxis.FontSize = 30;
+% ax.YAxis.FontSize = 30;
+% ylim([-20 20]);
+% legend(["No GVS"; "Amplifying"; "Attenuating"; "No GVS"; "Amplifying"; "Attenuating" ], "Location", "northwest", FontSize=25);
+% 
+% %%
+% cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Pos-Neg-Angle' datatype subject_str ]); 
+%     cd(code_path);
+%     hold off; 
 %% calculate slopes for trials grouped by motion profile
 for p = 1: length(prof)
     eval(["[row,col] = size(shot_" + prof(p) + ");"])
@@ -195,31 +196,31 @@ for p = 1: length(prof)
 end
 % or do the overall plot labeling /saving out here (1 per subjects)
     
-%indv slope plot
-figure;
-    plot_single_outcomes(slope_all,match_list, Color_List,match_list);
-    hold on; 
-    title(['Perception-tilt-Slope-All-Profiles: Subject ' datatype subject_str]);
-
-    cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope-All-Profiles' datatype subject_str ]); 
-    cd(code_path);
-    hold off; 
-
-
-figure;
-for p = 1: length(prof)
-    subplot(2,3,p)
-    eval(["plot_single_outcomes(slope_" + prof(p) + ",Label.shot_" + prof(p) + ", Color_List,match_list);"]);
-    title (["Profile " + prof(p)]);
-end
-    hold on; 
-    sgtitle(['Perception-tilt-Slope: Subject ' datatype subject_str]);
-
-    cd(plots_path);
-    saveas(gcf, [ 'Perception-tilt-Slope' datatype subject_str ]); 
-    cd(code_path);
-    hold off;  
+% %indv slope plot % commented out because I didn't need to run everytime
+% figure;
+%     plot_single_outcomes(slope_all,match_list, Color_List,match_list);
+%     hold on; 
+%     title(['Perception-tilt-Slope-All-Profiles: Subject ' datatype subject_str]);
+% 
+%     cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope-All-Profiles' datatype subject_str ]); 
+%     cd(code_path);
+%     hold off; 
+% 
+% 
+% figure;
+% for p = 1: length(prof)
+%     subplot(2,3,p)
+%     eval(["plot_single_outcomes(slope_" + prof(p) + ",Label.shot_" + prof(p) + ", Color_List,match_list);"]);
+%     title (["Profile " + prof(p)]);
+% end
+%     hold on; 
+%     sgtitle(['Perception-tilt-Slope: Subject ' datatype subject_str]);
+% 
+%     cd(plots_path);
+%     saveas(gcf, [ 'Perception-tilt-Slope' datatype subject_str ]); 
+%     cd(code_path);
+%     hold off;  
 
  % add the current subject's data into the aggregate variable
     %and increment the number of trials averaged into each trial type based on
@@ -275,10 +276,11 @@ end
 %     hold off;
 
 %%%%%
- figure;
+%%
+f= figure;
 b = boxplot(slope_save_all);
 % b.BoxFaceColor = blue;
-plot_label = ["- Velocity";"- Semi";"- Angle"; "No GVS"; "+ Velocity"; "+ Semi";"+ Angle" ];
+plot_label = ["- Velocity";"- Joint";"- Angle"; "No GVS"; "+ Velocity"; "+ Joint";"+ Angle" ];
 % xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
@@ -292,19 +294,19 @@ for j = 1:numsub
 end
 
 xlabel("GVS Coupling Scheme")
-ylabel("Perception/Actual (deg/deg)")
+ylabel("Perception/Actual (deg/deg)    ")
 ax = gca;
 ax.XAxis.FontSize = 32;
 ax.YAxis.FontSize = 32;
 hold on; 
-sgtitle(['Perception/Actual Tilt Slope GVS Effect' ],fontsize = 36); % for nice pretty plots
+title(['Perception/Actual Tilt Slope GVS Effect' ],fontsize = 36); % for nice pretty plots
 % sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
-
+f.Position = [100 100 1500 750];
  % cd(plots_path);
  %    saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
  %    cd(code_path);
  %    hold off;   
-    
+ %%   
  %%%%%%%%   
 figure;
 
