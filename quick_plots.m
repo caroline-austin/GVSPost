@@ -1,3 +1,15 @@
+%%
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+red =[226 107 109]/250;
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
+%%
 plot(All_avg_net_over_4A);
 hold on; plot(All_avg_net_over_5A);
 hold on; plot(All_avg_net_over_6A);
@@ -276,7 +288,7 @@ legend(Label.shot_4A(4:end))
  tilt_slope = slope_save_all;
 
 sub_symbols = [ "pentagram";"<";"hexagram";">"; "diamond";"v";"o";"+"; "*"; "x"; "square"; "^"; ];
-figure;
+fig=figure;
 tiledlayout(2,3,'TileSpacing','tight')
 for j = 1:7
     
@@ -284,8 +296,15 @@ for j = 1:7
         nexttile 
     plot(MotionRating_min_save(:,3), tilt_slope(:,j),'.','MarkerSize',0.1); 
     eval(["h" + Label_slope(j) + "=lsline;"])
+    eval(["h" + Label_slope(j) + ".LineWidth=3;"])
     eval(["line_y(j,:)=h" + Label_slope(j) + ".YData;"])
     corr_slope(j)=(line_y(j,2)-line_y(j,1))/3;
+
+    if j<4
+        eval(["h" + Label_slope(j) + ".Color=green;"])
+    else 
+        eval(["h" + Label_slope(j) + ".Color=red;"])
+    end
     hold on;
     for i = 1:length(tilt_slope)
         plot(MotionRating_min_save(i,3), tilt_slope(i,j),sub_symbols(i),'MarkerSize',20, "Color","black", "LineWidth", 2);
@@ -295,47 +314,53 @@ for j = 1:7
     xticks([1,2,3,4])
     if j == 1 
             ylabel({'';'Attenuating'},FontSize=30)
-            yticks([-.5 0 ])
+            yticks([0 1.5])
     elseif j ==5
-            ylabel({'                                  Normalized Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
-            
-            yticks([ 0 0.5])
+            % ylabel({'                                  Normalized Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
+            ylabel({'                           Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
+            yticks([ 0 1.5])
     else
             yticks([])
             
     end
 
     if j == 1
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([0, 1.5])
         xticks([])
         ax = gca;
         ax.YAxis.FontSize = 25;
         title("Velocity",FontSize=30)
     elseif  j ==2
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([0, 1.5])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
-        title("Semi",FontSize=30)
+        title("Joint",FontSize=30)
     elseif j ==3 
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([0, 1.5])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
         title("Angle",FontSize=30)
     elseif j ==5
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([0, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         
         ax.YAxis.FontSize = 25;
 %         ylabel('Amplifying',FontSize=30)
     elseif j == 7
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([0, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
     elseif j == 6
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([0, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         xlabel("Minimum Current (mA) for Moderate Motion Report",FontSize=30);
@@ -349,6 +374,7 @@ for j = 1:7
     end
 end
 sgtitle("GVS Effect vs. GVS Susceptibility", "FontSize", 36)
+fig.Position = [100 100 1400 750];
 % lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
 %         lgd.Layout.Tile = 8;
 % xlabel("Minimum Current (mA) for Moderate Motion",FontSize=30);
