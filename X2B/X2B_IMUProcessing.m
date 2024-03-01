@@ -213,5 +213,11 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(Y,time)
         % xlabel("f (Hz)")
         % ylabel("|P1(f)|")
 end
-
-
+    % 
+    % % save all imu data (outcomes metrics) into a single file
+    % cd([file_path, '/' , subject_str]);
+    % vars_2_save = ['Label main_match_ups main_results final_match_ups
+    % best_tingling best_motion start_impedance end_impedance']; %add IMU
+    % %output variables to the vars 2 save
+    % eval(strjoin(['  save ' strjoin(['S' subject_str "IMU.mat "],'') vars_2_save  '  vars_2_save']));     
+    % cd(code_path);
