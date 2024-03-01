@@ -16,7 +16,7 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2034:2041;  % Subject List 
+subnum = 2034:2042;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -121,12 +121,12 @@ for sub = 1:numsub
     % xticklabels([Label.MainResultsRow])
     % title ("Most Tingling");
 
-    figure;
-    sgtitle(['S' subject_str 'Paired Wins'])
-    % subplot(2,1,1)
-    bar([forhead_shoulder, shoulder_neck, neck_forhead]);
-    title ("Most Motion Sensation");
-    xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+    % figure;
+    % sgtitle(['S' subject_str 'Paired Wins'])
+    % % subplot(2,1,1)
+    % bar([forhead_shoulder, shoulder_neck, neck_forhead]);
+    % title ("Most Motion Sensation");
+    % xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
 
     % aggregating results
     total_results = total_results +main_results;
