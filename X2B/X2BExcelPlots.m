@@ -16,11 +16,11 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2034:2042;  % Subject List 
+subnum = 2034:2043;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
-sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = ["kpentagram-";"k<-";"khexagram-";"k>-"; "kdiamond-";"kv-";"ko-";"k+-"; "k*-"; "kx-"; "ksquare-"; "k^-";];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
@@ -207,3 +207,10 @@ xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
 
 
 cd(code_path);
+
+%% initial stats
+p=friedman(sub_motion');
+p=friedman(sub_tingle');
+
+p_forehead_shoulder_t = signrank(sub_tingle(1,:),sub_tingle(2,:));
+p_forehead_shoulder_m = signrank(sub_motion(1,:),sub_motion(2,:));
