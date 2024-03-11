@@ -314,11 +314,11 @@ for j = 1:7
     xticks([1,2,3,4])
     if j == 1 
             ylabel({'';'Attenuating'},FontSize=30)
-            yticks([0 1.5])
+            yticks([0.25 .5 .75 1])
     elseif j ==5
             % ylabel({'                                  Normalized Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
-            ylabel({'                           Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
-            yticks([ 0 1.5])
+            ylabel({'                           Perception/Actual Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
+            yticks([ .75 1 1.25 1.5])
     else
             yticks([])
             
@@ -326,28 +326,28 @@ for j = 1:7
 
     if j == 1
         % ylim([-0.6, 0])
-        ylim([0, 1.5])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
         ax.YAxis.FontSize = 25;
         title("Velocity",FontSize=30)
     elseif  j ==2
         % ylim([-0.6, 0])
-        ylim([0, 1.5])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
         title("Joint",FontSize=30)
     elseif j ==3 
         % ylim([-0.6, 0])
-        ylim([0, 1.5])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
         title("Angle",FontSize=30)
     elseif j ==5
         % ylim([0, .6])
-        ylim([0, 1.5])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         
@@ -355,12 +355,12 @@ for j = 1:7
 %         ylabel('Amplifying',FontSize=30)
     elseif j == 7
         % ylim([0, .6])
-        ylim([0, 1.5])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
     elseif j == 6
         % ylim([0, .6])
-        ylim([0, 1.5])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         xlabel("Minimum Current (mA) for Moderate Motion Report",FontSize=30);
@@ -380,6 +380,30 @@ fig.Position = [100 100 1400 750];
 % xlabel("Minimum Current (mA) for Moderate Motion",FontSize=30);
 % ylabel("Perception-Actual Tilt Correlation Slope",FontSize=30);
 % xlim ([1 4])
+%% 
+% load GVS susceptibility verbal reports load SubjectKGVS before running
+% sub_symbols = ["ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = [ "kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^"; ];
+fig = figure;
+plot(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]),'.','MarkerSize',0.001); hold on;
+h=lsline(); hold on;
+h.LineWidth = 4;
+line_y=h.YData;
+line_x=h.XData;
+corr_slope=(line_y(2)-line_y(1))/(line_x(2)-line_x(1));
+corr_slope_2 = corrcoef(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]));
+mdl = fitlm(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]));
+for i = 1:12
+    plot(MotionRating_min_save(i,3),Gain_sub(i),sub_symbols(i),'MarkerSize',25, LineWidth= 2);
+    hold on;
+end
+ylim([0.25 2])
+title("GVS Effect vs. GVS Susceptibility", "FontSize", 36)
+xlabel("Minimum Current (mA) for Moderate Motion Report",FontSize=30);
+ylabel('K_G_V_S ');
+fontsize(fig, 36, "points")
+fig.Position = [100 100 1400 750];
+
 %% plot tilt slope against rating
 %load  GVS Susceptibility and perception v. GVS and perception v. tilt
 sub_symbols = [ "pentagram";"<";"hexagram";">"; "diamond";"v";"o";"+"; "*"; "x"; "square"; "^"; ];

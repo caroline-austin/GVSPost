@@ -14,10 +14,12 @@ red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
 sub_symbols = [">k"; "vk";"ok";"+k"; "*k"; "xk"; "squarek"; "^k"; "<k"; "pentagramk"];
+% 
+% yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1]; 
+% xoffset = [-0.2;-0.1;0;0.1;0.2;-0.2;-0.1;0;0.1;0.2]; 
 
-yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1]; 
-xoffset = [-0.2;-0.1;0;0.1;0.2;-0.2;-0.1;0;0.1;0.2]; 
-
+yoffset = [0.2;0.2;0.2;0.2;-0.2;-0.2;-0.2;-0.2;-0.2;-0.2]; 
+xoffset = [-0.3;-0.15;0;0.15;0.15;-0.3;-0.15;0;0.15;0.15];
 % %naming variables 
 % % Profiles = ["DC Right/Front"; "DC Left/Back"; "Sin 0.25Hz"; "Sin 0.5Hz"; "Sin 1Hz"];
 % % Profiles_safe = ["DCRight-Front"; "DCLeft-Back"; "Sin0_25Hz"; "Sin0_5Hz"; "Sin1Hz"];
@@ -157,7 +159,7 @@ MapAreaPlot(All_MotionRating_map([1,3:8],:),Title,numsub, ["none", "slight", "mo
 Current_levels_str = ["0" "0.25" ".5"  "0.75" "1" "1.25" "1.5"];
 xticks([1 2 3 4 5 6 7]);
 xticklabels(Current_levels_str);
-xlim ([.75 7.25])
+xlim ([.6 7.25])
 
 %add labels and info to the plot
 ylabel("Number of Responses", "FontSize", 35)
