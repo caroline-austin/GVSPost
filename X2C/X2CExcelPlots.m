@@ -1,0 +1,435 @@
+% Created by: Caroline Austin 2/6/24
+% Script 2a of X2B data processing 
+% This script reads in the output of script 1 (X2BGet files) and uses the
+% data from the excel sheet to make plots summarizing the results of the
+% experiment 
+
+close all; 
+clear all; 
+clc; 
+
+
+%% 
+code_path = pwd; %save code directory
+file_path = uigetdir; %user selects file directory % select data folder
+plots_path = [file_path '/Plots']; % specify where plots are saved
+cd(code_path); cd .. ;
+[foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+
+subnum = [2044:2048, 2050];  % Subject List 
+numsub = length(subnum);
+subskip = [ 2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+
+sub_symbols = ["kpentagram-";"k<-";"khexagram-";"k>-"; "kdiamond-";"kv-";"ko-";"k+-"; "k*-"; "kx-"; "ksquare-"; "k^-";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+
+%%
+total_motion_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+total_tingle_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+total_motion_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+total_tingle_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+total_vis_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+total_metal_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+
+% total_forhead_shoulder = [0,0];
+% total_shoulder_neck = [0,0];
+% total_neck_forhead = [0,0];
+for sub = 1:numsub
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+    % skip subjects that DNF'd or there is no data for
+    if ismember(subject,subskip) == 1
+       continue
+    end
+    subject_path = [file_path '/' subject_str];
+    
+    % load subject data 
+    cd(subject_path);
+    load(['S' subject_str '.mat']);
+    cd(code_path)
+
+    main_results = cell2mat(main_results(:,[1,3]));
+    % main_match_ups = cell2mat(main_match_ups);
+
+    %% calculate relative wins 
+    motion_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+    tingle_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+    vis_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+    metal_wins = [0,0,0,0,0 ; 0,0,0,0,0];
+    motion_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+    tingle_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+    Label.combos = ["Four 1mA Three 2mA","Four 1mA Three 3mA","Four 1mA Three 4mA"; ...
+        "Four 2mA Three 2mA","Four 2mA Three 3mA","Four 2mA Three 4mA"; ...
+        "Four 3mA Three 2mA","Four 3mA Three 3mA","Four 3mA Three 4mA"; ...
+        "Four 4mA Three 2mA","Four 4mA Three 3mA","Four 4mA Three 4mA"];
+    Label.wins = ["Three 0.1mA", "Three 1mA", "Three 2mA", "Three 3mA", "Three 4mA"; "Four 0.1mA", "Four 1mA", "Four 2mA", "Four 3mA", "Four 4mA"];
+    
+    for match_up = 1:height(main_match_ups)
+        match_up_info = strrep([main_match_ups{match_up,2}, '_', num2str(main_match_ups{match_up,3}), '_mA', main_match_ups{match_up,4}, '_', num2str(main_match_ups{match_up,5}) '_mA',], ' ', '_');
+        match(1) = convertCharsToStrings(strrep([main_match_ups{match_up,2}, '_', num2str(main_match_ups{match_up,3}), '_mA'], ' ', '_'));
+        match(2) = convertCharsToStrings(strrep([main_match_ups{match_up,4}, '_', num2str(main_match_ups{match_up,5}), '_mA'], ' ', '_'));
+        
+        % pull winner data into an increment 
+        if main_match_ups{match_up,9} ==1
+            win_incr(1,1) = 1;
+            win_incr(2,1) = 0;
+        else
+            win_incr(2,1) = 1;
+            win_incr(1,1) = 0;
+        end
+        if main_match_ups{match_up,10} ==1
+            win_incr(1,2) = 1;
+            win_incr(2,2) = 0;
+        else
+            win_incr(2,2) = 1;
+            win_incr(1,2) = 0;
+        end
+        if main_match_ups{match_up,11} ==1
+            win_incr(1,3) = 1;
+            win_incr(2,3) = 0;
+        else
+            win_incr(2,3) = 1;
+            win_incr(1,3) = 0;
+        end
+        if main_match_ups{match_up,12} ==1
+            win_incr(1,4) = 1;
+            win_incr(2,4) = 0;
+        else
+            win_incr(2,4) = 1;
+            win_incr(1,4) = 0;
+        end
+
+        if contains(match_up_info, '4_electrode_0.1_mA')
+            combo_row = 0;
+            if match(1) == '4_electrode_0.1_mA'
+                row_1 = 2; col_1 = 1;
+                row_2 = 2; col_2 = 5;
+
+            else 
+                row_1 = 2; col_1 = 5;
+                row_2 = 2; col_2 = 1;
+            end
+                        
+        elseif contains(match_up_info, '4_electrode_1_mA')
+            combo_row = 1;
+            if match(1) == '4_electrode_1_mA'
+              row_1 = 2; col_1 = 2;
+              row_2 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_2 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_2 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_2 = 5;
+                combo_col = 3;
+
+                end
+            else
+              row_2 = 2; col_2 = 2;
+              row_1 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_1 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_1 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_1 = 5;
+                combo_col = 3;
+
+                end
+            end
+
+        elseif contains(match_up_info, '4_electrode_2_mA')
+            combo_row = 2;
+            if match(1) == "4_electrode_2_mA"
+              row_1 = 2; col_1 = 3;
+              row_2 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_2 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_2 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_2 = 5;
+                combo_col = 3;
+
+                end
+            else
+              row_2 = 2; col_2 = 3;
+              row_1 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_1 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_1 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_1 = 5;
+                combo_col = 3;
+
+                end
+            end
+
+
+        elseif contains(match_up_info, '4_electrode_3_mA')
+            combo_row = 3;
+            if match(1) == '4_electrode_3_mA'
+              row_1 = 2; col_1 = 4;
+              row_2 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_2 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_2 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_2 = 5;
+                combo_col = 3;
+
+                end
+            else
+              row_2 = 2; col_2 = 4;
+              row_1 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_1 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_1 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_1 = 5;
+                combo_col = 3;
+
+                end
+            end
+
+        elseif contains(match_up_info, '4_electrode_4_mA')
+            combo_row = 4;
+            if match(1) == '4_electrode_4_mA'
+              row_1 = 2; col_1 = 5;
+              row_2 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_2 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_2 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_2 = 5;
+                combo_col = 3;
+
+                end
+            else
+              row_2 = 2; col_2 = 5;
+              row_1 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_1 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_1 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_1 = 5;
+                combo_col = 3;
+
+                end
+            end
+        elseif contains(match_up_info, '3_electrode_0.1_mA')
+            combo_row = 0;
+            if match(1) == '3_electrode_0.1_mA'
+              row_1 = 1; col_1 = 1;
+              row_2 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_2 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_2 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_2 = 5;
+                combo_col = 3;
+
+                end
+            else
+              row_2 = 1; col_2 = 1;
+              row_1 = 1;
+
+                if contains(match_up_info, '3_electrode_2_mA')
+                col_1 = 3;
+                combo_col = 1;
+                elseif contains(match_up_info, '3_electrode_3_mA')
+                col_1 = 4;
+                combo_col = 2;    
+                elseif contains(match_up_info, '3_electrode_4_mA')
+                col_1 = 5;
+                combo_col = 3;
+
+                end
+            end
+                   
+        end
+
+        %tabulate!
+        motion_wins(row_1,col_1) = motion_wins(row_1,col_1)+win_incr(1,1);
+        motion_wins(row_2,col_2) = motion_wins(row_2,col_2)+win_incr(2,1);
+        tingle_wins (row_1,col_1) = tingle_wins(row_1,col_1)+win_incr(1,2);
+        tingle_wins (row_2,col_2) = tingle_wins(row_2,col_2)+win_incr(2,2);
+        vis_wins(row_1,col_1) = vis_wins(row_1,col_1)+win_incr(1,3);
+        vis_wins(row_2,col_2) = vis_wins(row_2,col_2)+win_incr(2,3);
+        metal_wins (row_1,col_1) = metal_wins(row_1,col_1)+win_incr(1,4);
+        metal_wins (row_2,col_2) = metal_wins(row_2,col_2)+win_incr(2,4);
+    if combo_row>0
+            if win_incr(1,1) == row_1 % if row 1 =1 and the (1,1) index of win_incr = 1 that means 3 electrode won
+                motion_combo_win=-1;
+            elseif win_incr(2,1) == row_2 % if row 2 = 1 and the (2,1) index of win_incr = 1 that means 3 electrode won
+                motion_combo_win=-1;
+            else 
+                motion_combo_win=1;
+            end
+
+            if win_incr(1,2) == row_1 % if row 1 =1 and the (1,2) index of win_incr = 1 that means 3 electrode won
+                tingle_combo_win=-1;
+            elseif win_incr(2,2) == row_2 % if row 2 = 1 and the (2,2) index of win_incr = 1 that means 3 electrode won
+                tingle_combo_win=-1;
+            else 
+                tingle_combo_win=1;
+            end
+            
+            motion_combo(combo_row,combo_col) = motion_combo(combo_row,combo_col)+ motion_combo_win;
+            tingle_combo(combo_row,combo_col) = tingle_combo(combo_row,combo_col)+ tingle_combo_win;
+    end 
+       
+             
+    end
+
+    
+    
+    %% can add any indv. subject plots here
+    % figure;
+    % sgtitle(['S' subject_str ' Total Wins'])
+    % subplot(2,1,1)
+    % bar(main_results(:,1));
+    % title ("Most Motion Sensation");
+    % xticklabels([])
+    % subplot(2,1,2)
+    % bar(main_results(:,2));
+    % xticklabels([Label.MainResultsRow])
+    % title ("Most Tingling");
+
+    % figure;
+    % sgtitle(['S' subject_str 'Paired Wins'])
+    % % subplot(2,1,1)
+    % bar([forhead_shoulder, shoulder_neck, neck_forhead]);
+    % title ("Most Motion Sensation");
+    % xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+
+    % % aggregating results
+    total_motion_combo = total_motion_combo +motion_combo;
+    total_tingle_combo = total_tingle_combo +tingle_combo;
+    total_motion_wins = total_motion_wins+motion_wins;
+    total_tingle_wins = total_tingle_wins+tingle_wins;
+    total_vis_wins = total_vis_wins+vis_wins;
+    total_metal_wins = total_metal_wins+metal_wins;
+    sub_motion_combo(:,:,sub) = motion_combo;
+    sub_tingle_combo(:,:,sub) = tingle_combo;
+    sub_motion_wins(:,:,sub)= motion_wins;
+    sub_tingle_wins(:,:,sub)= tingle_wins;
+    sub_vis_wins(:,:,sub)= vis_wins;
+    sub_metal_wins(:,:,sub)= metal_wins;
+    sub_total_motion_wins(sub,1)= cell2mat(total_motion_wins_3);
+    sub_total_motion_wins(sub,2)= cell2mat(total_motion_wins_4);
+    sub_total_tingle_wins(sub,1)= cell2mat(total_tingle_wins_3);
+    sub_total_tingle_wins(sub,2)= cell2mat(total_tingle_wins_4);
+    
+end
+
+% %% can add any aggregate subj plots here
+% figure;
+% sgtitle(['SAll Total Wins'])
+% subplot(2,1,1)
+% bar(total_results(:,1));
+% title ("Most Motion Sensation");
+% xticklabels([])
+% subplot(2,1,2)
+% bar(total_results(:,2));
+% xticklabels([Label.MainResultsRow])
+% title ("Most Tingling");
+% 
+%%
+figure;
+sgtitle(['SAll Total Responses'])
+subplot(2,1,1)
+b=boxplot(sub_total_motion_wins);
+hold on;
+for j = 1:numsub
+    for i = 1:width(sub_total_motion_wins)
+
+        plot(i+xoffset2(j), sub_total_motion_wins(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+title ("Most Motion Sensation");
+xticklabels([])
+
+subplot(2,1,2)
+boxplot(sub_total_tingle_wins);
+hold on;
+for j = 1:numsub
+    for i = 1:width(sub_total_tingle_wins)
+
+        plot(i+xoffset2(j), sub_total_tingle_wins(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+xticklabels([Label.MainResultsRow])
+title ("Most Tingling");
+fontsize(32,"points")
+
+% %% can add any aggregate subj plots here
+% figure;
+% sgtitle(['SAll Paired Wins'])
+% % subplot(2,1,1)
+% bar([total_forhead_shoulder, total_shoulder_neck, total_neck_forhead]);
+% title ("Most Motion Sensation");
+% xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+% 
+% figure;
+% sgtitle(['SAll Total Wins'])
+% % subplot(2,1,1)
+% b=boxplot([sub_forhead_shoulder sub_shoulder_neck sub_neck_forhead]);
+% hold on;
+% % for j = 1:numsub
+% %     for i = 1:width(sub_motion')
+% % 
+% %         plot(i+xoffset2(j), sub_motion(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+% %         hold on;
+% %     end
+% % end
+% title ("Most Motion Sensation");
+% xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+% 
+% 
+% cd(code_path);
+% 
+% %% initial stats
+% p=friedman(sub_motion');
+% p=friedman(sub_tingle');
+% 
+% p_forehead_shoulder_t = signrank(sub_tingle(1,:),sub_tingle(2,:));
+% p_forehead_shoulder_m = signrank(sub_motion(1,:),sub_motion(2,:));
