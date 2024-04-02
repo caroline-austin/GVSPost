@@ -11,9 +11,9 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = [2049, 2051];  % Subject List 
+subnum = [2060:2062];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
+subskip = [2058 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -40,8 +40,14 @@ for sub = 1:numsub
 % Even though the document contains info from all subjects this pull from
 % only the current subject's sheet
     cd(file_path);
+    if subject == 2053 || subject == 2061
     Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
+        ['S' subject_str],'Range','A2:I29'); % may need to increase beyond 27, but make sure those rows have zeros
+    else
+         Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
         ['S' subject_str],'Range','A2:I27'); % may need to increase beyond 27, but make sure those rows have zeros
+
+    end
     Trial_Num = cell2mat(Trial_Info(:,1));
     Label.DataColumns = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet',... 
         ['S' subject_str], 'Range','A1:I1');
@@ -149,8 +155,8 @@ for sub = 1:numsub
        tilt_command = table2array(TTS_data(1:end-1,2))/200; %deg
        tilt_actual = table2array(TTS_data(1:end-1,4))/200; %deg
        shot_actual = table2array(TTS_data(1:end-1,6))/-1000; %deg
-       GVS_actual1_mV= table2array(TTS_data(1:end-1,13))/1000; %mV (not mA)
-       GVS_actual2_mV= table2array(TTS_data(1:end-1,14))/1000; %mV (not mA)
+       GVS_actual1_mV= table2array(TTS_data(1:end-1,12))/1000; %mV (not mA)
+       GVS_actual2_mV= table2array(TTS_data(1:end-1,13))/1000; %mV (not mA)
        mustBeNonsparse(GVS_actual1_mV);
        mustBeFinite(GVS_actual1_mV);
        GVS_actual1_filt = lowpass(GVS_actual1_mV,1,50); %filter raw GVS data
