@@ -13,9 +13,9 @@ clear all;
 clc; 
 
 %% set up
-subnum = 2051:2051;  % Subject List 
+subnum = 2060;  % Subject List 
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = ''; %can change this to specify which data you want to use for the checkng
 % '' = regular , 'Time' = time adjusted, 'Adj' = Bias adjusted (can stack
 % multiple)
@@ -211,6 +211,8 @@ for sub = 1:numsub
     % a key it doesn't update the existing values
 end
 disp("Script Complete");
+
+cd(code_path);
 
 function PlotNxM(N,M, data,Color_List,lines_per_plot,label,match_list)
     figure;
