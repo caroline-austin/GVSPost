@@ -161,6 +161,8 @@ Label_mae = match_list;
    eval(['  save ' ['S' subject_str 'MeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
+   shot_0_00mA =[]; shot_N_4_00mA_8_00 =[]; shot_P_4_00mA_8_00=[]; shot_N_4_00mA_7_00 =[]; shot_P_4_00mA_7_00=[];shot_N_4_00mA_7_50 =[]; shot_P_4_00mA_7_50=[];
+   tilt_0_00mA =[]; tilt_N_4_00mA_8_00 =[]; tilt_P_4_00mA_8_00=[]; tilt_N_4_00mA_7_00 =[]; tilt_P_4_00mA_7_00=[];tilt_N_4_00mA_7_50 =[]; tilt_P_4_00mA_7_50=[];
    close all;
     
 end
