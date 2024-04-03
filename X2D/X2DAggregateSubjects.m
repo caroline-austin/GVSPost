@@ -246,77 +246,55 @@ for sub = 1:numsub
 
 
 end
-
-% Taking std of all subjects at specific points in time:
 %%
+% Taking std of all subjects at each point in time:
 % std(data to include, any speicial weighting, dimensions to calculate the std over)
-STD_shot_save_4A_test(:,:,[1 3]) = std(shot_save_4A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_4A_test(:,:,2) = std(shot_save_4A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_4A_test = reshape(STD_shot_save_4A_test,timeSeriesLength,3);
+STD_shot_save_4A(:,:,[1 3]) = std(shot_save_4A(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_4A(:,:,2) = std(shot_save_4A(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_4A = reshape(STD_shot_save_4A,timeSeriesLength,3);
 
-STD_shot_save_4B_test(:,:,[1 3]) = std(shot_save_4B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_4B_test(:,:,2) = std(shot_save_4B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_4B_test = reshape(STD_shot_save_4B_test,timeSeriesLength,3);
+STD_shot_save_4B(:,:,[1 3]) = std(shot_save_4B(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_4B(:,:,2) = std(shot_save_4B(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_4B = reshape(STD_shot_save_4B,timeSeriesLength,3);
 
-STD_shot_save_5A_test(:,:,[1 3]) = std(shot_save_5A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_5A_test(:,:,2) = std(shot_save_5A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_5A_test = reshape(STD_shot_save_5A_test,timeSeriesLength,3);
+STD_shot_save_5A(:,:,[1 3]) = std(shot_save_5A(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_5A(:,:,2) = std(shot_save_5A(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_5A = reshape(STD_shot_save_5A,timeSeriesLength,3);
 
-STD_shot_save_5B_test(:,:,[1 3]) = std(shot_save_5B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_5B_test(:,:,2) = std(shot_save_5B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_5B_test = reshape(STD_shot_save_5B_test,timeSeriesLength,3);
+STD_shot_save_5B(:,:,[1 3]) = std(shot_save_5B(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_5B(:,:,2) = std(shot_save_5B(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_5B = reshape(STD_shot_save_5B,timeSeriesLength,3);
 
-STD_shot_save_6A_test(:,:,[1 3]) = std(shot_save_6A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_6A_test(:,:,2) = std(shot_save_6A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_6A_test = reshape(STD_shot_save_6A_test,timeSeriesLength,3);
+STD_shot_save_6A(:,:,[1 3]) = std(shot_save_6A(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_6A(:,:,2) = std(shot_save_6A(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,3);
 
-STD_shot_save_6B_test(:,:,[1 3]) = std(shot_save_6B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_6B_test(:,:,2) = std(shot_save_6B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_6B_test = reshape(STD_shot_save_6B_test,timeSeriesLength,3);
-%
-STD_shot_save_4A = std(shot_save_4A,[],2, 'omitnan');
-STD_shot_save_4A = reshape(STD_shot_save_4A,timeSeriesLength,4);
-STD_shot_save_4B = std(shot_save_4B,[],2, 'omitnan');
-STD_shot_save_4B = reshape(STD_shot_save_4B,timeSeriesLength,4);
-STD_shot_save_5A = std(shot_save_5A,[],2, 'omitnan');
-STD_shot_save_5A = reshape(STD_shot_save_5A,timeSeriesLength,4);
-STD_shot_save_5B = std(shot_save_5B,[],2, 'omitnan');
-STD_shot_save_5B = reshape(STD_shot_save_5B,timeSeriesLength,4);
-STD_shot_save_6A = std(shot_save_6A,[],2, 'omitnan');
-STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,4);
-STD_shot_save_6B = std(shot_save_6B,[],2, 'omitnan');
-STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,4);
-
-% % Getting SEM of all subjects at specific points in time:
-% SEM_shot_save_4A = STD_shot_save_4A./sqrt(num_trials_4A);
-% SEM_shot_save_4B = STD_shot_save_4B./sqrt(num_trials_4B);
-% SEM_shot_save_5A = STD_shot_save_5A./sqrt(num_trials_5A);
-% SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
-% SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
-% SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
-
+STD_shot_save_6B(:,:,[1 3]) = std(shot_save_6B(:,:,[1 4]),[],2, 'omitnan');
+STD_shot_save_6B(:,:,2) = std(shot_save_6B(:,:,[2 3]),[],[2 3], 'omitnan');
+STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,3);
 
 %%
+% combine the 2 and 3 columns which both have the NoGVS conditions 
+All_shot_4A = [All_shot_4A(:,1) All_shot_4A(:,2)+All_shot_4A(:,3)   All_shot_4A(:,4) ];
+num_trials_4A= [num_trials_4A(1) num_trials_4A(2)+num_trials_4A(3)  num_trials_4A(4)];
+
+All_shot_4B = [All_shot_4B(:,1) All_shot_4B(:,2)+All_shot_4B(:,3)   All_shot_4B(:,4) ];
+num_trials_4B= [num_trials_4B(1) num_trials_4B(2)+num_trials_4B(3)  num_trials_4B(4)];
+
+All_shot_5A = [All_shot_5A(:,1) All_shot_5A(:,2)+All_shot_5A(:,3)  All_shot_5A(:,4) ];
+num_trials_5A= [num_trials_5A(1) num_trials_5A(2)+num_trials_5A(3)  num_trials_5A(4)];
+
+All_shot_5B = [All_shot_5B(:,1) All_shot_5B(:,2)+All_shot_5B(:,3)   All_shot_5B(:,4) ];
+num_trials_5B= [num_trials_5B(1) num_trials_5B(2)+num_trials_5B(3)  num_trials_5B(4)];
+
+All_shot_6A = [All_shot_6A(:,1) All_shot_6A(:,2)+All_shot_6A(:,3)   All_shot_6A(:,4) ];
+num_trials_6A= [num_trials_6A(1) num_trials_6A(2)+num_trials_6A(3)  num_trials_6A(4)];
+
+All_shot_6B = [All_shot_6B(:,1) All_shot_6B(:,2)+All_shot_6B(:,3)   All_shot_6B(:,4) ];
+num_trials_6B= [num_trials_6B(1) num_trials_6B(2)+num_trials_6B(3)  num_trials_6B(4)];
+
 %divide the aggregate report by the number of trials added into it to get
-%the average report across subjects (need to add a calculation of error)
-All_shot_4A = [All_shot_4A(:,1) All_shot_4A(:,2)+All_shot_4A(:,3)  All_shot_4A(:,3) All_shot_4A(:,4) ];
-num_trials_4A= [num_trials_4A(1) num_trials_4A(2)+num_trials_4A(3) num_trials_4A(3) num_trials_4A(4)];
-
-All_shot_4B = [All_shot_4B(:,1) All_shot_4B(:,2)+All_shot_4B(:,3)  All_shot_4B(:,3) All_shot_4B(:,4) ];
-num_trials_4B= [num_trials_4B(1) num_trials_4B(2)+num_trials_4B(3) num_trials_4B(3) num_trials_4B(4)];
-
-All_shot_5A = [All_shot_5A(:,1) All_shot_5A(:,2)+All_shot_5A(:,3)  All_shot_5A(:,3) All_shot_5A(:,4) ];
-num_trials_5A= [num_trials_5A(1) num_trials_5A(2)+num_trials_5A(3) num_trials_5A(3) num_trials_5A(4)];
-
-All_shot_5B = [All_shot_5B(:,1) All_shot_5B(:,2)+All_shot_5B(:,3)  All_shot_5B(:,3) All_shot_5B(:,4) ];
-num_trials_5B= [num_trials_5B(1) num_trials_5B(2)+num_trials_5B(3) num_trials_5B(3) num_trials_5B(4)];
-
-All_shot_6A = [All_shot_6A(:,1) All_shot_6A(:,2)+All_shot_6A(:,3)  All_shot_6A(:,3) All_shot_6A(:,4) ];
-num_trials_6A= [num_trials_6A(1) num_trials_6A(2)+num_trials_6A(3) num_trials_6A(3) num_trials_6A(4)];
-
-All_shot_6B = [All_shot_6B(:,1) All_shot_6B(:,2)+All_shot_6B(:,3)  All_shot_6B(:,3) All_shot_6B(:,4) ];
-num_trials_6B= [num_trials_6B(1) num_trials_6B(2)+num_trials_6B(3) num_trials_6B(3) num_trials_6B(4)];
-
+%the average report across subjects 
 All_shot_4A = All_shot_4A./num_trials_4A;
 All_shot_4B = All_shot_4B./num_trials_4B;
 All_shot_5A = All_shot_5A./num_trials_5A;
@@ -324,38 +302,16 @@ All_shot_5B = All_shot_5B./num_trials_5B;
 All_shot_6A = All_shot_6A./num_trials_6A;
 All_shot_6B = All_shot_6B./num_trials_6B;
 
-
 %%
-% num_trials_4A = num_trials_4A([1 2 4]);
-% num_trials_4B = num_trials_4B([1 2 4]);
-% num_trials_5A = num_trials_5A([1 2 4]);
-% num_trials_5B = num_trials_5B([1 2 4]);
-% num_trials_6A = num_trials_6A([1 2 4]);
-% num_trials_6B = num_trials_6B([1 2 4]);
+% caclulate SEM for each motion profile coupling scheme combo
+SEM_shot_save_4A = STD_shot_save_4A./sqrt(num_trials_4A);
+SEM_shot_save_4B = STD_shot_save_4B./sqrt(num_trials_4B);
+SEM_shot_save_5A = STD_shot_save_5A./sqrt(num_trials_5A);
+SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
+SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
+SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
 
-SEM_shot_save_4A = STD_shot_save_4A_test./sqrt(num_trials_4A([1 2 4]));
-SEM_shot_save_4B = STD_shot_save_4B_test./sqrt(num_trials_4B([1 2 4]));
-SEM_shot_save_5A = STD_shot_save_5A_test./sqrt(num_trials_5A([1 2 4]));
-SEM_shot_save_5B = STD_shot_save_5B_test./sqrt(num_trials_5B([1 2 4]));
-SEM_shot_save_6A = STD_shot_save_6A_test./sqrt(num_trials_6A([1 2 4]));
-SEM_shot_save_6B = STD_shot_save_6B_test./sqrt(num_trials_6B([1 2 4]));
-
-All_shot_4A = All_shot_4A(:,[1 2 4]);
-All_shot_4B = All_shot_4B(:,[1 2 4]);
-All_shot_5A = All_shot_5A(:,[1 2 4]);
-All_shot_5B = All_shot_5B(:,[1 2 4]);
-All_shot_6A = All_shot_6A(:,[1 2 4]);
-All_shot_6B = All_shot_6B(:,[1 2 4]);
-
-% This could be wrong so double check but I think this should be correct:
-
-% All_shot_4A_test = sum_rot_4A./num_trials_4A;
-% All_shot_4B_test = sum_rot_4B./num_trials_4B;
-% All_shot_5A_test = sum_rot_5A./num_trials_5A;
-% All_shot_5B_test = sum_rot_5B./num_trials_5B;
-% All_shot_6A_test = sum_rot_6A./num_trials_6A;
-% All_shot_6B_test = sum_rot_6B./num_trials_6B;
-
+match_list = [ "N_4_00mA_8_00"; "0_00mA";  "P_4_00mA_8_00"];
 %update the label
 Label.shot_4A = match_list;
 Label.shot_4B = match_list;
