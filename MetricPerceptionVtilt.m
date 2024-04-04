@@ -248,6 +248,10 @@ Label_slope = match_list;
    eval(['  save ' ['S' subject_str 'Perception-tilt-Slope' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
+   for j = 1:length(match_list)
+    eval(["shot_" + match_list(j) + " =[];"]);
+    eval(["tilt_" + match_list(j) + " =[];"]);
+   end
    close all;
     
 end
