@@ -16,7 +16,7 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = [2044:2048, 2050,2052];  % Subject List 
+subnum = [2044:2048, 2050,2052, 2063:2065];  % Subject List 
 numsub = length(subnum);
 subskip = [ 2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
