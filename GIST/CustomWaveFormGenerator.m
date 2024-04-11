@@ -8,16 +8,16 @@ close all
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Provide some time with zero motion at the beginnign and end, if desired
-sr=1000;          	            % sample rate 1000 Hz
+sr=100;          	            % sample rate 1000 Hz
 zpad=0;                         % sec at beginning runs padded with zeros
 zpad_after = 0;                 % sec at the end of runs padded with zeros
-cycles = 1;                     % number of cycles for the sine to run
-freq = [0.07,0.19, 0.36  ];       % Hz 1:*[0.07,0.18, 0.31], *[0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36  ];
-ampl = [1 1 1 ];                % +/- deg 
-amp_scale = 1000;
-phase_shift = [ 0, 0, 0];
+cycles = 19;                     % number of cycles for the sine to run
+freq = [0.16 0.33 0.43 0.61 ];       % Hz 1:*[0.07,0.18, 0.31], *[0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36  ];
+ampl = [0.7 1 0.48 0.18 ];                % +/- deg 
+amp_scale = 1500;
+phase_shift = [ 0, 0, 0, 0];
 
-s1 = 'SumOfSin6A_1mA.csv'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
+s1 = 'MacDougall_1_5mA_max4mA_100HzSample.csv'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
 %s5 = '_vtilt_ttilt_on.txt';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 filename = strcat(s1); %,s2,s3,s4,s5
@@ -28,7 +28,7 @@ filename = strcat(s1); %,s2,s3,s4,s5
 cd(fpath)
 
 %% TTS Tilt Profile
-tramp = 1/freq(3)/2; % ensures its goes to full sine at a peak, so its smooth
+tramp = 1/freq(4)/2; % ensures its goes to full sine at a peak, so its smooth
 tend = 2*tramp + cycles / freq(1);     % time required to do ramp up, # cycles, ramp down
 
 % Sum of Sines
@@ -62,7 +62,10 @@ ttsSin = sum(ramp_sine,2);
 Rcom = [zeros(zpad*sr,1); ttsSin; zeros(zpad_after*sr,1)];
 max_amp = max(abs(Rcom));
 Rcom = Rcom*amp_scale/max_amp;
-Rcom = floor([0 Rcom' 0])'; %
-% Rcom = floor([0 Rcom(1:18508 )' 0])'; %
+% Rcom = floor([0 Rcom' 0 4000 0 -4000 0])'; %
+Rcom = floor([0 Rcom(1:10000)' 0 4000 0 -4000 0])'; %
+% Rcom = floor([0 Rcom(1:18368 )' 0 5000 0 -5000 0])'; %
+
+plot([Rcom' Rcom']);
 
 writematrix(Rcom,filename)
