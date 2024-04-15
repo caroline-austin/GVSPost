@@ -12,7 +12,7 @@ clear;
 clc; 
 
 %% set up
-subnum =  [2049, 2051,2053:2057, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
 numsub = length(subnum);
 subskip = [2058 2059 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = [ "N_4_00mA_8_00"; "0_00mA"; "0_00mA"; "P_4_00mA_8_00"];

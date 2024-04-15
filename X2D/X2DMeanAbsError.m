@@ -6,7 +6,7 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum =  [2049, 2051,2053:2057, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
 numsub = length(subnum);
 subskip = [2058 2059  40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
@@ -229,9 +229,18 @@ sgtitle(['Mean Absolute Deflection' ],fontsize = 36); % for nice pretty plots
 %     hold off;
 
     %create box plot
+    %%
 %create box plot
 figure;
 boxplot(mae_save_all_norm);
+hold on;
+for j = 1:numsub
+    for i = 1:width(mae_save_all)
+        
+        plot(i+xoffset2(j), mae_save_all_norm(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
 xticks([1 2 3 ]);
 xticklabels(plot_list);
 hold on; 
@@ -241,7 +250,7 @@ sgtitle(['MAE-Sham-Removed-All-Profiles: AllSubjectsBoxPlot' datatype ]);
     saveas(gcf, [ 'MAE-Sham-Removed-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
     cd(code_path);
     hold off;
-
+%%
 
 figure;
 

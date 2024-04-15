@@ -6,7 +6,7 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum =  [2049, 2051,2053:2057, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
 numsub = length(subnum);
 subskip = [2058 2059 2060 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
@@ -295,6 +295,36 @@ for j = 1:numsub
     for i = 1:width(slope_save_all)
         
         plot(i+xoffset2(j), slope_save_all(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Perception/Actual (deg/deg)    ")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
+hold on; 
+title(['Perception/Actual Tilt Slope GVS Effect' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
+f.Position = [100 100 1500 750];
+ % cd(plots_path);
+ %    saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+ %    cd(code_path);
+ %    hold off;   
+ %%
+f= figure;
+b = boxplot(slope_save_all-slope_save_all(:,2));
+% b.BoxFaceColor = blue;
+plot_label = ["- Angle"; "No GVS"; "+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(slope_save_all)
+        
+        plot(i+xoffset2(j), slope_save_all(j, i)-slope_save_all(j,2),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
         hold on;
     end
 end
