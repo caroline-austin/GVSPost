@@ -42,9 +42,9 @@ for j = 1:3
             dir = "B";
         end
         for i = 1:3
-            if i ==1 ||i ==3
-                continue
-            end
+            % if i ==1 ||i ==3
+            %     continue
+            % end
             condition = conditions(i);
             motion = motions(j);
     
