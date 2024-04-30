@@ -12,9 +12,9 @@ clear;
 clc; 
 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [1011:1022, 1066:1067];  % Subject List 
 numsub = length(subnum);
-subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1006 1007 1008 1009 1010 1013 1015 1019 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
@@ -304,7 +304,8 @@ SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
 SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
 SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
 
-match_list = [ "N_4_00mA_8_00"; "0_00mA";  "P_4_00mA_8_00"];
+match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA"; "P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
+
 
 %update the label
 Label.shot_4A = match_list;
@@ -322,4 +323,4 @@ Label.shot_6B = match_list;
        'All_GVS_4A All_GVS_4B All_GVS_5A All_GVS_5B All_GVS_6A All_GVS_6B'];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   %eval (['clear ' vars_2_save])
+   eval (['clear ' vars_2_save])
