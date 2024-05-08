@@ -6,15 +6,32 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [1011:1022, 1066:1068];  % Subject List 
 numsub = length(subnum);
-subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 1019 1067 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
 
 Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";"k*";"khexagram";"kdiamond";];
+yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
+yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
+xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25;0.1;-0.1;0.025]; 
+
+
 % set up pathing
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -144,6 +161,10 @@ Label_mae = match_list;
    eval(['  save ' ['S' subject_str 'MeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
+   for j = 1:length(match_list)
+    eval(["shot_" + match_list(j) + " =[];"]);
+    eval(["tilt_" + match_list(j) + " =[];"]);
+   end
    close all;
     
 end
@@ -161,18 +182,48 @@ for p = 1: length(prof)
 end 
 
 %create box plot
-%create box plot
 figure;
-boxplot(mae_save_all);
-xticks([1 2 3 4 5 6 7]);
-xticklabels(plot_list);
+b = boxplot(mae_save_all);
+% b.BoxFaceColor = blue;
+plot_label = ["- Velocity";"- Semi";"- Angle"; "No GVS";"+ Velocity"; "+ Semi";"+ Angle" ];
+% xticks([1 2 3 4 5 6 ]);
+xticklabels(plot_label);
+hold on;
+
+for j = 1:numsub
+    for i = 1:width(mae_save_all)
+        
+        plot(i+xoffset2(j), mae_save_all(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+
+xlabel("GVS Coupling Scheme")
+ylabel("Mean Absolute Deflection")
+ax = gca;
+ax.XAxis.FontSize = 32;
+ax.YAxis.FontSize = 32;
 hold on; 
-sgtitle(['MAE-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+sgtitle(['Mean Absolute Deflection' ],fontsize = 36); % for nice pretty plots
+% sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
 
  cd(plots_path);
     saveas(gcf, [ 'MAE-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
     cd(code_path);
     hold off;
+
+% %create box plot
+% figure;
+% boxplot(mae_save_all);
+% xticks([1 2 3 4 5 6 7]);
+% xticklabels(plot_list);
+% hold on; 
+% sgtitle(['MAE-All-Profiles: AllSubjectsBoxPlot' datatype ]);
+% 
+%  cd(plots_path);
+%     saveas(gcf, [ 'MAE-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+%     cd(code_path);
+%     hold off;
 
     %create box plot
 %create box plot
@@ -247,13 +298,17 @@ end
     saveas(gcf, [ 'MAEShortAllSubjects' datatype  ]); 
     cd(code_path);
     hold off; 
+%%
+    mae_means = mean(mae_save_all, 'omitnan');
+    mae_std = std(mae_save_all, 'omitnan');
+
 
     %% save files
    cd(plots_path);
    vars_2_save = ['Label_mae mae_save_4A mae_save_4B mae_save_5A mae_save_5B mae_save_6A mae_save_6B mae_save_all mae_save_all_norm' ];
    eval(['  save ' ['SAllMeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
-   eval (['clear ' vars_2_save])
+   % eval (['clear ' vars_2_save])
    close all;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)

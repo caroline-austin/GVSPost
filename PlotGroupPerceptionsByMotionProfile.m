@@ -2,7 +2,11 @@ Type = '4A';
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
-Var = load("DynamicData.mat");
+% modified by Caroline 1/5/24
+DataName = "DynamicDataGain.mat";
+
+%% Load
+Var = load("./data/"+DataName);
 
 % User Definied
 %Type = 'Angle' (7.0), 'Velocity' (8.0), or 'Semi' (7.5)
@@ -63,7 +67,7 @@ for j = 1:3
                 angplot = interp1(time,tiltang(:,1),timeplot);
                 percplot = interp1(time,perceptions,timeplot);
                 semplot = interp1(time,percSEM,timeplot);
-        
+                % yyaxis right
                 plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
                 plot(timeplot,percplot,'-','LineWidth',LW,'color',...
                     LC(i,:),'LineStyle',LS(i))
@@ -79,7 +83,7 @@ for j = 1:3
                 % plot GVS stuff
                 GVS_name = "All_GVS_"+Type;
                 GVS_data = Var.(GVS_name);
-                stimulations = GVS_data(:,condition);
+                stimulations = -1*GVS_data(:,condition);
 
                 timeplot = 0:dt*2:T;
                 angplot = interp1(time,tiltang(:,1),timeplot);
@@ -96,9 +100,11 @@ for j = 1:3
             % end
         end
         hold off
-        ylim([-20 20])
+        ylim([-12 12])
+        xlim([0 27])
         set(gca,'FontSize',16)
         if k == 2
+            % yyaxis right
             ylabel('Tilt (deg)')
             yticks([-10 0 10])
         elseif k == 1
@@ -114,18 +120,24 @@ for j = 1:3
             xticks(0:5:25)
         end
         if k ==2 && j==1
-            title('Perceptions')
+            title('Perceptions', FontSize= 30)
         end
         if k == 1 && j ==1
-            title('Coupled GVS Profiles')
-            ylabel('Velocity (mA)')
+            title('Coupled GVS Waveforms', FontSize= 30)
+            ylabel(' Velocity (mA)')
         elseif k == 1 && j ==2
-            ylabel('Semi (mA)')
+            ylabel('Joint (mA)  ')
         elseif k == 1 && j ==3
-            ylabel('Angle (mA)')
+            ylabel('Angle (mA)  ')
         end
+        ax = gca;
+        ax.XAxis.FontSize = 20;
+        ax.YAxis.FontSize = 20;
      end
 end
 % title(t,Title,'Fontsize',16)
 legend({'Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating'},'Position',[0.8 0.325 0.15 0.15])
-f.Position = [100 100 1000 500];
+f.Position = [100 100 1500 620];
+% ax = gca;
+% ax.XAxis.FontSize = 32;
+% ax.YAxis.FontSize = 32;

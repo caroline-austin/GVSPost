@@ -1,3 +1,15 @@
+%%
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+red =[226 107 109]/250;
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
+%%
 plot(All_avg_net_over_4A);
 hold on; plot(All_avg_net_over_5A);
 hold on; plot(All_avg_net_over_6A);
@@ -270,12 +282,13 @@ ylim([-20 20])
 legend(Label.shot_4A(4:end))
 
 %% plot tilt slope against rating with subject symbols
-
+% used for IEEE paper
 %load  GVS Susceptibility and perception v. GVS and perception v. tilt
+%(sham removed)
  tilt_slope = slope_save_all;
 
 sub_symbols = [ "pentagram";"<";"hexagram";">"; "diamond";"v";"o";"+"; "*"; "x"; "square"; "^"; ];
-figure;
+fig=figure;
 tiledlayout(2,3,'TileSpacing','tight')
 for j = 1:7
     
@@ -283,8 +296,15 @@ for j = 1:7
         nexttile 
     plot(MotionRating_min_save(:,3), tilt_slope(:,j),'.','MarkerSize',0.1); 
     eval(["h" + Label_slope(j) + "=lsline;"])
+    eval(["h" + Label_slope(j) + ".LineWidth=3;"])
     eval(["line_y(j,:)=h" + Label_slope(j) + ".YData;"])
     corr_slope(j)=(line_y(j,2)-line_y(j,1))/3;
+
+    if j<4
+        eval(["h" + Label_slope(j) + ".Color=green;"])
+    else 
+        eval(["h" + Label_slope(j) + ".Color=red;"])
+    end
     hold on;
     for i = 1:length(tilt_slope)
         plot(MotionRating_min_save(i,3), tilt_slope(i,j),sub_symbols(i),'MarkerSize',20, "Color","black", "LineWidth", 2);
@@ -293,48 +313,54 @@ for j = 1:7
     xlim([1,4.1])
     xticks([1,2,3,4])
     if j == 1 
-            ylabel('Attenuating ',FontSize=35)
-            yticks([-.5 0 ])
+            ylabel({'';'Attenuating'},FontSize=30)
+            yticks([0.25 .5 .75 1])
     elseif j ==5
-            ylabel('Amplifying',FontSize=35)
-            
-            yticks([ 0 0.5])
+            % ylabel({'                                  Normalized Perception/Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
+            ylabel({'                           Perception/Actual Tilt (Deg/Deg)';'Amplifying'},FontSize=30)
+            yticks([ .75 1 1.25 1.5])
     else
             yticks([])
             
     end
 
     if j == 1
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
         ax.YAxis.FontSize = 25;
         title("Velocity",FontSize=30)
     elseif  j ==2
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
-        title("Semi",FontSize=30)
+        title("Joint",FontSize=30)
     elseif j ==3 
-        ylim([-0.6, 0])
+        % ylim([-0.6, 0])
+        ylim([.25, 1])
         xticks([])
         ax = gca;
 %         ax.YAxis.FontSize = 25;
         title("Angle",FontSize=30)
     elseif j ==5
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         
         ax.YAxis.FontSize = 25;
 %         ylabel('Amplifying',FontSize=30)
     elseif j == 7
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
     elseif j == 6
-        ylim([0, .6])
+        % ylim([0, .6])
+        ylim([.75, 1.5])
         ax = gca;
         ax.XAxis.FontSize = 25;
         xlabel("Minimum Current (mA) for Moderate Motion Report",FontSize=30);
@@ -347,11 +373,37 @@ for j = 1:7
 
     end
 end
+sgtitle("GVS Effect vs. GVS Susceptibility", "FontSize", 36)
+fig.Position = [100 100 1400 750];
 % lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
 %         lgd.Layout.Tile = 8;
 % xlabel("Minimum Current (mA) for Moderate Motion",FontSize=30);
 % ylabel("Perception-Actual Tilt Correlation Slope",FontSize=30);
 % xlim ([1 4])
+%% 
+% load GVS susceptibility verbal reports load SubjectKGVS before running
+% sub_symbols = ["ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = [ "kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^"; ];
+fig = figure;
+plot(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]),'.','MarkerSize',0.001); hold on;
+h=lsline(); hold on;
+h.LineWidth = 4;
+line_y=h.YData;
+line_x=h.XData;
+corr_slope=(line_y(2)-line_y(1))/(line_x(2)-line_x(1));
+corr_slope_2 = corrcoef(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]));
+mdl = fitlm(MotionRating_min_save([4,7:9,11:12],3),Gain_sub([4,7:9, 11:12]));
+for i = 1:12
+    plot(MotionRating_min_save(i,3),Gain_sub(i),sub_symbols(i),'MarkerSize',25, LineWidth= 2);
+    hold on;
+end
+ylim([0.25 2])
+title("GVS Effect vs. GVS Susceptibility", "FontSize", 36)
+xlabel("Minimum Current (mA) for Moderate Motion Report",FontSize=30);
+ylabel('K_G_V_S ');
+fontsize(fig, 36, "points")
+fig.Position = [100 100 1400 750];
+
 %% plot tilt slope against rating
 %load  GVS Susceptibility and perception v. GVS and perception v. tilt
 sub_symbols = [ "pentagram";"<";"hexagram";">"; "diamond";"v";"o";"+"; "*"; "x"; "square"; "^"; ];

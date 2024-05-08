@@ -10,7 +10,7 @@ clear;
 clc; 
 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [ 1011:1022 1066:1068];  % Subject List 1011:1022
 numsub = length(subnum);
 subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = ''; %can change this to specify which data you want to use for the checkng
@@ -109,7 +109,10 @@ for sub = 1:numsub
         shot_6A = shot_6A + bias_correction;
         shot_6B = shot_6B + bias_correction;
 
+        max_bis(sub) = max([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
+         min_bis(sub) = min([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
 
+        all_bias(sub) = bias_correction;
 %% save files
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
@@ -122,6 +125,8 @@ for sub = 1:numsub
 
 
 end
+mean_bias = mean(abs(all_bias));
+std_bias = std(abs(all_bias));
 
 function bias=calc_bias(motion, report)
         %find average for each signal

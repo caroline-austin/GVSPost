@@ -12,9 +12,10 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = 1011:1022;  % Subject List 
+subnum = [ 1011:1022 1066:1068];  % Subject List 1011:1022
 numsub = length(subnum);
-subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
+% 1015 is included here for completeness but excluded later
 
 %% Operating System Check
 if ismac || isunix % Runs the Mac or Linux operating system code
