@@ -7,9 +7,9 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [1011:1022 1066:1068];  % Subject List 
 numsub = length(subnum);
-subskip = [1006 1007 1008 1009 1010 1013 1015 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1006 1007 1008 1009 1010 1013 1015 1019 1067 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = ["N700"; "N750"; "N800"; "000mA";"P700"; "P750"; "P800"];
 %match_list = 
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
@@ -39,11 +39,11 @@ Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
 plot_list = ["N Vel"; "N Ang&Vel"; "N Ang"; "None";"P Vel"; "P Ang&Vel"; "P Ang"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
-sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";"k*";"khexagram";"kdiamond";];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
-xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25;0.1;-0.1;0.025]; 
 
 
 for sub = 1:numsub
