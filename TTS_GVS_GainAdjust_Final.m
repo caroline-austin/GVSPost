@@ -6,7 +6,7 @@ clc; clear; close all; %warning off;
 %% set up
 subnum = [ 1011:1022 1066:1068];  % Subject List 1011:1022
 numsub = length(subnum);
-subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [1013 1015 1067];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTime';
 
 code_path = pwd; %save code directory
@@ -145,6 +145,7 @@ for sub = 1:numsub
 
 Gain_Save{sub} = [avg_gain_4A  avg_gain_4B  avg_gain_5A  avg_gain_5B  avg_gain_6A  avg_gain_6B];
 all_avg_gain(sub) = avg_gain;
+
 end
 mean_gain = mean(all_avg_gain, 'omitnan');
 std_gain = std(all_avg_gain, 'omitnan');

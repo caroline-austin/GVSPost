@@ -11,6 +11,8 @@ colors;
 % LC = [redseq(80,:);redseq(50,:);redseq(20,:)];
 % LC = [red;blue;green];
 LC = [226 107 109;128 128 128;90 160 163]/255;
+LC(1,:) = red;
+LC(3,:) = blue;
 
 
 %% Make Figure
@@ -18,7 +20,7 @@ dir = "B";
 nummot = 1; %number of motions to plot
 motions = ["4";"5";"6"];
 
-f=figure;
+f=figure('Renderer', 'painters');
 tiledlayout(4*nummot,3,'TileSpacing','none');
 for d = 1:nummot
     motion = motions(d);
@@ -54,7 +56,7 @@ for d = 1:nummot
                     current = tiltang(:,1);
                 case 'Semi'
                     conditions = [6 4 2];
-                    Title = 'Semi Coupled GVS';
+                    Title = 'Joint Coupled GVS';
                     current = tiltang(:,3)/2+tiltang(:,1)/2;
             end
             current = current*4/max(abs(current));
@@ -140,6 +142,6 @@ for d = 1:nummot
         end
     end
 end
-legend({'Physical Tilt','Amplifying','','','','','No GVS','','','','','Attenuating'},'Position',[0.8 0.325 0.15 0.15])
-f.Position = [100 100 1250 500*nummot];
+legend({'Physical Tilt','Positive Coupling','','','','','No GVS','','','','','Negative Coupling'},'Position',[0.8 0.325 0.15 0.15])
+f.Position = [100 100 1250 300*nummot];
 end

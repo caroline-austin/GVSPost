@@ -4,17 +4,17 @@ clc;clear;close all;
 %%
 % PreProcess
 	% TTS_GVS_Files_Final.m
-	% TTS_GVS_IndvGroupByProfile_Final.m
-	% TTS_GVS_Trial_Check_Final.m
-	% TTS_GVS_IndvPlotBiasAdjust_Final.m
-	% TTS_GVS_IndvPlotTimeAdjust_Final.m
+	% TTS_GVS_IndvGroupByProfile_Final
+	% TTS_GVS_TrialCheck_Final
+	% TTS_GVS_IndvPlotBiasAdjust_Final
+	TTS_GVS_IndvPlotTimeAdj_Final
 
 % Aggregate Data
 TTS_GVS_GainAdjust_Final
 TTS_GVS_Aggregate_Final
 
 % Save Aggregate Data to .mat
-DataName = "DynamicDataGain.mat";
+DataName = "DynamicDataGainFinal.mat";
 save("./data/"+DataName) 
 
 %% Load
