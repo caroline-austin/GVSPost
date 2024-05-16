@@ -34,7 +34,7 @@ gain = -0.3; k = (gain/9.81)*(180/pi);
 zpad=1;                         % sec at beginning runs padded with zeros
 zpad_after = 1;                 % sec at the end of runs padded with zeros
 cycles = 1;                     % number of cycles for the sine to run
-freq = [0.07,0.18, 0.31  ];       % Hz 1:*[0.07,0.18, 0.31], *[0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36  ];
+freq = [0.07,0.18, 0.31  ];       % Hz 1:*4 [0.07,0.18, 0.31], *5 [0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *6 [0.07,0.19, 0.36  ];
 ampl = [1 1 1 ];                % +/- deg 
 amp_scale = 8;
 phase_shift = [ 0, 0, 0];
