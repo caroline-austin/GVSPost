@@ -97,9 +97,9 @@ get_anova_table(res_mae_gain.aov)
 
 pairwise.t.test(mae_bias_time_gain[,3],mae_bias_time_gain[,2],p.adj = "bonf")
 
-res_mae_gain_neg.aov <- anova_test(data = mae_bias_time_gain[1:36,], dv = Var, wid = SID, within = CouplingScheme)
+res_mae_gain_neg.aov <- anova_test(data = mae_bias_time_gain[1:45,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_mae_gain_neg.aov)
-res_mae_gain_pos.aov <- anova_test(data = mae_bias_time_gain[49:84,], dv = Var, wid = SID, within = CouplingScheme)
+res_mae_gain_pos.aov <- anova_test(data = mae_bias_time_gain[61:105,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_mae_gain_pos.aov)
 
 #############################
@@ -136,9 +136,9 @@ get_anova_table(res_perception_tilt.aov)
 
 pairwise.t.test(perception_tilt_bias_time[,3],perception_tilt_bias_time[,2],p.adj = "bonf")
 
-res_perception_tilt_neg.aov <- anova_test(data = perception_tilt_bias_time[1:36,], dv = Var, wid = SID, within = CouplingScheme)
+res_perception_tilt_neg.aov <- anova_test(data = perception_tilt_bias_time[1:45,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_perception_tilt_neg.aov)
-res_perception_tilt_pos.aov <- anova_test(data = perception_tilt_bias_time[49:84,], dv = Var, wid = SID, within = CouplingScheme)
+res_perception_tilt_pos.aov <- anova_test(data = perception_tilt_bias_time[61:105,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_perception_tilt_pos.aov)
 
 #################################
@@ -174,9 +174,9 @@ get_anova_table(res_perception_tilt_gain.aov)
 
 pairwise.t.test(perception_tilt_bias_time_gain[,3],perception_tilt_bias_time_gain[,2],p.adj = "bonf")
 
-res_perception_tilt_gain_neg.aov <- anova_test(data = perception_tilt_bias_time_gain[1:36,], dv = Var, wid = SID, within = CouplingScheme)
+res_perception_tilt_gain_neg.aov <- anova_test(data = perception_tilt_bias_time_gain[1:45,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_perception_tilt_gain_neg.aov)
-res_perception_tilt_gain_pos.aov <- anova_test(data = perception_tilt_bias_time_gain[49:84,], dv = Var, wid = SID, within = CouplingScheme)
+res_perception_tilt_gain_pos.aov <- anova_test(data = perception_tilt_bias_time_gain[61:105,], dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_perception_tilt_gain_pos.aov)
 
 #################################
