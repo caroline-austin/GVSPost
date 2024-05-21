@@ -6,9 +6,11 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [1011:1022, 1066:1068];  % Subject List 
+subskip = [1006 1007 1008 1009 1010 1011 1012 1013 1015 1019 1067 40006];  %DNF'd subjects or subjects that didn't complete this part
+
 numsub = length(subnum);
-subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+% subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = ''; % no data type specifiers for verbal reports
 
 % colors- first 5 are color blind friendly colors

@@ -10,9 +10,9 @@ file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 1011:1022;  % Subject List 
-numsub = length(subnum); % calculate how many subjects are specified in line above
-subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subnum = [1011:1022, 1066:1068];  % Subject List 
+subskip = [1006 1007 1008 1009 1010 1011 1012 1013 1015 1019 1067 40006];  %DNF'd subjects or subjects that didn't complete this part
+numsub = length(subnum);
 
 used_sub = 0; % initialize variable that keeps track of the subjects' data that is analyzed in this step
 for sub = 1:numsub %interate through all of the specified subjects
