@@ -18,7 +18,7 @@ cd(code_path); cd .. ;
 
 subnum = [2044:2048, 2050,2052, 2063:2065];  % Subject List 
 numsub = length(subnum);
-subskip = [ 2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 sub_symbols = ["kpentagram-";"k<-";"khexagram-";"k>-"; "kdiamond-";"kv-";"ko-";"k+-"; "k*-"; "kx-"; "ksquare-"; "k^-";];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
@@ -371,16 +371,17 @@ end
 % xticklabels([Label.MainResultsRow])
 % title ("Most Tingling");
 % 
+
 %%
 figure;
-sgtitle(['SAll Total Responses'])
+sgtitle('SAll Total Responses')
 subplot(2,1,1)
 b=boxplot(sub_total_motion_wins);
 hold on;
 for j = 1:numsub
     for i = 1:width(sub_total_motion_wins)
 
-        plot(i+xoffset2(j), sub_total_motion_wins(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        plot(i+xoffset2(j), sub_total_motion_wins(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
         hold on;
     end
 end
@@ -393,13 +394,33 @@ hold on;
 for j = 1:numsub
     for i = 1:width(sub_total_tingle_wins)
 
-        plot(i+xoffset2(j), sub_total_tingle_wins(j, i),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        plot(i+xoffset2(j), sub_total_tingle_wins(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
         hold on;
     end
 end
 xticklabels([Label.MainResultsRow])
 title ("Most Tingling");
-fontsize(32,"points")
+fontsize(25,"points")
+
+figure;
+sgtitle('Visual Flashes')
+bar(total_vis_wins.');
+xticklabels([0.1 1 2 3 4].')
+xlabel('Current (mA)')
+ylabel('Total Reports')
+legend("3 Electrode", "4 Electrode")
+hold on
+
+figure;
+sgtitle('Metallic Taste')
+bar(total_metal_wins.');
+xticklabels([0.1 1 2 3 4].')
+xlabel('Current (mA)')
+ylabel('Total Reports')
+legend("3 Electrode", "4 Electrode")
+hold on
+
+
 
 % %% can add any aggregate subj plots here
 % figure;

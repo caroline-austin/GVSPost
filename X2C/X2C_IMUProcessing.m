@@ -16,23 +16,21 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = 2034:2043;  % Subject List 
+subnum = [2044:2048, 2050,2052, 2063:2064];  % Subject List 
 numsub = length(subnum);
-subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 sensorpositionplot = 0;
 
 %%
 total_results = zeros(3,2);
-forhead_fft_SpHz_accx = NaN(10,numsub);
-shoulder_fft_SpHz_accx = NaN(10,numsub);
-neck_fft_SpHz_accx = NaN(10,numsub);
-forhead_fft_SpHz_accy = NaN(10,numsub);
-shoulder_fft_SpHz_accy = NaN(10,numsub);
-neck_fft_SpHz_accy = NaN(10,numsub);
-forhead_fft_SpHz_accz = NaN(10,numsub);
-shoulder_fft_SpHz_accz = NaN(10,numsub);
-neck_fft_SpHz_accz = NaN(10,numsub);
+three_electrode_fft_SpHz_accx = NaN(10,numsub);
+four_electrode_fft_SpHz_accx = NaN(10,numsub);
+three_electrode_fft_SpHz_accy = NaN(10,numsub);
+four_electrode_fft_SpHz_accy = NaN(10,numsub);
+three_electrode_fft_SpHz_accz = NaN(10,numsub);
+four_electrode_fft_SpHz_accz = NaN(10,numsub);
+
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -61,7 +59,7 @@ for sub = 1:numsub
         %load trial data
         cd([subject_path '/IMU']);
         load(IMU_files{file});
-        x_tick_label{file_count,sub} = IMU_files{file}(13:16);
+        x_tick_label{file_count,sub} = IMU_files{file}(7:12);
 
         Euler = imu_data(2:end,1:3); % exclude first line of 0's
         % not sure why, but order needs to be rotated like this- maybe so that the
@@ -122,23 +120,17 @@ for sub = 1:numsub
          [fft_SpHz_accymag(file_count,sub),freq_SpHzmag(file_count,sub),P1gymag,fgymag] = fftcalc(Y_acc,time);
 
         switch x_tick_label{file_count,sub}
-            case "Forh"
+            case "3_elec"
                 f_index = f_index+1;
-                forhead_fft_SpHz_accx(f_index,sub) = fft_SpHz_accx(file_count,sub);
-                forhead_fft_SpHz_accy(f_index,sub) = fft_SpHz_accy(file_count,sub);
-                forhead_fft_SpHz_accz(f_index,sub) = fft_SpHz_accy(file_count,sub);
-            case "Shou"
+                three_electrode_fft_SpHz_accx(f_index,sub) = fft_SpHz_accx(file_count,sub);
+                three_electrode_fft_SpHz_accy(f_index,sub) = fft_SpHz_accy(file_count,sub);
+                three_electrode_fft_SpHz_accz(f_index,sub) = fft_SpHz_accy(file_count,sub);
+            case "4_elec"
                 s_index = s_index+1;
-                shoulder_fft_SpHz_accx(s_index,sub) = fft_SpHz_accx(file_count,sub);
-                shoulder_fft_SpHz_accy(s_index,sub) = fft_SpHz_accy(file_count,sub);
-                shoulder_fft_SpHz_accz(s_index,sub) = fft_SpHz_accz(file_count,sub);
+                four_electrode_fft_SpHz_accx(s_index,sub) = fft_SpHz_accx(file_count,sub);
+                four_electrode_fft_SpHz_accy(s_index,sub) = fft_SpHz_accy(file_count,sub);
+                four_electrode_fft_SpHz_accz(s_index,sub) = fft_SpHz_accz(file_count,sub);
 
-            case "Neck"
-                n_index = n_index+1;
-                neck_fft_SpHz_accx(n_index,sub) = fft_SpHz_accx(file_count,sub);
-                neck_fft_SpHz_accy(n_index,sub) = fft_SpHz_accy(file_count,sub);
-                neck_fft_SpHz_accz(n_index,sub) = fft_SpHz_accz(file_count,sub);
-    
         end
 
     end
@@ -146,19 +138,16 @@ for sub = 1:numsub
 end
 
 %% plot results
-figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accx); xticklabels([]); title("Forehead"); ylim([0 20*10^-3]);
-subplot(3,1,2);boxplot(shoulder_fft_SpHz_accx); xticklabels([]); title("Shoulder"); ylim([0 20*10^-3]);
-subplot(3,1,3); boxplot(neck_fft_SpHz_accx); title("Neck");ylim([0 20*10^-3]);
+figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accx); xticklabels([]); title("Three Electrode"); ylim([0 20*10^-3]);
+subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accx); xticklabels([]); title("Four Electrode"); ylim([0 20*10^-3]);
 xticklabels(subnum);
 sgtitle("X sway near 0.5Hz");
-figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accy); xticklabels([]); title("Forehead"); ylim([0 0.3]);
-subplot(3,1,2);boxplot(shoulder_fft_SpHz_accy); xticklabels([]); title("Shoulder"); ylim([0 0.3]);
-subplot(3,1,3); boxplot(neck_fft_SpHz_accy); title("Neck"); ylim([0 0.3]);
+figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accy); xticklabels([]); title("Three Electrode"); ylim([0 0.3]);
+subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accy); xticklabels([]); title("Four Electrode"); ylim([0 0.3]);
 xticklabels(subnum);
 sgtitle("Y sway near 0.5Hz");
-figure; subplot(3,1,1); boxplot(forhead_fft_SpHz_accz); xticklabels([]); title("Forehead"); ylim([0 0.4]);
-subplot(3,1,2);boxplot(shoulder_fft_SpHz_accz); xticklabels([]); title("Shoulder"); ylim([0 0.4]);
-subplot(3,1,3); boxplot(neck_fft_SpHz_accz); title("Neck"); ylim([0 0.4]);
+figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accz); xticklabels([]); title("Three Electrode"); ylim([0 0.4]);
+subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accz); xticklabels([]); title("Four Electrode"); ylim([0 0.4]);
 xticklabels(subnum);
 sgtitle("Z sway near 0.5Hz");
 
@@ -208,8 +197,8 @@ function [mfftsphz,freq_SpHz,P1,f] = fftcalc(Y,time)
         % xline(maxline,'--','Color','red'); xline(minline,'--','Color','red');
         % ylim([0 1.5]);
         % 
-        % % sgtitle(strrep(trial_name,'_','.'));
-        % %title("Single-Sided Amplitude Spectrum")
+        % sgtitle(strrep(trial_name,'_','.'));
+        % title("Single-Sided Amplitude Spectrum")
         % xlabel("f (Hz)")
         % ylabel("|P1(f)|")
 end
