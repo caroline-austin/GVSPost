@@ -118,7 +118,7 @@ for sub = 1:numsub
        %  end
         
        %generate filename 
-       filesave_name = strrep(strjoin([ "S" subject_str '_' TTS_profile ... % add in GVS info here
+       filesave_name = strrep(strjoin([ "S" subject_str '_' TTS_profile '_'... % add in GVS info here
            trial_number]), ' ', '');
        % %load GVS profile commanded by sparky
        % cd(gvs_path)
