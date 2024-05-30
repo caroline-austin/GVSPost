@@ -14,10 +14,13 @@ zpad_after = 0;                 % sec at the end of runs padded with zeros
 cycles = 19;                     % number of cycles for the sine to run
 freq = [0.16 0.33 0.43 0.61 ];       % Hz 1:*[0.07,0.18, 0.31], *[0.07,0.25, 0.33 ], [0.07,0.17, 0.27, .47 ],[0.07,0.19, 0.26, .48 ], *[0.07,0.19, 0.36  ];
 ampl = [0.7 1 0.48 0.18 ];                % +/- deg 
-amp_scale = 1500;
-phase_shift = [ 0, 0, 0, 0];
-
-s1 = 'MacDougall_1_5mA_max4mA_100HzSample.csv'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
+% freq = [0.16 0.33 0.43 0.61 ];   %moore macdougall values
+% ampl = [0.7 1 0.48 0.18 ];
+amp_scale = -2000;
+phase_shift = [0,0,0,0]; % [ pi/22, pi/22, pi/22, pi/22];%
+time_shift = 800+1;% (Polaris)0, ~400, *800, *1400, *2000, x2100, ~5000, *7900, ~8600, x8800, *9600
+code_path = pwd;
+s1 = 'MacDougall_2mA_max4mA_100HzSampleNegShift8s.csv'; %s2 = num2str(freq(f)); s3= '_a'; s4 = num2str(ampl(a));
 %s5 = '_vtilt_ttilt_on.txt';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% EDIT HERE %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 filename = strcat(s1); %,s2,s3,s4,s5
@@ -58,14 +61,20 @@ end
 ttsSin = sum(ramp_sine,2);
 % ttsSin = sum(sinusoid,2);
 
+%%
 % add in the zero padding at the beginning and end of the profile
 Rcom = [zeros(zpad*sr,1); ttsSin; zeros(zpad_after*sr,1)];
 max_amp = max(abs(Rcom));
 Rcom = Rcom*amp_scale/max_amp;
+max_val=(max(Rcom(1:10000)));
+max_loc = find(Rcom(1:10000) == max_val);
+Rcom(max_loc)= 4000;
 % Rcom = floor([0 Rcom' 0 4000 0 -4000 0])'; %
-Rcom = floor([0 Rcom(1:10000)' 0 4000 0 -4000 0])'; %
+% Rcom = floor([0 Rcom(1:10000)' ])'; %
+Rcom = floor([0 Rcom(time_shift:10000)' Rcom(1:time_shift)']);
 % Rcom = floor([0 Rcom(1:18368 )' 0 5000 0 -5000 0])'; %
 
-plot([Rcom' Rcom']);
+plot([Rcom Rcom]);
 
 writematrix(Rcom,filename)
+cd(code_path)
