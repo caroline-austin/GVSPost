@@ -59,6 +59,7 @@ for sub = 1:numsub
        end
 
        if (contains(current_mat_file, '12') || contains(current_mat_file, '15')) && length(TTS_data.tilt_actual) > 6004
+           
            TTS_data.tilt_force = TTS_data.tilt_force(1:6004); 
            TTS_data.tilt_actual =  TTS_data.tilt_actual(1:6004); 
            TTS_data.joystick_actual = TTS_data.joystick_actual(1:6004);
@@ -103,7 +104,14 @@ for sub = 1:numsub
        hold on;
        index = length(trial)+1;
        trial{index} = string([current_mat_file]);
+       text = char(trial{index});
 
+       Label.trial(index)= string(text(7:12));
+       % if (contains(current_mat_file, '12d') || contains(current_mat_file, '15d'))
+       %      Label.trial(index)= string(text(21:26));
+       % else
+       % 
+       % end
        
        
 
@@ -117,3 +125,8 @@ end
 %%
 figure; 
 plot(mae_save')
+%%
+figure
+bar(rms_save')
+xticks([1:24])
+xticklabels(["" (Label.trial)])
