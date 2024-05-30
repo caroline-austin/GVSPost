@@ -81,8 +81,7 @@ for sub = 1:numsub
        end
 
        % % figure out the filename of the GVS profile that was run
-       % GVS_profile_name = char(strjoin([ string(Trial_Info(row,4)), ...
-       %     "_", string(Trial_Info(row,5)), "mA_prop", string(Trial_Info(row,6))]));
+       GVS_profile_name = char(strjoin([ string(Trial_Info(row,3))]));
         
        % %figure out what the current was proportional to (7,7.5,8) and store
        % %in a string to use later for file naming
@@ -95,7 +94,7 @@ for sub = 1:numsub
        %      proportion = [GVS_profile_name(end) '_00'];
        %  end
        % 
-       % GVS_profile_name = strrep([strrep(char(GVS_profile_name), '.', '_') '.mat'], ' ', '');
+       GVS_profile_name = strrep([strrep(char(GVS_profile_name), '.', '_') ], ' ', '');
        % 
        % figure out name of the TTS profile that was run (this is 
        % based on the master spread sheet, not the csv filename)
@@ -118,8 +117,8 @@ for sub = 1:numsub
        %  end
         
        %generate filename 
-       filesave_name = strrep(strjoin([ "S" subject_str '_' TTS_profile '_'... % add in GVS info here
-           trial_number]), ' ', '');
+       filesave_name = strrep(strjoin([ "S" subject_str '_' GVS_profile_name '_' TTS_profile ... % add in GVS info here
+             '_' trial_number]), ' ', '');
        % %load GVS profile commanded by sparky
        % cd(gvs_path)
        % Commanded_GVS= load(GVS_profile_name);
