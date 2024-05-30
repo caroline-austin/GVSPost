@@ -9,7 +9,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3001:3003];  % Subject List 1011:1022
+subnum = [ 3004:3004];  % Subject List 1011:1022
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -40,7 +40,7 @@ for sub = 1:numsub
 % only the current subject's sheet
     cd(file_path);
     Trial_Info = readcell('PilotTestTrials.xlsx','Sheet', ... % ManualControlTrials.xlsx
-        ['S' subject_str],'Range','A2:H30'); % may need to increase beyond 30, but make sure those rows have zeros
+        ['S' subject_str],'Range','A2:H35'); % may need to increase beyond 35, but make sure those rows have zeros
     Trial_Num = cell2mat(Trial_Info(:,1));
     Label.DataColumns = readcell('PilotTestTrials.xlsx','Sheet',... 
         ['S' subject_str], 'Range','A1:H1');
@@ -143,10 +143,10 @@ for sub = 1:numsub
        tilt_command = table2array(TTS_data(1:end-1,3))/200; %deg %the net command of disturbance + joystick
        tilt_actual = table2array(TTS_data(1:end-1,5))/200; %deg % the net output moiton of disturbance + joystick
        joystick_actual = table2array(TTS_data(1:end-1,7))/1000; %deg %the joystick input
-       % GVS_actual_mV= table2array(TTS_data(1:end-1,10))/1000; %mV (not mA) % the GVS signal recorded by the TTS 
-       % mustBeNonsparse(GVS_actual_mV);
-       % mustBeFinite(GVS_actual_mV);
-       % GVS_actual_filt = lowpass(GVS_actual_mV,1,50); %filter raw GVS data
+       GVS_actual_mV= table2array(TTS_data(1:end-1,10))/1000; %mV (not mA) % the GVS signal recorded by the TTS 
+       mustBeNonsparse(GVS_actual_mV);
+       mustBeFinite(GVS_actual_mV);
+       GVS_actual_filt = lowpass(GVS_actual_mV,1,50); %filter raw GVS data
        trial_end = find(time,1, 'last');
 
        % Find where there are the random 0s because data was not sent and use
@@ -164,8 +164,8 @@ for sub = 1:numsub
         %variables
        cd(subject_path);
        vars_2_save = ['TTS_data tilt_force tilt_command  tilt_actual joystick_actual' ...
-           ' time plot_time  trial_end' ...
-           ' '];%tilt_velocity GVS_actual_mV GVS_actual_filt
+           ' time plot_time  trial_end GVS_actual_mV GVS_actual_filt' ...
+           ' '];%tilt_velocity 
        eval(['  save ' [char(filesave_name), '.mat '] vars_2_save ' vars_2_save']);      
        cd(code_path)
        eval (['clear ' vars_2_save])

@@ -5,7 +5,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3001:3003];  % Subject List 1011:1022
+subnum = [ 3004:3004];  % Subject List 1011:1022
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -41,7 +41,7 @@ for sub = 1:numsub
 
     figure;
     trial= [];
-    subplot(3,1,1)
+    subplot(4,1,1)
     % for each of the output files read it in and plot it
     for i = 1:num_files
        current_mat_file = char(mat_filenames(i));
@@ -59,45 +59,52 @@ for sub = 1:numsub
        end
 
        if (contains(current_mat_file, '12') || contains(current_mat_file, '15')) && length(TTS_data.tilt_actual) > 6004
-            TTS_data.tilt_force = TTS_data.tilt_force(1:6004); 
+           TTS_data.tilt_force = TTS_data.tilt_force(1:6004); 
            TTS_data.tilt_actual =  TTS_data.tilt_actual(1:6004); 
            TTS_data.joystick_actual = TTS_data.joystick_actual(1:6004);
+           TTS_data.GVS_actual_mV = TTS_data.GVS_actual_mV(1:6004);
        end
 
-       if contains(current_mat_file, '2_0')
+       rms_save(sub,i) = rms(TTS_data.tilt_actual);
+       mae_save(sub,i) = rms(TTS_data.joystick_actual);
+
+       if contains(current_mat_file, '2_0') || contains(current_mat_file, '2_1') || contains(current_mat_file, '2_2')
            TTS_data.tilt_force = TTS_data.tilt_force*-1; 
            TTS_data.tilt_actual =  TTS_data.tilt_actual*-1; 
            TTS_data.joystick_actual = TTS_data.joystick_actual*-1;
-           %TTS_data.GVS_actual_mV = TTS_data.GVS_actual_mV*-1;
-       end
-
-       if contains(current_mat_file, '3_0')
+           TTS_data.GVS_actual_mV = TTS_data.GVS_actual_mV*-1;
+       elseif contains(current_mat_file, '3_0') || contains(current_mat_file, '3_1') || contains(current_mat_file, '3_2')  || contains(current_mat_file, '3_3')
             TTS_data.tilt_force = flip(TTS_data.tilt_force); 
            TTS_data.tilt_actual =  flip(TTS_data.tilt_actual); 
            TTS_data.joystick_actual = flip(TTS_data.joystick_actual);
-           %TTS_data.GVS_actual_mV = flip(TTS_data.GVS_actual_mV);
-       end
-
-       if contains(current_mat_file, '4_0')
+           TTS_data.GVS_actual_mV = flip(TTS_data.GVS_actual_mV);
+       elseif contains(current_mat_file, '4_0') || contains(current_mat_file, '4_1') || contains(current_mat_file, '4_2')
            TTS_data.tilt_force = flip(TTS_data.tilt_force*-1); 
            TTS_data.tilt_actual =  flip(TTS_data.tilt_actual*-1); 
            TTS_data.joystick_actual = flip(TTS_data.joystick_actual*-1);
-           %TTS_data.GVS_actual_mV = flip(TTS_data.GVS_actual_mV*-1);
+           TTS_data.GVS_actual_mV = flip(TTS_data.GVS_actual_mV*-1);
        end
        
+       subplot(4,1,1)
        plot(TTS_data.tilt_force)
        hold on;
-       subplot(3,1,2)
+       title("disturbance profile")
+       subplot(4,1,2)
        plot(TTS_data.tilt_actual)
+       title("actual motion")
        hold on;
-       subplot(3,1,3)
+       subplot(4,1,3)
        plot(TTS_data.joystick_actual);
+       title("joy stick")
+       hold on;
+       subplot(4,1,4)
+       plot(TTS_data.GVS_actual_mV);
+       title("GVS")
        hold on;
        index = length(trial)+1;
        trial{index} = string([current_mat_file]);
 
-       rms_save(sub,i) = rms(TTS_data.tilt_actual);
-       mae_save(sub,i) = rms(TTS_data.joystick_actual);
+       
        
 
 
