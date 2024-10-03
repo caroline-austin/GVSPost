@@ -7,7 +7,8 @@ fs=50;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % set the folder that you want to save the files to
 % file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
-file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
+% file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
+file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization';
 %'/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt';
 % uncomment the mkdir line if the folder does not already exist
 mkdir(file_path) 
@@ -26,12 +27,12 @@ mkdir(file_path)
 
 % number of electrodes in the montage (must be at least 2 and no more than 5)
 % 2 = bilateral 3 = Cevette, 4 = Aoyama
-Num_Electrode = 4; 
+Num_Electrode = 2; 
 
 % 7 = tilt velocity; 8 = tilt angle ; 
 % between 7 and 8 = scaled contribution (closer to 7 is more velocity
 % weighted, closer to 8 is more angle weighted)
-Proportional = 8;
+Proportional = 7.2;
 
 PmA =[-4 0 4];
 
@@ -84,7 +85,7 @@ if ismember(Proportional, [1 2 3 4 5 6 7 8])
     scale = PmA(iter)/signal_max;
     C = scale;
     
-elseif Proportional < 8
+elseif Proportional < 8 && Proportional > 1
        Type_1 = floor(Proportional);
        Type_2 = ceil(Proportional);
 
@@ -109,9 +110,35 @@ elseif Proportional < 8
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
 
-elseif Propotional == 0
-    %special case(s) you could use to tie weight with tilt and translation
-    %or any other two data types that aren't in adjacent columns 
+elseif Proportional == 0
+    %special case where proportional to angle and abs(velocity)
+
+       Type_1 = 7; % velocity
+       Type_2 = 8; % angle
+
+       Weight_1 = 0.5; % equal weighting for now
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = abs((TTS_file(:,Type_1)))'; 
+       Signal_2 = (TTS_file(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       Signal_1 = Signal_1 / signal_max1;
+       Signal_2 = Signal_2 / signal_max2;
+
+       [loc] =find(Signal_2<0);
+       Signal_1(loc) = Signal_1(loc)*-1;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
 
 end 
 
