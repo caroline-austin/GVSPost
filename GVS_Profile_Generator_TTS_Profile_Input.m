@@ -32,9 +32,9 @@ Num_Electrode = 2;
 % 7 = tilt velocity; 8 = tilt angle ; 
 % between 7 and 8 = scaled contribution (closer to 7 is more velocity
 % weighted, closer to 8 is more angle weighted)
-Proportional = 7.2;
+Proportional = 7.5;
 
-PmA =[-4 0 4];
+PmA = [4.0]; %[- 4 0 4];
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
 
@@ -110,13 +110,13 @@ elseif Proportional < 8 && Proportional > 1
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
 
-elseif Proportional == 0
+elseif Proportional <1 && Proportional>0
     %special case where proportional to angle and abs(velocity)
 
-       Type_1 = 7; % velocity
        Type_2 = 8; % angle
+       Type_1 = 7; % velocity
 
-       Weight_1 = 0.5; % equal weighting for now
+       Weight_1 = 1-Proportional; 
        Weight_2 = 1-Weight_1; 
 
        Signal_1 = abs((TTS_file(:,Type_1)))'; 
@@ -140,6 +140,36 @@ elseif Proportional == 0
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
 
+elseif Proportional >-1 && Proportional<0
+    %special case where proportional to velocity and abs(angle)
+
+       Type_2 = 8; % angle
+       Type_1 = 7; % velocity
+
+       Weight_1 = 1+Proportional; % equal weighting for now
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = (TTS_file(:,Type_1))'; 
+       Signal_2 = abs(TTS_file(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       Signal_1 = Signal_1 / signal_max1;
+       Signal_2 = Signal_2 / signal_max2;
+
+       [loc] =find(Signal_1<0);
+       Signal_2(loc) = Signal_2(loc)*-1;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
+  
 end 
 
 GVS_Signal = GVS_Signal*(scale);
@@ -235,12 +265,14 @@ elseif Num_Electrode==4
     elseif Electrode_Config==2
         Electrode_5_Sig=zeros(1,T);% may need to switch this to match the length of the sinusoid - seems to be and 2 second difference?
         if Current_Direction == 2
-            % electrodes 3&4 are anodes(?) and 1&2 are cathodes (forward)
+            % electrodes 3&4 are anodes(+) and 1&2 are cathodes(-)
+            % (forward)- positive motion coupling
             Electrode_1_Sig=GVS_Signal*(-1);
             Electrode_2_Sig=Electrode_1_Sig;
             Electrode_3_Sig=GVS_Signal;
         else
-            % electrodes 1&2 are anodes and 3&4 are cathodes (Backward)
+            % electrodes 1&2 are anodes (+) and 3&4 are cathodes (-) 
+            % (Backward) - negative motion coupling 
             Electrode_2_Sig=GVS_Signal;
             Electrode_3_Sig=GVS_Signal*(-1);
         end
