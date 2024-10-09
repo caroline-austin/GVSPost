@@ -169,7 +169,33 @@ elseif Proportional >-1 && Proportional<0
        scale = (PmA(iter));
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
-  
+       
+elseif Proportional <-1
+      % special case where angle and velocity are coupled with opposite
+      % signs - default as velocity + and angle negative
+       Type_1 = floor(abs(Proportional));
+       Type_2 = ceil(abs(Proportional));
+
+       Weight_1 = Type_2 - abs(Proportional);
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = (TTS_file(:,Type_1))'; 
+       Signal_2 = -1*(TTS_file(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       % Signal_1 = Signal_1 / signal_max1;
+       % Signal_2 = Signal_2 / signal_max2;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
 end 
 
 GVS_Signal = GVS_Signal*(scale);
