@@ -1,3 +1,12 @@
+%% GVSPost X2A Script 4 : Create plots from the aggregated data
+% Caroline Austin 
+% Created ?/?/2023? Last Modified:10/9/24
+% this script handles the verbal reports data from X2A - this includes 
+% verbal rating of none slight/noticeable moderate severe for motion
+% sensations and side effects as well as qualitative descriptions of
+% motion. This script plots the data that has been combined across subjects
+% for visualization
+
 close all; 
 clear all; 
 clc; 

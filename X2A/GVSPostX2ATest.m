@@ -1,9 +1,19 @@
+%% GVSPost X2A Script 2 : Organize and Extract Info from the Data
+% Caroline Austin 
+% Created ?/?/2023? Last Modified:10/9/24
+% this script handles the verbal reports data from X2A - this includes 
+% verbal rating of none slight/noticeable moderate severe for motion
+% sensations and side effects as well as qualitative descriptions of
+% motion. This script sorts and tallies up the reports of certain key words
+% by the trial conditions they are asscoiated with (map variables) then
+% saves them into a .mat file
+
+%% house keeping
 %prep the workspace
 close all; 
 clear all; 
 clc; 
 
-%% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
