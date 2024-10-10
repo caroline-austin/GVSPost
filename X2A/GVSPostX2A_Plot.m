@@ -33,7 +33,9 @@ num_config = 3;
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '/Plots']; % specify where plots are saved
+cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+cd(code_path)
 
 subnum = 2001:2010;  % Subject List 
 

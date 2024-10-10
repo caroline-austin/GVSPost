@@ -8,6 +8,8 @@
 % by the trial conditions they are asscoiated with (map variables) then
 % saves them into a .mat file
 
+% C:\Users\caroa\UCB-O365\Bioastronautics File Repository - File Repository\Torin Group Items\Projects\Motion Coupled GVS\PitchMontageTesting
+
 %% house keeping
 %prep the workspace
 close all; 
@@ -17,7 +19,9 @@ clc;
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
+cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+cd(code_path)
 
 subnum = 2001:2010;  % Subject List 
 numsub = length(subnum); % calculate how many subjects are specified in line above
