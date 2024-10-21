@@ -30,7 +30,7 @@ cd(code_path)
 % filenames if they match then proceed with making comparison plots 
 for i = 1:num_csv_files   
     current_csv_file = char(csv_filenames(i));
-    csv_num = str2num(current_csv_file(19:20));
+    csv_num = str2num(current_csv_file(11:12)); %19:20
     for j = 1:height(TrialKey)
         
         if csv_num == (TrialKey.TTSTrial(j))
@@ -38,7 +38,7 @@ for i = 1:num_csv_files
             Trial_name = strjoin(["Prof" TrialKey.TTSProfile(j) ", GVS" ...
                 TrialKey.MaxGVS(j) ", Angle" TrialKey.MaxAngle(j) ", Velocity" ...
                 TrialKey.MaxVelocity(j) ", Decay" TrialKey.UserDecay(j) ...
-                ", Ch 2" TrialKey.Ch2(j) TrialKey.Ch2_1(j) ", Ch3" TrialKey.Ch3(j)]);
+                ", Ch 2" TrialKey.Ch2(j) ]); % TrialKey.Ch2_1(j) ", Ch3" TrialKey.Ch3(j)
 
             cd(file_path)
             TTS_output = readtable(current_csv_file); %, 'VariableNamingRule','preserve');
