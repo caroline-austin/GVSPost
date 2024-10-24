@@ -16,15 +16,15 @@ conditions = {'A'}; % right now ideally just one condition, might have an exp. A
 datatype = {'Accelerometer','Gyroscope'};
 
 numtrials = 30; % this number will vary, should not exceed 60
-subnum = [2006];  % Subject List 2001:2010 2001:2010
+subnum = [2004];  % Subject List 2001:2010 2001:2010
 groups = [1]; % ex: 1:Control 2:VisualCM % but I don't have groups yet so here all are the same
-subskip = [2001 2004 2008 2010];  %DNF'd subjects
+subskip = [2001 2002 2003 2005 2006 2007 2008 2009 2010];  %DNF'd subjects
 
 % additional start buffer for IMU data (sec.) row = cond.; col = subject
 % this accounts for the time difference btween starting the imu and
 % starting the stop watch 
-buffer = [8 14 8 8  9 8 6 0 13 0];%...
-          % 8.5 9 0 0 0 0 0 0 0 0;...
+buffer = [25.5 9.5 8.5 8.5 9 8 6 0 10 0;%...
+          132 0 0 132 0 0 0 0 0 0;]; %...
           % 8.5 9 0 0 0 0 0 0 0 0]; 
 
 % seconds to truncate off each trial [start, end]
@@ -61,9 +61,27 @@ for sub = 1:numsub
     % skip subjects that DNF'd
     if ismember(subject,subskip) == 1
        continue
+    elseif subject == 2004
+         num_imu_files = 2;
+    
+    else
+        num_imu_files = length(conditions);
     end
-    for cond = 1:length(conditions)
+    
+    for cond = 1:num_imu_files
 
+        if num_imu_files > 1
+        accelfile = [file_path,'/',num2str(subject),'/',...
+            num2str(subject),'-A','-',...
+            datatype{1},'-',  num2str(cond) ,'.csv'];
+
+        gyrofile = [file_path,'/',num2str(subject),'/',...
+            num2str(subject),'-A','-',...
+            datatype{2}, '-' ,num2str(cond), '.csv'];
+
+        timestampfile = [file_path,'/',num2str(subject),'/',...
+            num2str(subject),'-All-TimeStamps-', num2str(cond) ,'.xlsx'];
+        else
         % Get File names
         accelfile = [file_path,'/',num2str(subject),'/',...
             num2str(subject),'-',conditions{cond},'-',...
@@ -75,15 +93,38 @@ for sub = 1:numsub
 
         timestampfile = [file_path,'/',num2str(subject),'/',...
             num2str(subject),'-All-TimeStamps.xlsx'];
+        end
         
         if isfile(accelfile)==0
             continue
+        end
+
+        if subject == 2004 && cond ==1
+        continue
         end
 
         % Read in raw data
         acceldata = readtable(accelfile,'ReadVariableNames',false);
         gyrodata = readtable(gyrofile,'ReadVariableNames',false);
         timestamps = readtable(timestampfile,'ReadVariableNames',false);
+
+        if subject == 2004 && cond ==1
+            acceldata.Var6 = acceldata.Var4;
+            acceldata.Var5 = acceldata.Var3;
+            acceldata.Var4 = acceldata.Var2;
+            acceldata.Var3 = acceldata.Var1;
+            acceldata.Var2 = acceldata.Var1;
+
+            gyrodata.Var6 = gyrodata.Var4;
+            gyrodata.Var5 = gyrodata.Var3;
+            gyrodata.Var4 = gyrodata.Var2;
+            gyrodata.Var3 = gyrodata.Var1;
+            gyrodata.Var2 = gyrodata.Var1;
+            
+            timestamps.Var5 =timestamps.Var3;
+        elseif subject == 2004
+            timestamps.Var5 =timestamps.Var3;
+        end
 
         numtrials = ceil(height(timestamps)/2); 
   
@@ -109,14 +150,17 @@ for sub = 1:numsub
             clf(1);
             hold on
             plot(time,gyro_aligned(:,1)); %acc_aligned(:,3)
-            scatter(Times+repmat(trunc',numtrials,1),mean(gyro(:,1))*...
+            scatter(Times+repmat(trunc',numtrials,1),mean(gyro(:,1),'omitnan')*...
                 ones(length(Times),1)); % acc_aligned(:,3)
+            title(subject_str)
             hold off
             % pause;
         end
 
 
 %% sort trials to save 
+    
+
 trial_key = [file_path,'/',num2str(subject), '/A' , num2str(subject), '.mat'];
 load(trial_key);
 
@@ -210,7 +254,7 @@ end
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label TrialInfo1 TrialInfo2 imu_data acc_aligned gyro_aligned' ...
-        ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
+        ' EndImpedance StartImpedance MaxCurrent MinCurrent Times']; 
     eval(['  save ' ['A', subject_str,'imu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
