@@ -50,7 +50,26 @@ for sub = 1:numsub
 
      all_imu_data.(['A', subject_str])= imu_data;
 
-
+     % get position data
+     % Store state information
+    % vel(sub,trial,cond).x = ...
+    %     cumtrapz(trial_time,trial_accel(:,1));
+    % vel(sub,trial,cond).y = ...
+    %     cumtrapz(trial_time,trial_accel(:,2));
+    % vel(sub,trial,cond).z = ...
+    %     cumtrapz(trial_time,trial_accel(:,3));
+        for current = 1:l
+            for profile =1:w
+                for config = 1:h
+                    all_pos.(['A', subject_str]){current,profile,config}(:,1) = ...
+                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,1)));
+                    all_pos.(['A', subject_str]){current,profile,config}(:,2) = ...
+                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,2)));
+                    all_pos.(['A', subject_str]){current,profile,config}(:,3) = ...
+                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,3)));
+                end
+            end
+        end
 
 end
 
