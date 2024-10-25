@@ -13,7 +13,7 @@ code_path = pwd;
 %% Experimental Methods Specifications
 file_path = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
 
-subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
+subnum = [2003];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
 subskip = [2001 2008 2010];  %DNF'd subjects
 
@@ -52,21 +52,38 @@ for sub = 1:numsub
 
      % get position data
      % Store state information
-    % vel(sub,trial,cond).x = ...
-    %     cumtrapz(trial_time,trial_accel(:,1));
-    % vel(sub,trial,cond).y = ...
-    %     cumtrapz(trial_time,trial_accel(:,2));
-    % vel(sub,trial,cond).z = ...
-    %     cumtrapz(trial_time,trial_accel(:,3));
+
         for current = 1:l
             for profile =1:w
                 for config = 1:h
+                    if isempty(all_imu_data.(['A', subject_str]){current,profile,config})
+                        continue
+                    end
+                    trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,7);
+                    trial_accel = all_imu_data.(['A', subject_str]){current,profile,config}(:,1:3);
+                    trial_gyro = all_imu_data.(['A', subject_str]){current,profile,config}(:,4:6);
+                    
+                    all_vel.(['A', subject_str]){current,profile,config}(:,1) = ...
+                        cumtrapz(trial_time,trial_accel(:,1));
+                    all_vel.(['A', subject_str]){current,profile,config}(:,2) = ...
+                        cumtrapz(trial_time,trial_accel(:,2));
+                    all_vel.(['A', subject_str]){current,profile,config}(:,3) = ...
+                        cumtrapz(trial_time,trial_accel(:,3));
+
                     all_pos.(['A', subject_str]){current,profile,config}(:,1) = ...
                         cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,1)));
                     all_pos.(['A', subject_str]){current,profile,config}(:,2) = ...
                         cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,2)));
                     all_pos.(['A', subject_str]){current,profile,config}(:,3) = ...
                         cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,3)));
+
+                    all_ang.(['A', subject_str]){current,profile,config}(:,1) = ...
+                        cumtrapz(trial_time,trial_gyro(:,1));
+                    all_ang.(['A', subject_str]){current,profile,config}(:,2) = ...
+                        cumtrapz(trial_time,trial_gyro(:,2));
+                    all_ang.(['A', subject_str]){current,profile,config}(:,3) = ...
+                        cumtrapz(trial_time,trial_gyro(:,3));
+
                 end
             end
         end

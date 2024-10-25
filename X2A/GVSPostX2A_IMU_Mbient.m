@@ -16,14 +16,14 @@ conditions = {'A'}; % right now ideally just one condition, might have an exp. A
 datatype = {'Accelerometer','Gyroscope'};
 
 numtrials = 30; % this number will vary, should not exceed 60
-subnum = [2004];  % Subject List 2001:2010 2001:2010
+subnum = [2003];  % Subject List 2001:2010 2001:2010
 groups = [1]; % ex: 1:Control 2:VisualCM % but I don't have groups yet so here all are the same
-subskip = [2001 2002 2003 2005 2006 2007 2008 2009 2010];  %DNF'd subjects
+subskip = [2001 2008 2010];  %DNF'd subjects
 
 % additional start buffer for IMU data (sec.) row = cond.; col = subject
 % this accounts for the time difference btween starting the imu and
 % starting the stop watch 
-buffer = [25.5 9.5 8.5 8.5 9 8 6 0 10 0;%...
+buffer = [8.5 9.5 8.5 8.5 9 8 6 0 10 0;%...
           132 0 0 132 0 0 0 0 0 0;]; %...
           % 8.5 9 0 0 0 0 0 0 0 0]; 
 
@@ -234,7 +234,10 @@ for trial =1:numtrials
         if current_index == 0 || profile_index == 0 || config_index == 0
             continue
         end
-    imu_data{current_index,profile_index,config_index} = [acc_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) gyro_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3)];
+    imu_data{current_index,profile_index,config_index} = ...
+    [acc_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) ...
+    gyro_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) ...
+    time(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100))'];
     % imu_data{current_index,profile_index,config_index,:,4:6} = gyro(Times(trial*2-1):Times(trial*2),1:3);
 
 
