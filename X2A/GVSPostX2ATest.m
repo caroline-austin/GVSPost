@@ -122,14 +122,33 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
      Label.Type_map = ["Current"; "Type"; "Config";"Profile"];
      Type_mapReduced = ReduceMapMultiple(Type_map,MinCurrent,MaxCurrent,Label);
 
+    %% OBSERVED MOTION DIRECTIONS (SEBASTIAN)
+    possible_directions = ["right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw"];
+    Observed_Motion_map1 = TextMatchMap(Observed1,TrialInfo1, possible_directions, 2);
+    Observed_Motion_map2 = TextMatchMap(Observed2,TrialInfo2, possible_directions, 2);
+    Observed_Motion_map = Observed_Motion_map1 + Observed_Motion_map2;
+    Label.Observed_Motion_map = ["Current"; "Direction"; "Config";"Profile"];
+    Observed_Motion_mapReduced = ReduceMapMultiple(Observed_Motion_map,MinCurrent,MaxCurrent,Label);
+
+
+    %% OBSERVED MOTION TIMINGS (SEBASTIAN)
+    possible_timings = ["rhyt", "cont", "inter"];
+    Observed_Timing_map1 = TextMatchMap(Observed1, TrialInfo1, possible_timings, 3);
+    Observed_Timing_map2 = TextMatchMap(Observed2, TrialInfo2, possible_timings, 3);
+    Observed_Timing_map = Observed_Timing_map1 + Observed_Timing_map2;
+    Label.Observed_Timing_map = ["Current"; "Timing"; "Config";"Profile"];
+    Observed_Timing_mapReduced = ReduceMapMultiple(Observed_Timing_map,MinCurrent,MaxCurrent,Label);
+
+
+    
 %% Save file
     cd([file_path, '/' , subject_str]); %move to directory where file will be saved
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label Motion_map Tingle_map Metallic_map' ... 
         ' VisFlash_map MotionRating_map ObservedRating_map' ... 
-        ' Timing_map Type_map Tingle_mapReduced Motion_mapReduced '...
-        'Metallic_mapReduced VisFlash_mapReduced MotionRating_mapReduced ' ...
+        ' Timing_map Type_map Observed_Timing_map Observed_Motion_map Tingle_mapReduced Motion_mapReduced '...
+        'Observed_Motion_mapReduced Observed_Timing_mapReduced Metallic_mapReduced VisFlash_mapReduced MotionRating_mapReduced ' ...
         'ObservedRating_mapReduced Type_mapReduced Timing_mapReduced '...
         ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
     eval(['  save ' ['A', subject_str,'Extract.mat '] vars_2_save ' vars_2_save']); %save file     
