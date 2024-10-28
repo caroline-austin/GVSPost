@@ -9,15 +9,23 @@ code_path = pwd;
 %% Experimental Methods Specifications
 file_path = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
 
-subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
+subnum = [2009];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
 subskip = [2001 2008 2010];  %DNF'd subjects
 
 %% plot info
- plots = ['1 2'];
+ plots = ['2 '];
 
- % plot 1 creates box plots for the rms metric
- % plot 2 plots the raw data for a given trial
+ % plot 1 creates box plots for the rms metric - 3 plots (roll pitch and
+ % yaw each with subplots for binaural, cevette, and aoyama)
+ % plot 2 plots the angular position for the 0.5Hz sinusoidal trials -3
+ % plots for each subject roll, pitch, and yaw each with subplots for
+ % binaural, cevette, and aoyama and then separate lines for each current
+ % amplitude
+ %plot 3 plots the  position for the 0.5Hz sinusoidal trials -3
+ % plots for each subject x, y, and z each with subplots for
+ % binaural, cevette, and aoyama and then separate lines for each current
+ % amplitude
 
  %% initialize  
 
@@ -29,6 +37,7 @@ purple = [0.4196    0.3059    0.4431];
 red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
+color_grad = turbo(9);
 
 %naming variables 
 Profiles = ["DC Right/Front"; "DC Left/Back"; "Sin 0.25Hz"; "Sin 0.5Hz"; "Sin 1Hz"];
@@ -42,10 +51,10 @@ cd([file_path]);
 load(['Allimu.mat'])
 cd(code_path);
 
-config = Label.Config;
-num_config = length(config);
-current_amp = Label.CurrentAmp ;
-num_current = length(current_amp);
+Config = Label.Config;
+num_config = length(Config);
+Current_amp = Label.CurrentAmp ;
+num_current = length(Current_amp);
 imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw"];
 
 
@@ -119,13 +128,184 @@ sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
 end
 
 if contains(plots,'2 ')
-%% plot 2
+%% plot 2 - plot angle over time
+data_plot = time_series_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_ang, all_time, "Angle (deg)");
 
 % organize data into plotting variable
 
+% for sub = 1:numsub
+%     subject = subnum(sub);
+%     subject_str = num2str(subject);
+%     f1 = figure();
+%     tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+%     sgtitle (['Roll direction; 0.5Hz Profiles subject: ' subject_str])
+%     f2 = figure();
+%     tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+%     sgtitle (['Pitch direction; 0.5Hz Profiles subject: ' subject_str])
+%     f3 = figure();
+%     tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+%     sgtitle (['Yaw direction; 0.5Hz Profiles subject: ' subject_str])
+%  for config = 1:num_config
+%       figure(f1)
+%       nexttile
+%       figure(f2)
+%       nexttile
+%       figure(f3)
+%       nexttile
+%         for current = 1:num_current
+%             if isempty(all_imu_data.(['A', subject_str]){current,4,config})
+%                         continue
+%             end
+%             ang_plot.(Config(config)).(imu_dir(4)){:,current} = all_ang.(['A' subject_str ]){current,4,config}(:,1);
+%             ang_plot.(Config(config)).(imu_dir(5)){:,current} = all_ang.(['A' subject_str ]){current,4,config}(:,2);
+%             ang_plot.(Config(config)).(imu_dir(6)){:,current} = all_ang.(['A' subject_str ]){current,4,config}(:,3);
+%             ang_plot.(Config(config)).time{:,current} = all_imu_data.(['A' subject_str ]){current,4,config}(:,7);
+% 
+%             figure(f1)
+%             plot( ang_plot.(Config(config)).(imu_dir(4)){:,current}*180/pi(), "Color", color_grad(current,:)); hold on;
+%             hold on;
+%             title(Config(config));
+% 
+%             if config ==2
+%                 ylabel("Angle (deg)")
+%             elseif config == 3
+%             xlabel("Time (ms)")
+%             end
+%             % ylim([0 0.25]);
+%             % grid minor
+% 
+%             figure(f2)
+%             plot( ang_plot.(Config(config)).(imu_dir(5)){:,current}*180/pi(), "Color", color_grad(current,:)); hold on;
+%             hold on;
+%             title(Config(config));
+% 
+%             if config ==2
+%                 ylabel("Angle (deg)")
+%             elseif config == 3
+%             xlabel("Time (ms)")
+%             end
+%             % ylim([0 0.25]);
+%             % grid minor
+% 
+%             figure(f3)
+%             plot( ang_plot.(Config(config)).(imu_dir(6)){:,current}*180/pi(), "Color", color_grad(current,:)); hold on;
+%             hold on;
+%             title(Config(config));
+% 
+%             if config ==2
+%                 ylabel("Angle (deg)")
+%             elseif config == 3
+%             xlabel("Time (ms)")
+%             end
+%             % ylim([0 0.25]);
+%             % grid minor
+% 
+% 
+%         end
+%      figure(f1)
+%      legend(num2str(Current_amp(2:9)'));
+%      figure(f2)
+%      legend(num2str(Current_amp(2:9)'));
+%      figure(f3)
+%      legend(num2str(Current_amp(2:9)'));
+% 
+% 
+%  end
+% 
+% end
+% 
+disp(" press any key to close all")
+pause;
+close all;
 
 end
 
 
+if contains(plots,'3 ')
+    %% plot 3
+data_plot = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_imu_data, all_time, "acceleration (m/s)");
+disp(" press any key to close all")
+pause;
+close all;
+end
+
+
+if contains(plots,'4 ')
+    %% plot 4
+data_plot = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_pos, all_time, "position (m)");
+disp(" press any key to close all")
+pause;
+close all;
+end
+
+%% functions
+%list of subjects, % %list of variables to
+%separate the suplots by
+function data_plot = time_series_plot(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label)
+numsub = length(subnum);
+num_figure_var = length(figure_var);
+num_subplot_var = length(subplot_var);
+num_trial_var = length(trial_var);
+num_extra_var = length(extra_var);
+color_grad = turbo(num_trial_var);
+
+for sub = 1:numsub
+    
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+     if ismember(subject,subskip) == 1
+       continue
+     end
+    for figure_index =1:num_figure_var
+        f(figure_index) = figure();
+        tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+        sgtitle ([ figure_var(figure_index) ; num2str(extra_var(extra_var_indices)) 'subject: ' subject_str])
+    end
+
+ for subplot_index = subplot_indices
+         for figure_index =1:num_figure_var
+            figure(f(figure_index) );
+            nexttile
+        end 
+        for trial_index = trial_indices
+            for extra_index = extra_var_indices %might actually want to move this to be outermost loop?
+            if isempty(data.(['A', subject_str]){trial_index,extra_index,subplot_index})
+                        continue
+            end
+
+            data_plot.(subplot_var(subplot_index)).time{:,trial_index} = time.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,1);
+            
+            for figure_index =1:num_figure_var
+                data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
+                
+                figure(f(figure_index));
+                plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}*180/pi(), "Color", color_grad(trial_index,:)); hold on;
+                hold on;
+                title(subplot_var(subplot_index));
+
+                % should proabably manually build the legend here
+               
+                if subplot_index ==2
+                    ylabel(y_label)
+                elseif subplot_index == 3
+                xlabel("Time (ms)")
+                end
+                % ylim([0 0.25]);
+            % grid minor
+
+            
+            end             
+           
+            end
+        end
+        for figure_index =1:num_figure_var
+             figure(f(figure_index))
+             legend(num2str(trial_var(trial_indices)));
+        end
+
+ end
+ end
+
+end
 
 
