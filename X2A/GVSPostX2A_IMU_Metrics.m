@@ -13,7 +13,7 @@ code_path = pwd;
 %% Experimental Methods Specifications
 file_path = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
 
-subnum = [2003];  % Subject List 2001:2010 2001:2010
+subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
 subskip = [2001 2008 2010];  %DNF'd subjects
 
@@ -40,7 +40,7 @@ for sub = 1:numsub
             for config = 1:h
                 rms_out = rms(imu_data{current,profile,config});
                 if isnan(rms_out)
-                    rms_out = [NaN NaN NaN NaN NaN NaN];
+                    rms_out = [NaN NaN NaN NaN NaN NaN NaN];
                 end
 
                 rms_save{current, profile, config}(sub,:) = rms_out;
@@ -60,6 +60,7 @@ for sub = 1:numsub
                         continue
                     end
                     trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,7);
+                    all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,7);
                     trial_accel = all_imu_data.(['A', subject_str]){current,profile,config}(:,1:3);
                     trial_gyro = all_imu_data.(['A', subject_str]){current,profile,config}(:,4:6);
                     
@@ -94,7 +95,7 @@ end
     cd([file_path]); %move to directory where file will be saved
     %add all variables that we want to save to a list must include space
     %between variable names 
-    vars_2_save =  ['Label all_imu_data rms_save' ];% ...
+    vars_2_save =  ['Label all_imu_data rms_save all_imu_data all_pos all_vel all_ang all_time' ];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
