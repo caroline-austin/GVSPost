@@ -16,14 +16,17 @@ conditions = {'A'}; % right now ideally just one condition, might have an exp. A
 datatype = {'Accelerometer','Gyroscope'};
 
 numtrials = 30; % this number will vary, should not exceed 60
-subnum = [2003];  % Subject List 2001:2010 2001:2010
+subnum = [2006];  % Subject List 2001:2010 2001:2010
 groups = [1]; % ex: 1:Control 2:VisualCM % but I don't have groups yet so here all are the same
 subskip = [2001 2008 2010];  %DNF'd subjects
+
+%there is an issue with how subject 2004's data is being processed and
+%saved for sorting that I need to look into 
 
 % additional start buffer for IMU data (sec.) row = cond.; col = subject
 % this accounts for the time difference btween starting the imu and
 % starting the stop watch 
-buffer = [8.5 9.5 8.5 8.5 9 8 6 0 10 0;%...
+buffer = [21 9.5 8.5 8.5 9 21 6 0 10 0;%...
           132 0 0 132 0 0 0 0 0 0;]; %...
           % 8.5 9 0 0 0 0 0 0 0 0]; 
 
