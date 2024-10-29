@@ -30,6 +30,10 @@ cd(code_path)
 % filenames if they match then proceed with making comparison plots 
 for i = 1:num_csv_files   
     current_csv_file = char(csv_filenames(i));
+    if contains(current_csv_file, "GIST_")
+        continue
+    end
+
     csv_num = str2num(current_csv_file(20:21)); %19:20 11:12
     for j = 1:height(TrialKey)
         
