@@ -42,7 +42,7 @@ for i = 1:num_csv_files
             Trial_name = strjoin(["Prof" TrialKey.TTSProfile(j) ", GVS" ...
                 TrialKey.MaxGVS(j) ", Angle" TrialKey.MaxAngle(j) ", Velocity" ...
                 TrialKey.MaxVelocity(j) ", Decay" TrialKey.UserDecay(j) ...
-                ", Ch1" TrialKey.Ch1(j) ", Ch 2" TrialKey.Ch2(j)  ", Ch3" TrialKey.Ch3(j) TrialKey.Ch3_1(j)]); % TrialKey.Ch2_1(j) ", Ch3" TrialKey.Ch3(j)
+                 ", Ch 2" TrialKey.Ch2(j) ]);% ", Ch1" TrialKey.Ch1(j) ", Ch3" TrialKey.Ch3(j) TrialKey.Ch3_1(j)]); % TrialKey.Ch2_1(j) ", Ch3" TrialKey.Ch3(j)
 
             cd(file_path)
             TTS_output = readtable(current_csv_file); %, 'VariableNamingRule','preserve');
@@ -50,24 +50,24 @@ for i = 1:num_csv_files
 
             figure; 
             sgtitle(Trial_name)
-            subplot(2,1,1)
+            % subplot(2,1,1)
             plot(TTS_output.ms(1:end-2)/1000, TTS_output.TiltFeedback(1:end-2));
             hold on;
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS1MV(1:end-2));
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS1MV(1:end-2));
             plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS2MV(1:end-2));
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS3MV(1:end-2));
-            legend ("Tilt Angle", "Ch 3",  "Ch2", "Ch1")
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS3MV(1:end-2));
+            legend ("Tilt Angle", "Ch2")% "Ch 3",  "Ch2", "Ch1")
             xlabel("time (s)");
-            ylabel("Angle (deg) and GVS (mV) ")
+            ylabel("Angle (deg-counts) and GVS (mV) ")
              
-            subplot(2,1,2)
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.AngVel(1:end-2)); hold on;
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS1MV(1:end-2));
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS2MV(1:end-2));
-            plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS3MV(1:end-2));
-            legend ("Tilt Velocity", "Ch 3",  "Ch2", "Ch1")
-            xlabel("time (s)");
-            ylabel("Velocity (deg/s) and GVS (mV) ")
+            % subplot(2,1,2)
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.AngVel(1:end-2)); hold on;
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS1MV(1:end-2));
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS2MV(1:end-2));
+            % plot(TTS_output.ms(1:end-2)/1000, TTS_output.GVS3MV(1:end-2));
+            % legend ("Tilt Velocity", "Ch 3",  "Ch2", "Ch1")
+            % xlabel("time (s)");
+            % ylabel("Velocity (deg/s) and GVS (mV) ")
 
             % disp("press any key to continue")
             % pause
