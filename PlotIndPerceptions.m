@@ -8,11 +8,13 @@ function PlotIndPerceptions(Var,subnum)
 LW = 2;
 LS = {"-","-","-"};
 colors;
+LC = [226 107 109;128 128 128;90 160 163]/255;
 
+shift = 1;
 
 %% Make Figure
 
-conditions = [4 4 4];
+conditions = [1 2 4];
 motions = ["4","5","6"];
 
 f=figure;
@@ -26,7 +28,7 @@ for j = 1:3
         else
             dir = "B";
         end
-        for i = 2
+        for i = 1:3
             condition = conditions(i);
             motion = motions(j);
     
@@ -45,8 +47,15 @@ for j = 1:3
             timeplot = 0:dt*2:T;
             angplot = interp1(time,tiltang(:,1),timeplot);
             percplot = interp1(time,perceptions,timeplot);
-    
-            plot(timeplot,percplot(:,subnum),'-','LineWidth',LW,'LineStyle',LS(i))
+            indvdata = percplot(:,subnum);
+
+            if shift == 1
+            elseif shift == 2
+                indvdata = indvdata - (indvdata(1)+indvdata(end))/2;
+                indvdata = indvdata - indvdata(1);
+            end
+
+            plot(timeplot,indvdata,'-','LineWidth',LW,'LineStyle',LS(i),'Color',LC(i,:))
             plot(timeplot,angplot,'LineWidth',LW*2,'color',[0 0 0]);
             
         end

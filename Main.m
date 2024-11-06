@@ -25,10 +25,10 @@ X2DPlotGroupPerceptions('Angle',Var)
 % PlotGroupPerceptions('Semi',Var)
 % PlotGroupPerceptions('Velocity',Var)
 
-% for i = 1:12
-%     PlotIndPerceptions(Var,i)
-% end
-% PlotNoGVSGroupPerceptions(Var)
+for i = 1:12
+    PlotIndPerceptions(Var,i)
+end
+PlotNoGVSGroupPerceptions(Var)
 
 % % Compute Metrics (store in .csv)
 % MetricCompute_Gain("AngleGain",Var)

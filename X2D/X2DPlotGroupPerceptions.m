@@ -10,8 +10,6 @@ LS = {"-","-","-"};
 cd ..
 colors;
 cd(code_path);
-LC = [redseq(80,:);redseq(50,:);redseq(20,:)];
-LC = [red;blue;green];
 LC = [226 107 109;128 128 128;90 160 163]/255;
 
 
@@ -22,7 +20,7 @@ switch Type
         conditions = [5 4 1];
         Title = 'Velocity Coupled GVS';
     case 'Angle'
-        conditions = [3 2 1];
+        conditions = [1 2 3];
         Title = 'Angle Coupled GVS';
     case 'Semi'
         conditions = [6 4 2];
@@ -58,6 +56,7 @@ for j = 1:3
             shot_name = "All_shot_"+motion+dir;
             shot_data = Var.(shot_name);
             perceptions = shot_data(:,condition);
+            % perceptions = perceptions-perceptions(1);
             sem_name = "SEM_shot_save_"+motion+dir;
             SEM = Var.(sem_name);
             percSEM = SEM(:,condition);
