@@ -16,6 +16,7 @@ file_path = uigetdir; %user selects file directory './Subject Data/'; %I replace
 subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
 subskip = [2001 2008 2010];  %DNF'd subjects
+fs =100; % sampling freq of 100Hz
 
 %% load data 
 for sub = 1:numsub
@@ -35,18 +36,18 @@ for sub = 1:numsub
     [l, w , h] = size(imu_data);
 
 % rms, others
-    for current = 1:l
-        for profile =1:w
-            for config = 1:h
-                rms_out = rms(imu_data{current,profile,config});
-                if isnan(rms_out)
-                    rms_out = [NaN NaN NaN NaN NaN NaN NaN];
-                end
-
-                rms_save{current, profile, config}(sub,:) = rms_out;
-            end
-        end
-    end
+    % for current = 1:l
+    %     for profile =1:w
+    %         for config = 1:h
+    %             rms_out = rms(imu_data{current,profile,config});
+    %             if isnan(rms_out)
+    %                 rms_out = [NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN];
+    %             end
+    % 
+    %             rms_save{current, profile, config}(sub,:) = rms_out;
+    %         end
+    %     end
+    % end
 
      all_imu_data.(['A', subject_str])= imu_data;
 
@@ -59,35 +60,73 @@ for sub = 1:numsub
                     if isempty(all_imu_data.(['A', subject_str]){current,profile,config})
                         continue
                     end
-                    trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,7);
-                    all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,7);
+                    trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
+                    all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
                     trial_accel = all_imu_data.(['A', subject_str]){current,profile,config}(:,1:3);
                     trial_gyro = all_imu_data.(['A', subject_str]){current,profile,config}(:,4:6);
+                    trial_eulers = all_imu_data.(['A', subject_str]){current,profile,config}(:,7:9);
+                    [len, wid] = size(trial_eulers);
+
+                    % make all trials only 10s
+                    if len > 12*fs 
+                        buffer = floor((len - 12*fs)/2);
+                        trial_eulers = trial_eulers(buffer:len - buffer,:); % take middle 10s of long trials
+                        trial_time_e = trial_time(buffer:len - buffer,:);
+
+                    else
+                         trial_eulers = [trial_eulers; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
+                         trial_time_e = [trial_time; NaN(2*buffer,wid)];
+                    end
+                       
+                    neg_loc=find(trial_eulers < -100); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
+                    trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
                     
-                    all_vel.(['A', subject_str]){current,profile,config}(:,1) = ...
-                        cumtrapz(trial_time,trial_accel(:,1));
-                    all_vel.(['A', subject_str]){current,profile,config}(:,2) = ...
-                        cumtrapz(trial_time,trial_accel(:,2));
-                    all_vel.(['A', subject_str]){current,profile,config}(:,3) = ...
-                        cumtrapz(trial_time,trial_accel(:,3));
+                    bias = mean(trial_eulers);
+                    trial_eulers = trial_eulers - bias; 
+                    all_ang.(['A', subject_str]){current,profile,config} =  trial_eulers;
 
-                    all_pos.(['A', subject_str]){current,profile,config}(:,1) = ...
-                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,1)));
-                    all_pos.(['A', subject_str]){current,profile,config}(:,2) = ...
-                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,2)));
-                    all_pos.(['A', subject_str]){current,profile,config}(:,3) = ...
-                        cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,3)));
 
-                    all_ang.(['A', subject_str]){current,profile,config}(:,1) = ...
-                        cumtrapz(trial_time,trial_gyro(:,1));
-                    all_ang.(['A', subject_str]){current,profile,config}(:,2) = ...
-                        cumtrapz(trial_time,trial_gyro(:,2));
-                    all_ang.(['A', subject_str]){current,profile,config}(:,3) = ...
-                        cumtrapz(trial_time,trial_gyro(:,3));
+                    
+                    % all_vel.(['A', subject_str]){current,profile,config}(:,1) = ...
+                    %     cumtrapz(trial_time,trial_accel(:,1));
+                    % all_vel.(['A', subject_str]){current,profile,config}(:,2) = ...
+                    %     cumtrapz(trial_time,trial_accel(:,2));
+                    % all_vel.(['A', subject_str]){current,profile,config}(:,3) = ...
+                    %     cumtrapz(trial_time,trial_accel(:,3));
+
+                    % all_pos.(['A', subject_str]){current,profile,config}(:,1) = ...
+                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,1)));
+                    % all_pos.(['A', subject_str]){current,profile,config}(:,2) = ...
+                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,2)));
+                    % all_pos.(['A', subject_str]){current,profile,config}(:,3) = ...
+                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,3)));
+
+                    % all_ang.(['A', subject_str]){current,profile,config}(:,1) = ...
+                    %     cumtrapz(trial_time,trial_gyro(:,1));
+                    % all_ang.(['A', subject_str]){current,profile,config}(:,2) = ...
+                    %     cumtrapz(trial_time,trial_gyro(:,2));
+                    % all_ang.(['A', subject_str]){current,profile,config}(:,3) = ...
+                    %     cumtrapz(trial_time,trial_gyro(:,3));
+                    
+                  
 
                 end
             end
         end
+
+    for current = 1:l
+        for profile =1:w
+            for config = 1:h
+                rms_out = rms( all_ang.(['A', subject_str]){current,profile,config});
+            if isnan(rms_out)
+                rms_out = [NaN NaN NaN ];
+            end
+
+            rms_save{current, profile, config}(sub,:) = rms_out;
+            end
+        end
+    end
+
 
 end
 
@@ -95,8 +134,8 @@ end
     cd([file_path]); %move to directory where file will be saved
     %add all variables that we want to save to a list must include space
     %between variable names 
-    vars_2_save =  ['Label all_imu_data rms_save all_imu_data all_pos all_vel all_ang all_time' ];% ...
-        % ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
+    vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ];% ...
+        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
