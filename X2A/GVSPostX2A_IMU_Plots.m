@@ -9,9 +9,9 @@ code_path = pwd;
 %% Experimental Methods Specifications
 file_path = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
 
-subnum = [2009];  % Subject List 2001:2010 2001:2010
+subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
-subskip = [2001 2008 2010];  %DNF'd subjects
+subskip = [2001 2004 2008 2010];  %DNF'd subjects
 
 %% plot info
  plots = ['2 '];
@@ -55,10 +55,11 @@ Config = Label.Config;
 num_config = length(Config);
 Current_amp = Label.CurrentAmp ;
 num_current = length(Current_amp);
-imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw"];
+imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 
-if contains(plots,'1 ')
+
+if contains(plots,' 1 ')
 %% plot 1
 f1 = figure();
 tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
@@ -72,16 +73,16 @@ sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
 % organize data into plotting variable
     for j = 1:num_config
         for i = 1:num_current
-            rms_plot.(config(j)).(imu_dir(4))(:,i) = rms_save{i,4,j}(:,4);
-            rms_plot.(config(j)).(imu_dir(5))(:,i) = rms_save{i,4,j}(:,5);
-            rms_plot.(config(j)).(imu_dir(6))(:,i) = rms_save{i,4,j}(:,6);
+            rms_plot.(Config(j)).(imu_dir(4))(:,i) = rms_save{i,4,j}(:,1);
+            rms_plot.(Config(j)).(imu_dir(5))(:,i) = rms_save{i,4,j}(:,2);
+            rms_plot.(Config(j)).(imu_dir(6))(:,i) = rms_save{i,4,j}(:,3);
 
         end
         figure(f1)
         nexttile
-        boxplot(rms_plot.(config(j)).(imu_dir(4)));
+        boxplot(rms_plot.(Config(j)).(imu_dir(4)));
         hold on;
-        title(config(j));
+        title(Config(j));
         xticks([1,2,3,4,5,6,7,8,9]);
         xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
         if j ==2
@@ -89,15 +90,15 @@ sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
         elseif j == 3
         xlabel("Current Amplitude (mA)")
         end
-        ylim([0 0.25]);
+        % ylim([0 0.25]);
         grid minor
         
 
         figure(f2)
         nexttile
-        boxplot(rms_plot.(config(j)).(imu_dir(5)));
+        boxplot(rms_plot.(Config(j)).(imu_dir(5)));
         hold on;
-        title(config(j));
+        title(Config(j));
         xticks([1,2,3,4,5,6,7,8,9]);
         xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
         if j ==2
@@ -105,14 +106,14 @@ sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
         elseif j == 3
         xlabel("Current Amplitude (mA)")
         end
-        ylim([0 0.31]);
+        % ylim([0 0.31]);
         grid minor
 
         figure(f3)
         nexttile
-        boxplot(rms_plot.(config(j)).(imu_dir(6)));
+        boxplot(rms_plot.(Config(j)).(imu_dir(6)));
         hold on;
-        title(config(j));
+        title(Config(j));
         xticks([1,2,3,4,5,6,7,8,9]);
         xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
         if j ==2
@@ -120,7 +121,7 @@ sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
         elseif j == 3
         xlabel("Current Amplitude (mA)")
         end
-        ylim([0 0.25]);
+        % ylim([0 0.25]);
         grid minor
 
     end
@@ -129,7 +130,7 @@ end
 
 if contains(plots,'2 ')
 %% plot 2 - plot angle over time
-data_plot = time_series_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_ang, all_time, "Angle (deg)");
+data_plot = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_ang, all_time, "Angle (deg)");
 disp(" press any key to close all")
 pause;
 close all;
@@ -195,7 +196,7 @@ for sub = 1:numsub
                 data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
                 
                 figure(f(figure_index));
-                plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}*180/pi(), "Color", color_grad(trial_index,:)); hold on;
+                plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(trial_index,:)); hold on;
                 hold on;
                 title(subplot_var(subplot_index));
 
