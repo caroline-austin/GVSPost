@@ -16,9 +16,9 @@ conditions = {'A'}; % right now ideally just one condition, might have an exp. A
 datatype = {'Accelerometer','Gyroscope'};
 
 numtrials = 30; % this number will vary, should not exceed 60
-subnum = [2006];  % Subject List 2001:2010 2001:2010
+subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 groups = [1]; % ex: 1:Control 2:VisualCM % but I don't have groups yet so here all are the same
-subskip = [2001 2008 2010];  %DNF'd subjects
+subskip = [2001 2002 2008 2010];  %DNF'd subjects
 
 %there is an issue with how subject 2004's data is being processed and
 %saved for sorting that I need to look into 
@@ -26,7 +26,7 @@ subskip = [2001 2008 2010];  %DNF'd subjects
 % additional start buffer for IMU data (sec.) row = cond.; col = subject
 % this accounts for the time difference btween starting the imu and
 % starting the stop watch 
-buffer = [21 9.5 8.5 8.5 9 21 6 0 10 0;%...
+buffer = [9.5 9.5 8.5 8.5 9 21 6 0 10 0;%...
           132 0 0 132 0 0 0 0 0 0;]; %...
           % 8.5 9 0 0 0 0 0 0 0 0]; 
 
@@ -35,7 +35,7 @@ trunc = [0.3 -0.3]; %seconds
 
 % Used to find buffer time for timed trial arrays- this plot is not super
 % helpful for finding the buffers with the GVSPost data
-findbuffers = 1; % 1 is on other num is off
+findbuffers = 0; % 1 is on other num is off
 % Used to view sensor orientation over time
 sensorpositionplot =0; % 1 is on other num is off
 
@@ -140,7 +140,7 @@ for sub = 1:numsub
         gyro = pi/180*gyro;
 
         % Rotate accelerometer Data (x-ML y-AP z-EarthVertical)
-        [acc_aligned, gyro_aligned] = GravityAligned(acc, gyro,sensorpositionplot);
+        [acc_aligned, gyro_aligned,euler_angles] = GravityAligned(acc, gyro,sensorpositionplot);
         %%
 
         % Get Trial Times
@@ -240,6 +240,7 @@ for trial =1:numtrials
     imu_data{current_index,profile_index,config_index} = ...
     [acc_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) ...
     gyro_aligned(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) ...
+    euler_angles(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100),1:3) ...
     time(floor(Times(trial*2-1)*100):ceil(Times(trial*2)*100))'];
     % imu_data{current_index,profile_index,config_index,:,4:6} = gyro(Times(trial*2-1):Times(trial*2),1:3);
 
@@ -259,7 +260,7 @@ end
     cd([file_path, '/' , subject_str]); %move to directory where file will be saved
     %add all variables that we want to save to a list must include space
     %between variable names 
-    vars_2_save =  ['Label TrialInfo1 TrialInfo2 imu_data acc_aligned gyro_aligned' ...
+    vars_2_save =  ['Label TrialInfo1 TrialInfo2 imu_data acc_aligned gyro_aligned euler_angles' ...
         ' EndImpedance StartImpedance MaxCurrent MinCurrent Times']; 
     eval(['  save ' ['A', subject_str,'imu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
@@ -494,7 +495,7 @@ function Times = GetTrialTimes(timestamps,buffer,cond)
     end
 end
 
-function  [acc_aligned,gyro_aligned] = GravityAligned(acc, gyro,sensorpositionplot)
+function  [acc_aligned,gyro_aligned,Eulers] = GravityAligned(acc, gyro,sensorpositionplot)
     FUSE = imufilter('SampleRate',25);
     q = FUSE(acc,gyro); % goes from Inertial to Sensor
     Eulers = eulerd(q, 'ZYX', 'frame'); % sensor = Rx'*Ry'*Rz'*global
