@@ -85,7 +85,13 @@ for sub = 1:numsub
                     trial_eulers = trial_eulers - bias; 
                     all_ang.(['A', subject_str]){current,profile,config} =  trial_eulers;
 
-
+                    if profile == 4 && config ==1
+                        y = trial_eulers(:,3);
+                        x = trial_time_e;
+                        mdl = fittype('a*sin(b*x+c)','indep','x');
+                        fittedmdl2 = fit(x,y,mdl,'start',[rand(),(pi),rand()]);
+                        figure; plot(x,y); hold on; plot(fittedmdl2);
+                    end
                     
                     % all_vel.(['A', subject_str]){current,profile,config}(:,1) = ...
                     %     cumtrapz(trial_time,trial_accel(:,1));
