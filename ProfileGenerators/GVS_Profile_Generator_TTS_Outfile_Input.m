@@ -38,6 +38,10 @@ PmA = [4.0]; %[- 4 0 4];
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
 
+% For reconstruction of GIST profiles set GIST =1, for original profiles
+% designed for sparky set = 0;
+GIST_IMU = 1;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Profile Type Modifiers
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,6 +68,48 @@ Electrode_Config = 2;
 % other number otherwise
 Profile_Type = 1; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% if GIST_IMU = 1; 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% General 
+
+% Default waveform for coupling is "DC" , "DC+SD" is DC plus a custom
+% waveform (code should prompt for the additional custom waveform)
+Waveform = "DC";
+mA_max = 5; % maximum current for coupling
+% doesn't apply for the DC, but I think this is the sampling freq for the 
+% custom waveform
+freq = 0.5; 
+SD_period = 0; % in seconds (this might actually be for the custom waveform)
+
+% angle and velocity at which the maximum current is realized
+max_angle = 10;
+max_vel = 6;
+
+% Channel 1
+Ch1 = 1;
+K1 = 999;
+Couple_1 = "Roll";
+Threshold_1 = 0;
+K2 = 999;
+Couple_2 = "ZVelocity";
+Threshold_2 = 0;
+% Channel 2
+Ch2 = 0;
+K3 = 999;
+Couple_3 = "Roll";
+Threshold_3 = 0;
+K4 = 999;
+Couple_4 = "ZVelocity";
+Threshold_4 = 0;
+% Channel 3
+Ch3 = 0;
+K5 = 999;
+Couple_5 = "Roll";
+Threshold_5 = 0;
+K6 = 999;
+Couple_6 = "ZVelocity";
+Threshold_6 = 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Select the TTS file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cd ../..
@@ -87,7 +133,7 @@ end
 for iter = 1:length(PmA)
 
 % GVS_Signal = (TTS_file(:,8)*C(iter))';
-
+if GIST_IMU == 0
 if ismember(Proportional, [1 2 3 4 5 6 7 8])
     
     GVS_Signal = (TTS_param(:,Proportional))'; 
@@ -209,10 +255,41 @@ elseif Proportional <-1
 end 
 
 GVS_Signal = GVS_Signal*(scale);
+
+
+elseif GIST_IMU == 1
+    % for now assuming only channel 1 is in use so only bilateral GVS (2
+    % electrodes)
+    if Couple_1 == "Roll"
+        Signal_1 = (TTS_param(:,8))'; 
+        max_1 = max_angle;
+    elseif Couple_1 == "ZVelocity"
+        Signal_1 = -(TTS_param(:,7))'; 
+        max_1 = max_vel;
+    end
+
+    if Couple_2 == "Roll"
+        Signal_2 = (TTS_param(:,8))'; 
+        max_2 = max_angle;
+    elseif Couple_2 == "ZVelocity"
+        Signal_2 = -(TTS_param(:,7))'; 
+        max_2 = max_vel;
+    end
+
+    GVS_Signal = K1/999*(mA_max/max_1)*(Signal_1-Threshold_1) + K2/999*(mA_max/max_2)*(Signal_2-Threshold_2);
+    % loc = find(GVS_Signal > 5);
+    GVS_Signal(GVS_Signal > 5) = 5;
+    % loc = find(GVS_Signal < -5);
+    GVS_Signal(GVS_Signal < -5) = -5;
+
+    C = 0; % normally C is scale/maxGVS not sure why
+
+
+end 
+
 maxGVS = max(abs(GVS_Signal));
 
 GVS_Signal = [ zeros(zpad*fs) GVS_Signal];
-
 dt =1/fs;
 T = length(GVS_Signal);
 t = (0:T-1)*dt;
