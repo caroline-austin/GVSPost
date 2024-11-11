@@ -118,32 +118,7 @@ for sub = 1:numsub
                     % hold on; plot(fittedmdl1);
                     % hold on;plot(trial_time_e(loc),roll_ang(loc))
                     % title(strjoin([subject_str "Profile:" Label.Config(config) Label.Profile(profile)  Label.CurrentAmp(current) " mA"]));
-
-
-
-                    
-                    % all_vel.(['A', subject_str]){current,profile,config}(:,1) = ...
-                    %     cumtrapz(trial_time,trial_accel(:,1));
-                    % all_vel.(['A', subject_str]){current,profile,config}(:,2) = ...
-                    %     cumtrapz(trial_time,trial_accel(:,2));
-                    % all_vel.(['A', subject_str]){current,profile,config}(:,3) = ...
-                    %     cumtrapz(trial_time,trial_accel(:,3));
-
-                    % all_pos.(['A', subject_str]){current,profile,config}(:,1) = ...
-                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,1)));
-                    % all_pos.(['A', subject_str]){current,profile,config}(:,2) = ...
-                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,2)));
-                    % all_pos.(['A', subject_str]){current,profile,config}(:,3) = ...
-                    %     cumtrapz(trial_time,cumtrapz(trial_time,trial_accel(:,3)));
-
-                    % all_ang.(['A', subject_str]){current,profile,config}(:,1) = ...
-                    %     cumtrapz(trial_time,trial_gyro(:,1));
-                    % all_ang.(['A', subject_str]){current,profile,config}(:,2) = ...
-                    %     cumtrapz(trial_time,trial_gyro(:,2));
-                    % all_ang.(['A', subject_str]){current,profile,config}(:,3) = ...
-                    %     cumtrapz(trial_time,trial_gyro(:,3));
-                    
-                  
+                                
 
                 end
             end
