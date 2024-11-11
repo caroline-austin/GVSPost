@@ -295,6 +295,10 @@ T = length(GVS_Signal);
 t = (0:T-1)*dt;
 
 Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(PmA(iter)) "mA_prop"  num2str(Proportional)])); %C(iter)
+if GIST_IMU == 1
+    Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(mA_max(iter)) ...
+        "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2  "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
+end
 Filename = strrep(Filename, '.', '_');
 Filename = strrep(Filename, ' ', '');
 
