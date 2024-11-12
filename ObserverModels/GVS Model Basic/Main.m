@@ -7,18 +7,35 @@ GVS_Params = [0.0245, 0];
 dt = 1/50;
 
 code_path = pwd;
-[input_filearg,input_path] = uigetfile('*.txt');
+% [input_filearg,input_path] = uigetfile('*.txt');
+[input_filearg,input_path] = uigetfile('*.csv');
 fprintf([input_filearg '\n']);
 
 cd(input_path) %make sure the profile you want to run is in this folder
-TTS_file = load(input_filearg);  
+
+
+if contains(input_filearg, 'csv') %% TTS output file as input
+    TTS_file = readtable(input_filearg); 
+    Var_names = TTS_file.Properties.VariableNames;
+    if Var_names{1} == "Var1" % out put from manual control vi
+        tilt_angle_deg = TTS_file.(Var_names{5})/200; % store tilt feedback (actual tilt)
+    else 
+        tilt_angle_deg = TTS_file.TiltFeedback/200;
+        
+    end
+    tilt_vel_deg  = [0; smoothdata((diff(tilt_angle_deg)./(diff(TTS_file.(Var_names{1}))/1000)),  "movmean",10 )]; % store tilt velocity
+else %TTS input file as input
+    TTS_file = load(input_filearg);  
+    tilt_angle_deg = TTS_file(:,8);
+    tilt_vel_deg = TTS_file(:,7)/200;
+end
 cd(code_path);
 
-tilt_angle_deg = TTS_file(:,8);
-tilt_vel_deg = TTS_file(:,7)/200;
+% tilt_angle_deg = TTS_file(:,8);
+% tilt_vel_deg = TTS_file(:,7)/200;
 
 
-T = length(tilt_vel_deg)/50;
+T = length(tilt_vel_deg)/50; % 1/50 is the tts sampling time
 model_time = (0:dt:T)';
 time = model_time(1):30:model_time(end); % For plotting 
 
@@ -26,6 +43,8 @@ time = model_time(1):30:model_time(end); % For plotting
 model_motion = [0 0 0 0 0 0].*zeros(length(model_time),1);
 model_motion(2:end,4)= tilt_vel_deg;
 
+loc =find(isnan(model_motion));
+model_motion(loc) = 0;
 
 %% Run observer simulations of -1 mA peak
 
@@ -94,3 +113,13 @@ subplot(3,1,3)
 plot(model_time,current)
 ylabel("mA")
 xlabel("time")
+%%
+subplot(3,1,2)
+ylim([-20 20])
+sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
+
+max(tilt_est)
+max(tilt)
+min(tilt_est)
+min(tilt)
+max(abs(tilt-tilt_est))
