@@ -19,7 +19,8 @@ cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 cd(code_path)
 
-subnum = 1014:1022;  % Subject List 2001:2010
+subnum = 2001:2010;  
+% Subject List 2001:2010
 numsub = length(subnum);
 subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 

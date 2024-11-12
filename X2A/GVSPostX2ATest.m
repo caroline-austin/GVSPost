@@ -100,9 +100,10 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
     %current level, response, electrode configuration, and profile
     %these variables are more open ended, subjects can have multiple key
     %word repsonses for each trial 
-    % suffix 1 denotes part 1 suffix 2 denotes part 2     
-     Motion_map1 = TextMatchMap(MotionSense1,TrialInfo1,["roll"; "pitch"; "yaw"], 3);
-     Motion_map2 = TextMatchMap(MotionSense2,TrialInfo2,["roll"; "pitch"; "yaw"], 3);
+    % suffix 1 denotes part 1 suffix 2 denotes part 2
+     possible_motions = ["right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw"];
+     Motion_map1 = TextMatchMap(MotionSense1,TrialInfo1,possible_motions, 3);
+     Motion_map2 = TextMatchMap(MotionSense2,TrialInfo2,possible_motions, 3);
      Motion_map = Motion_map1+Motion_map2; % combined into a single variable
      Label.Motion_map = ["Current"; "Direction"; "Config";"Profile"];%labels are for the 4 dimensions of the array
      %take map variables and reduce it so that they only contain the responses
