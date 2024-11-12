@@ -66,7 +66,7 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 
 % 7: 
 
-Include_plots = ['11','12'];
+Include_plots = [' 12 '];
 
 % should probably insert a for loop that checks to make sure this file exists first
 cd([file_path]);
@@ -170,7 +170,7 @@ if contains(Include_plots,'1 ')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-
+        disp("press any key to continue"); pause; 
         close all
     end
 
@@ -265,7 +265,7 @@ if contains(Include_plots,'2')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-
+        disp("press any key to continue"); pause; 
         close all
     end
 
@@ -504,6 +504,7 @@ if contains(Include_plots,'5')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
     end
 end
@@ -609,6 +610,7 @@ if contains(Include_plots, '6')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
     end
 end
@@ -650,6 +652,7 @@ if contains(Include_plots, '7')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
 
 end
@@ -705,6 +708,7 @@ if contains(Include_plots, '8')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
 
 end
@@ -801,7 +805,7 @@ if contains(Include_plots,'9')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-
+        disp("press any key to continue"); pause; 
         close all
 
 end
@@ -952,7 +956,7 @@ if contains(Include_plots,'10')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-
+        disp("press any key to continue"); pause; 
         close all
 
 end
@@ -1081,6 +1085,7 @@ if contains(Include_plots, '11')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
 end
 
