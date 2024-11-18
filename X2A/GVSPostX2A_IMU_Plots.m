@@ -67,7 +67,7 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 
 if contains(plots,' 1 ')
-%% plot 1
+%% plot 1 - rms of anglular position in a box plot across current amps for the 0.5 Hz profile
 rms_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
@@ -76,13 +76,58 @@ close all;
 end
 
 if contains(plots,'2 ')
-%% plot 2
-mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+%% plot 2 
+%  mean (dominant) freq in angular position data in a box plot across 
+% current amps for the 0.5 Hz profile (first set of plots)
+% and the power at that mean freq. (2nd set of plots)
+mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+mean_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
 close all;
 end
+
+if contains(plots,'3 ')
+%% plot 3 - 
+%  median (dominant) freq in angular position data in a box plot across 
+% current amps for the 0.5 Hz profile (first set of plots)
+% and the power at that median freq. (2nd set of plots)
+med_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+med_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
+
+disp("press any key to continue")
+pause 
+close all;
+end
+
+if contains(plots,' 4 ')
+%% plot 4
+% phase shift, amplitude, and freq. fitted by the sinusodial fit model box
+% plot across current amps for the 0.5 Hz profile
+fit_phase_shift_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
+fit_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+fit_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
+
+disp("press any key to continue")
+pause 
+close all;
+end
+
+if contains(plots,' 5 ')
+%% plot 5
+% mean or median estimated sway amplitude (1/2* difference in peak to peak sway) 
+% (pulled for all peak time points in a trial, based on frequency fit by 
+% the sinusoidal fit model). box plot across current amps for the 0.5Hz
+% profile
+mean_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+med_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+
+disp("press any key to continue")
+pause 
+close all;
+end
+
 
 if contains(plots,'3 ')
 %% plot 3
@@ -266,6 +311,7 @@ color_grad = turbo(num_trial_var);
             for figure_index =1:num_figure_var
                 for extra_index = extra_var_indices
                     data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(:,figure_index);
+                    mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
 
                 end
             end
