@@ -14,7 +14,7 @@ numsub = length(subnum);
 subskip = [2001 2004 2008 2010];  %DNF'd subjects
 
 %% plot info
- plots = ['2 '];
+ plots = [' 1 '];
 
  % plot 1 creates box plots for the rms metric - 3 plots (roll pitch and
  % yaw each with subplots for binaural, cevette, and aoyama)
@@ -60,6 +60,10 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 
 if contains(plots,' 1 ')
+%% plot 1
+data_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], rms_save, "Current Amplitude (mA)", "RMS (deg)");
+
+
 %% plot 1
 f1 = figure();
 tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
@@ -365,3 +369,55 @@ for sub = 1:numsub
 end
 
 
+function data_plot = single_metric_plot(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, x_label, y_label)
+
+numsub = length(subnum);
+num_figure_var = length(figure_var);
+num_subplot_var = length(subplot_var);
+num_trial_var = length(trial_var);
+num_extra_var = length(extra_var);
+color_grad = turbo(num_trial_var);
+
+    for figure_index =1:num_figure_var
+        f(figure_index) = figure();
+        tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+        sgtitle (strjoin([ figure_var(figure_index) y_label num2str(extra_var(extra_var_indices)) ]))
+    end
+% organize data into plotting variable
+    for subplot = subplot_indices
+        for trial = trial_indices
+            for figure_index =1:num_figure_var
+                for extra_index = extra_var_indices
+                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(:,figure_index);
+
+                end
+            end
+
+        end
+
+        for figure_index =1:num_figure_var
+            figure(f(figure_index));
+            nexttile
+
+            boxplot(data_plot.(subplot_var(subplot)).(figure_var(figure_index)));
+            hold on;
+            title(subplot_var(subplot));
+            xticks(trial_indices);
+            xticklabels(trial_var(trial_indices));
+
+
+            if subplot ==2
+                ylabel(y_label)
+            elseif subplot == 3
+            xlabel(x_label)
+            end
+            % ylim([0 0.25]);
+            grid minor
+
+        end
+
+
+    end
+
+
+end
