@@ -68,7 +68,7 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 if contains(plots,' 1 ')
 %% plot 1 - rms of anglular position in a box plot across current amps for the 0.5 Hz profile
-rms_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
+rms_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
@@ -80,8 +80,8 @@ if contains(plots,'2 ')
 %  mean (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that mean freq. (2nd set of plots)
-mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-mean_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
+mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+mean_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
@@ -93,8 +93,8 @@ if contains(plots,'3 ')
 %  median (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that median freq. (2nd set of plots)
-med_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-med_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
+med_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+med_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1,med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
@@ -105,9 +105,9 @@ if contains(plots,' 4 ')
 %% plot 4
 % phase shift, amplitude, and freq. fitted by the sinusodial fit model box
 % plot across current amps for the 0.5 Hz profile
-fit_phase_shift_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
-fit_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-fit_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
+fit_phase_shift_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
+fit_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+fit_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
@@ -120,8 +120,8 @@ if contains(plots,' 5 ')
 % (pulled for all peak time points in a trial, based on frequency fit by 
 % the sinusoidal fit model). box plot across current amps for the 0.5Hz
 % profile
-mean_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-med_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], med_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+mean_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+med_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, med_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
 
 disp("press any key to continue")
 pause 
@@ -129,75 +129,17 @@ close all;
 end
 
 
-if contains(plots,'3 ')
-%% plot 3
-f1 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Roll direction Freq Power of 0.5Hz Profiles ')
-f2 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Pitch direction Freq Power of 0.5Hz Profiles ')
-% f3 = figure();
-% tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-% sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
-% organize data into plotting variable
-    for j = 1:num_config
-        for i = 1:num_current
-            mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
-            mean_freq_plot.(Config(j)).(imu_dir(5))(:,i) = power_interest_pitch{i,4,j}(:,10);
-            % mean_freq_plot.(Config(j)).(imu_dir(6))(:,i) = mean_freq{i,4,j}(:,3);
-
-        end
-        figure(f1)
-        nexttile
-        boxplot(mean_freq_plot.(Config(j)).(imu_dir(4)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("Power (?)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        ylim([0 45]);
-        grid minor
-        
-
-        figure(f2)
-        nexttile
-        boxplot(mean_freq_plot.(Config(j)).(imu_dir(5)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("Power (?)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        ylim([0 15]);
-        grid minor
-        % 
-        % figure(f3)
-        % nexttile
-        % boxplot(mean_freq_plot.(Config(j)).(imu_dir(6)));
-        % hold on;
-        % title(Config(j));
-        % xticks([1,2,3,4,5,6,7,8,9]);
-        % xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        % if j ==2
-        %     ylabel("RMS (deg/s)")
-        % elseif j == 3
-        % xlabel("Current Amplitude (mA)")
-        % end
-        % % ylim([0 0.25]);
-        % grid minor
-
-    end
+if contains(plots,'6 ')
+%% plot  6 
+% plots the power of the signal at select frequencies - box plot across
+% current amplitudes for each evaluated frequency within the 0.5 Hz profile
+for freq = 1:length(freq_interest)
+    y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz(deg?)"]);
+    power_interest_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],freq, power_interest, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
     disp("press any key to continue")
     pause 
     close all;
+end
 end
 
 
@@ -291,7 +233,7 @@ for sub = 1:numsub
 end
 
 
-function data_plot = single_metric_plot(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, x_label, y_label,sub_symbols, xoffset)
+function data_plot = single_metric_plot(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, extra_index2 ,data, x_label, y_label,sub_symbols, xoffset)
 
 numsub = length(subnum);
 num_figure_var = length(figure_var);
@@ -310,8 +252,8 @@ color_grad = turbo(num_trial_var);
         for trial = trial_indices
             for figure_index =1:num_figure_var
                 for extra_index = extra_var_indices
-                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(:,figure_index);
-                    mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
+                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(:,figure_index,extra_index2);
+                    % mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
 
                 end
             end
