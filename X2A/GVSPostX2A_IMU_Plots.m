@@ -68,144 +68,20 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 if contains(plots,' 1 ')
 %% plot 1
-data_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
+rms_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
 
-
-%% plot 1
-f1 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Roll direction RMS of 0.5Hz Profiles ')
-f2 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Pitch direction RMS of 0.5Hz Profiles ')
-f3 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
-% organize data into plotting variable
-    for j = 1:num_config
-        for i = 1:num_current
-            rms_plot.(Config(j)).(imu_dir(4))(:,i) = rms_save{i,4,j}(:,1);
-            rms_plot.(Config(j)).(imu_dir(5))(:,i) = rms_save{i,4,j}(:,2);
-            rms_plot.(Config(j)).(imu_dir(6))(:,i) = rms_save{i,4,j}(:,3);
-
-        end
-        figure(f1)
-        nexttile
-        boxplot(rms_plot.(Config(j)).(imu_dir(4)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("RMS (deg/s)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        % ylim([0 0.25]);
-        grid minor
-        
-
-        figure(f2)
-        nexttile
-        boxplot(rms_plot.(Config(j)).(imu_dir(5)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("RMS (deg/s)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        % ylim([0 0.31]);
-        grid minor
-
-        figure(f3)
-        nexttile
-        boxplot(rms_plot.(Config(j)).(imu_dir(6)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("RMS (deg/s)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        % ylim([0 0.25]);
-        grid minor
-
-    end
-
+disp("press any key to continue")
+pause 
+close all;
 end
 
 if contains(plots,'2 ')
 %% plot 2
-f1 = figure();
-tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-sgtitle ('Roll direction Mean Sway Freq of 0.5Hz Profiles ')
-% f2 = figure();
-% tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-% sgtitle ('Pitch direction RMS of 0.5Hz Profiles ')
-% f3 = figure();
-% tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-% sgtitle ('Yaw direction RMS of 0.5Hz Profiles ')
-% organize data into plotting variable
-    for j = 1:num_config
-        for i = 1:num_current
-            mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = mean_freq{i,4,j}(:,1);
-            % mean_freq_plot.(Config(j)).(imu_dir(5))(:,i) = mean_freq{i,4,j}(:,2);
-            % mean_freq_plot.(Config(j)).(imu_dir(6))(:,i) = mean_freq{i,4,j}(:,3);
+mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
 
-        end
-        figure(f1)
-        nexttile
-        boxplot(mean_freq_plot.(Config(j)).(imu_dir(4)));
-        hold on;
-        title(Config(j));
-        xticks([1,2,3,4,5,6,7,8,9]);
-        xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        if j ==2
-            ylabel("RMS (deg/s)")
-        elseif j == 3
-        xlabel("Current Amplitude (mA)")
-        end
-        ylim([0 1.75]);
-        grid minor
-        
-
-        % figure(f2)
-        % nexttile
-        % boxplot(mean_freq_plot.(Config(j)).(imu_dir(5)));
-        % hold on;
-        % title(Config(j));
-        % xticks([1,2,3,4,5,6,7,8,9]);
-        % xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        % if j ==2
-        %     ylabel("RMS (deg/s)")
-        % elseif j == 3
-        % xlabel("Current Amplitude (mA)")
-        % end
-        % % ylim([0 0.31]);
-        % grid minor
-        % 
-        % figure(f3)
-        % nexttile
-        % boxplot(mean_freq_plot.(Config(j)).(imu_dir(6)));
-        % hold on;
-        % title(Config(j));
-        % xticks([1,2,3,4,5,6,7,8,9]);
-        % xticklabels(["0.1" ,"0.5" ,"1" ,"1.5" ,"2", "2.5" ,"3" ,"3.5" ,"4"]);
-        % if j ==2
-        %     ylabel("RMS (deg/s)")
-        % elseif j == 3
-        % xlabel("Current Amplitude (mA)")
-        % end
-        % % ylim([0 0.25]);
-        % grid minor
-
-    end
-
+disp("press any key to continue")
+pause 
+close all;
 end
 
 if contains(plots,'3 ')
@@ -274,12 +150,14 @@ sgtitle ('Pitch direction Freq Power of 0.5Hz Profiles ')
         % grid minor
 
     end
-
+    disp("press any key to continue")
+    pause 
+    close all;
 end
 
 
-if contains(plots,'4 ')
-%% plot 3 - plot angle over time
+if contains(plots,'X ')
+%% plot X - plots angle over time
 data_plot = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_ang, all_time, "Angle (deg)");
 disp(" press any key to close all")
 pause;
@@ -288,22 +166,14 @@ close all;
 end
 
 
-if contains(plots,'3 ')
-    %% plot 3
+if contains(plots,'Y ')
+    %% plot Y - plots linear acceleration over time
 data_plot = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_imu_data, all_time, "acceleration (m/s)");
 disp(" press any key to close all")
 pause;
 close all;
 end
 
-
-if contains(plots,'4 ')
-    %% plot 4
-data_plot = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_pos, all_time, "position (m)");
-disp(" press any key to close all")
-pause;
-close all;
-end
 
 %% functions
 %list of subjects, % %list of variables to
