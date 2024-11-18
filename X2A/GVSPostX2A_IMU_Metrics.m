@@ -19,6 +19,7 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
 fs =100; % sampling freq of 100Hz
 profile_freq = [ 0 0 0.25 0.5 1];
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
+num_freq = length(freq_interest);
 %% load data 
 for sub = 1:numsub
     subject = subnum(sub);
@@ -64,8 +65,8 @@ for sub = 1:numsub
                         mean_power{current, profile, config}(sub,:) = NaN();
                         med_freq{current, profile, config}(sub,:) = NaN();
                         med_power{current, profile, config}(sub,:) = NaN();
-                        power_interest_roll{current, profile, config}(sub,:) = NaN(1, 18);
-                        power_interest_pitch{current, profile, config}(sub,:) = NaN(1, 18);
+                        power_interest{current, profile, config}(sub,1:2,1:num_freq) = NaN(1, 2,num_freq);
+                        % power_interest_pitch{current, profile, config}(sub,:) = NaN(1, 18);
                         mean_amp{current, profile, config}(sub,:) =  NaN();
                         med_amp{current, profile, config}(sub,:) =  NaN();
                         phase_shift{current, profile, config}(sub,:) = NaN();
@@ -106,8 +107,8 @@ for sub = 1:numsub
                     roll_ang = trial_eulers(:,3);
                     pitch_ang = trial_eulers(:,2);
 
-                    [power_interest_roll{current, profile, config}(sub,:),~] = periodogram(roll_ang,[],freq_interest,fs);
-                    [power_interest_pitch{current, profile, config}(sub,:),~] = periodogram(pitch_ang,[],freq_interest,fs);
+                    [power_interest{current, profile, config}(sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
+                    [power_interest{current, profile, config}(sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
                     [med_freq{current, profile, config}(sub,:), med_power{current, profile, config}(sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq{current, profile, config}(sub,:), mean_power{current, profile, config}(sub,:)]=meanfreq(roll_ang,fs);
 
@@ -158,7 +159,7 @@ end
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ...
-        'freq_interest power_interest_roll  power_interest_pitch med_freq med_power mean_freq mean_power ' ...
+        'freq_interest power_interest  med_freq med_power mean_freq mean_power ' ...
         'phase_shift fit_freq fit_amp mean_amp med_amp'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
