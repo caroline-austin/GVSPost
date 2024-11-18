@@ -15,7 +15,7 @@ file_path = uigetdir; %user selects file directory './Subject Data/'; %I replace
 
 subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
-subskip = [2001 2008 2010];  %DNF'd subjects
+subskip = [2001 2004 2008 2010];  %DNF'd subjects
 fs =100; % sampling freq of 100Hz
 profile_freq = [ 0 0 0.25 0.5 1];
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
