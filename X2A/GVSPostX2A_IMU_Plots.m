@@ -16,7 +16,7 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
 
 
 %% plot info
- plots = [' 1 '];
+ plots = ['  '];
 
  % plot 1 creates box plots for the rms metric - 3 plots (roll pitch and
  % yaw each with subplots for binaural, cevette, and aoyama)
@@ -43,7 +43,7 @@ color_grad = turbo(9);
 
 %naming variables 
 Profiles = ["DC Right/Front"; "DC Left/Back"; "Sin 0.25Hz"; "Sin 0.5Hz"; "Sin 1Hz"];
-Profiles_safe = ["DCRight-Front"; "DCLeft-Back"; "Sin0_25Hz"; "Sin0_5Hz"; "Sin1Hz"];
+Profiles_safe = ["DCRight_Front"; "DCLeft_Back"; "Sin0_25Hz"; "Sin0_5Hz"; "Sin1Hz"];
 num_profiles = length(Profiles);
 
 sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";"k*";"khexagram";"kdiamond";];
@@ -68,8 +68,9 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 if contains(plots,' 1 ')
 %% plot 1 - rms of anglular position in a box plot across current amps for the 0.5 Hz profile
-rms_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
-
+for prof = 1:num_profiles
+    rms_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
+end
 disp("press any key to continue")
 pause 
 close all;
@@ -80,9 +81,10 @@ if contains(plots,'2 ')
 %  mean (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that mean freq. (2nd set of plots)
-mean_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-mean_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
-
+for prof = 1:num_profiles
+    mean_freq_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+    mean_power.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
+end
 disp("press any key to continue")
 pause 
 close all;
@@ -93,9 +95,10 @@ if contains(plots,'3 ')
 %  median (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that median freq. (2nd set of plots)
-med_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-med_power = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1,med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
-
+for prof = 1:num_profiles
+    med_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+    med_power.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1,med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
+end
 disp("press any key to continue")
 pause 
 close all;
@@ -105,10 +108,11 @@ if contains(plots,' 4 ')
 %% plot 4
 % phase shift, amplitude, and freq. fitted by the sinusodial fit model box
 % plot across current amps for the 0.5 Hz profile
-fit_phase_shift_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
-fit_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-fit_freq_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4], 1, fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
-
+for prof = 1:num_profiles
+    fit_phase_shift_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
+    fit_amp_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+    fit_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
+end
 disp("press any key to continue")
 pause 
 close all;
@@ -120,9 +124,10 @@ if contains(plots,' 5 ')
 % (pulled for all peak time points in a trial, based on frequency fit by 
 % the sinusoidal fit model). box plot across current amps for the 0.5Hz
 % profile
-mean_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, mean_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-med_amp_plot = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],1, med_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-
+for prof = 1:num_profiles
+    mean_amp_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+    med_amp_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, med_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+end
 disp("press any key to continue")
 pause 
 close all;
@@ -133,32 +138,69 @@ if contains(plots,'6 ')
 %% plot  6 
 % plots the power of the signal at select frequencies - box plot across
 % current amplitudes for each evaluated frequency within the 0.5 Hz profile
-for freq = 1:length(freq_interest)
-    y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz(deg?)"]);
-    power_interest_plot = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [4],freq, power_interest, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
-    disp("press any key to continue")
+for prof = 4%1:num_profiles
+for freq = [10 11]%1:length(freq_interest)
+    y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz 10log10(deg^2 /Hz)"]);
+    power_interest_plot.(Profiles_safe(prof)).(strrep(strrep(strjoin(["X" num2str(freq_interest(freq))]),'.', '_'), ' ', ''))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],freq, power_interest, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
+    disp("press any key to continue") 
     pause 
     close all;
+
 end
 end
+%%
+
+% f(figure_index) = figure();
+% figure(f(figure_index) );
+%             nexttile
+% for dir = 4:5
+% 
+% for prof = 1:num_profiles
+%     figure(prof+dir*10);
+%     tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+%     sgtitle ([imu_dir(dir) Profiles_safe(prof) ""])
+%     for config = 1:3
+%     nexttile
+% 
+%         for sub = 1:numsub
+%             subject = subnum(sub);
+%                 subject_str = num2str(subject);
+%                  if ismember(subject,subskip) == 1
+%                    continue
+%                  end
+%             plot(power_interest_plot.(Profiles_safe(prof)).(Config(config)).(imu_dir(dir))(sub, :), sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5) 
+%             hold on;
+%         end
+%     end
+% end
+% end
+end
+
+
 
 
 if contains(plots,'X ')
 %% plot X - plots angle over time
-data_plot = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_ang, all_time, "Angle (deg)");
-disp(" press any key to close all")
-pause;
-close all;
+for prof = 4%1:num_profiles
+    ang_plot.(Profiles_safe(prof))  = time_series_plot(2006,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
+    disp(" press any key to close all") %subnum
+    pause;
+    close all;
+end
+
 
 end
 
 
 if contains(plots,'Y ')
     %% plot Y - plots linear acceleration over time
-data_plot = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [4], all_imu_data, all_time, "acceleration (m/s)");
-disp(" press any key to close all")
-pause;
-close all;
+for prof = 1:num_profiles
+    acc_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_imu_data, all_time, "acceleration (m/s)");
+    disp(" press any key to close all")
+    pause;
+    close all;
+end
+
 end
 
 
@@ -180,6 +222,7 @@ for sub = 1:numsub
      if ismember(subject,subskip) == 1
        continue
      end
+
     for figure_index =1:num_figure_var
         f(figure_index) = figure();
         tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
@@ -241,6 +284,7 @@ num_subplot_var = length(subplot_var);
 num_trial_var = length(trial_var);
 num_extra_var = length(extra_var);
 color_grad = turbo(num_trial_var);
+sub2use = [2 3 5 6 7 9];
 
     for figure_index =1:num_figure_var
         f(figure_index) = figure();
@@ -252,7 +296,7 @@ color_grad = turbo(num_trial_var);
         for trial = trial_indices
             for figure_index =1:num_figure_var
                 for extra_index = extra_var_indices
-                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(:,figure_index,extra_index2);
+                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(sub2use,figure_index,extra_index2);
                     % mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
 
                 end
@@ -269,16 +313,17 @@ color_grad = turbo(num_trial_var);
             title(subplot_var(subplot));
             xticks(trial_indices);
             xticklabels(trial_var(trial_indices));
-
+            save_index = 0;
             for sub = 1:numsub
                 subject = subnum(sub);
                 subject_str = num2str(subject);
                  if ismember(subject,subskip) == 1
                    continue
                  end
+                 save_index = save_index+1;
                 for trial = 1:num_trial_var
                     
-                    plot(trial+xoffset(sub), data_plot.(subplot_var(subplot)).(figure_var(figure_index))(sub,trial),sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5);
+                    plot(trial+xoffset(sub), data_plot.(subplot_var(subplot)).(figure_var(figure_index))(save_index,trial),sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5);
                     hold on;
                 end
             end
