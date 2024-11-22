@@ -141,14 +141,25 @@ if contains(plots,'6 ')
 for prof = 4%1:num_profiles
 for freq = [10 11]%1:length(freq_interest)
     y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz 10log10(deg^2 /Hz)"]);
-    power_interest_plot.(Profiles_safe(prof)).(strrep(strrep(strjoin(["X" num2str(freq_interest(freq))]),'.', '_'), ' ', ''))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],freq, power_interest, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
+    power_interest_plot.(Profiles_safe(prof)).(strrep(strrep(strjoin(["X" num2str(freq_interest(freq))]),'.', '_'), ' ', ''))  =  ...
+        single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],freq, power_interest, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
     disp("press any key to continue") 
     pause 
     close all;
 
 end
 end
-%%
+%% plot 7
+
+for prof = 5%1:num_profiles
+for current = [9]%1:length(freq_interest)
+    y_label = strjoin (["Power at " num2str(Current_amp(current)) "mA 10log10(deg^2 /Hz)"]);
+    data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:5), Config,[1:3], Current_amp', [current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
+    disp("press any key to continue") 
+    pause 
+    close all;
+end
+end
 
 % f(figure_index) = figure();
 % figure(f(figure_index) );
@@ -331,6 +342,76 @@ sub2use = [2 3 5 6 7 9];
             if subplot ==2
                 ylabel(y_label)
             elseif subplot == 3
+            xlabel(x_label)
+            end
+            % ylim([0 0.25]);
+            grid minor
+
+        end
+
+
+    end
+
+
+end
+
+
+function data_plot = single_metric_plot2(subnum,subskip,motion_dir, Config,config_indices, Current, current_indices, Profiles, profile_indices, freq_interest, freq_indices ,data, x_label, y_label,sub_symbols, xoffset)
+
+numsub = length(subnum);
+num_figure_var = length(motion_dir);
+num_subplot_var = length(Config);
+num_trial_var = length(Current);
+num_extra_var = length(Profiles);
+color_grad = turbo(num_trial_var);
+sub2use = [2 3 5 6 7 9];
+
+    for dir_index =1:num_figure_var
+        f(dir_index) = figure();
+        tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+        sgtitle (strjoin([ motion_dir(dir_index) y_label num2str(Profiles(profile_indices)) ]))
+    end
+% organize data into plotting variable
+    for config = config_indices
+        for current = current_indices
+            for dir_index =1:num_figure_var
+                for profile = profile_indices
+                    for freq = freq_indices
+                        data_plot.(Config(config)).(motion_dir(dir_index)).(strrep(strrep(strjoin(["X" num2str(Current(current))]),'.', '_'), ' ', ''))(:,freq) = data{current,profile,config}(sub2use,dir_index,freq);
+                    % mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
+                    end
+                end
+            end
+
+        end
+
+        for dir_index =1:num_figure_var
+            figure(f(dir_index));
+            nexttile
+
+            boxplot(data_plot.(Config(config)).(motion_dir(dir_index)).(strrep(strrep(strjoin(["X" num2str(Current(current))]),'.', '_'), ' ', '')));
+            hold on;
+            title(Config(config));
+            xticks(freq_indices);
+            xticklabels(freq_interest(freq_indices));
+            save_index = 0;
+            for sub = 1:numsub
+                subject = subnum(sub);
+                subject_str = num2str(subject);
+                 if ismember(subject,subskip) == 1
+                   continue
+                 end
+                 save_index = save_index+1;
+                for freq = freq_indices
+                    
+                    plot(freq+xoffset(sub), data_plot.(Config(config)).(motion_dir(dir_index)).(strrep(strrep(strjoin(["X" num2str(Current(current))]),'.', '_'), ' ', ''))(save_index,freq),sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5);
+                    hold on;
+                end
+            end
+
+            if config ==2
+                ylabel(y_label)
+            elseif config == 3
             xlabel(x_label)
             end
             % ylim([0 0.25]);
