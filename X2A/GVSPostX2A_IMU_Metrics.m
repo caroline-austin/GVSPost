@@ -112,7 +112,8 @@ for sub = 1:numsub
                     [med_freq{current, profile, config}(sub,:), med_power{current, profile, config}(sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq{current, profile, config}(sub,:), mean_power{current, profile, config}(sub,:)]=meanfreq(roll_ang,fs);
 
-
+                    power_interest{current, profile, config}(sub,:,1:num_freq) = log10(power_interest{current, profile, config}(sub,:,1:num_freq))*10;
+                    
                     mdl = fittype('a*sin(b*x+c)','indep','x');
                     fittedmdl1 = fit(trial_time_e,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
                     y_model = fittedmdl1(trial_time_e);
