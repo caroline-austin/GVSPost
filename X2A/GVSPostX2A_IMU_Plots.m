@@ -81,9 +81,9 @@ if contains(plots,'2 ')
 %  mean (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that mean freq. (2nd set of plots)
-for prof = 1:num_profiles
-    mean_freq_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-    mean_power.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
+for prof = 4%1:num_profiles
+    mean_freq_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+    mean_power_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof],1, mean_power, "Current Amplitude (mA)", "Mean Amp (deg)", sub_symbols, xoffset2);
 end
 disp("press any key to continue")
 pause 
@@ -96,8 +96,8 @@ if contains(plots,'3 ')
 % current amps for the 0.5 Hz profile (first set of plots)
 % and the power at that median freq. (2nd set of plots)
 for prof = 1:num_profiles
-    med_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
-    med_power.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1,med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
+    med_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, med_freq, "Current Amplitude (mA)", "Mean Freq (Hz)", sub_symbols, xoffset2);
+    med_power_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1,med_power, "Current Amplitude (mA)", "Mean Power (deg?)", sub_symbols, xoffset2);
 end
 disp("press any key to continue")
 pause 
@@ -108,10 +108,10 @@ if contains(plots,' 4 ')
 %% plot 4
 % phase shift, amplitude, and freq. fitted by the sinusodial fit model box
 % plot across current amps for the 0.5 Hz profile
-for prof = 1:num_profiles
-    fit_phase_shift_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
-    fit_amp_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
-    fit_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
+for prof = 4%1:num_profiles
+    fit_phase_shift_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, phase_shift, "Current Amplitude (mA)", "Phase shift (deg)", sub_symbols, xoffset2);
+    fit_amp_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_amp, "Current Amplitude (mA)", "Amplitude (deg)", sub_symbols, xoffset2);
+    fit_freq_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, fit_freq, "Current Amplitude (mA)", "Freq (Hz)", sub_symbols, xoffset2);
 end
 disp("press any key to continue")
 pause 
@@ -151,8 +151,8 @@ end
 end
 %% plot 7
 
-for prof = 5%1:num_profiles
-for current = [9]%1:length(freq_interest)
+for prof = 4%1:num_profiles
+for current = [8]%1:length(freq_interest)
     y_label = strjoin (["Power at " num2str(Current_amp(current)) "mA 10log10(deg^2 /Hz)"]);
     data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:5), Config,[1:3], Current_amp', [current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
     disp("press any key to continue") 
