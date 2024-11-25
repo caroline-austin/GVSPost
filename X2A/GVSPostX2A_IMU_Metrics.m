@@ -152,8 +152,25 @@ for sub = 1:numsub
         end
     end
 
+    [rms_save_reduced(:,:,:,sub,:)] = ReduceVarMultiple(rms_save,MinCurrent,MaxCurrent,Label,sub);
+    [mean_power_reduced(:,:,:,sub,:)] = ReduceVarMultiple(mean_power,MinCurrent,MaxCurrent,Label,sub);
+    [mean_freq_reduced(:,:,:,sub,:)] = ReduceVarMultiple(mean_freq,MinCurrent,MaxCurrent,Label,sub);
+    [med_power_reduced(:,:,:,sub,:)] = ReduceVarMultiple(med_power,MinCurrent,MaxCurrent,Label,sub);
+    [med_freq_reduced(:,:,:,sub,:)] = ReduceVarMultiple(med_freq,MinCurrent,MaxCurrent,Label,sub);
+    [med_amp_reduced(:,:,:,sub,:)] = ReduceVarMultiple(med_amp,MinCurrent,MaxCurrent,Label,sub);
+    [mean_amp_reduced(:,:,:,sub,:)] = ReduceVarMultiple(mean_amp,MinCurrent,MaxCurrent,Label,sub);
+    [phase_shift_reduced(:,:,:,sub,:)] = ReduceVarMultiple(phase_shift,MinCurrent,MaxCurrent,Label,sub);
+    [fit_freq_reduced(:,:,:,sub,:)] = ReduceVarMultiple(fit_freq,MinCurrent,MaxCurrent,Label,sub);
+    [fit_amp_reduced(:,:,:,sub,:)] = ReduceVarMultiple(fit_amp,MinCurrent,MaxCurrent,Label,sub);
+
+    [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
 
 end
+%%
+Label.IMUmetrics = ["Current" "Profile" "Config" "Subject" "Direction" "VarIndex"];
+Label.CurrentAmpReduced = ["Low" "Min" "Max"];
+
+
 
 %% save data
     cd([file_path]); %move to directory where file will be saved
@@ -161,9 +178,60 @@ end
     %between variable names 
     vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ...
         'freq_interest power_interest  med_freq med_power mean_freq mean_power ' ...
-        'phase_shift fit_freq fit_amp mean_amp med_amp'];% ...
+        'phase_shift fit_freq fit_amp mean_amp med_amp' ...
+        ' power_interest_reduced  med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
+        'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
     eval (['clear ' vars_2_save]) 
+
+
+    %%
+function [Reduced_var] = ReduceVarMultiple(Var,MinCurrent,MaxCurrent,Label,sub_index)
+%this function takes a previously generated map and reduces it so that the
+%values recorded are only for the sham(0.1), low (min), and high(max)
+%current amplitude conditions. 
+% dim1 is current, dim2 is variable of interest,dim 3 electrode configuration,is dim 4 is profile
+
+%get size of the original map and pre-allocate the reduced map
+[dim1, dim3, dim4] = size(Var);
+% Reduced_var = zeros(3,dim3,dim4);
+for index_1 = 1:dim1
+for outer = 1: dim4  %cycle through the different electrode configurations
+    for inner = 1:dim3 %cycle through the different profiles
+        %find locations where a response is recorded 
+        % test = Var{:,inner,outer}(sub_index,:);
+        [row,col] = find(Var{index_1,inner,outer}(sub_index,:,:));
+
+        num_trials = length(row); %number of responses
+        %initialize checking variables
+        check_low = 0;
+        check_min = 0;
+        check_max = 0;
+        for k = 1:num_trials %cycle through all identified responses
+            if Label.CurrentAmp(index_1) == 0.1 %for sham condition
+                Reduced_var(1, inner, outer,1,:,:) = Var{index_1,inner, outer}(sub_index,:,:);
+                check_low = 1;
+            elseif Label.CurrentAmp(index_1) == MinCurrent{outer} %for low current condition
+                Reduced_var(2, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                check_min = 1;
+            elseif Label.CurrentAmp(index_1) == MaxCurrent{outer} %for high current conditions 
+                Reduced_var(3, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                check_max = 1;
+                %below is meant to handle a couple of trials where the
+                %current provided in a part 2 trial was less than the
+                %predetermined max while still meant to represent the max
+                %report
+            elseif Label.CurrentAmp(index_1) <= MaxCurrent{outer} && Label.CurrentAmp(index_1) >= MinCurrent{outer} && inner ~= 4 %not 0.5hz profile
+                Reduced_var(3, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                check_max = 1;
+            end
+        end
+
+    end
+end
+end
+
+end
