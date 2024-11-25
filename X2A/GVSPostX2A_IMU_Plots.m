@@ -307,7 +307,7 @@ sub2use = [2 3 5 6 7 9];
         for trial = trial_indices
             for figure_index =1:num_figure_var
                 for extra_index = extra_var_indices
-                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data{trial,extra_index,subplot}(sub2use,figure_index,extra_index2);
+                    data_plot.(subplot_var(subplot)).(figure_var(figure_index))(:,trial) = data(trial,extra_index,subplot,sub2use,figure_index,extra_index2);
                     % mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
 
                 end
@@ -377,7 +377,7 @@ sub2use = [2 3 5 6 7 9];
             for dir_index =1:num_figure_var
                 for profile = profile_indices
                     for freq = freq_indices
-                        data_plot.(Config(config)).(motion_dir(dir_index)).(strrep(strrep(strjoin(["X" num2str(Current(current))]),'.', '_'), ' ', ''))(:,freq) = data{current,profile,config}(sub2use,dir_index,freq);
+                        data_plot.(Config(config)).(motion_dir(dir_index)).(strrep(strrep(strjoin(["X" num2str(Current(current))]),'.', '_'), ' ', ''))(:,freq) = data(current,profile,config,sub2use,dir_index,freq);
                     % mean_freq_plot.(Config(j)).(imu_dir(4))(:,i) = power_interest_roll{i,4,j}(:,10);
                     end
                 end
