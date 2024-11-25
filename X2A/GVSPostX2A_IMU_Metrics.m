@@ -61,17 +61,17 @@ for sub = 1:numsub
                 % figure; 
                 for config = 1:h
                     if isempty(all_imu_data.(['A', subject_str]){current,profile,config})
-                        mean_freq{current, profile, config}(sub,:) = NaN();
-                        mean_power{current, profile, config}(sub,:) = NaN();
-                        med_freq{current, profile, config}(sub,:) = NaN();
-                        med_power{current, profile, config}(sub,:) = NaN();
-                        power_interest{current, profile, config}(sub,1:2,1:num_freq) = NaN(1, 2,num_freq);
+                        mean_freq(current, profile, config,sub,:) = NaN();
+                        mean_power(current, profile, config,sub,:) = NaN();
+                        med_freq(current, profile, config,sub,:) = NaN();
+                        med_power(current, profile, config,sub,:) = NaN();
+                        power_interest(current, profile, config,sub,1:2,1:num_freq) = NaN(1, 2,num_freq);
                         % power_interest_pitch{current, profile, config}(sub,:) = NaN(1, 18);
-                        mean_amp{current, profile, config}(sub,:) =  NaN();
-                        med_amp{current, profile, config}(sub,:) =  NaN();
-                        phase_shift{current, profile, config}(sub,:) = NaN();
-                        fit_freq{current, profile, config}(sub,:) = NaN();
-                        fit_amp{current, profile, config}(sub,:) = NaN();
+                        mean_amp(current, profile, config,sub,:) =  NaN();
+                        med_amp(current, profile, config,sub,:) =  NaN();
+                        phase_shift(current, profile, config,sub,:) = NaN();
+                        fit_freq(current, profile, config,sub,:) = NaN();
+                        fit_amp(current, profile, config,sub,:) = NaN();
                         continue
                     end
                     trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
@@ -107,25 +107,25 @@ for sub = 1:numsub
                     roll_ang = trial_eulers(:,3);
                     pitch_ang = trial_eulers(:,2);
 
-                    [power_interest{current, profile, config}(sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
-                    [power_interest{current, profile, config}(sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
-                    [med_freq{current, profile, config}(sub,:), med_power{current, profile, config}(sub,:)]=medfreq(roll_ang,fs);
-                    [mean_freq{current, profile, config}(sub,:), mean_power{current, profile, config}(sub,:)]=meanfreq(roll_ang,fs);
+                    [power_interest(current, profile, config, sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
+                    [power_interest(current, profile, config, sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
+                    [med_freq(current, profile, config,sub,:), med_power(current, profile, config, sub,:)]=medfreq(roll_ang,fs);
+                    [mean_freq(current, profile, config,sub,:), mean_power(current, profile, config, sub,:)]=meanfreq(roll_ang,fs);
 
-                    power_interest{current, profile, config}(sub,:,1:num_freq) = log10(power_interest{current, profile, config}(sub,:,1:num_freq))*10;
+                    power_interest(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
                     
                     mdl = fittype('a*sin(b*x+c)','indep','x');
                     fittedmdl1 = fit(trial_time_e,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
                     y_model = fittedmdl1(trial_time_e);
                   
-                    phase_shift{current, profile, config}(sub,:) = fittedmdl1.c;
-                    fit_freq{current, profile, config}(sub,:) = fittedmdl1.b;
-                    fit_amp{current, profile, config}(sub,:) = fittedmdl1.a;
+                    phase_shift(current, profile, config,sub,:) = fittedmdl1.c;
+                    fit_freq(current, profile, config, sub,:) = fittedmdl1.b;
+                    fit_amp(current, profile, config, sub,:) = fittedmdl1.a;
                     
                     [val, loc]=findpeaks(abs(y_model));
                     amps = abs(diff(roll_ang (loc)))/2;
-                    mean_amp{current, profile, config}(sub,:) = mean(amps);
-                    med_amp{current, profile, config}(sub,:) = median(amps);
+                    mean_amp(current, profile, config, sub,:) = mean(amps);
+                    med_amp(current, profile, config, sub,:) = median(amps);
 
                     % %for visual checking
                     % subplot(3,1,config)
@@ -147,7 +147,7 @@ for sub = 1:numsub
                 rms_out = [NaN NaN NaN ];
             end
 
-            rms_save{current, profile, config}(sub,:) = rms_out;
+            rms_save(current, profile, config, sub,:) = rms_out;
             end
         end
     end
@@ -178,7 +178,7 @@ Label.CurrentAmpReduced = ["Low" "Min" "Max"];
     %between variable names 
     vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ...
         'freq_interest power_interest  med_freq med_power mean_freq mean_power ' ...
-        'phase_shift fit_freq fit_amp mean_amp med_amp' ...
+        'phase_shift fit_freq fit_amp mean_amp med_amp rms_save_reduced' ...
         ' power_interest_reduced  med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
         'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
@@ -196,14 +196,14 @@ function [Reduced_var] = ReduceVarMultiple(Var,MinCurrent,MaxCurrent,Label,sub_i
 % dim1 is current, dim2 is variable of interest,dim 3 electrode configuration,is dim 4 is profile
 
 %get size of the original map and pre-allocate the reduced map
-[dim1, dim3, dim4] = size(Var);
+[dim1, dim3, dim4,~,~,~] = size(Var);
 % Reduced_var = zeros(3,dim3,dim4);
 for index_1 = 1:dim1
 for outer = 1: dim4  %cycle through the different electrode configurations
     for inner = 1:dim3 %cycle through the different profiles
         %find locations where a response is recorded 
         % test = Var{:,inner,outer}(sub_index,:);
-        [row,col] = find(Var{index_1,inner,outer}(sub_index,:,:));
+        [row,col] = find(Var(index_1,inner,outer,sub_index,:,:));
 
         num_trials = length(row); %number of responses
         %initialize checking variables
@@ -212,20 +212,20 @@ for outer = 1: dim4  %cycle through the different electrode configurations
         check_max = 0;
         for k = 1:num_trials %cycle through all identified responses
             if Label.CurrentAmp(index_1) == 0.1 %for sham condition
-                Reduced_var(1, inner, outer,1,:,:) = Var{index_1,inner, outer}(sub_index,:,:);
+                Reduced_var(1, inner, outer,1,:,:) = Var(index_1,inner, outer,sub_index,:,:);
                 check_low = 1;
             elseif Label.CurrentAmp(index_1) == MinCurrent{outer} %for low current condition
-                Reduced_var(2, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                Reduced_var(2, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
                 check_min = 1;
             elseif Label.CurrentAmp(index_1) == MaxCurrent{outer} %for high current conditions 
-                Reduced_var(3, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
                 check_max = 1;
                 %below is meant to handle a couple of trials where the
                 %current provided in a part 2 trial was less than the
                 %predetermined max while still meant to represent the max
                 %report
             elseif Label.CurrentAmp(index_1) <= MaxCurrent{outer} && Label.CurrentAmp(index_1) >= MinCurrent{outer} && inner ~= 4 %not 0.5hz profile
-                Reduced_var(3, inner, outer,1,:,:) = Var{index_1, inner, outer}(sub_index,:,:);
+                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
                 check_max = 1;
             end
         end
