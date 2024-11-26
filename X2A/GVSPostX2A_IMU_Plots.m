@@ -149,7 +149,23 @@ for freq = [10 11]%1:length(freq_interest)
 
 end
 end
-%% plot 7
+
+%% plot  7
+% plots the power of the signal at select frequencies - box plot across
+% current amplitudes for each evaluated frequency within the 0.5 Hz profile
+for prof = 4%1:num_profiles
+for freq = [10 11]%1:length(freq_interest)
+    y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz 10log10(deg^2 /Hz)"]);
+    power_interest_plot.(Profiles_safe(prof)).(strrep(strrep(strjoin(["X" num2str(freq_interest(freq))]),'.', '_'), ' ', ''))  =  ...
+        single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Label.CurrentAmpReduced',[1:3], Profiles_safe, [prof],freq, power_interest_reduced, "Current Amplitude (mA)", y_label, sub_symbols, xoffset2);
+    disp("press any key to continue") 
+    pause 
+    close all;
+
+end
+end
+
+%% plot 8
 
 for prof = 4%1:num_profiles
 for current = [8]%1:length(freq_interest)
@@ -161,30 +177,19 @@ for current = [8]%1:length(freq_interest)
 end
 end
 
-% f(figure_index) = figure();
-% figure(f(figure_index) );
-%             nexttile
-% for dir = 4:5
-% 
-% for prof = 1:num_profiles
-%     figure(prof+dir*10);
-%     tiledlayout(3,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
-%     sgtitle ([imu_dir(dir) Profiles_safe(prof) ""])
-%     for config = 1:3
-%     nexttile
-% 
-%         for sub = 1:numsub
-%             subject = subnum(sub);
-%                 subject_str = num2str(subject);
-%                  if ismember(subject,subskip) == 1
-%                    continue
-%                  end
-%             plot(power_interest_plot.(Profiles_safe(prof)).(Config(config)).(imu_dir(dir))(sub, :), sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5) 
-%             hold on;
-%         end
-%     end
-% end
-% end
+
+%% plot 9
+
+for prof = 5%1:num_profiles
+for current = [3]%1:3
+    y_label = strjoin (["Power at " num2str(Label.CurrentAmpReduced(current)) "mA 10log10(deg^2 /Hz)"]);
+    data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:5), Config,[1:3], Label.CurrentAmpReduced',[current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest_reduced, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
+    disp("press any key to continue") 
+    pause 
+    close all;
+end
+end
+
 end
 
 
@@ -192,7 +197,7 @@ end
 
 if contains(plots,'X ')
 %% plot X - plots angle over time
-for prof = 4%1:num_profiles
+for prof = 3%1:num_profiles
     ang_plot.(Profiles_safe(prof))  = time_series_plot(2006,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
     disp(" press any key to close all") %subnum
     pause;
