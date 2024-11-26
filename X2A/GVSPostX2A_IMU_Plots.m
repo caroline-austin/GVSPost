@@ -150,9 +150,12 @@ for freq = [10 11]%1:length(freq_interest)
 end
 end
 
+end
+if contains(plots,'7 ')
 %% plot  7
 % plots the power of the signal at select frequencies - box plot across
-% current amplitudes for each evaluated frequency within the 0.5 Hz profile
+% low/min/max current amplitudes for each evaluated frequency within  a 
+% given profile 
 for prof = 4%1:num_profiles
 for freq = [10 11]%1:length(freq_interest)
     y_label = strjoin (["Power at " num2str(freq_interest(freq)) "Hz 10log10(deg^2 /Hz)"]);
@@ -164,9 +167,11 @@ for freq = [10 11]%1:length(freq_interest)
 
 end
 end
-
+end
+if contains(plots,'8 ')
 %% plot 8
-
+% plots the power of the signal across selected frequencies for a selected
+% current amplitude and profile compination
 for prof = 4%1:num_profiles
 for current = [8]%1:length(freq_interest)
     y_label = strjoin (["Power at " num2str(Current_amp(current)) "mA 10log10(deg^2 /Hz)"]);
@@ -176,12 +181,13 @@ for current = [8]%1:length(freq_interest)
     close all;
 end
 end
-
-
+end
+if contains(plots,'9 ')
 %% plot 9
-
-for prof = 5%1:num_profiles
-for current = [3]%1:3
+% plots the power of the signal across selected frequencies for a selected
+% current amplitude (low min max) and profile compination
+for prof = [2]%1:num_profiles
+for current = [1]%1:3
     y_label = strjoin (["Power at " num2str(Label.CurrentAmpReduced(current)) "mA 10log10(deg^2 /Hz)"]);
     data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:5), Config,[1:3], Label.CurrentAmpReduced',[current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest_reduced, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
     disp("press any key to continue") 
@@ -189,7 +195,6 @@ for current = [3]%1:3
     close all;
 end
 end
-
 end
 
 
@@ -197,8 +202,8 @@ end
 
 if contains(plots,'X ')
 %% plot X - plots angle over time
-for prof = 3%1:num_profiles
-    ang_plot.(Profiles_safe(prof))  = time_series_plot(2006,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
+for prof = [1 2]%1:num_profiles
+    ang_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
     disp(" press any key to close all") %subnum
     pause;
     close all;
