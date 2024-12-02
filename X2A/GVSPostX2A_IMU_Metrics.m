@@ -82,33 +82,38 @@ for sub = 1:numsub
                     [len, wid] = size(trial_eulers);
 
                     % make all trials only 10s
-                    if len > 12*fs 
+                    if len > 12*fs && (profile == 4 || profile == 3 || profile == 5 )
                         buffer = floor((len - 12*fs)/2);
                         trial_eulers = trial_eulers(buffer:len - buffer,:); % take middle 10s of long trials
                         trial_time_e = trial_time(buffer:len - buffer,:);
 
-                    else
+                    elseif len <12*fs
+                         buffer = floor(abs((len - 12*fs)/2));
                          trial_eulers = [trial_eulers; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
                          trial_time_e = [trial_time; NaN(2*buffer,wid)];
+                    else 
+                         trial_time_e = trial_time;
                     end
-                       
-                    if subject == 2004
-                        neg_loc=find(trial_eulers < -70); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
-                    trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
-                    else
-                        neg_loc=find(trial_eulers < -100); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
-                        trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
-                    end
-                    
+                       trial_eulers = unwrap(trial_eulers);
+                    % if subject == 2004
+                    %     neg_loc=find(trial_eulers < -70); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
+                    % trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
+                    % else
+                    %     neg_loc=find(trial_eulers < -100); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
+                    %     trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
+                    % end
+                    % 
                     bias = mean(trial_eulers);
                     trial_eulers = trial_eulers - bias; 
                     all_ang.(['A', subject_str]){current,profile,config} =  trial_eulers;
 
                     roll_ang = trial_eulers(:,3);
                     pitch_ang = trial_eulers(:,2);
+                    yaw_ang = trial_eulers(:,1);
 
                     [power_interest(current, profile, config, sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
                     [power_interest(current, profile, config, sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
+                    [power_interest(current, profile, config, sub,3,1:num_freq),~] = periodogram(yaw_ang,[],freq_interest,fs);
                     [med_freq(current, profile, config,sub,:), med_power(current, profile, config, sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq(current, profile, config,sub,:), mean_power(current, profile, config, sub,:)]=meanfreq(roll_ang,fs);
 
@@ -134,6 +139,8 @@ for sub = 1:numsub
                     % hold on;plot(trial_time_e(loc),roll_ang(loc))
                     % title(strjoin([subject_str "Profile:" Label.Config(config) Label.Profile(profile)  Label.CurrentAmp(current) " mA"]));
                                 
+                   angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10)) - mean(roll_ang(1:10)) ;
+                   angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10)) - mean(pitch_ang(1:10)) ;
 
                 end
             end
@@ -162,6 +169,7 @@ for sub = 1:numsub
     [phase_shift_reduced(:,:,:,sub,:)] = ReduceVarMultiple(phase_shift,MinCurrent,MaxCurrent,Label,sub);
     [fit_freq_reduced(:,:,:,sub,:)] = ReduceVarMultiple(fit_freq,MinCurrent,MaxCurrent,Label,sub);
     [fit_amp_reduced(:,:,:,sub,:)] = ReduceVarMultiple(fit_amp,MinCurrent,MaxCurrent,Label,sub);
+    [angle_drift_reduced(:,:,:,sub,:)] = ReduceVarMultiple(angle_drift,MinCurrent,MaxCurrent,Label,sub);
 
     [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
 
@@ -180,7 +188,8 @@ Label.CurrentAmpReduced = ["Low" "Min" "Max"];
         'freq_interest power_interest  med_freq med_power mean_freq mean_power ' ...
         'phase_shift fit_freq fit_amp mean_amp med_amp rms_save_reduced' ...
         ' power_interest_reduced  med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
-        'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced'];% ...
+        'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced' ...
+        ' angle_drift angle_drift_reduced'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
