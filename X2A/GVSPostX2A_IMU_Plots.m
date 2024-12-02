@@ -186,10 +186,10 @@ if contains(plots,'9 ')
 %% plot 9
 % plots the power of the signal across selected frequencies for a selected
 % current amplitude (low min max) and profile compination
-for prof = [2]%1:num_profiles
-for current = [1]%1:3
+for prof = [1]%1:num_profiles
+for current = [3]%1:3
     y_label = strjoin (["Power at " num2str(Label.CurrentAmpReduced(current)) "mA 10log10(deg^2 /Hz)"]);
-    data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:5), Config,[1:3], Label.CurrentAmpReduced',[current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest_reduced, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
+    data_plot = single_metric_plot2(subnum,subskip,imu_dir(4:6), Config,[1:3], Label.CurrentAmpReduced',[current], Profiles_safe, [prof], freq_interest, [2:18] ,power_interest_reduced, "Frequency (Hz)", y_label,sub_symbols, xoffset2);
     disp("press any key to continue") 
     pause 
     close all;
@@ -197,12 +197,24 @@ end
 end
 end
 
+if contains(plots,' 10 ')
+%% plot 10
+% 
+
+for prof = 1:num_profiles
+    angle_drift_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Label.CurrentAmpReduced',[1:3], Profiles_safe, [prof],1, angle_drift_reduced, "Current Amplitude (mA)", "Angle (deg)", sub_symbols, xoffset2);
+end
+
+disp("press any key to continue")
+pause 
+close all;
+end
 
 
 
 if contains(plots,'X ')
 %% plot X - plots angle over time
-for prof = [1 2]%1:num_profiles
+for prof = [1]%1:num_profiles
     ang_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
     disp(" press any key to close all") %subnum
     pause;
@@ -342,7 +354,7 @@ sub2use = [2 3 5 6 7 9];
                    continue
                  end
                  save_index = save_index+1;
-                for trial = 1:num_trial_var
+                for trial = trial_indices
                     
                     plot(trial+xoffset(sub), data_plot.(subplot_var(subplot)).(figure_var(figure_index))(save_index,trial),sub_symbols(sub),'MarkerSize',15,"LineWidth", 1.5);
                     hold on;
