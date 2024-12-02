@@ -4,7 +4,7 @@ addpath("./Observer/");
 addpath("./assets/")
 
 GVS_Params = [0.0245, 0];
-dt = 1/50;
+
 
 code_path = pwd;
 % [input_filearg,input_path] = uigetfile('*.txt');
@@ -14,17 +14,27 @@ fprintf([input_filearg '\n']);
 cd(input_path) %make sure the profile you want to run is in this folder
 
 
-if contains(input_filearg, 'csv') %% TTS output file as input
-    TTS_file = readtable(input_filearg); 
-    Var_names = TTS_file.Properties.VariableNames;
-    if Var_names{1} == "Var1" % out put from manual control vi
-        tilt_angle_deg = TTS_file.(Var_names{5})/200; % store tilt feedback (actual tilt)
-    else 
-        tilt_angle_deg = TTS_file.TiltFeedback/200;
-        
+if contains(input_filearg, 'csv') %% TTS or GIST output file as input
+    if contains(input_filearg, 'GIST_') % GIST file
+        fs = 375; %Hz ~sampling freq of GIST 2v9
+        GIST_file = readtable(input_filearg); 
+        tilt_vel_deg  = GIST_file.ZVelocity;
+        tilt_vel_degp = GIST_file.XVelocity;
+        tilt_vel_degy = GIST_file.YVelocity;
+    else % TTS file
+        fs = 50; % Hz
+        TTS_file = readtable(input_filearg); 
+        Var_names = TTS_file.Properties.VariableNames;
+        if Var_names{1} == "Var1" % out put from manual control vi
+            tilt_angle_deg = TTS_file.(Var_names{5})/200; % store tilt feedback (actual tilt)
+        else 
+            tilt_angle_deg = TTS_file.TiltFeedback/200;
+            
+        end
+        tilt_vel_deg  = [0; smoothdata((diff(tilt_angle_deg)./(diff(TTS_file.(Var_names{1}))/1000)),  "movmean",10 )]; % store tilt velocity
     end
-    tilt_vel_deg  = [0; smoothdata((diff(tilt_angle_deg)./(diff(TTS_file.(Var_names{1}))/1000)),  "movmean",10 )]; % store tilt velocity
 else %TTS input file as input
+    fs = 50; %Hz
     TTS_file = load(input_filearg);  
     tilt_angle_deg = TTS_file(:,8);
     tilt_vel_deg = TTS_file(:,7)/200;
@@ -34,14 +44,18 @@ cd(code_path);
 % tilt_angle_deg = TTS_file(:,8);
 % tilt_vel_deg = TTS_file(:,7)/200;
 
-
-T = length(tilt_vel_deg)/50; % 1/50 is the tts sampling time
+dt = 1/fs;
+T = length(tilt_vel_deg)/fs; % 1/50 is the tts sampling time
 model_time = (0:dt:T)';
 time = model_time(1):30:model_time(end); % For plotting 
 
 % Initialize
 model_motion = [0 0 0 0 0 0].*zeros(length(model_time),1);
 model_motion(2:end,4)= tilt_vel_deg;
+if contains(input_filearg, 'GIST_') % GIST file
+    model_motion(2:end,5)= tilt_vel_degp;
+    model_motion(2:end,6)= tilt_vel_degy;
+end
 
 loc =find(isnan(model_motion));
 model_motion(loc) = 0;
