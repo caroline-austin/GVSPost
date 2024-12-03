@@ -124,6 +124,7 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
      Type_mapReduced = ReduceMapMultiple(Type_map,MinCurrent,MaxCurrent,Label);
 
     %% OBSERVED MOTION DIRECTIONS (SEBASTIAN)
+    % save the possible directions as a label
     possible_directions = ["right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw"];
     Observed_Motion_map1 = TextMatchMap(Observed1,TrialInfo1, possible_directions, 2);
     Observed_Motion_map2 = TextMatchMap(Observed2,TrialInfo2, possible_directions, 2);

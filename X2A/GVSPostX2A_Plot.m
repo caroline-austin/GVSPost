@@ -64,9 +64,34 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 % for Type, Direction, Timing and subplots for each electrode configuration, generates
 % plots for 3 effects and 5 profiles
 
-% 7: 
+% 7: plots the maximum tolerable current amplitudes in different electrode configurations
+%responses vs current amplitude (mA), plots for 2/3/4 electrodes
+%plots as 3 histograms
 
-Include_plots = [' 12 '];
+% 8: Plots the starting/ending impedances(kOhm) for 10 different impedance configurations, 
+%plots as 1 figure with 10 subplot histograms
+
+% 9: Plots reported sensations (tingling/flashes/taste/motion) at different
+%currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
+%plots as 3 figure, each with 3 sand plots.
+%Plots contain all 3 electrodes for a single property at a time
+% Only Part 1 profile (4)
+
+% 10: Plots as overlayed sand plots that seem to be identical to plots 9, with
+%the slight difference that it shows the difference between cases with noe
+%reported responses and cases where the response was no discomfort
+
+% 11: This section plots motion timing, axis, and type, for several frequencies
+%and electron configurations
+%plots as 3 separate histograms
+
+% 12: This section plots the observed motion direction for several frequencies
+%and electron configurations
+%plots as 2 separate histograms
+
+% 13:
+
+Include_plots = ['12', '13'];
 
 % should probably insert a for loop that checks to make sure this file exists first
 cd([file_path]);
@@ -170,7 +195,7 @@ if contains(Include_plots,'1 ')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-        disp("press any key to continue"); pause; 
+        %disp("press any key to continue"); pause; 
         close all
     end
 
@@ -265,7 +290,7 @@ if contains(Include_plots,'2')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-        disp("press any key to continue"); pause; 
+        %disp("press any key to continue"); pause; 
         close all
     end
 
@@ -276,7 +301,7 @@ end
 % % these plots have all of the side effects on the same plot and then makes 
 % different plots for each electrode configuration for part 1 of the
 % experiment 
-if contains(Include_plots, '3')
+if contains(Include_plots, ' 3')
     for config = 1:num_config
     figure;
     subplot(2,3,1)
@@ -504,7 +529,7 @@ if contains(Include_plots,'5')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
-    disp("press any key to continue"); pause; 
+    %disp("press any key to continue"); pause; 
     close all
     end
 end
@@ -610,7 +635,7 @@ if contains(Include_plots, '6')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
-    disp("press any key to continue"); pause; 
+    %disp("press any key to continue"); pause; 
     close all
     end
 end
@@ -652,7 +677,7 @@ if contains(Include_plots, '7')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
-    disp("press any key to continue"); pause; 
+    %disp("press any key to continue"); pause; 
     close all
 
 end
@@ -708,7 +733,7 @@ if contains(Include_plots, '8')
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
     cd(code_path);
-    disp("press any key to continue"); pause; 
+    %disp("press any key to continue"); pause; 
     close all
 
 end
@@ -805,7 +830,7 @@ if contains(Include_plots,'9')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-        disp("press any key to continue"); pause; 
+        %disp("press any key to continue"); pause; 
         close all
 
 end
@@ -956,7 +981,7 @@ if contains(Include_plots,'10')
         cd(plots_path);
         saveas(gcf, [char(Filename) '.fig']);
         cd(code_path);
-        disp("press any key to continue"); pause; 
+        %disp("press any key to continue"); pause; 
         close all
 
 end
@@ -1026,6 +1051,7 @@ if contains(Include_plots, '11')
         Title = strjoin([num2str(config+1) " Electrodes"]);
         title(Title, "FontSize", 45)
         
+       
     
         Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
         xticks([1 2 3 4 5]);
@@ -1168,6 +1194,135 @@ if contains(Include_plots, '12')
     sgtitle(overall_title, "FontSize", 50)
     
     Filename = strtrim(strjoin(["ElectrodeObservedMotionTimingAllProfMaxCurrentGroupedBar"]));
+
+    %% TRYING OUT SPIDER PLOTS
+    for prof = 1:num_profiles
+        Observed_Timing_map_Max(:,prof,:) = All_Observed_Timing_mapReduced (3,:,:,prof);
+    end
+    figure;
+        t_dir = tiledlayout(2,2);
+        for config = 1:num_config
+            nexttile
+            bar_notation = Observed_Timing_map_Max (:,:,config)';
+            s = spider_plot(bar_notation,'AxesLabels', {'Rhythmic', 'Continuous', 'Intermittent'},'AxesLimits', [0, 0, 0; 10, 10, 10] ...
+                ,'AxesInterval', 5,'AxesDisplay', 'one','AxesPrecision', 0, 'AxesLabelsOffset', 0.2, 'AxesDataOffset', 0.1);
+            %s.AxesLimits = [0, 0, 0; 10, 10, 10];
+            %s.AxesDisplay = 'data';
+            %s.AxesLabelsOffset = 0.2;
+            %s.AxesDataOffset = 0.1;
+            %type_color = [Color_list(5,:);Color_list(2,:); Color_list(3,:)];
+            %{
+            for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+                s(j).FaceColor = type_color(j,:);
+            end
+            %}
+            ax = gca;
+            ax.FontSize = 25;
+        %     legend("roll", "pitch", "yaw")
+            Title = strjoin([num2str(config+1) " Electrodes"]);
+            title(Title, "FontSize", 45)
+            
+        
+           %Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+            %xticks([1 2 3 4 5]);
+            %xticklabels(Current_levels_str);
+            %ylim([0 10])
+        end
+        %ylabel("                        Number of Responses", "FontSize", 35)
+    %     xlabel("Current mA", "FontSize", 37)
+        lgd = legend("DC+", "DC-", "0.25Hz", "0.5Hz", "1Hz", 'FontSize', 38 );
+        lgd.Layout.Tile = 4;
+        overall_title = strjoin(["Observed Motion Timing at Max Current Amplitude"]);
+        sgtitle(overall_title, "FontSize", 50)
+
+        %% END OF TRYING SPIDER PLOTS
+    
+    cd(plots_path);
+    saveas(gcf, [char(Filename) '.fig']);
+    cd(code_path);
+
+    close all
+end
+
+if contains(Include_plots, '13')
+%%  Reduced Plot Reported Motion Direction (right, left, up, down, forward, back, circular, roll, pitch, yaw)
+%this section plots the observed motion direction for several frequencies
+%and electron configurations
+%plots as 2 separate histograms
+    for prof = 1:num_profiles
+        Motion_map_Max(:,prof,:) = All_Motion_mapReduced (3,:,:,prof);
+    end
+    figure;
+    t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        bar_notation = Motion_map_Max (:,:,config)';
+        b = bar(bar_notation);
+        dir_color = [Color_list(1,:);Color_list(6,:); Color_list(4,:)];
+        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = dir_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+        
+    %     legend("roll", "pitch", "yaw")
+        Title = strjoin([num2str(config+1) " Electrodes"]);
+        title(Title, "FontSize", 45)
+    
+    
+        Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(Current_levels_str);
+        ylim([0 10])
+    end
+    ylabel("                        Number of Responses", "FontSize", 35)
+%     xlabel("Current mA", "FontSize", 37)
+    lgd = legend("right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw", 'FontSize', 38 ,'NumColumns',2);
+    lgd.Layout.Tile = 4;
+    overall_title = strjoin(["Reported Motion Axis at Max Current Amplitude"]);
+    sgtitle(overall_title, "FontSize", 50)
+    
+    Filename = strtrim(strjoin(["ElectrodeReportedObservedMotionDirectionAllProfMaxCurrentGroupedBar"]));
+    
+    cd(plots_path);
+    saveas(gcf, [char(Filename) '.fig']);
+    cd(code_path);
+
+%% Reduced Plot Reported Motion Timing (rhythmic, continuous, intermittent)
+
+    for prof = 1:num_profiles
+        Timing_map_Max(:,prof,:) = All_Timing_mapReduced (3,:,:,prof);
+    end
+    figure;
+    t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        bar_notation = Timing_map_Max (:,:,config)';
+        b = bar(bar_notation);
+        type_color = [Color_list(5,:);Color_list(2,:); Color_list(3,:)];
+        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = type_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+    %     legend("roll", "pitch", "yaw")
+        Title = strjoin([num2str(config+1) " Electrodes"]);
+        title(Title, "FontSize", 45)
+        
+    
+       Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(Current_levels_str);
+        ylim([0 10])
+    end
+    ylabel("                        Number of Responses", "FontSize", 35)
+%     xlabel("Current mA", "FontSize", 37)
+    lgd = legend("rhythmic", "continuous", "intermittent", 'FontSize', 38 );
+    lgd.Layout.Tile = 4;
+    overall_title = strjoin(["Reported Motion Timing at Max Current Amplitude"]);
+    sgtitle(overall_title, "FontSize", 50)
+    
+    Filename = strtrim(strjoin(["ElectrodeReportedMotionTimingAllProfMaxCurrentGroupedBar"]));
     
     cd(plots_path);
     saveas(gcf, [char(Filename) '.fig']);
