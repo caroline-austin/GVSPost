@@ -16,11 +16,11 @@ cd(input_path) %make sure the profile you want to run is in this folder
 
 if contains(input_filearg, 'csv') %% TTS or GIST output file as input
     if contains(input_filearg, 'GIST_') % GIST file
-        fs = 375; %Hz ~sampling freq of GIST 2v9
+        fs = 50; %375Hz ~sampling freq of GIST 2v9, but resampling down to 50 Hz for consistency
         GIST_file = readtable(input_filearg); 
-        tilt_vel_deg  = GIST_file.ZVelocity;
-        tilt_vel_degp = GIST_file.XVelocity;
-        tilt_vel_degy = GIST_file.YVelocity;
+        tilt_vel_deg  = resample(GIST_file.ZVelocity,50,375);
+        tilt_vel_degp = resample(GIST_file.XVelocity,50,375);
+        tilt_vel_degy = resample(GIST_file.YVelocity,50,375);
     else % TTS file
         fs = 50; % Hz
         TTS_file = readtable(input_filearg); 
@@ -130,7 +130,8 @@ xlabel("time")
 %%
 subplot(3,1,2)
 ylim([-20 20])
-sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
+sgtitle(strrep(input_filearg, '_' , '-'));
+% sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
 
 max(tilt_est)
 max(tilt)
