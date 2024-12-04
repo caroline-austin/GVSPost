@@ -105,10 +105,11 @@ cd(code_path);
 num_sub = length(subject_label); 
 numsub = 100;
 
+if contains(Include_plots,'1 ')
 %% Area Plots organized by side effects
 %Plots contain all 3 electrodes for a single property at a time
 % loops through for all 5 profiles
-if contains(Include_plots,'1 ')
+
     for prof = 1:num_profiles
         figure; %figure for Tingling
         t1 = tiledlayout(2,2);
@@ -127,11 +128,11 @@ if contains(Include_plots,'1 ')
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+        % 
         figure;%figure for Metallic Taste
         t2 = tiledlayout(2,2);
         for config = 1:num_config %generate electrode subplots
@@ -148,10 +149,10 @@ if contains(Include_plots,'1 ')
         TotalTitle = char(strjoin(["Reported Metallic Taste " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure;%figure for Visual Flashes
         t3 = tiledlayout(2,2);
@@ -169,10 +170,10 @@ if contains(Include_plots,'1 ')
         TotalTitle = char(strjoin(["Reported Visual Flashes " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure; %figure for Motion Sensation/intensity 
         t4 = tiledlayout(2,2);
@@ -191,20 +192,20 @@ if contains(Include_plots,'1 ')
         TotalTitle = char(strjoin(["Reported Motion Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        %disp("press any key to continue"); pause; 
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+        disp("press any key to continue"); pause; 
         close all
     end
 
 end
-
+if contains(Include_plots,'2')
 %% Reducece Area Plots organized by side effects
 %Plots contain all 3 electrodes for a single property at a time
 % area plot only for part 1 of the experiment 
-if contains(Include_plots,'2')
+
     for prof = 1:num_profiles
         figure; %Tingling
         t1 = tiledlayout(2,2);
@@ -222,10 +223,10 @@ if contains(Include_plots,'2')
         TotalTitle = char(strjoin(["Reported Tingling Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure; %Metallic Taste
         t2 = tiledlayout(2,2);
@@ -243,10 +244,10 @@ if contains(Include_plots,'2')
         TotalTitle = char(strjoin(["Reported Metallic Taste " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         
         figure;%Visual Flashes
@@ -265,10 +266,10 @@ if contains(Include_plots,'2')
         TotalTitle = char(strjoin(["Reported Visual Flashes " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure;
         t4 = tiledlayout(2,2);
@@ -286,22 +287,22 @@ if contains(Include_plots,'2')
         TotalTitle = char(strjoin(["Reported Motion Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
-       %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        %disp("press any key to continue"); pause; 
+       % %save plot
+       %  cd(plots_path);
+       %  saveas(gcf, [char(Filename) '.fig']);
+       %  cd(code_path);
+        disp("press any key to continue"); pause; 
         close all
     end
 
 end
-
+if contains(Include_plots, ' 3')
 %% Area Plots for Side Effects organized by the number of electrodes 
 %this has not been updated for the 4D rating arrays
 % % these plots have all of the side effects on the same plot and then makes 
 % different plots for each electrode configuration for part 1 of the
 % experiment 
-if contains(Include_plots, ' 3')
+
     for config = 1:num_config
     figure;
     subplot(2,3,1)
@@ -333,18 +334,18 @@ if contains(Include_plots, ' 3')
     
     Filename = strrep(strjoin([num2str(config+1) "ElectrodeEffectsRatingsSin0_5HzAllCurrent"]), ' ', '');
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     end
 end 
 % 
 % 
-
+if contains(Include_plots, '4')
 %% Plots contain all 3 electrodes for a single property at a time
  % bar plot only for part 1 of the experiment 
  %
-if contains(Include_plots, '4')
+
     figure;
     t1 = tiledlayout(2,2);
     for config = 1:num_config
@@ -360,9 +361,9 @@ if contains(Include_plots, '4')
     sgtitle("Reported Tingling Sensation", "FontSize", 50);
     Filename =  "TingleRatingsSin0_5HzAllCurrentStackedBar";
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     
     figure;
     t2 = tiledlayout(2,2);
@@ -379,9 +380,9 @@ if contains(Include_plots, '4')
     sgtitle("Reported Metallic Taste", "FontSize", 50)
     Filename = "MetallicRatingsSin0_5HzAllCurrentStackedBar";
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     
     
     figure;
@@ -399,9 +400,9 @@ if contains(Include_plots, '4')
     sgtitle("Reported Visual Flashes", "FontSize", 50)
     Filename = "VisualFlashRatingsSin0_5HzAllCurrentStackedBar";
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     
     figure;
     t4 = tiledlayout(2,2);
@@ -419,9 +420,9 @@ if contains(Include_plots, '4')
     
     Filename = "MotionRatingsSin0_5HzAllCurrentStackedBar";
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
 end
 %}
 
@@ -457,9 +458,9 @@ if contains(Include_plots,'5')
     
     Filename = strtrim(strjoin(["ElectrodeMotionDirection" Profiles_safe(prof) "AllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     end
     %}
 
@@ -492,9 +493,9 @@ if contains(Include_plots,'5')
     
     Filename = strtrim(strjoin(["ElectrodeMotionTiming" Profiles_safe(prof) "AllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     end
     
     
@@ -526,10 +527,10 @@ if contains(Include_plots,'5')
     
     Filename = strtrim(strjoin(["ElectrodeMotionType" Profiles_safe(prof) "AllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-    %disp("press any key to continue"); pause; 
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
     end
 end
@@ -565,9 +566,9 @@ if contains(Include_plots, '6')
     
     Filename = strtrim(strjoin(["ElectrodeMotionDirection" Profiles_safe(prof) "ReducedAllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     end
     %% Plot Motion Timing (rhythmic, continuous, intermittent)
     for prof = 1:num_profiles
@@ -598,9 +599,9 @@ if contains(Include_plots, '6')
     
     Filename = strtrim(strjoin(["ElectrodeMotionTiming" Profiles_safe(prof) "ReducedAllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     end
     
     
@@ -632,19 +633,20 @@ if contains(Include_plots, '6')
     
     Filename = strtrim(strjoin(["ElectrodeMotionType" Profiles_safe(prof) "ReducedAllCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-    %disp("press any key to continue"); pause; 
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
     end
 end
 
+if contains(Include_plots, '7')
 %% Plot the Max/minCurrents
 %plots the maximum tolerable current amplitudes in different electrode configurations
 %responses vs current amplitude (mA), plots for 2/3/4 electrodes
 %plots as 3 histograms
-if contains(Include_plots, '7')
+
     figure; 
     t_dir = tiledlayout(2,2);
     for config = 1:num_config
@@ -674,17 +676,18 @@ if contains(Include_plots, '7')
     
     Filename = strtrim(strjoin(["Current_Hist"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-    %disp("press any key to continue"); pause; 
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
 
 end
+if contains(Include_plots, '8')
 %% Plot the Start/End Impedances
 %plots the starting/ending impedances(kOhm) for 10 different impedance configurations, 
 %plots as 10 histograms
-if contains(Include_plots, '8')
+
     fig = figure; 
     t_dir = tiledlayout(3,4);
     Impedance_label = ["1-2"; "1-3"; "1-4"; "1-5"; "2-3"; ...
@@ -730,20 +733,21 @@ if contains(Include_plots, '8')
     
     Filename = strtrim(strjoin(["Impedance_Hist"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-    %disp("press any key to continue"); pause; 
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    disp("press any key to continue"); pause; 
     close all
 
 end
+if contains(Include_plots,'9')
 %% Area Plots organized by side effects With Subject Lines Overlayed
 %plots reported sensations (tingling/flashes/taste/motion) at different
 %currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
 %plots as 3 overlayed line charts
 %Plots contain all 3 electrodes for a single property at a time
 % Only Part 1 profile (4)
-if contains(Include_plots,'9')
+
         prof = 4;
         figure; %figure for Tingling
         t1 = tiledlayout(2,2);
@@ -762,10 +766,10 @@ if contains(Include_plots,'9')
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure;%figure for Metallic Taste
         t2 = tiledlayout(2,2);
@@ -783,10 +787,10 @@ if contains(Include_plots,'9')
         TotalTitle = char(strjoin(["Reported Metallic Taste " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure;%figure for Visual Flashes
         t3 = tiledlayout(2,2);
@@ -804,10 +808,10 @@ if contains(Include_plots,'9')
         TotalTitle = char(strjoin(["Reported Visual Flashes " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
         figure; %figure for Motion Sensation/intensity 
         t4 = tiledlayout(2,2);
@@ -826,11 +830,11 @@ if contains(Include_plots,'9')
         TotalTitle = char(strjoin(["Reported Motion Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        %disp("press any key to continue"); pause; 
+        % % save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+        disp("press any key to continue"); pause; 
         close all
 
 end
@@ -839,6 +843,7 @@ end
 %plots... tbh im a little unsure about the difference between 10 and 9
 %plots as overlayed line charts
 if contains(Include_plots,'10')
+    %%
     prof = 4; 
         [dim1, dim2, dim3, dim4] = size(All_Tingle_map);
         Sin05Hz_Tingle_map = [All_Tingle_map(:,:,:,4) zeros(dim1,1,dim3)];
@@ -870,11 +875,11 @@ if contains(Include_plots,'10')
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+        % 
 
        [dim1, dim2, dim3, dim4] = size(All_Metallic_map);
         Sin05Hz_Metallic_map = [All_Metallic_map(:,:,:,4) zeros(dim1,1,dim3)];
@@ -905,10 +910,10 @@ if contains(Include_plots,'10')
         TotalTitle = char(strjoin(["Reported Metallic Taste " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
 
         [dim1, dim2, dim3, dim4] = size(All_VisFlash_map);
@@ -940,10 +945,10 @@ if contains(Include_plots,'10')
         TotalTitle = char(strjoin(["Reported Visual Flashes " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
         
 
         [dim1, dim2, dim3, dim4] = size(All_MotionRating_map);
@@ -977,11 +982,11 @@ if contains(Include_plots,'10')
         TotalTitle = char(strjoin(["Reported Motion Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
-        %disp("press any key to continue"); pause; 
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+        disp("press any key to continue"); pause; 
         close all
 
 end
@@ -1073,7 +1078,7 @@ if contains(Include_plots, '11')
  
     
     
-    %% Plot Motion Type (rhythmic, continuous, intermittent)
+    %% Plot Motion Type (tilt, translation, general instability)
     for prof = 1:num_profiles
         Type_map_Max(:,prof,:) = All_Type_mapReduced (3,:,:,prof);
     end
@@ -1200,7 +1205,7 @@ if contains(Include_plots, '12')
         Observed_Timing_map_Max(:,prof,:) = All_Observed_Timing_mapReduced (3,:,:,prof);
     end
     figure;
-        t_dir = tiledlayout(2,2);
+        t_dir = tiledlayout(2,2,'TileSpacing','none','Padding','tight');
         for config = 1:num_config
             nexttile
             bar_notation = Observed_Timing_map_Max (:,:,config)';
@@ -1237,11 +1242,11 @@ if contains(Include_plots, '12')
 
         %% END OF TRYING SPIDER PLOTS
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
 
-    close all
+    % close all
 end
 
 if contains(Include_plots, '13')
