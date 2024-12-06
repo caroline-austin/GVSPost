@@ -414,22 +414,22 @@ elseif Ch1>=1 && Ch2>=1 && Ch3 ==0  % "aoyama" for Sparky
     Num_Electrode = 4;
     GIST_electrodes = 4;
     GVS_Signal = GVS_Signal_1;
-    GVS_Signal_A = GVS_Signal_1;
-    GVS_Signal_B = GVS_Signal_2;
+    GVS_Signal_1 = GVS_Signal_1;
+    GVS_Signal_2 = GVS_Signal_2;
 
 elseif Ch1>=1 && Ch2==0 && Ch3 >=1 % "aoyama" for Sparky
     Num_Electrode = 4;
     GIST_electrodes = 4;
     GVS_Signal = GVS_Signal_1;
-    GVS_Signal_A = GVS_Signal_1;
-    GVS_Signal_B = GVS_Signal_3;
+    GVS_Signal_1 = GVS_Signal_1;
+    GVS_Signal_2 = GVS_Signal_3;
 
 elseif Ch1==0 && Ch2>=1 && Ch3 >=1 % "aoyama" for Sparky
     Num_Electrode = 4;
     GIST_electrodes = 4;
     GVS_Signal = GVS_Signal_2;
-    GVS_Signal_A = GVS_Signal_2;
-    GVS_Signal_B = GVS_Signal_3;
+    GVS_Signal_1 = GVS_Signal_2;
+    GVS_Signal_2 = GVS_Signal_3;
     
 
 elseif Ch1>= 1 && Ch2>=1 && Ch3>=1 % combine channels into "aoyama" for Sparky
@@ -452,11 +452,6 @@ end
     GVS_Signal_3(GVS_Signal_3 > 5) = 5;
     GVS_Signal_3(GVS_Signal_3 < -5) = -5;
 
-    GVS_Signal_A(GVS_Signal_A > 5) = 5;
-    GVS_Signal_A(GVS_Signal_A < -5) = -5;
-
-    GVS_Signal_B(GVS_Signal_B > 5) = 5;
-    GVS_Signal_B(GVS_Signal_B < -5) = -5;
 
     C = 0; % normally C is scale/maxGVS not sure why
 
@@ -590,8 +585,8 @@ elseif Num_Electrode==4 && GIST_electrodes ==4
     % positive coupling we want the sign of the mastoid to be opposite of
     % the motion
     % 
-    Electrode_1_Sig=-1*GVS_Signal_A; % left mastoid
-    Electrode_2_Sig= -1*GVS_Signal_B;% right mastoid
+    Electrode_1_Sig=-1*GVS_Signal_1; % left mastoid
+    Electrode_2_Sig= -1*GVS_Signal_2;% right mastoid
     
     %
     Electrode_3_Sig= -1*Electrode_1_Sig;% left distal
