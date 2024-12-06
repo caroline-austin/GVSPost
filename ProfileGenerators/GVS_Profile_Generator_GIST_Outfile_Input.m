@@ -85,6 +85,9 @@ SD_period = 0; % in seconds (this might actually be for the custom waveform)
 max_angle = 10;
 max_vel = 6;
 
+% Zvelocity = roll velocity, X velocity = pitch velocity, Y velocity = yaw
+% velocity
+
 % Channel 1
 Ch1 = 1;
 K1 = 999;
@@ -94,21 +97,22 @@ K2 = 999;
 Couple_2 = "ZVelocity";
 Threshold_2 = 0;
 % Channel 2
-Ch2 = 0;
+Ch2 = 1;
 K3 = 999;
-Couple_3 = "Roll";
+Couple_3 = "Pitch";
 Threshold_3 = 0;
 K4 = 999;
-Couple_4 = "ZVelocity";
+Couple_4 = "XVelocity";
 Threshold_4 = 0;
 % Channel 3
-Ch3 = 0;
+Ch3 = 1;
 K5 = 999;
-Couple_5 = "Roll";
+Couple_5 = "Pitch";
 Threshold_5 = 0;
 K6 = 999;
-Couple_6 = "ZVelocity";
+Couple_6 = "XVelocity";
 Threshold_6 = 0;
+%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Select the GIST file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -121,8 +125,12 @@ GIST_file = readtable(input_filearg);
 cd(code_path);
 %% 
 Var_names = GIST_file.Properties.VariableNames;
-GIST_param(:,8) = resample(GIST_file.Roll,50,375); % store tilt feedback (actual tilt)
-GIST_param(:,7) = resample(GIST_file.ZVelocity,50,375); % store tilt velocity 
+GIST_param(:,8) = resample(GIST_file.Roll,50,375); % store roll tilt
+GIST_param(:,7) = resample(GIST_file.ZVelocity,50,375); % store roll tilt velocity 
+GIST_param(:,6) = resample(GIST_file.Pitch,50,375); % store pitch tilt
+GIST_param(:,5) = resample(GIST_file.XVelocity,50,375); % store pitch tilt velocity 
+GIST_param(:,4) = resample(GIST_file.Yaw,50,375); % store yaw 
+GIST_param(:,3) = resample(GIST_file.YVelocity,50,375); % store yaw velocity 
 
 %%
 for iter = 1:length(PmA)
@@ -255,11 +263,25 @@ GVS_Signal = GVS_Signal*(scale);
 elseif GIST_IMU == 1
     % for now assuming only channel 1 is in use so only bilateral GVS (2
     % electrodes)
+
+    % channel 1
     if Couple_1 == "Roll"
         Signal_1 = (GIST_param(:,8))'; 
         max_1 = max_angle;
     elseif Couple_1 == "ZVelocity"
         Signal_1 = -(GIST_param(:,7))'; 
+        max_1 = max_vel;
+    elseif Couple_1 == "Pitch"
+        Signal_1 = (GIST_param(:,6))'; 
+        max_1 = max_angle;
+    elseif Couple_1 == "XVelocity"
+        Signal_1 = -(GIST_param(:,5))'; 
+        max_1 = max_vel;
+    elseif Couple_1 == "Yaw"
+        Signal_1 = (GIST_param(:,4))'; 
+        max_1 = max_angle;
+    elseif Couple_1 == "YVelocity"
+        Signal_1 = -(GIST_param(:,3))'; 
         max_1 = max_vel;
     end
 
@@ -269,16 +291,174 @@ elseif GIST_IMU == 1
     elseif Couple_2 == "ZVelocity"
         Signal_2 = -(GIST_param(:,7))'; 
         max_2 = max_vel;
+    elseif Couple_2 == "Pitch"
+        Signal_2 = (GIST_param(:,6))'; 
+        max_2 = max_angle;
+    elseif Couple_2 == "XVelocity"
+        Signal_2 = -(GIST_param(:,5))'; 
+        max_2 = max_vel;
+    elseif Couple_2 == "Yaw"
+        Signal_2 = (GIST_param(:,4))'; 
+        max_2 = max_angle;
+    elseif Couple_2 == "YVelocity"
+        Signal_2 = -(GIST_param(:,3))'; 
+        max_2 = max_vel;
     end
 
-    GVS_Signal = K1/999*(mA_max/max_1)*(Signal_1-Threshold_1) + K2/999*(mA_max/max_2)*(Signal_2-Threshold_2);
-    % loc = find(GVS_Signal > 5);
+    % channel 2
+    if Couple_3 == "Roll"
+        Signal_3 = (GIST_param(:,8))'; 
+        max_3 = max_angle;
+    elseif Couple_3 == "ZVelocity"
+        Signal_3 = -(GIST_param(:,7))'; 
+        max_3 = max_vel;
+    elseif Couple_3 == "Pitch"
+        Signal_3 = (GIST_param(:,6))'; 
+        max_3 = max_angle;
+    elseif Couple_3 == "XVelocity"
+        Signal_3 = -(GIST_param(:,5))'; 
+        max_3 = max_vel;
+    elseif Couple_3 == "Yaw"
+        Signal_3 = (GIST_param(:,4))'; 
+        max_3 = max_angle;
+    elseif Couple_3 == "YVelocity"
+        Signal_3 = -(GIST_param(:,3))'; 
+        max_3 = max_vel;
+    end
+
+    if Couple_4 == "Roll"
+        Signal_4 = (GIST_param(:,8))'; 
+        max_4 = max_angle;
+    elseif Couple_4 == "ZVelocity"
+        Signal_4 = -(GIST_param(:,7))'; 
+        max_4 = max_vel;
+    elseif Couple_4 == "Pitch"
+        Signal_4 = (GIST_param(:,6))'; 
+        max_4 = max_angle;
+    elseif Couple_4 == "XVelocity"
+        Signal_4 = -(GIST_param(:,5))'; 
+        max_4 = max_vel;
+    elseif Couple_4 == "Yaw"
+        Signal_4 = (GIST_param(:,4))'; 
+        max_4 = max_angle;
+    elseif Couple_4 == "YVelocity"
+        Signal_4 = -(GIST_param(:,3))'; 
+        max_4 = max_vel;
+    end
+
+     % channel 3
+    if Couple_5 == "Roll"
+        Signal_5 = (GIST_param(:,8))'; 
+        max_5 = max_angle;
+    elseif Couple_5 == "ZVelocity"
+        Signal_5 = -(GIST_param(:,7))'; 
+        max_5 = max_vel;
+    elseif Couple_5 == "Pitch"
+        Signal_5 = (GIST_param(:,6))'; 
+        max_5 = max_angle;
+    elseif Couple_5 == "XVelocity"
+        Signal_5 = -(GIST_param(:,5))'; 
+        max_5 = max_vel;
+    elseif Couple_5 == "Yaw"
+        Signal_5 = (GIST_param(:,4))'; 
+        max_5 = max_angle;
+    elseif Couple_5 == "YVelocity"
+        Signal_5 = -(GIST_param(:,3))'; 
+        max_5 = max_vel;
+    end
+
+    if Couple_6 == "Roll"
+        Signal_6 = (GIST_param(:,8))'; 
+        max_6 = max_angle;
+    elseif Couple_6 == "ZVelocity"
+        Signal_6 = -(GIST_param(:,7))'; 
+        max_6 = max_vel;
+    elseif Couple_6 == "Pitch"
+        Signal_6 = (GIST_param(:,6))'; 
+        max_6 = max_angle;
+    elseif Couple_6 == "XVelocity"
+        Signal_6 = -(GIST_param(:,5))'; 
+        max_6 = max_vel;
+    elseif Couple_6 == "Yaw"
+        Signal_6 = (GIST_param(:,4))'; 
+        max_6 = max_angle;
+    elseif Couple_6 == "YVelocity"
+        Signal_6 = -(GIST_param(:,3))'; 
+        max_6 = max_vel;
+    end
+
+    
+    GVS_Signal_1 = K1/999*(mA_max/max_1)*(Signal_1-Threshold_1) + K2/999*(mA_max/max_2)*(Signal_2-Threshold_2);
+    GVS_Signal_2 = K3/999*(mA_max/max_3)*(Signal_3-Threshold_3) + K4/999*(mA_max/max_4)*(Signal_4-Threshold_4);
+    GVS_Signal_3 = K5/999*(mA_max/max_5)*(Signal_5-Threshold_5) + K6/999*(mA_max/max_6)*(Signal_6-Threshold_6);
+
+% if statements on how to program electrodes depending on which/how many
+% channels are on.
+
+if Ch1>=1 && Ch2==0 && Ch3 ==0 % bilateral for Sparky
+    GVS_Signal = GVS_Signal_1;
+    Num_Electrode = 2;
+    GIST_electrodes = 2;
+
+elseif Ch1==0 && Ch2>=1 && Ch3 ==0  % bilateral for Sparky
+    GVS_Signal = GVS_Signal_2;
+    Num_Electrode = 2;
+    GIST_electrodes = 2;
+
+elseif Ch1==0 && Ch2==0 && Ch3 >=1  % bilateral for Sparky
+    GVS_Signal = GVS_Signal_3;
+    Num_Electrode = 2;
+    GIST_electrodes = 2;
+
+elseif Ch1>=1 && Ch2>=1 && Ch3 ==0  % "aoyama" for Sparky
+    Num_Electrode = 4;
+    GIST_electrodes = 4;
+    GVS_Signal = GVS_Signal_1;
+    GVS_Signal_A = GVS_Signal_1;
+    GVS_Signal_B = GVS_Signal_2;
+
+elseif Ch1>=1 && Ch2==0 && Ch3 >=1 % "aoyama" for Sparky
+    Num_Electrode = 4;
+    GIST_electrodes = 4;
+    GVS_Signal = GVS_Signal_1;
+    GVS_Signal_A = GVS_Signal_1;
+    GVS_Signal_B = GVS_Signal_3;
+
+elseif Ch1==0 && Ch2>=1 && Ch3 >=1 % "aoyama" for Sparky
+    Num_Electrode = 4;
+    GIST_electrodes = 4;
+    GVS_Signal = GVS_Signal_2;
+    GVS_Signal_A = GVS_Signal_2;
+    GVS_Signal_B = GVS_Signal_3;
+    
+
+elseif Ch1>= 1 && Ch2>=1 && Ch3>=1 % combine channels into "aoyama" for Sparky
+    Num_Electrode = 4;
+    GIST_electrodes = 6;
+    GVS_Signal = GVS_Signal_1;
+
+end
+
+   
     GVS_Signal(GVS_Signal > 5) = 5;
-    % loc = find(GVS_Signal < -5);
     GVS_Signal(GVS_Signal < -5) = -5;
 
-    C = 0; % normally C is scale/maxGVS not sure why
+    GVS_Signal_1(GVS_Signal_1 > 5) = 5;
+    GVS_Signal_1(GVS_Signal_1 < -5) = -5;
 
+    GVS_Signal_2(GVS_Signal_2 > 5) = 5;
+    GVS_Signal_2(GVS_Signal_2 < -5) = -5;
+
+    GVS_Signal_3(GVS_Signal_3 > 5) = 5;
+    GVS_Signal_3(GVS_Signal_3 < -5) = -5;
+
+    GVS_Signal_A(GVS_Signal_A > 5) = 5;
+    GVS_Signal_A(GVS_Signal_A < -5) = -5;
+
+    GVS_Signal_B(GVS_Signal_B > 5) = 5;
+    GVS_Signal_B(GVS_Signal_B < -5) = -5;
+
+    C = 0; % normally C is scale/maxGVS not sure why
 
 end 
 
@@ -291,8 +471,11 @@ t = (0:T-1)*dt;
 
 Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(PmA(iter)) "mA_prop"  num2str(Proportional)])); %C(iter)
 if GIST_IMU == 1
-    Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(mA_max(iter)) ...
-        "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2  "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
+    Filename = strtrim(strjoin([input_filearg(1:end-4) "_DC_" num2str(mA_max(iter)) ...
+        "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2 ...
+        "_Ch2"  num2str(K3) Couple_3 num2str(K4) Couple_4 ...
+        "_Ch3"  num2str(K5) Couple_5 num2str(K6) Couple_6 ...
+        "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
 end
 Filename = strrep(Filename, '.', '_');
 Filename = strrep(Filename, ' ', '');
@@ -367,29 +550,6 @@ elseif Num_Electrode==3
         Electrode_5_Sig=zeros(1,T); %Electrode_4_Sig;
     end
     Electrode_4_Sig=zeros(1,T);
-    
-elseif Num_Electrode==4
-    if Electrode_Config==1
-        Electrode_2_Sig=GVS_Signal*(-1/3);
-        Electrode_3_Sig=Electrode_2_Sig;
-        Electrode_4_Sig=Electrode_2_Sig;
-        Electrode_5_Sig=zeros(1,T);
-    elseif Electrode_Config==2
-        Electrode_5_Sig=zeros(1,T);% may need to switch this to match the length of the sinusoid - seems to be and 2 second difference?
-        if Current_Direction == 2
-            % electrodes 3&4 are anodes(+) and 1&2 are cathodes(-)
-            % (forward)- positive motion coupling
-            Electrode_1_Sig=GVS_Signal*(-1);
-            Electrode_2_Sig=Electrode_1_Sig;
-            Electrode_3_Sig=GVS_Signal;
-        else
-            % electrodes 1&2 are anodes (+) and 3&4 are cathodes (-) 
-            % (Backward) - negative motion coupling 
-            Electrode_2_Sig=GVS_Signal;
-            Electrode_3_Sig=GVS_Signal*(-1);
-        end
-        Electrode_4_Sig=Electrode_3_Sig;
-    end
 elseif Num_Electrode==5
     if Electrode_Config==1
         Electrode_2_Sig=GVS_Signal*(-.25);
@@ -402,6 +562,54 @@ elseif Num_Electrode==5
         Electrode_4_Sig=Electrode_3_Sig;
         Electrode_5_Sig=Electrode_3_Sig;
     end
+    
+elseif Num_Electrode==4 && GIST_IMU ==0
+    if Electrode_Config==1
+        Electrode_2_Sig=GVS_Signal*(-1/3);
+        Electrode_3_Sig=Electrode_2_Sig;
+        Electrode_4_Sig=Electrode_2_Sig;
+        Electrode_5_Sig=zeros(1,T);
+    elseif Electrode_Config==2
+        Electrode_5_Sig=zeros(1,T);% may need to switch this to match the length of the sinusoid - seems to be and 2 second difference?
+        if Current_Direction == 2
+            % electrodes 1&2 are cathodes(-) and 3&4 are anodes(+)
+            % (forward)- positive motion coupling
+            Electrode_1_Sig=GVS_Signal*(-1);
+            Electrode_2_Sig=Electrode_1_Sig;
+            Electrode_3_Sig=GVS_Signal;
+        else
+            % electrodes 1&2 are anodes (+) and 3&4 are cathodes (-) 
+            % (Backward) - negative motion coupling 
+            Electrode_2_Sig=GVS_Signal;
+            Electrode_3_Sig=GVS_Signal*(-1);
+        end
+        Electrode_4_Sig=Electrode_3_Sig;
+    end
+elseif Num_Electrode==4 && GIST_electrodes ==4
+   
+    % positive coupling we want the sign of the mastoid to be opposite of
+    % the motion
+    % 
+    Electrode_1_Sig=-1*GVS_Signal_A; % left mastoid
+    Electrode_2_Sig= -1*GVS_Signal_B;% right mastoid
+    
+    %
+    Electrode_3_Sig= -1*Electrode_1_Sig;% left distal
+    Electrode_4_Sig=-1*Electrode_2_Sig; % right distal
+    Electrode_5_Sig=zeros(1,T);
+
+
+elseif Num_Electrode==4 && GIST_electrodes ==6
+    % positive coupling we want the sign of the mastoid to be opposite of
+    % the motion
+    Electrode_1_Sig=GVS_Signal_1*(-1)+GVS_Signal_2*(-1) ; % left mastoid
+    Electrode_2_Sig=GVS_Signal_1 + GVS_Signal_3*(-1); % right mastoid
+
+    
+    Electrode_3_Sig=GVS_Signal_2; %left distal
+    Electrode_4_Sig=GVS_Signal_3; % right distal
+    Electrode_5_Sig=zeros(1,T);
+
 end
 
 zpad_Zeros= zeros(zpad*fs,1);
