@@ -82,22 +82,22 @@ freq = 0.5;
 SD_period = 0; % in seconds (this might actually be for the custom waveform)
 
 % angle and velocity at which the maximum current is realized
-max_angle = 10;
-max_vel = 6;
+max_angle = 10; % set to 10 for optimal roll coupling
+max_vel = 6; % set to 6 for optimal roll coupling
 
 % Zvelocity = roll velocity, X velocity = pitch velocity, Y velocity = yaw
 % velocity
 
 % Channel 1
 Ch1 = 1;
-K1 = 999;
+K1 = 999; % set as -999 for optimal roll coupling
 Couple_1 = "Roll";
 Threshold_1 = 0;
-K2 = 999;
+K2 = 0; % set at -999 for optimal roll coupling
 Couple_2 = "ZVelocity";
 Threshold_2 = 0;
 % Channel 2
-Ch2 = 1;
+Ch2 = 0;
 K3 = 999;
 Couple_3 = "Pitch";
 Threshold_3 = 0;
@@ -105,7 +105,7 @@ K4 = 999;
 Couple_4 = "XVelocity";
 Threshold_4 = 0;
 % Channel 3
-Ch3 = 1;
+Ch3 = 0;
 K5 = 999;
 Couple_5 = "Pitch";
 Threshold_5 = 0;
@@ -466,12 +466,24 @@ t = (0:T-1)*dt;
 
 Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(PmA(iter)) "mA_prop"  num2str(Proportional)])); %C(iter)
 if GIST_IMU == 1
+    % Filename = strtrim(strjoin([input_filearg(1:end-4) "_DC_" num2str(mA_max(iter)) ...
+    %     "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2 ...
+    %     "_Ch2"  num2str(K3) Couple_3 num2str(K4) Couple_4 ...
+    %     "_Ch3"  num2str(K5) Couple_5 num2str(K6) Couple_6 ...
+    %     "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
     Filename = strtrim(strjoin([input_filearg(1:end-4) "_DC_" num2str(mA_max(iter)) ...
-        "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2 ...
-        "_Ch2"  num2str(K3) Couple_3 num2str(K4) Couple_4 ...
-        "_Ch3"  num2str(K5) Couple_5 num2str(K6) Couple_6 ...
-        "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
+        "mAmax"]));
+    if Ch1 ==1
+        Filename = strtrim(strjoin([Filename "_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2]));
+    end
+    if Ch2 == 1
+        Filename = strtrim(strjoin([Filename "_Ch2"  num2str(K3) Couple_3 num2str(K4) Couple_4]));
+    end
+    if Ch3 ==1
+        Filename = strtrim(strjoin([Filename "_Ch3"  num2str(K5) Couple_5 num2str(K6) Couple_6]));
+    end
 end
+Filename = strtrim(strjoin([Filename "_MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
 Filename = strrep(Filename, '.', '_');
 Filename = strrep(Filename, ' ', '');
 
