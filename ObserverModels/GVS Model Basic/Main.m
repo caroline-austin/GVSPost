@@ -109,7 +109,7 @@ omega_head = percepts{4};
 tilt = atand(g_head(:,2)./g_head(:,3));
 tilt_est = atand(g_est(:,2)./g_est(:,3));
 Results{1} = [ts tilt_est];
-
+%%
 figure;
 subplot(3,1,1)
 plot(ts,tilt); hold on;
@@ -118,7 +118,8 @@ legend("tilt", "perception")
 ylabel("deg")
 
 subplot(3,1,2)
-plot(ts,omega_head(:,1)*180/pi()); hold on;
+% plot(ts,omega_head(:,1)); hold on;
+plot(model_time(2:end),tilt_vel_deg); hold on;
 plot(ts,omega_est(:,1)); hold on;
 legend("angular velocity","perception")
 ylabel("deg/s")
@@ -127,12 +128,12 @@ subplot(3,1,3)
 plot(model_time,current)
 ylabel("mA")
 xlabel("time")
-%%
+
 subplot(3,1,2)
 ylim([-20 20])
 sgtitle(strrep(input_filearg, '_' , '-'));
 % sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
-
+%%
 max(tilt_est)
 max(tilt)
 min(tilt_est)
