@@ -30,6 +30,8 @@ sym = 'asymmetric';
 
 % GVS current input
 current_in = varargin{2};
+current_inR = current_in(:,1);
+current_inL = current_in(:,2);
 
 % Model parameters for GVS blocks
 KRight = 0.5;

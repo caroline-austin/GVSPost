@@ -87,13 +87,26 @@ Profile = strrep(Profile, '+', '');
 [row, col] = size(Profile);
 for i = 1:col+1
     if i<=col
-        current(i,1) = str2num(Profile{2,i});
+        current_R(i,1) = str2num(Profile{2,i});
     else
-        current(i,1) = 0;
+        current_R(i,1) = 0;
     end
 end
 
-current = [current/100];
+for i = 1:col+1
+    if i ==1 
+        current_L(i,1) = 0;
+    elseif i<=col
+        current_L(i,1) = str2num(Profile{1,i});
+    else
+        current_L(i,1) = 0;
+    end
+end
+
+current_R = [current_R/100];
+current_L = [current_L/100];
+
+current = [current_R current_L];
 
 Glevel = [0 0 -1].*ones(length(model_time),1); % -1g for all time 
 
@@ -108,6 +121,8 @@ omega_head = percepts{4};
 
 tilt = atand(g_head(:,2)./g_head(:,3));
 tilt_est = atand(g_est(:,2)./g_est(:,3));
+tilt_p = atand(g_head(:,1)./g_head(:,3));
+tilt_est_p = atand(g_est(:,1)./g_est(:,3));
 Results{1} = [ts tilt_est];
 %%
 figure;
@@ -115,17 +130,19 @@ subplot(3,1,1)
 plot(ts,tilt); hold on;
 plot(ts,tilt_est); hold on;
 legend("tilt", "perception")
-ylabel("deg")
+ylabel("roll tilt deg")
 
 subplot(3,1,2)
 % plot(ts,omega_head(:,1)); hold on;
 plot(model_time(2:end),tilt_vel_deg); hold on;
 plot(ts,omega_est(:,1)); hold on;
 legend("angular velocity","perception")
-ylabel("deg/s")
+ylabel(" roll velocity deg/s")
 
 subplot(3,1,3)
-plot(model_time,current)
+plot(model_time,current_R, 'r') 
+hold on; 
+plot(model_time,current_L, 'b')
 ylabel("mA")
 xlabel("time")
 
@@ -133,6 +150,32 @@ subplot(3,1,2)
 ylim([-20 20])
 sgtitle(strrep(input_filearg, '_' , '-'));
 % sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
+
+%% pitch plot
+figure;
+subplot(3,1,1)
+plot(ts,tilt_p); hold on;
+plot(ts,tilt_est_p); hold on;
+legend("tilt", "perception")
+ylabel("pitch tilt deg")
+
+subplot(3,1,2)
+% plot(ts,omega_head(:,1)); hold on;
+plot(model_time(2:end),tilt_vel_degp); hold on;
+plot(ts,omega_est(:,2)); hold on;
+legend("angular velocity","perception")
+ylabel(" pitch velocity deg/s")
+
+subplot(3,1,3)
+plot(model_time,current_R, 'r') 
+hold on; 
+plot(model_time,current_L, 'b')
+ylabel("mA")
+xlabel("time")
+
+subplot(3,1,2)
+ylim([-20 20])
+sgtitle(strrep(input_filearg, '_' , '-'));
 %%
 max(tilt_est)
 max(tilt)
