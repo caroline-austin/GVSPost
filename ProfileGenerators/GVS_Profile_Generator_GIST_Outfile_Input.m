@@ -47,8 +47,10 @@ GIST_IMU = 1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % set this as 1 for sinusoidal and noise; 
-% for DC profiles use 1 for left/backward and 2 for right/forward
-Current_Direction = 1; 
+% for DC profiles use 1 for left/backward and 2 for right/forward -
+% right/forward I think is default positve coupling with the GIST because
+% angle and velocity have opposite sign conventions on the GIST
+Current_Direction = 2; 
 
 % Provide some time with zero motion at the beginniTTSsaveng and end, if desired
 % this adds time to the duration
@@ -75,7 +77,7 @@ Profile_Type = 1;
 % Default waveform for coupling is "DC" , "DC+SD" is DC plus a custom
 % waveform (code should prompt for the additional custom waveform)
 Waveform = "DC";
-mA_max = 5; % maximum current for coupling
+mA_max = 2.5; % maximum current for coupling
 % doesn't apply for the DC, but I think this is the sampling freq for the 
 % custom waveform
 freq = 0.5; 
@@ -89,15 +91,15 @@ max_vel = 6; % set to 6 for optimal roll coupling
 % velocity
 
 % Channel 1
-Ch1 = 1;
-K1 = 999; % set as -999 for optimal roll coupling
+Ch1 = 0;
+K1 = 999; % set as 999 for optimal roll coupling
 Couple_1 = "Roll";
 Threshold_1 = 0;
-K2 = 0; % set at -999 for optimal roll coupling
+K2 = 999; % set at 999 for optimal roll coupling
 Couple_2 = "ZVelocity";
 Threshold_2 = 0;
 % Channel 2
-Ch2 = 0;
+Ch2 = 1;
 K3 = 999;
 Couple_3 = "Pitch";
 Threshold_3 = 0;
@@ -105,7 +107,7 @@ K4 = 999;
 Couple_4 = "XVelocity";
 Threshold_4 = 0;
 % Channel 3
-Ch3 = 0;
+Ch3 = 1;
 K5 = 999;
 Couple_5 = "Pitch";
 Threshold_5 = 0;
@@ -440,17 +442,17 @@ elseif Ch1>= 1 && Ch2>=1 && Ch3>=1 % combine channels into "aoyama" for Sparky
 end
 
    
-    GVS_Signal(GVS_Signal > 5) = 5;
-    GVS_Signal(GVS_Signal < -5) = -5;
+    GVS_Signal(GVS_Signal > mA_max) = mA_max;
+    GVS_Signal(GVS_Signal < -mA_max) = -mA_max;
 
-    GVS_Signal_1(GVS_Signal_1 > 5) = 5;
-    GVS_Signal_1(GVS_Signal_1 < -5) = -5;
+    GVS_Signal_1(GVS_Signal_1 > mA_max) = mA_max;
+    GVS_Signal_1(GVS_Signal_1 < -mA_max) = -mA_max;
 
-    GVS_Signal_2(GVS_Signal_2 > 5) = 5;
-    GVS_Signal_2(GVS_Signal_2 < -5) = -5;
+    GVS_Signal_2(GVS_Signal_2 > mA_max) = mA_max;
+    GVS_Signal_2(GVS_Signal_2 < -mA_max) = -mA_max;
 
-    GVS_Signal_3(GVS_Signal_3 > 5) = 5;
-    GVS_Signal_3(GVS_Signal_3 < -5) = -5;
+    GVS_Signal_3(GVS_Signal_3 > mA_max) = mA_max;
+    GVS_Signal_3(GVS_Signal_3 < -mA_max) = -mA_max;
 
 
     C = 0; % normally C is scale/maxGVS not sure why
@@ -595,10 +597,10 @@ elseif Num_Electrode==4 && GIST_IMU ==0
 elseif Num_Electrode==4 && GIST_electrodes ==4
    
     % positive coupling we want the sign of the mastoid to be opposite of
-    % the motion
+    % the motion- apparently not?
     % 
-    Electrode_1_Sig=-1*GVS_Signal_1; % left mastoid
-    Electrode_2_Sig= -1*GVS_Signal_2;% right mastoid
+    Electrode_1_Sig= GVS_Signal_1; % left mastoid
+    Electrode_2_Sig= GVS_Signal_2;% right mastoid
     
     %
     Electrode_3_Sig= -1*Electrode_1_Sig;% left distal
@@ -609,8 +611,8 @@ elseif Num_Electrode==4 && GIST_electrodes ==4
 elseif Num_Electrode==4 && GIST_electrodes ==6
     % positive coupling we want the sign of the mastoid to be opposite of
     % the motion
-    Electrode_1_Sig=GVS_Signal_1*(-1)+GVS_Signal_2*(-1) ; % left mastoid
-    Electrode_2_Sig=GVS_Signal_1 + GVS_Signal_3*(-1); % right mastoid
+    Electrode_1_Sig=(-1)*GVS_Signal_1+GVS_Signal_2 ; % left mastoid
+    Electrode_2_Sig=GVS_Signal_1 + GVS_Signal_3; % right mastoid
 
     
     Electrode_3_Sig=GVS_Signal_2; %left distal
