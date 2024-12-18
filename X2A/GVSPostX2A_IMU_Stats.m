@@ -43,40 +43,71 @@ control_profile = 2;
 interest_profile = 3:5;
 profile_freq = [0 0 0.25 0.5 1];
 index = 0;
+index2 = 0;
+freq_power_anova = table;
 
 for profile = interest_profile
     for config = 1:num_config
         for dir = 1:3
             for freq = 1:length(freq_interest)
-
                 if profile_freq(profile) ~= freq_interest(freq) % only care about the frequencies that math the GVS freq
                     continue
-                elseif config == 1 && dir == 2 % binaural config and pitch direction
-                    continue
-                elseif (config ==2 || config ==3) && (dir == 1 || dir ==3) % pitch montage and not pitch direction
-                    continue
                 end
+
                 
                 index = index +1;
-                Label.power_stats(index) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
+                % Label.power_stats(index) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
                 power_control(:,index) = changem(squeeze(power_interest_reduced(control_current,control_profile,config,:,dir,freq)), nan);
                 
                 
                 power_eval(:,index) = changem(squeeze(power_interest_reduced(interest_current,profile,config,:,dir,freq)), nan);
                 
+                % save data into table
+                num_subs = height(power_eval);
+
+                freq_power_anova.data((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = power_eval(:,index);
+                freq_power_anova.data((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = power_control(:,index);                
+                      
+                freq_power_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+                freq_power_anova.type((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = "control";                
+
+                freq_power_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = Config(config);
+                freq_power_anova.config((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = Config(config);
+
+                freq_power_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir+3);
+                freq_power_anova.dir((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = imu_dir(dir+3);
+
+                freq_power_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2) ) = freq_interest(freq);
+
+                freq_power_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+                freq_power_anova.sub((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = 1:num_subs;
+
+                if (config == 1 && dir == 2 )  % binaural config and pitch direction 
+                    continue
+                elseif (config ==2 || config ==3) && (dir == 1 || dir ==3) % pitch montage and not pitch direction
+                    continue
+                end
+                index2 = index2+1;
+                Label.power_stats(index2) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
+                power_control_mat(:,index2) = power_control(:,index);             
+                power_eval_mat(:,index2) =  power_eval(:,index);
 
             end
         end
     end
 end
 
+ freq_power_anova( any(ismissing(freq_power_anova),2), :) = [];
 % power_control_save = power_control(~isnan(power_control));
 % power_eval_save = power_eval(~isnan(power_eval));
 
-for i = 1:length(power_eval)
-    p_power(i) = signrank(power_control(:,i),power_eval(:,i));
+for i = 1:length(power_eval_mat)
+    p_power(i) = signrank(power_control_mat(:,i),power_eval_mat(:,i));
 end
-
+%%
+cd(file_path)
+writetable(freq_power_anova, "freq_power_anova.csv");
+cd(code_path)
 %% stats for angle displacement 
 control_current = 1; 
 interest_current = 3; 
