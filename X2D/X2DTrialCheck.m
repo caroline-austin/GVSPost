@@ -13,7 +13,7 @@ clear all;
 clc; 
 
 %% set up
-subnum = 2060;  % Subject List 
+subnum = 2069;  % Subject List 
 numsub = length(subnum);
 subskip = [2058 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = ''; %can change this to specify which data you want to use for the checkng
@@ -22,8 +22,8 @@ datatype = ''; %can change this to specify which data you want to use for the ch
 
 %may eventually want to modigy the color list to be more colorblind
 %friendly 
-Color_List = [ "black";"green";"cyan"; "blue";"red";"green"; "cyan";"blue"];
-match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00"];
+Color_List = [ "black";"green";"cyan"; "blue"; "magenta";"red";"green"; "cyan";"blue"; "magenta"];
+match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00";"P_5_00mA_0_00"];
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory

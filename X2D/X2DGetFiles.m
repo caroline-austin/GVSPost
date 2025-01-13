@@ -11,7 +11,7 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = [2060:2062];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059
+subnum = [2069];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062
 numsub = length(subnum);
 subskip = [2058 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -41,8 +41,12 @@ for sub = 1:numsub
 % only the current subject's sheet
     cd(file_path);
     if subject == 2053 || subject == 2061
-    Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
+        Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
         ['S' subject_str],'Range','A2:I29'); % may need to increase beyond 27, but make sure those rows have zeros
+    elseif subject >= 2069
+        Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
+        ['S' subject_str],'Range','A2:I39'); % may need to increase beyond 27, but make sure those rows have zeros
+
     else
          Trial_Info = readcell('PitchDynamicGVSPlusTilt.xlsx','Sheet', ...
         ['S' subject_str],'Range','A2:I27'); % may need to increase beyond 27, but make sure those rows have zeros
