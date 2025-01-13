@@ -7,8 +7,8 @@ fs=50;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % set the folder that you want to save the files to
 % file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
-% file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
-file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization';
+file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
+% file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization';
 %'/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt';
 % uncomment the mkdir line if the folder does not already exist
 mkdir(file_path) 
@@ -27,14 +27,17 @@ mkdir(file_path)
 
 % number of electrodes in the montage (must be at least 2 and no more than 5)
 % 2 = bilateral 3 = Cevette, 4 = Aoyama
-Num_Electrode = 2; 
+Num_Electrode = 4; 
 
 % 7 = tilt velocity; 8 = tilt angle ; 
 % between 7 and 8 = scaled contribution (closer to 7 is more velocity
 % weighted, closer to 8 is more angle weighted)
-Proportional = 7.5;
+Proportional = 0;
+angle_portion = 3.71; %mA/deg
+vel_portion = 0.28; % mA/(deg/s)
 
-PmA = [4.0]; %[- 4 0 4];
+PmA = [-5.0]; %[- 4 0 4];
+mA_max = 5; % this is the IRB limit
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
 
@@ -196,9 +199,28 @@ elseif Proportional <-1
        scale = (PmA(iter));
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
+
+elseif Proportional ==0
+    Weight_1 = angle_portion;
+    Weight_2 = vel_portion;
+
+    Signal_1 = (TTS_file(:,8))'; % angle
+    Signal_2 = ((TTS_file(:,7))')/200; % velocity 
+
+    signal_max1 = max(abs(Signal_1));
+    signal_max2 = max(abs(Signal_2));
+
+    GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+    C = 0;
 end 
 
-GVS_Signal = GVS_Signal*(scale);
+if Proportional ~= 0
+    GVS_Signal = GVS_Signal*(scale);
+else 
+    GVS_Signal(GVS_Signal > mA_max) = mA_max;
+    GVS_Signal(GVS_Signal < -mA_max) = -mA_max;
+
+end
 maxGVS = max(abs(GVS_Signal));
 
 GVS_Signal = [ zeros(zpad*fs) GVS_Signal];
@@ -298,7 +320,7 @@ elseif Num_Electrode==4
             Electrode_3_Sig=GVS_Signal;
         else
             % electrodes 1&2 are anodes (+) and 3&4 are cathodes (-) 
-            % (Backward) - negative motion coupling 
+            % (Backward) - negative motion coupling (positive mastoids with positive motion = negative GVS motion perception)
             Electrode_2_Sig=GVS_Signal;
             Electrode_3_Sig=GVS_Signal*(-1);
         end
@@ -383,6 +405,20 @@ end
 cd(file_path);
 saveas(gcf, Filename);
 cd(code_path);
+
+%% plot signal components 
+figure;
+subplot(4,1,1);
+plot(Signal_1);
+subplot(4,1,2);
+plot(Signal_2);
+
+subplot(4,1,3);
+plot(Signal_1*Weight_1);
+subplot(4,1,4);
+plot(Signal_2*Weight_2);
+
+
 
 %% Create CSV file that removes decimals and adds +/- sign.
 X=num2str(NewElectM,'%+04g '); %% Create 5 character string with 3-digit number + symbol, then space after.
