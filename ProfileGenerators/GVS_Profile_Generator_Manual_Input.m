@@ -281,6 +281,49 @@ ylabel('Power/Frequency (dB/Hz)');
 % saveas(gcf, Filename);
 % cd('../');
 
+% %% Plot GVS signals for Poster
+% figure;
+% subplot(2,3,1);
+% title('Electrode 1'); hold on;
+% plot(t,(NewElectM(1,2:end)./100), "Color", [0 0.3470 0.7410], LineWidth=5);
+% xlim([0 12])
+% ylim([-4 4])
+% xlabel('Time (s)');
+% ylabel('Current (mA)');
+% subplot(2,3,2);
+% title('Electrode 2'); hold on;
+% plot(t,(NewElectM(2,2:end)./100), "Color", [0.8500 0.2250 0.0980], LineWidth=5);
+% xlim([0 12])
+% ylim([-4 4])
+% xlabel('Time (s)');
+% ylabel('Current (mA)');
+% subplot(2,3,3);
+% title('Electrode 3'); hold on;
+% plot(t,(NewElectM(3,2:end)./100), "Color", [0.4660 0.7740 0.1880], LineWidth=5);
+% xlim([0 12])
+% ylim([-4 4])
+% xlabel('Time (s)');
+% ylabel('Current (mA)');
+% subplot(2,3,4);
+% title('Electrode 4'); hold on;
+% plot(t,(NewElectM(4,2:end)./100), "Color", [0.9290 0.6940 0.1250], LineWidth=5);
+% xlim([0 12])
+% ylim([-4 4])
+% xlabel('Time (s)');
+% ylabel('Current (mA)');
+% subplot(2,3,5);
+% title('Electrode 5'); hold on;
+% plot(t,(NewElectM(5,2:end)./100), "Color", "black", LineWidth=5);
+% xlim([0 12])
+% ylim([-4 4])
+% xlabel('Time (s)');
+% ylabel('Current (mA)');
+% set(gcf,'position',[100,100,1500,800])  
+% 
+% % cd('Profiles/');
+% % saveas(gcf, Filename);
+% % cd('../');
+
 %% Create CSV file that removes decimals and adds +/- sign.
 X=num2str(NewElectM,'%+04g '); %% Create 5 character string with 3-digit number + symbol, then space after.
 %%% Create electrode matrix of 5 character values.
