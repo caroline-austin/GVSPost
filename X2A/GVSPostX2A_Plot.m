@@ -1262,7 +1262,12 @@ if contains(Include_plots, '13')
     for config = 1:num_config
         nexttile
         bar_notation = Motion_map_Max (:,:,config)';
-        b = bar(bar_notation);
+        bar_lateral = bar_notation(:,1)+bar_notation(:,2)+bar_notation(:,8);
+        bar_fore_aft = bar_notation(:,5)+bar_notation(:,6)+bar_notation(:,9);
+        bar_circular = bar_notation(:,7);
+        bar_yaw = bar_notation(:,10);
+        bar_data = [bar_lateral,bar_fore_aft,bar_circular,bar_yaw];
+        b = bar(bar_data);
         dir_color = [Color_list(1,:);Color_list(6,:); Color_list(4,:)];
         for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
             b(j).FaceColor = dir_color(j,:);
@@ -1278,11 +1283,11 @@ if contains(Include_plots, '13')
         Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
         xticks([1 2 3 4 5]);
         xticklabels(Current_levels_str);
-        ylim([0 10])
+        ylim([0 20])
     end
     ylabel("                        Number of Responses", "FontSize", 35)
 %     xlabel("Current mA", "FontSize", 37)
-    lgd = legend("right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw", 'FontSize', 38 ,'NumColumns',2);
+    lgd = legend("lateral","fore/aft","circular","yaw", 'FontSize', 38 ,'NumColumns',2);
     lgd.Layout.Tile = 4;
     overall_title = strjoin(["Reported Motion Axis at Max Current Amplitude"]);
     sgtitle(overall_title, "FontSize", 50)
