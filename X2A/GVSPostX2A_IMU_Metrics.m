@@ -139,8 +139,13 @@ for sub = 1:numsub
                     % hold on;plot(trial_time_e(loc),roll_ang(loc))
                     % title(strjoin([subject_str "Profile:" Label.Config(config) Label.Profile(profile)  Label.CurrentAmp(current) " mA"]));
                                 
-                   angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10)) - mean(roll_ang(1:10)) ;
-                   angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10)) - mean(pitch_ang(1:10)) ;
+                   angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
+                   angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
+                    if profile == 2 && config ==2 && subject == 2005 && current == 8
+                        angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
+                        angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
+
+                    end
 
                 end
             end
