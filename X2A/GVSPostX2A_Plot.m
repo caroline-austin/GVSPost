@@ -44,7 +44,7 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 %plot legend
 % 1: Sand plots across all 9 current amplitudes, separate files for each 
 % side effect and subplots for each electrode configuration, generates
-% plots for 4 sides effects and 5 profiles
+% plots for 4 sides effects and 5 profiles (plot 10 is better)
 
 % 2: Sand plots for only sham, low, high current amplitudes, separate files 
 % for each side effect and subplots for each electrode configuration, generates
@@ -72,10 +72,10 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 %plots as 1 figure with 10 subplot histograms
 
 % 9: Plots reported sensations (tingling/flashes/taste/motion) at different
-%currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
-%plots as 3 figure, each with 3 sand plots.
+%currents for all electrode configurations (2/3/4) using each waveforms
+%plots as 20 figures, each with 3 sand plots.
 %Plots contain all 3 electrodes for a single property at a time
-% Only Part 1 profile (4)
+
 
 % 10: Plots as overlayed sand plots that seem to be identical to plots 9, with
 %the slight difference that it shows the difference between cases with noe
@@ -91,7 +91,7 @@ subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this 
 
 % 13:
 
-Include_plots = ['12', '13'];
+Include_plots = [ ' '];
 
 % should probably insert a for loop that checks to make sure this file exists first
 cd([file_path]);
@@ -741,101 +741,135 @@ if contains(Include_plots, '8')
 
 end
 if contains(Include_plots,'9')
-%% Area Plots organized by side effects With Subject Lines Overlayed
-%plots reported sensations (tingling/flashes/taste/motion) at different
-%currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
-%plots as 3 overlayed line charts
-%Plots contain all 3 electrodes for a single property at a time
-% Only Part 1 profile (4)
 
-        prof = 4;
-        figure; %figure for Tingling
+
+
+%% Reducece Area Plots organized by side effects
+%Plots contain all 3 electrodes for a single property at a time
+% area plot only for part 1 of the experiment 
+
+    for prof = 1:2%:num_profiles
+        check = 0;
+        [dim1, dim2, dim3, dim4] = size(All_Tingle_mapReduced);
+        Prof_Tingle_mapReduced = [All_Tingle_mapReduced(:,:,:,prof) zeros(dim1,1,dim3)];
+        for i = 1:dim3
+            for j = 1:dim1
+                check = sum(Prof_Tingle_mapReduced(j,:,i));
+                if check > num_sub
+                    disp("error too many reports ")
+                end
+                Prof_Tingle_mapReduced(j,end,i)=num_sub-check;
+                
+            end
+        end
+
+        if ismember(prof, [1 4 5])
+            low_lim = 2;
+            high_lim = 3;
+        else 
+            low_lim = 1;
+            high_lim = 3;
+        end
+
+        figure; %Tingling
         t1 = tiledlayout(2,2);
         for config = 1:num_config %generate electrode subplots
             nexttile
             Title = strjoin([num2str(config+1) " Electrodes"]);
-            MapAreaPlot(All_Tingle_map(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe"],Color_list)
-            xlim([0.1 4]);
+            set(gca, 'Color', 'black') 
+            hold on;
+            MapAreaPlot(All_Tingle_mapReduced(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+            xlim([low_lim high_lim]);
         end
+        
         %add labels and info to the plot
         ylabel("                        Number of Responses", "FontSize", 35)
         xlabel("Current mA", "FontSize", 37)
-        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
+        lgd = legend('none','noticeable', 'moderate', 'severe','FontSize', 38, 'Color', 'w' );    
         lgd.Layout.Tile = 4;
+
+
         TotalTitle = char(strjoin(["Reported Tingling Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
-        Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        
+        Filename = char(strjoin(["TingleRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
         % %save plot
         % cd(plots_path);
         % saveas(gcf, [char(Filename) '.fig']);
         % cd(code_path);
-        
-        figure;%figure for Metallic Taste
+  %%  
+        figure; %Metallic Taste
         t2 = tiledlayout(2,2);
         for config = 1:num_config %generate electrode subplots
             nexttile
             Title = strjoin([num2str(config+1) " Electrodes"]);
-            MapAreaPlot(All_Metallic_map(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe"],Color_list)
-            xlim([0.1 4]);
+            set(gca, 'Color', 'black') 
+            hold on;
+            MapAreaPlot(All_Metallic_mapReduced(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+            xlim([low_lim high_lim]);
         end
         %add labels and info to the plot
         ylabel("                        Number of Responses", "FontSize", 35)
         xlabel("Current mA", "FontSize", 37)
-        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 , 'Color', 'w' );
         lgd.Layout.Tile = 4;
         TotalTitle = char(strjoin(["Reported Metallic Taste " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
-        Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
+        Filename = char(strjoin(["MetallicRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
         % %save plot
         % cd(plots_path);
         % saveas(gcf, [char(Filename) '.fig']);
         % cd(code_path);
         
-        figure;%figure for Visual Flashes
+        
+        figure;%Visual Flashes
         t3 = tiledlayout(2,2);
         for config = 1:num_config %generate electrode subplots
             nexttile
             Title = strjoin([num2str(config+1) " Electrodes"]);
-            MapAreaPlot(All_VisFlash_map(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe"],Color_list)
-            xlim([0.1 4]);
+            set(gca, 'Color', 'black') 
+            hold on;
+            MapAreaPlot(All_VisFlash_mapReduced(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+            xlim([low_lim high_lim]);
         end
         %add labels and info to the plot
         ylabel("                        Number of Responses", "FontSize", 35)
         xlabel("Current mA", "FontSize", 37)
-        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 , 'Color', 'w' );
         lgd.Layout.Tile = 4;
         TotalTitle = char(strjoin(["Reported Visual Flashes " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
-        Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
+        Filename = char(strjoin(["VisualFlashRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
         % %save plot
         % cd(plots_path);
         % saveas(gcf, [char(Filename) '.fig']);
         % cd(code_path);
         
-        figure; %figure for Motion Sensation/intensity 
+        figure;
         t4 = tiledlayout(2,2);
         for config = 1:num_config %generate electrode subplots
             nexttile
             Title = strjoin([num2str(config+1) " Electrodes"]);
-            MapAreaPlot(All_MotionRating_map(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe"],Color_list)
-            xlim([0.1 4]);
+            set(gca, 'Color', 'black') 
+            hold on;
+            MapAreaPlot(All_MotionRating_mapReduced(:,:,config,prof),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+            xlim([low_lim high_lim]);
         end
         %add labels and info to the plot
         ylabel("                        Number of Responses", "FontSize", 35)
         xlabel("Current mA", "FontSize", 37)
-        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 );
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'FontSize', 38 , 'Color', 'w' );
         lgd.Layout.Tile = 4;
-
         TotalTitle = char(strjoin(["Reported Motion Sensation " Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 50);
-        Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllCurrentAreaPlot"]));
-        % % save plot
-        % cd(plots_path);
-        % saveas(gcf, [char(Filename) '.fig']);
-        % cd(code_path);
-        disp("press any key to continue"); pause; 
-        close all
+        Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "ReducedCurrentAreaPlot"]));
+       % %save plot
+       %  cd(plots_path);
+       %  saveas(gcf, [char(Filename) '.fig']);
+       %  cd(code_path);
+
+        % disp("press any key to continue"); pause; 
+        % close all
+    end
 
 end
 
@@ -843,17 +877,22 @@ end
 %plots... tbh im a little unsure about the difference between 10 and 9
 %plots as overlayed line charts
 if contains(Include_plots,'10')
-    %%
+%% Area Plots organized by side effects With Subject Lines Overlayed
+    %Sand plots reported sensations (tingling/flashes/taste/motion) at different
+%currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
+%plots as 3 overlayed line charts
+%Plots contain all 3 electrodes for a single property at a time
+% Only Part 1 profile (4)
     prof = 4; 
         [dim1, dim2, dim3, dim4] = size(All_Tingle_map);
-        Sin05Hz_Tingle_map = [All_Tingle_map(:,:,:,4) zeros(dim1,1,dim3)];
+        Prof_Tingle_mapReduced = [All_Tingle_map(:,:,:,4) zeros(dim1,1,dim3)];
         for i = 1:dim3
             for j = 1:dim1
-                check = sum(Sin05Hz_Tingle_map(j,:,i));
+                check = sum(Prof_Tingle_mapReduced(j,:,i));
                 if check > num_sub
                     disp("error too many reports ")
                 end
-                Sin05Hz_Tingle_map(j,end,i)=num_sub-check;
+                Prof_Tingle_mapReduced(j,end,i)=num_sub-check;
                 
             end
         end
@@ -863,7 +902,7 @@ if contains(Include_plots,'10')
         for config = 1:num_config %generate electrode subplots
             nexttile
             Title = strjoin([num2str(config+1) " Electrodes"]);
-            MapAreaPlot(Sin05Hz_Tingle_map(:,:,config),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+            MapAreaPlot(Prof_Tingle_mapReduced(:,:,config),Title,numsub, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
             xlim([0.5 4]);
         end
         %add labels and info to the plot
