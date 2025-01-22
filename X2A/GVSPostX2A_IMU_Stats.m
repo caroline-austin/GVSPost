@@ -108,6 +108,53 @@ end
 cd(file_path)
 writetable(freq_power_anova, "freq_power_anova.csv");
 cd(code_path)
+
+%% plots for freq_power_anova
+
+bilateral_power = freq_power_anova(freq_power_anova.config == "Binaural",:);
+bilateral_roll_power = bilateral_power(bilateral_power.dir == "roll",:);
+bilateral_yaw_power = bilateral_power(bilateral_power.dir == "yaw",:);
+
+pitch_power = freq_power_anova(freq_power_anova.dir == "pitch",:);
+pitch_power = pitch_power(pitch_power.config ~= "Binaural",:);
+%%
+
+bilateral_roll_power_data = cell2mat(table2cell(bilateral_roll_power(:,1)));
+bilateral_roll_power_group = strcat(string(bilateral_roll_power.type) , ": ", string(bilateral_roll_power.freq_interest), " Hz");
+
+bilateral_yaw_power_data = cell2mat(table2cell(bilateral_yaw_power(:,1)));
+bilateral_yaw_power_group = strcat(string(bilateral_yaw_power.type) , ": ", string(bilateral_yaw_power.freq_interest), " Hz");
+
+pitch_power_data = cell2mat(table2cell(pitch_power(:,1)));
+pitch_power_group = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz");
+pitch_power_group_montage = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz ", string(pitch_power.config));
+
+%%
+figure;
+boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+xlabel("Experimental Condition")
+title("Bilateral Roll")
+
+figure;
+boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+xlabel("Experimental Condition")
+title("Bilateral Yaw")
+
+figure;
+boxplot(pitch_power_data , pitch_power_group)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+xlabel("Experimental Condition")
+title("Pitch")
+
+figure;
+boxplot(pitch_power_data , pitch_power_group_montage)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+xlabel("Experimental Condition")
+title("Pitch Montages")
+
+
 %% stats for angle displacement 
 control_current = 1; 
 interest_current = 3; 
@@ -140,6 +187,7 @@ end
 % for i = 1:width(drift_eval)
 %     p_drift(i) = signrank(drift_control(:,i),drift_eval(:,i));
 % end
+
 
 for i = 1:width(drift_eval)/2
     p_drift(i) = signrank(drift_eval(:,i),drift_eval(:,i+3)); % comparing positive and negative responses (rather than to the control response)
