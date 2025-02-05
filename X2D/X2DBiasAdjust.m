@@ -10,7 +10,7 @@ clear;
 clc; 
 
 %% set up
-subnum = [2049, 2051,2053:2062];  % Subject List 
+subnum = [2073];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
 subskip = [2058 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = ''; %can change this to specify which data you want to use for the checkng
@@ -101,26 +101,28 @@ for sub = 1:numsub
             length(sham_indices_5A)+length(sham_indices_5B) + ... 
             length(sham_indices_6A)+length(sham_indices_6B);
 
+        % average bias on sham trials
         bias_correction = bias_correction/ num_sham_trials;
 
-        %apply the bias correction to all trials
-        shot_4A = shot_4A + bias_correction;
-        shot_4B = shot_4B + bias_correction;
-        shot_5A = shot_5A + bias_correction;
-        shot_5B = shot_5B + bias_correction;
-        shot_6A = shot_6A + bias_correction;
-        shot_6B = shot_6B + bias_correction;
+        %apply the bias correction to all trials on a trial specific basis
+        shot_4A = shot_4A + bias_4A;
+        shot_4B = shot_4B + bias_4B;
+        shot_5A = shot_5A + bias_5A;
+        shot_5B = shot_5B + bias_5B;
+        shot_6A = shot_6A + bias_6A;
+        shot_6B = shot_6B + bias_6B;
 
         max_bis(sub) = max([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
-         min_bis(sub) = min([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
+        min_bis(sub) = min([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
 
         all_bias(sub) = bias_correction;
+        hist([bias_4A bias_4B bias_5A bias_5B bias_6A bias_6B])
 %% save files
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' bias_correction'];
-   eval(['  save ' ['S', subject_str, 'Group' datatype 'Bias.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S', subject_str, 'Extract' datatype 'Bias.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
@@ -129,6 +131,8 @@ for sub = 1:numsub
 end
 mean_bias = mean(abs(all_bias));
 std_bias = std(abs(all_bias));
+
+% hist(all_bias)
 
 function bias=calc_bias(motion, report)
         %find average for each signal
