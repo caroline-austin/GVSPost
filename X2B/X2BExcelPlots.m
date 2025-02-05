@@ -27,7 +27,7 @@ xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100];
 xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
 %%
-total_results = zeros(3,2);
+total_results = zeros(3,4);
 total_forhead_shoulder = [0,0];
 total_shoulder_neck = [0,0];
 total_neck_forhead = [0,0];
@@ -135,6 +135,8 @@ for sub = 1:numsub
     total_forhead_shoulder = total_forhead_shoulder + forhead_shoulder;
     sub_motion(:,sub) = main_results(:,1); 
     sub_tingle(:,sub) = main_results(:,2); 
+    sub_metal(:,sub) = main_results(:,3); 
+    sub_vis(:,sub) = main_results(:,4); 
     sub_neck_forhead (sub,:)= neck_forhead;
     sub_shoulder_neck (sub,:)= shoulder_neck;
     sub_forhead_shoulder (sub,:)= forhead_shoulder;
@@ -143,6 +145,7 @@ end
 %% can add any aggregate subj plots here
 figure;
 sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
+
 subplot(2,1,1)
 bar(total_results(:,1));
 title ("Motion Sensation",'FontSize', 18);
@@ -151,6 +154,7 @@ set(ax, 'FontSize', 18);
 xticklabels([])
 ylabel("Number of Reports")
 ylim([0 70])
+grid minor
 
 subplot(2,1,2)
 bar(total_results(:,2));
@@ -160,12 +164,15 @@ xticklabels(["Forehead","Shoulder","Neck"])
 ylabel("Number of Reports")
 title ("Tingling",'FontSize', 18);
 ylim([0 70])
+grid minor
 
+set(gcf,'position',[100,100,700,800])  
 
-%%
+%% box plots for motion and tingling 
 figure;
+tiledlayout(2,1,"TileSpacing","compact")
 sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
-subplot(2,1,1)
+nexttile
 b=boxplot(sub_motion');
 hold on;
 for j = 1:numsub
@@ -182,9 +189,9 @@ ax = gca;
 set(ax, 'FontSize', 18);
 xticklabels([])
 ylabel("Number of Reports")
-ylim([0 10])
-
-subplot(2,1,2)
+ylim([0 8.5])
+grid minor
+nexttile
 h = boxplot(sub_tingle');
 hold on;
 for j = 1:numsub
@@ -201,8 +208,53 @@ ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Tingling",'FontSize', 18);
 ylabel("Number of Reports")
-ylim([0 10])
+ylim([0 8.5])
+grid minor
+set(gcf,'position',[100,100,700,800])  
 
+%% box plots for metallic taste and visual flashes 
+figure;
+tiledlayout(2,1,"TileSpacing","compact")
+sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
+nexttile
+b=boxplot(sub_metal');
+hold on;
+for j = 1:numsub
+    for i = 1:width(sub_metal')
+        
+        plot(i+xoffset2(j), sub_metal(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+title ("Metallic Taste",'FontSize', 18);
+set(b, 'LineWidth', 2);
+set(b, 'Color', 'k');
+ax = gca; 
+set(ax, 'FontSize', 18);
+xticklabels([])
+ylabel("Number of Reports")
+ylim([0 8.5])
+grid minor
+nexttile
+h = boxplot(sub_vis');
+hold on;
+for j = 1:numsub
+    for i = 1:width(sub_vis')
+        
+        plot(i+xoffset2(j), sub_vis(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        hold on;
+    end
+end
+xticklabels(["Forehead","Shoulder","Neck"])
+set(h, 'LineWidth', 2);
+set(h, 'Color', 'k');
+ax = gca;
+set(ax, 'FontSize', 18); 
+title ("Visual Flashes",'FontSize', 18);
+ylabel("Number of Reports")
+ylim([0 8.5])
+grid minor
+set(gcf,'position',[100,100,700,800])  
 
 %% can add any aggregate subj plots here
 figure;
@@ -233,6 +285,8 @@ cd(code_path);
 %% initial stats
 p=friedman(sub_motion');
 p=friedman(sub_tingle');
+p=friedman(sub_metal');
+p=friedman(sub_vis');
 
 p_forehead_shoulder_t = signrank(sub_tingle(1,:),sub_tingle(2,:));
 p_forehead_shoulder_m = signrank(sub_motion(1,:),sub_motion(2,:));

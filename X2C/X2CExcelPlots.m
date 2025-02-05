@@ -376,7 +376,9 @@ end
 %%
 figure;
 sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
-subplot(2,1,1)
+% subplot(2,1,1)
+tiledlayout(2,1, "TileSpacing","compact")
+nexttile
 b=boxplot(sub_total_motion_wins);
 hold on;
 for j = 1:numsub
@@ -393,9 +395,10 @@ ax = gca;
 set(ax, 'FontSize', 18);
 xticklabels([])
 ylabel("Number of Reports")
-ylim([0 30])
+ylim([0 25])
 
-subplot(2,1,2)
+% subplot(2,1,2)
+nexttile
 h = boxplot(sub_total_tingle_wins);
 hold on;
 for j = 1:numsub
@@ -405,81 +408,90 @@ for j = 1:numsub
         hold on;
     end
 end
-xticklabels([Label.MainResultsRow])
+% xticklabels([Label.MainResultsRow])
+xticklabels(["Shoulder" "Temples"])
 set(h, 'LineWidth', 2);
 set(h, 'Color', 'k');
 ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Tingling",'FontSize', 18);
 ylabel("Number of Reports")
-ylim([0 30])
+ylim([0 25])
+set(gcf,'position',[100,100,700,800])  
 
-
+%%
 figure;
 sgtitle('Visual Flashes')
 bar(total_vis_wins.');
 xticklabels([0.1 1 2 3 4].')
-xlabel('Current (mA)',"FontSize",14)
+xlabel('Current at Distal Electrode (mA)',"FontSize",14)
 ylabel('Total Reports',"FontSize",14)
-legend("3 Electrode", "4 Electrode","Location","northwest")
-ylim([0 90])
+legend("Shoulder", "Temples","Location","northwest")
+ylim([0 81])
+xlim([1.5 5.5])
 hold on
 
+%%
 figure;
 sgtitle('Metallic Taste')
 bar(total_metal_wins.');
 xticklabels([0.1 1 2 3 4].')
 xlabel('Current (mA)',"FontSize",14)
 ylabel('Total Reports',"FontSize",14)
-legend("3 Electrode", "4 Electrode","Location","northwest")
-ylim([0 90])
+legend("Shoulder", "Temples","Location","northwest")
+ylim([0 81])
+xlim([1.5 5.5])
 hold on
-
+%%
 figure;
 sgtitle('Motion Sensation')
 bar(total_motion_wins.');
 xticklabels([0.1 1 2 3 4].')
 xlabel('Current (mA)',"FontSize",14)
 ylabel('Total Reports',"FontSize",14)
-legend("3 Electrode", "4 Electrode","Location","northwest")
-ylim([0 90])
+legend("Shoulder", "Temples","Location","northwest")
+ylim([0 81])
+xlim([1.5 5.5])
+grid minor
 hold on
-
+%%
 figure;
 sgtitle('Tingling')
 bar(total_tingle_wins.');
 xticklabels([0.1 1 2 3 4].')
 xlabel('Current (mA)',"FontSize",14)
 ylabel('Total Reports',"FontSize",14)
-legend("3 Electrode", "4 Electrode","Location","northwest")
-ylim([0 90])
+legend("Shoulder", "Temples","Location","northwest")
+ylim([0 81])
+xlim([1.5 5.5])
+grid minor
 hold on
 
 
 
 
-% can add any aggregate subj plots here
-figure;
-sgtitle(['SAll Paired Wins'])
-subplot(2,1,1)
-bar([total_forhead_shoulder, total_shoulder_neck, total_neck_forhead]);
-title ("Most Motion Sensation");
-xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
-
-figure;
-sgtitle(['SAll Total Wins'])
-subplot(2,1,1)
-b=boxplot([sub_forhead_shoulder sub_shoulder_neck sub_neck_forhead]);
-hold on;
-for j = 1:numsub
-    for i = 1:width(sub_motion')
-
-        plot(i+xoffset2(j), sub_motion(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
-        hold on;
-    end
-end
-title ("Most Motion Sensation");
-xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+% % can add any aggregate subj plots here
+% figure;
+% sgtitle(['SAll Paired Wins'])
+% subplot(2,1,1)
+% bar([total_forhead_shoulder, total_shoulder_neck, total_neck_forhead]);
+% title ("Most Motion Sensation");
+% xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
+% 
+% figure;
+% sgtitle(['SAll Total Wins'])
+% subplot(2,1,1)
+% b=boxplot([sub_forhead_shoulder sub_shoulder_neck sub_neck_forhead]);
+% hold on;
+% for j = 1:numsub
+%     for i = 1:width(sub_motion')
+% 
+%         plot(i+xoffset2(j), sub_motion(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+%         hold on;
+%     end
+% end
+% title ("Most Motion Sensation");
+% xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
 
 
 % cd(code_path);
