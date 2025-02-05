@@ -211,6 +211,17 @@ close all;
 end
 
 
+if contains(plots,'W ')
+%% plot W - plots angle over time for the max current experienced by each participant
+for prof = [1]%1:num_profiles
+    [~] = time_series_plot_mult_sub(subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
+    disp(" press any key to close all") %subnum
+    pause;
+    close all;
+end
+end
+
+
 
 if contains(plots,'X ')
 %% plot X - plots angle over time
@@ -240,6 +251,74 @@ end
 %% functions
 %list of subjects, % %list of variables to
 %separate the suplots by
+function data_plot = time_series_plot_mult_sub(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+    numsub = length(subnum);
+num_figure_var = length(figure_var);
+num_subplot_var = length(subplot_var);
+num_trial_var = length(trial_var);
+num_extra_var = length(extra_var);
+color_grad = turbo(num_trial_var);
+
+for figure_index =1:num_figure_var
+    f(figure_index) = figure();
+    tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+    sgtitle ([ figure_var(figure_index) ; num2str(extra_var(extra_var_indices))])
+end
+
+for sub = 1:numsub
+    
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+     if ismember(subject,subskip) == 1
+       continue
+     end
+
+ for subplot_index = subplot_indices
+         for figure_index =1:num_figure_var
+            figure(f(figure_index) );
+            nexttile
+        end 
+        for trial_index = trial_indices
+            for extra_index = extra_var_indices %might actually want to move this to be outermost loop?
+            if isempty(data.(['A', subject_str]){trial_index,extra_index,subplot_index})
+                        continue
+            end
+
+            data_plot.(subplot_var(subplot_index)).time{:,trial_index} = time.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,1);
+            
+            for figure_index =1:num_figure_var
+                data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
+                
+                figure(f(figure_index));
+                plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(trial_index,:)); hold on;
+                hold on;
+                title(subplot_var(subplot_index));
+
+                % should proabably manually build the legend here
+               
+                if subplot_index ==2
+                    ylabel(y_label)
+                elseif subplot_index == 3
+                xlabel("Time (ms)")
+                end
+                % ylim([0 0.25]);
+            % grid minor
+
+            
+            end             
+           
+            end
+        end
+        for figure_index =1:num_figure_var
+             figure(f(figure_index))
+             legend(num2str(trial_var(trial_indices)));
+        end
+
+ end
+ end
+end
+
+
 function data_plot = time_series_plot(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label)
 numsub = length(subnum);
 num_figure_var = length(figure_var);

@@ -129,30 +129,30 @@ pitch_power_data = cell2mat(table2cell(pitch_power(:,1)));
 pitch_power_group = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz");
 pitch_power_group_montage = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz ", string(pitch_power.config));
 
-%%
-figure;
-boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-xlabel("Experimental Condition")
-title("Bilateral Roll")
-
-figure;
-boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-xlabel("Experimental Condition")
-title("Bilateral Yaw")
-
-figure;
-boxplot(pitch_power_data , pitch_power_group)
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-xlabel("Experimental Condition")
-title("Pitch")
-
-figure;
-boxplot(pitch_power_data , pitch_power_group_montage)
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-xlabel("Experimental Condition")
-title("Pitch Montages")
+% %%
+% figure;
+% boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+% title("Bilateral Roll")
+% 
+% figure;
+% boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+% title("Bilateral Yaw")
+% 
+% figure;
+% boxplot(pitch_power_data , pitch_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+% title("Pitch")
+% 
+% figure;
+% boxplot(pitch_power_data , pitch_power_group_montage)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+% title("Pitch Montages")
 
 
 %% stats for angle displacement 
@@ -162,24 +162,53 @@ control_profile = 2;
 interest_profile = 1:2;
 profile_freq = [0 0 0.25 0.5 1];
 index = 0;
+index2 = 0;
+ang_disp_anova = table;
 
 for profile = interest_profile
     for config = 1:num_config
         for dir = 1:2
+
+               index = index +1;
+                % Label.power_stats(index) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
+                displacement_control(:,index) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,:,dir)), nan);
+                
+                
+                displacement_eval(:,index) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,:,dir)), nan);
+                
+                % save data into table
+                num_subs = height(displacement_eval);
+
+                ang_disp_anova.data((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = displacement_eval(:,index);
+                ang_disp_anova.data((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = displacement_control(:,index);                
+                      
+                ang_disp_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+                ang_disp_anova.type((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = "control";                
+
+                ang_disp_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = Config(config);
+                ang_disp_anova.config((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = Config(config);
+
+                ang_disp_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir+3);
+                ang_disp_anova.dir((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = imu_dir(dir+3);
+
+                ang_disp_anova.profile((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2) ) = Profiles_safe(profile);
+
+                ang_disp_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+                ang_disp_anova.sub((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = 1:num_subs;
+
+
                 if config == 1 && dir == 2 % binaural config and pitch direction
                     continue
                 elseif (config ==2 || config ==3) && (dir == 1 || dir ==3) % pitch montage and not pitch direction
                     continue
                 end
                 
-                index = index +1;
-                Label.angle_drift_stats(index) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
-                drift_control(:,index) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,:,dir)), nan);
+               index2 = index2+1;
+                Label.angle_drift_stats(index2) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
+                drift_control(:,index2) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,:,dir)), nan);
                 
-                drift_eval(:,index) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,:,dir)), nan);
-                
-
-            
+                drift_eval(:,index2) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,:,dir)), nan);
+                            
         end
     end
 end
@@ -192,3 +221,43 @@ end
 for i = 1:width(drift_eval)/2
     p_drift(i) = signrank(drift_eval(:,i),drift_eval(:,i+3)); % comparing positive and negative responses (rather than to the control response)
 end
+
+%% save table as csv to load into R
+cd(file_path)
+writetable(ang_disp_anova, "ang_disp_anova.csv");
+cd(code_path)
+
+%% plots for ang_disp_anova
+
+bilateral_disp = ang_disp_anova(ang_disp_anova.config == "Binaural",:);
+bilateral_roll_disp = bilateral_disp(bilateral_disp.dir == "roll",:);
+
+pitch_disp = ang_disp_anova(ang_disp_anova.dir == "pitch",:);
+pitch_disp = pitch_disp(pitch_disp.config ~= "Binaural",:);
+%%
+
+bilateral_roll_disp_data = cell2mat(table2cell(bilateral_roll_disp(:,1)));
+bilateral_roll_disp_group = strcat(string(bilateral_roll_disp.type) , ": ", string(bilateral_roll_disp.profile));
+
+pitch_disp_data = cell2mat(table2cell(pitch_disp(:,1)));
+pitch_disp_group = strcat(string(pitch_disp.type) , ": ", string(pitch_disp.profile));
+pitch_disp_group_montage = strcat(string(pitch_disp.type) , ": ", string(pitch_disp.profile),  string(pitch_disp.config));
+
+%%
+figure;
+boxplot(bilateral_roll_disp_data , bilateral_roll_disp_group)
+ylabel("Sway Displacement (deg)")
+xlabel("Experimental Condition")
+title("Bilateral Roll")
+
+figure;
+boxplot(pitch_disp_data , pitch_disp_group)
+ylabel("Sway Displacement (deg)")
+xlabel("Experimental Condition")
+title("Pitch")
+
+figure;
+boxplot(pitch_disp_data , pitch_disp_group_montage)
+ylabel("Sway Displacement (deg)")
+xlabel("Experimental Condition")
+title("Pitch Montages")

@@ -141,6 +141,11 @@ for sub = 1:numsub
                                 
                    angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                    angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
+
+                   if config ==2 % flipping for the cevette bc the profiles were generated with the wrong polarity label 
+                        angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;
+                        angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
+                   end
                     if profile == 2 && config ==2 && subject == 2005 && current == 8
                         angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                         angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
@@ -178,6 +183,8 @@ for sub = 1:numsub
 
     [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
 
+    % [all_ang_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(all_ang,MinCurrent,MaxCurrent,Label,sub);
+
 end
 %%
 Label.IMUmetrics = ["Current" "Profile" "Config" "Subject" "Direction" "VarIndex"];
@@ -204,6 +211,53 @@ Label.CurrentAmpReduced = ["Low" "Min" "Max"];
 
     %%
 function [Reduced_var] = ReduceVarMultiple(Var,MinCurrent,MaxCurrent,Label,sub_index)
+%this function takes a previously generated map and reduces it so that the
+%values recorded are only for the sham(0.1), low (min), and high(max)
+%current amplitude conditions. 
+% dim1 is current, dim2 is variable of interest,dim 3 electrode configuration,is dim 4 is profile
+
+%get size of the original map and pre-allocate the reduced map
+[dim1, dim3, dim4,~,~,~] = size(Var);
+% Reduced_var = zeros(3,dim3,dim4);
+for index_1 = 1:dim1
+for outer = 1: dim4  %cycle through the different electrode configurations
+    for inner = 1:dim3 %cycle through the different profiles
+        %find locations where a response is recorded 
+        % test = Var{:,inner,outer}(sub_index,:);
+        [row,col] = find(Var(index_1,inner,outer,sub_index,:,:));
+
+        num_trials = length(row); %number of responses
+        %initialize checking variables
+        check_low = 0;
+        check_min = 0;
+        check_max = 0;
+        for k = 1:num_trials %cycle through all identified responses
+            if Label.CurrentAmp(index_1) == 0.1 %for sham condition
+                Reduced_var(1, inner, outer,1,:,:) = Var(index_1,inner, outer,sub_index,:,:);
+                check_low = 1;
+            elseif Label.CurrentAmp(index_1) == MinCurrent{outer} %for low current condition
+                Reduced_var(2, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                check_min = 1;
+            elseif Label.CurrentAmp(index_1) == MaxCurrent{outer} %for high current conditions 
+                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                check_max = 1;
+                %below is meant to handle a couple of trials where the
+                %current provided in a part 2 trial was less than the
+                %predetermined max while still meant to represent the max
+                %report
+            elseif Label.CurrentAmp(index_1) <= MaxCurrent{outer} && Label.CurrentAmp(index_1) >= MinCurrent{outer} && inner ~= 4 %not 0.5hz profile
+                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                check_max = 1;
+            end
+        end
+
+    end
+end
+end
+
+end
+
+function [Reduced_var] = ReduceTimeSeriesMultiple(Var,MinCurrent,MaxCurrent,Label,sub_index)
 %this function takes a previously generated map and reduces it so that the
 %values recorded are only for the sham(0.1), low (min), and high(max)
 %current amplitude conditions. 
