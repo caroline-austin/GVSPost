@@ -5,10 +5,12 @@ addpath("./assets/")
 
 GVS_Params = [0.0245, 0];
 
+% if the TTS is in pitch config set to 1 else = 0
+TTS_pitch = 1;
 
 code_path = pwd;
-% [input_filearg,input_path] = uigetfile('*.txt');
-[input_filearg,input_path] = uigetfile('*.csv');
+[input_filearg,input_path] = uigetfile('*.txt');
+% [input_filearg,input_path] = uigetfile('*.csv');
 fprintf([input_filearg '\n']);
 
 cd(input_path) %make sure the profile you want to run is in this folder
@@ -51,10 +53,15 @@ time = model_time(1):30:model_time(end); % For plotting
 
 % Initialize
 model_motion = [0 0 0 0 0 0].*zeros(length(model_time),1);
-model_motion(2:end,4)= tilt_vel_deg;
+
 if contains(input_filearg, 'GIST_') % GIST file
     model_motion(2:end,5)= tilt_vel_degp;
     model_motion(2:end,6)= tilt_vel_degy;
+    model_motion(2:end,4)= tilt_vel_deg;
+elseif TTS_pitch == 1
+    model_motion(2:end,5)= tilt_vel_deg;
+else
+    model_motion(2:end,4)= tilt_vel_deg;
 end
 
 loc =find(isnan(model_motion));
@@ -119,25 +126,40 @@ g_head = percepts{2};
 omega_est = percepts{3};
 omega_head = percepts{4};
 
+
 tilt = atand(g_head(:,2)./g_head(:,3));
 tilt_est = atand(g_est(:,2)./g_est(:,3));
 tilt_p = atand(g_head(:,1)./g_head(:,3));
 tilt_est_p = atand(g_est(:,1)./g_est(:,3));
 Results{1} = [ts tilt_est];
-%%
+%
 figure;
 subplot(3,1,1)
-plot(ts,tilt); hold on;
-plot(ts,tilt_est); hold on;
-legend("tilt", "perception")
-ylabel("roll tilt deg")
 
+    
+
+if TTS_pitch ==1 
+    plot(ts,tilt_p); hold on;
+    plot(ts,tilt_est_p); hold on;
+    ylabel("pitch tilt deg")
+else
+    plot(ts,tilt); hold on;
+    plot(ts,tilt_est); hold on;
+    ylabel("roll tilt deg")
+end
+legend("tilt", "perception")
 subplot(3,1,2)
 % plot(ts,omega_head(:,1)); hold on;
 plot(model_time(2:end),tilt_vel_deg); hold on;
-plot(ts,omega_est(:,1)); hold on;
+if TTS_pitch ==1 
+    plot(ts,omega_est(:,2)); hold on;
+    ylabel(" pitch velocity deg/s")
+else
+    plot(ts,omega_est(:,1)); hold on;
+    ylabel(" roll velocity deg/s")
+end 
 legend("angular velocity","perception")
-ylabel(" roll velocity deg/s")
+
 
 subplot(3,1,3)
 plot(model_time,current_R, 'r') 
@@ -145,13 +167,22 @@ hold on;
 plot(model_time,current_L, 'b')
 ylabel("mA")
 xlabel("time")
+legend(["right" "left"])
 
 subplot(3,1,2)
 ylim([-20 20])
-sgtitle(strrep(input_filearg, '_' , '-'));
+sgtitle(strrep(input_filearg, '_' , ' '));
 % sgtitle("4A 5mAmaxCh10Roll-999ZVelocityMaxAngle5MaxVel6")
+if TTS_pitch ==1
+    cd('C:\Users\caroa\UCB-O365\Bioastronautics File Repository - File Repository\Torin Group Items\Projects\Motion Coupled GVS\PitchDynamicGVSPlusTiltTesting\Data\PerceptionProfiles');
+    save(input_filearg, "tilt_est_p");
+    cd(code_path)
+
+end
 
 %% pitch plot
+if TTS_pitch ==1 
+else
 figure;
 subplot(3,1,1)
 plot(ts,tilt_p); hold on;
@@ -176,6 +207,7 @@ xlabel("time")
 subplot(3,1,2)
 ylim([-20 20])
 sgtitle(strrep(input_filearg, '_' , '-'));
+end
 %%
 max(tilt_est)
 max(tilt)
