@@ -8,7 +8,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = [2049, 2051,2053:2062];  % Subject List 
+subnum = [2073];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
 subskip = [2058 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
@@ -48,9 +48,9 @@ for sub = 1:numsub
     %adjusted 
     cd(subject_path);
     if ismac || isunix
-        load(['S', subject_str, 'Group' datatype '.mat']);
+        load(['S', subject_str, 'Extract' datatype '.mat']);
     elseif ispc
-        load(['S', subject_str, 'Group' datatype '.mat ']);
+        load(['S', subject_str, 'Extract' datatype '.mat ']);
     end
     
     cd(code_path);
@@ -148,7 +148,7 @@ for sub = 1:numsub
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min' ' avg_loc_rms_min'];
-   eval(['  save ' ['S', subject_str, 'Group' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
+   eval(['  save ' ['S', subject_str, 'Extract' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
    close all;
