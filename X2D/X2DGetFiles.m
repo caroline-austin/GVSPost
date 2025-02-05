@@ -20,6 +20,7 @@ file_path = uigetdir; %user selects file directory
 plots_path = [file_path '/Plots']; % specify where plots are saved
 gvs_path = [file_path '/GVSProfiles'];
 tts_path = [file_path '/TTSProfiles'];
+percep_path = [file_path '/PerceptionProfiles'];
 cd ..
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
 cd(code_path)
@@ -148,6 +149,11 @@ for sub = 1:numsub
        Commanded_TTS= load([TTS_profile_name, '.txt']);
        cd (code_path);
        tilt_velocity = (Commanded_TTS(2:end,7))/200;
+       %load predicted perception from observer
+       cd(percep_path)
+       Predicted_Perception= load(GVS_profile_name);
+       Predicted_Perception = -Predicted_Perception.tilt_est_p; % including negative sign bc shot report is also flipped
+       cd (code_path);
 
        %load the TTS output csv file and store appropriate data with
        %unit conversions
@@ -158,7 +164,7 @@ for sub = 1:numsub
        plot_time = (time -time(1))/1000;
        tilt_command = table2array(TTS_data(1:end-1,2))/200; %deg
        tilt_actual = table2array(TTS_data(1:end-1,4))/200; %deg
-       shot_actual = table2array(TTS_data(1:end-1,6))/-1000; %deg
+       shot_actual = table2array(TTS_data(1:end-1,6))/-1000; %deg - % negative sign included bc shot is flipped in this config
        GVS_actual1_mV= table2array(TTS_data(1:end-1,12))/1000; %mV (not mA)
        GVS_actual2_mV= table2array(TTS_data(1:end-1,13))/1000; %mV (not mA)
        mustBeNonsparse(GVS_actual1_mV);
@@ -185,7 +191,7 @@ for sub = 1:numsub
        cd(subject_path);
        vars_2_save = ['TTS_data tilt_command tilt_velocity tilt_actual' ...
            ' time plot_time GVS_actual1_mV GVS_actual1_filt GVS_actual2_mV GVS_actual2_filt trial_end' ...
-           ' GVS_command shot_actual'];
+           ' GVS_command shot_actual Predicted_Perception'];
        eval(['  save ' [char(filesave_name), '.mat '] vars_2_save ' vars_2_save']);      
        cd(code_path)
        eval (['clear ' vars_2_save])

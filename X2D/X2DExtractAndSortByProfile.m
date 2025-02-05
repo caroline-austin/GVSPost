@@ -66,21 +66,27 @@ end
    GVS_4A = [];
    tilt_4A = [];
    shot_4A = [];
+   predict_4A = [];
    GVS_4B = [];
    tilt_4B = [];
    shot_4B = [];
+   predict_4B = [];
    GVS_5A = [];
    tilt_5A = [];
    shot_5A = [];
+   predict_5A = [];
    GVS_5B = [];
    tilt_5B = [];
    shot_5B = [];
+   predict_5B = [];
    GVS_6A = [];
    tilt_6A = [];
    shot_6A = [];
+   predict_6A = [];
    GVS_6B = [];
    tilt_6B = [];
    shot_6B = [];
+   predict_6B = [];
    
     %iterate through all trial files to store them into the grouped
     %variables
@@ -118,6 +124,9 @@ end
                     current_file);
                 [shot_4A, Label] = AddOnData1(shot_4A,shot_actual,  ... 
                     Label, 'shot_4A', 'shot_actual', current_file);
+
+                [predict_4A, Label] = AddOnData1(predict_4A,Predicted_Perception,  ... 
+                    Label, 'predict_4A', 'Predicted_Perception', current_file);
               
             case '4B'
                [GVS_4B, Label] = AddOnData3(GVS_4B,GVS_command, ... 
@@ -131,6 +140,9 @@ end
                     current_file);
                 [shot_4B, Label] = AddOnData1(shot_4B,shot_actual,  ... 
                     Label, 'shot_4B', 'shot_actual', current_file);
+
+                 [predict_4B, Label] = AddOnData1(predict_4B,Predicted_Perception,  ... 
+                    Label, 'predict_4B', 'Predicted_Perception', current_file);
 
             case '5A'
 
@@ -146,6 +158,9 @@ end
                 [shot_5A, Label] = AddOnData1(shot_5A,shot_actual,  ... 
                     Label, 'shot_5A', 'shot_actual', current_file);
 
+                [predict_5A, Label] = AddOnData1(predict_5A,Predicted_Perception,  ... 
+                    Label, 'predict_5A', 'Predicted_Perception', current_file);
+
             case '5B'
 
                 [GVS_5B, Label] = AddOnData3(GVS_5B,GVS_command, ... 
@@ -159,6 +174,9 @@ end
                     current_file);
                 [shot_5B, Label] = AddOnData1(shot_5B,shot_actual,  ... 
                     Label, 'shot_5B', 'shot_actual', current_file);
+
+                [predict_5B, Label] = AddOnData1(predict_5B,Predicted_Perception,  ... 
+                    Label, 'predict_5B', 'Predicted_Perception', current_file);
 
             case '6A'
 
@@ -174,6 +192,9 @@ end
                 [shot_6A, Label] = AddOnData1(shot_6A,shot_actual,  ... 
                     Label, 'shot_6A', 'shot_actual', current_file);
 
+                [predict_6A, Label] = AddOnData1(predict_6A,Predicted_Perception,  ... 
+                    Label, 'predict_6A', 'Predicted_Perception', current_file);
+
             case '6B'
 
                 [GVS_6B, Label] = AddOnData3(GVS_6B,GVS_command, ... 
@@ -187,6 +208,9 @@ end
                     current_file);
                 [shot_6B, Label] = AddOnData1(shot_6B,shot_actual,  ... 
                     Label, 'shot_6B', 'shot_actual', current_file);
+
+                [predict_6B, Label] = AddOnData1(predict_6B,Predicted_Perception,  ... 
+                    Label, 'predict_6B', 'Predicted_Perception', current_file);
         end
     end
     %set up time vector for plotting later on
@@ -194,9 +218,10 @@ end
 
 %% save files
    cd(subject_path);
-   vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
-       ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
-       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B'];
+   vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A predict_4A ' ...
+       ' shot_5A tilt_5A GVS_5A predict_5A shot_6A tilt_6A GVS_6A predict_6A ' ...
+       'shot_4B tilt_4B GVS_4B predict_4B  ' ...
+       'shot_5B tilt_5B GVS_5B predict_5B shot_6B tilt_6B GVS_6B predict_6B'];
    %change filename for saving -> remove PS and possibly swap out "Group"
    %for Extract or Sort
    eval(['  save ' ['S', subject_str, 'Extract.mat '] vars_2_save ' vars_2_save']);      
@@ -227,9 +252,14 @@ end
 function [out_var, Label] = AddOnData1(out_var,data1, Label, out_var_name, ...
     name1, current_file)
     %determine existing variable size
-    [~,out_var_col]=size(out_var);
+    [out_var_row,out_var_col]=size(out_var);
+    extra = out_var_row -length(data1);
     %append data onto existing variable
-    out_var(:,out_var_col+1) = data1; 
+    if extra >= 0 || out_var_row == 0 
+    out_var(:,out_var_col+1) = [data1; zeros(extra,1)]; 
+    else 
+        out_var(:,out_var_col+1) = [data1(1:out_var_row,:)]; 
+    end
     %append corresponding labels
     eval(char(["Label." out_var_name "(out_var_col+1,:) = string([ " + ...
         "current_file(10:end-4)  name1]);"]));

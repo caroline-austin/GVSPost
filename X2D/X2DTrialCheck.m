@@ -32,10 +32,12 @@ if ismac || isunix
     plots_path = [file_path '/Plots/Check']; % specify where plots are saved
     gvs_path = [file_path '/GVSProfiles'];
     tts_path = [file_path '/TTSProfiles'];
+    percep_path = [file_path '/PerceptionProfiles'];
 elseif ispc
     plots_path = [file_path '\Plots\Check']; % specify where plots are saved
     gvs_path = [file_path '\GVSProfiles'];
     tts_path = [file_path '\TTSProfiles'];
+    percep_path = [file_path '\PerceptionProfiles'];
 end
 cd .. 
 [filenames]=file_path_info2(code_path, file_path); % get files from file folder
@@ -120,19 +122,22 @@ for sub = 1:numsub
     disp("Please Review these 6 plots for correctness and then press any key to continue");
     pause;
     close all
-
+%%
     %plot shot profiles against tilt to check them. For these plots you
     %want to make sure that the shot report is generally in the same
     %direction as the physical motion profile (with maybe a little bit of
     %lag) If the subject is reporting the exact opposite sense of motion
     %for large portions of the trial consider removing the trial
+    num_time_step = length(time);
     figure;
     cd ..
     subplot(rows,cols,1)
         for prof2plot = 1:length(Label.shot_4A)
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_4A, Label.GVS_4A , tilt_4A, ...
-            shot_4A(),1, time,Color_List,prof2plot,match_list)
+            shot_4A(),1, time,Color_List,prof2plot,match_list); 
+        hold on; 
+        plot( time, predict_4A(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_4A(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
@@ -145,6 +150,8 @@ for sub = 1:numsub
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_4B, Label.GVS_4B , tilt_4B, ...
             shot_4B(),1, time,Color_List,prof2plot,match_list)
+        hold on; 
+        plot( time, predict_4B(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_4B(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
@@ -157,6 +164,8 @@ for sub = 1:numsub
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_5A, Label.GVS_5A , tilt_5A, ...
             shot_5A(),1, time,Color_List,prof2plot,match_list)
+        hold on; 
+        plot( time, predict_5A(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_5A(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
@@ -169,6 +178,8 @@ for sub = 1:numsub
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_5B, Label.GVS_5B , tilt_5B, ...
             shot_5B(),1, time,Color_List,prof2plot,match_list)
+        hold on; 
+        plot( time, predict_5B(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_5B(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
@@ -181,6 +192,8 @@ for sub = 1:numsub
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_6A, Label.GVS_6A , tilt_6A, ...
             shot_6A(),1, time,Color_List,prof2plot,match_list)
+        hold on; 
+        plot( time, predict_6A(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_6A(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
@@ -193,6 +206,8 @@ for sub = 1:numsub
             subplot(rows,cols, prof2plot)
         PlotGVSTTSPerceptionSHOTonly(Label.shot_6B, Label.GVS_6B , tilt_6B, ...
             shot_6B(),1, time,Color_List,prof2plot,match_list)
+        hold on; 
+        plot( time, predict_6B(1:num_time_step,prof2plot), '--g')
         trial_name= char(strrep(Label.shot_6B(prof2plot), '_', '.'));
         plot_title =trial_name(1:16);
         title(plot_title);
