@@ -53,7 +53,7 @@ for sub = 1:numsub
     neck_forhead = [0,0];
     for match_up = 1:height(main_match_ups)
         
-        if contains(main_match_ups{match_up,2}, 'Three Forhead')
+        if contains(main_match_ups{match_up,2}, 'Three Forehead')
             if contains(main_match_ups{match_up,3}, 'Three Shoulder')
                 if main_match_ups{match_up,8} == 1
                     forhead_shoulder(1) = forhead_shoulder(1)+1;
@@ -78,7 +78,7 @@ for sub = 1:numsub
                     shoulder_neck(2) = shoulder_neck(2)+1;
                 end
 
-            elseif contains(main_match_ups{match_up,3} , 'Three Forhead')
+            elseif contains(main_match_ups{match_up,3} , 'Three Forehead')
                 if main_match_ups{match_up,8} == 1
                     forhead_shoulder(2) = forhead_shoulder(2)+1;
                 elseif main_match_ups{match_up,8} == 2
@@ -87,7 +87,7 @@ for sub = 1:numsub
 
             end
         elseif contains(main_match_ups{match_up,2} ,'Three Neck')
-            if contains(main_match_ups{match_up,3} , 'Three Forhead')
+            if contains(main_match_ups{match_up,3} , 'Three Forehead')
                 if main_match_ups{match_up,8} == 1
                     neck_forhead(1) = neck_forhead(1)+1;
                 elseif main_match_ups{match_up,8} == 2
@@ -142,19 +142,29 @@ end
 
 %% can add any aggregate subj plots here
 figure;
-sgtitle(['SAll Total Wins'])
+sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 subplot(2,1,1)
 bar(total_results(:,1));
-title ("Most Motion Sensation");
+title ("Motion Sensation",'FontSize', 18);
+ax = gca; 
+set(ax, 'FontSize', 18);
 xticklabels([])
+ylabel("Number of Reports")
+ylim([0 70])
+
 subplot(2,1,2)
 bar(total_results(:,2));
-xticklabels([Label.MainResultsRow])
-title ("Most Tingling");
+ax = gca; 
+set(ax, 'FontSize', 18);
+xticklabels(["Forehead","Shoulder","Neck"])
+ylabel("Number of Reports")
+title ("Tingling",'FontSize', 18);
+ylim([0 70])
+
 
 %%
 figure;
-sgtitle(['SAll Total Wins'])
+sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 subplot(2,1,1)
 b=boxplot(sub_motion');
 hold on;
@@ -165,11 +175,17 @@ for j = 1:numsub
         hold on;
     end
 end
-title ("Most Motion Sensation");
+title ("Motion Sensation",'FontSize', 18);
+set(b, 'LineWidth', 2);
+set(b, 'Color', 'k');
+ax = gca; 
+set(ax, 'FontSize', 18);
 xticklabels([])
+ylabel("Number of Reports")
+ylim([0 10])
 
 subplot(2,1,2)
-boxplot(sub_tingle');
+h = boxplot(sub_tingle');
 hold on;
 for j = 1:numsub
     for i = 1:width(sub_motion')
@@ -178,8 +194,14 @@ for j = 1:numsub
         hold on;
     end
 end
-xticklabels([Label.MainResultsRow])
-title ("Most Tingling");
+xticklabels(["Forehead","Shoulder","Neck"])
+set(h, 'LineWidth', 2);
+set(h, 'Color', 'k');
+ax = gca;
+set(ax, 'FontSize', 18); 
+title ("Tingling",'FontSize', 18);
+ylabel("Number of Reports")
+ylim([0 10])
 
 
 %% can add any aggregate subj plots here

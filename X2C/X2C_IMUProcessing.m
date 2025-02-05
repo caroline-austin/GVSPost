@@ -16,7 +16,7 @@ plots_path = [file_path '/Plots']; % specify where plots are saved
 cd(code_path); cd .. ;
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 
-subnum = [2044:2048, 2050,2052, 2063:2064];  % Subject List 
+subnum = [2065];  % Subject List 2044:2048, 2050,2052, 2063:
 numsub = length(subnum);
 subskip = [2049 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -140,15 +140,17 @@ end
 %% plot results
 figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accx); xticklabels([]); title("Three Electrode"); ylim([0 20*10^-3]);
 subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accx); xticklabels([]); title("Four Electrode"); ylim([0 20*10^-3]);
-xticklabels(subnum);
+xticklabels(subnum); xlabel("Subject");
 sgtitle("X sway near 0.5Hz");
+
 figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accy); xticklabels([]); title("Three Electrode"); ylim([0 0.3]);
 subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accy); xticklabels([]); title("Four Electrode"); ylim([0 0.3]);
-xticklabels(subnum);
+xticklabels(subnum); xlabel("Subject");
 sgtitle("Y sway near 0.5Hz");
+
 figure; subplot(2,1,1); boxplot(three_electrode_fft_SpHz_accz); xticklabels([]); title("Three Electrode"); ylim([0 0.4]);
 subplot(2,1,2);boxplot(four_electrode_fft_SpHz_accz); xticklabels([]); title("Four Electrode"); ylim([0 0.4]);
-xticklabels(subnum);
+xticklabels(subnum); xlabel("Subject");
 sgtitle("Z sway near 0.5Hz");
 
 cd(code_path);
