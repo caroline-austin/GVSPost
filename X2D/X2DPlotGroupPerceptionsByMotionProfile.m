@@ -1,19 +1,25 @@
 Type = '4A';
+code_path = pwd; 
+%%
 % Plots of Dynamic Data
 % 7/28/23
 % Made by Aaron
 % modified by Caroline 1/5/24
-DataName = "DynamicDataGain.mat";
+% modified by Caroline 2/7/25
+% DataName = "DynamicDataGain.mat";
 
 %% Load
-Var = load("./data/"+DataName);
+[filename, file_path] = uigetfile; % grab the SAllBiasTimeGain.mat file from the Data folder for this project
+Var = load([file_path '/' filename]);
 
 %%
 % User Definied
 %Type = 'Angle' (7.0), 'Velocity' (8.0), or 'Semi' (7.5)
 LW = 2;
 LS = {"-","-","-"};
+cd('..')
 colors;
+cd(code_path);
 LC = [redseq(80,:);redseq(50,:);redseq(20,:)];
 LC = [red;blue;green];
 LC = [226 107 109;128 128 128;90 160 163]/255;
@@ -33,17 +39,19 @@ LC = [226 107 109;128 128 128;90 160 163]/255;
 %         Title = 'Semi Coupled GVS';
 % end
 Title = Type;
-conditions = [5 4 1; 6 4 2; 7 4 3 ];
+conditions = [4 3 1; 5 3 2];
 motions = ["4"];
 
+[row, col]=size(conditions);
+
 f=figure;
-t=tiledlayout(3,2,'TileSpacing','tight');
-for j = 1:3
-     for k = 1:2
+t=tiledlayout(row,2,'TileSpacing','tight');
+for j = 1:row % number of GVS coupling schemes
+     for k = 1:2 % 1 = GVS plot 2 = perception plot
         nexttile
         hold on
         
-        for i = 1:3
+        for i = 1:col % postive/negative/sham
             condition = conditions(j,i);
 %             motion = motions(j);
     
@@ -84,7 +92,12 @@ for j = 1:3
                 % plot GVS stuff
                 GVS_name = "All_GVS_"+Type;
                 GVS_data = Var.(GVS_name);
-                stimulations = -1*GVS_data(:,condition);
+                if condition < 3
+                    stimulations = GVS_data(:,condition);
+                else % there are 6 GVS dimensions instead of 5 so need to add one 
+                    stimulations = GVS_data(:,condition+1);
+                end
+
 
                 timeplot = 0:dt*2:T;
                 angplot = interp1(time,tiltang(:,1),timeplot);
