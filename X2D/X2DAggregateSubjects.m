@@ -12,10 +12,10 @@ clear;
 clc; 
 
 %% set up
-subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum = [2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2075];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2059 40006];  %DNF'd subjects or subjects that didn't complete this part
-match_list = [ "N_4_00mA_8_00"; "0_00mA"; "0_00mA"; "P_4_00mA_8_00"];
+subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
 code_path = pwd; %save code directory
@@ -78,12 +78,12 @@ for sub = 1:numsub
     if ismac || isunix
         subject_path = [file_path, '/' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group' datatype '.mat']);
+        load(['S', subject_str, 'Extract' datatype '.mat']);
         cd(code_path);
     elseif ispc
         subject_path = [file_path, '\' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group' datatype '.mat ']);
+        load(['S', subject_str, 'Extract' datatype '.mat ']);
         cd(code_path);
     end
 
@@ -101,10 +101,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_4A)
         for j = 1:length(match_list)
             if contains(Label.shot_4A(i), match_list(j))
-                if j ==2
+                if j ==3 
                     check_4A = check_4A+1;
                 end
-                if j ==2 && check_4A >1
+                if j ==3 && check_4A >1 % force 2nd of the GVS conditions to get paired with 2nd in matchlist
                     continue
                 end
                 %add data in to get averaged
@@ -119,10 +119,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_4B)
         for j = 1:length(match_list)
             if contains(Label.shot_4B(i), match_list(j))
-                if j ==2
+                if j ==3
                     check_4B = check_4B+1;
                 end
-                if j ==2 && check_4B >1
+                if j ==3 && check_4B >1
                     continue
                 end
                 All_shot_4B(:,j) = All_shot_4B(:,j)+shot_4B(:,i);
@@ -135,10 +135,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_5A)
         for j = 1:length(match_list)
             if contains(Label.shot_5A(i), match_list(j))
-                if j ==2
+                if j ==3
                     check_5A = check_5A+1;
                 end
-                if j ==2 && check_5A >1
+                if j ==3 && check_5A >1
                     continue
                 end
                 All_shot_5A(:,j) = All_shot_5A(:,j)+shot_5A(:,i);
@@ -151,10 +151,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_5B)
         for j = 1:length(match_list)
             if contains(Label.shot_5B(i), match_list(j))
-                if j ==2
+                if j ==3
                     check_5B = check_5B+1;
                 end
-                if j ==2 && check_5B >1
+                if j ==3 && check_5B >1
                     continue
                 end
                 All_shot_5B(:,j) = All_shot_5B(:,j)+shot_5B(:,i);
@@ -168,10 +168,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_6A)
         for j = 1:length(match_list)
             if contains(Label.shot_6A(i), match_list(j))
-                if j ==2
+                if j ==3
                     check_6A = check_6A+1;
                 end
-                if j ==2 && check_6A >1
+                if j ==3 && check_6A >1
                     continue
                 end
                 All_shot_6A(:,j) = All_shot_6A(:,j)+shot_6A(:,i);
@@ -184,10 +184,10 @@ for sub = 1:numsub
     for i = 1:length(Label.shot_6B)
         for j = 1:length(match_list)
             if contains(Label.shot_6B(i), match_list(j))
-                if j ==2
+                if j ==3
                     check_6B = check_6B+1;
                 end
-                if j ==2 && check_6B >1
+                if j ==3 && check_6B >1
                     continue
                 end
                 All_shot_6B(:,j) = All_shot_6B(:,j)+shot_6B(:,i);
@@ -249,49 +249,49 @@ end
 %%
 % Taking std of all subjects at each point in time:
 % std(data to include, any speicial weighting, dimensions to calculate the std over)
-STD_shot_save_4A(:,:,[1 3]) = std(shot_save_4A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_4A(:,:,2) = std(shot_save_4A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_4A = reshape(STD_shot_save_4A,timeSeriesLength,3);
+STD_shot_save_4A(:,:,[1 2 4 5]) = std(shot_save_4A(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_4A(:,:,3) = std(shot_save_4A(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_4A = reshape(STD_shot_save_4A,timeSeriesLength,5);
 
-STD_shot_save_4B(:,:,[1 3]) = std(shot_save_4B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_4B(:,:,2) = std(shot_save_4B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_4B = reshape(STD_shot_save_4B,timeSeriesLength,3);
+STD_shot_save_4B(:,:,[1 2 4 5]) = std(shot_save_4B(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_4B(:,:,3) = std(shot_save_4B(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_4B = reshape(STD_shot_save_4B,timeSeriesLength,5);
 
-STD_shot_save_5A(:,:,[1 3]) = std(shot_save_5A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_5A(:,:,2) = std(shot_save_5A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_5A = reshape(STD_shot_save_5A,timeSeriesLength,3);
+STD_shot_save_5A(:,:,[1 2 4 5]) = std(shot_save_5A(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_5A(:,:,3) = std(shot_save_5A(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_5A = reshape(STD_shot_save_5A,timeSeriesLength,5);
 
-STD_shot_save_5B(:,:,[1 3]) = std(shot_save_5B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_5B(:,:,2) = std(shot_save_5B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_5B = reshape(STD_shot_save_5B,timeSeriesLength,3);
+STD_shot_save_5B(:,:,[1 2 4 5]) = std(shot_save_5B(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_5B(:,:,3) = std(shot_save_5B(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_5B = reshape(STD_shot_save_5B,timeSeriesLength,5);
 
-STD_shot_save_6A(:,:,[1 3]) = std(shot_save_6A(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_6A(:,:,2) = std(shot_save_6A(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,3);
+STD_shot_save_6A(:,:,[1 2 4 5]) = std(shot_save_6A(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_6A(:,:,3) = std(shot_save_6A(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,5);
 
-STD_shot_save_6B(:,:,[1 3]) = std(shot_save_6B(:,:,[1 4]),[],2, 'omitnan');
-STD_shot_save_6B(:,:,2) = std(shot_save_6B(:,:,[2 3]),[],[2 3], 'omitnan');
-STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,3);
+STD_shot_save_6B(:,:,[1 2 4 5]) = std(shot_save_6B(:,:,[1 2 5 6]),[],2, 'omitnan');
+STD_shot_save_6B(:,:,3) = std(shot_save_6B(:,:,[3 4]),[],[2 3], 'omitnan');
+STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,5);
 
 %%
-% combine the 2 and 3 columns which both have the NoGVS conditions 
-All_shot_4A = [All_shot_4A(:,1) All_shot_4A(:,2)+All_shot_4A(:,3)   All_shot_4A(:,4) ];
-num_trials_4A= [num_trials_4A(1) num_trials_4A(2)+num_trials_4A(3)  num_trials_4A(4)];
+% combine the 3 and 4 columns which both have the NoGVS conditions 
+All_shot_4A = [All_shot_4A(:,1) All_shot_4A(:,2) All_shot_4A(:,3)+ All_shot_4A(:,4)  All_shot_4A(:,5) All_shot_4A(:,6)];
+num_trials_4A= [num_trials_4A(1) num_trials_4A(2) num_trials_4A(3)+num_trials_4A(4) num_trials_4A(5) num_trials_4A(6)];
 
-All_shot_4B = [All_shot_4B(:,1) All_shot_4B(:,2)+All_shot_4B(:,3)   All_shot_4B(:,4) ];
-num_trials_4B= [num_trials_4B(1) num_trials_4B(2)+num_trials_4B(3)  num_trials_4B(4)];
+All_shot_4B = [All_shot_4B(:,1) All_shot_4B(:,2) All_shot_4B(:,3)+ All_shot_4B(:,4)  All_shot_4B(:,5) All_shot_4B(:,6)];
+num_trials_4B= [num_trials_4B(1) num_trials_4B(2) num_trials_4B(3)+num_trials_4B(4) num_trials_4B(5) num_trials_4B(6)];
 
-All_shot_5A = [All_shot_5A(:,1) All_shot_5A(:,2)+All_shot_5A(:,3)  All_shot_5A(:,4) ];
-num_trials_5A= [num_trials_5A(1) num_trials_5A(2)+num_trials_5A(3)  num_trials_5A(4)];
+All_shot_5A = [All_shot_5A(:,1) All_shot_5A(:,2) All_shot_5A(:,3)+ All_shot_5A(:,4)  All_shot_5A(:,5) All_shot_5A(:,6)];
+num_trials_5A= [num_trials_5A(1) num_trials_5A(2) num_trials_5A(3)+num_trials_5A(4) num_trials_5A(5) num_trials_5A(6)];
 
-All_shot_5B = [All_shot_5B(:,1) All_shot_5B(:,2)+All_shot_5B(:,3)   All_shot_5B(:,4) ];
-num_trials_5B= [num_trials_5B(1) num_trials_5B(2)+num_trials_5B(3)  num_trials_5B(4)];
+All_shot_5B = [All_shot_5B(:,1) All_shot_5B(:,2) All_shot_5B(:,3)+ All_shot_5B(:,4)  All_shot_5B(:,5) All_shot_5B(:,6)];
+num_trials_5B= [num_trials_5B(1) num_trials_5B(2) num_trials_5B(3)+num_trials_5B(4) num_trials_5B(5) num_trials_5B(6)];
 
-All_shot_6A = [All_shot_6A(:,1) All_shot_6A(:,2)+All_shot_6A(:,3)   All_shot_6A(:,4) ];
-num_trials_6A= [num_trials_6A(1) num_trials_6A(2)+num_trials_6A(3)  num_trials_6A(4)];
+All_shot_6A = [All_shot_6A(:,1) All_shot_6A(:,2) All_shot_6A(:,3)+ All_shot_6A(:,4)  All_shot_6A(:,5) All_shot_6A(:,6)];
+num_trials_6A= [num_trials_6A(1) num_trials_6A(2) num_trials_6A(3)+num_trials_6A(4) num_trials_6A(5) num_trials_6A(6)];
 
-All_shot_6B = [All_shot_6B(:,1) All_shot_6B(:,2)+All_shot_6B(:,3)   All_shot_6B(:,4) ];
-num_trials_6B= [num_trials_6B(1) num_trials_6B(2)+num_trials_6B(3)  num_trials_6B(4)];
+All_shot_6B = [All_shot_6B(:,1) All_shot_6B(:,2) All_shot_6B(:,3)+ All_shot_6B(:,4)  All_shot_6B(:,5) All_shot_6B(:,6)];
+num_trials_6B= [num_trials_6B(1) num_trials_6B(2) num_trials_6B(3)+num_trials_6B(4) num_trials_6B(5) num_trials_6B(6)];
 
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects 
@@ -311,7 +311,7 @@ SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
 SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
 SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
 
-match_list = [ "N_4_00mA_8_00"; "0_00mA";  "P_4_00mA_8_00"];
+match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
 %update the label
 Label.shot_4A = match_list;
 Label.shot_4B = match_list;
