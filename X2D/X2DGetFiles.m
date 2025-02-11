@@ -11,9 +11,9 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = [2069];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062
+subnum = [2075];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
 numsub = length(subnum);
-subskip = [2058 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
+subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -121,7 +121,7 @@ for sub = 1:numsub
 
        %check actual v. perscribed physical motion profile
        if ~ contains(current_csv_file, TTS_profile)
-            disp(["For trial ", trial_number, "the TTS csv profile does " + ...
+            disp(["For trial ", trial_number, "and subject", subject_str,"the TTS csv profile does " + ...
                 "not match the listed master spread sheet profile "])
        end
 
