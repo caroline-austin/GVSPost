@@ -6,9 +6,9 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum = [2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2075];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2059 2060 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
 
 % colors- first 5 are color blind friendly colors
@@ -20,15 +20,15 @@ red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
 
-Color_List = [ "black"; "blue";"red";"blue"];
-match_list = [ "N_4_00mA_8_00"; "0_00mA"; "P_4_00mA_8_00"];
-plot_list = [ "N Ang"; "None"; "P Ang"];
+Color_List = [ "black"; "blue";"magenta";"red";"blue"; "magenta"];
+match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
+plot_list = [ "N Ang"; "N Opt"; "None"; "P Ang"; "P Opt"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
-sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";"bpentagram";"b<";"bhexagram";"b>"; "bdiamond";"bv";"bo";"b+"; "b*"; "bx"; "bsquare"; "b^";];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
-xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25; -0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
 % set up pathing
 code_path = pwd; %save code directory
@@ -78,11 +78,11 @@ for sub = 1:numsub
     if ismac || isunix
         subject_path = [file_path, '/' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group', datatype '.mat']);
+        load(['S', subject_str, 'Extract', datatype '.mat']);
     elseif ispc
         subject_path = [file_path, '\' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group', datatype '.mat ']);
+        load(['S', subject_str, 'Extract', datatype '.mat ']);
     end
     
     cd(code_path);
@@ -102,8 +102,14 @@ for p = 1: length(prof)
 end
 % slope calculation for data aggregated by coupling scheme
 for j = 1:length(match_list)
-    eval(["LM.X" + match_list(j) + " = fitlm(tilt_" + match_list(j) + ", shot_" + match_list(j) + ", 'Intercept', false);"]);
-    eval(["slope_all(j)= LM.X" + match_list(j) + ".Coefficients.Estimate;"]);
+    check_var = eval(["shot_" + match_list(j)]);
+    if isempty(check_var)
+            slope_all(j)= NaN;
+        continue
+    else
+        eval(["LM.X" + match_list(j) + " = fitlm(tilt_" + match_list(j) + ", shot_" + match_list(j) + ", 'Intercept', false);"]);
+        eval(["slope_all(j)= LM.X" + match_list(j) + ".Coefficients.Estimate;"]);
+    end
 end
 
 % %% curve fitting plots % commented out because don't need to recreate
@@ -286,7 +292,7 @@ end
 f= figure;
 b = boxplot(slope_save_all);
 % b.BoxFaceColor = blue;
-plot_label = ["- Angle"; "No GVS"; "+ Angle" ];
+plot_label = ["- Angle"; "- Optimal"; "No GVS"; "+ Angle" ; "+ Optimal" ];
 % xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
@@ -313,10 +319,11 @@ f.Position = [100 100 1500 750];
  %    cd(code_path);
  %    hold off;   
  %%
+ % same as previous figure but subtract out NoGVS slope
 f= figure;
-b = boxplot(slope_save_all-slope_save_all(:,2));
+b = boxplot(slope_save_all-slope_save_all(:,3));
 % b.BoxFaceColor = blue;
-plot_label = ["- Angle"; "No GVS"; "+ Angle" ];
+plot_label = ["- Angle"; "- Optimal"; "No GVS"; "+ Angle" ; "+ Optimal" ];
 % xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
@@ -324,7 +331,7 @@ hold on;
 for j = 1:numsub
     for i = 1:width(slope_save_all)
         
-        plot(i+xoffset2(j), slope_save_all(j, i)-slope_save_all(j,2),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
+        plot(i+xoffset2(j), slope_save_all(j, i)-slope_save_all(j,3),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
         hold on;
     end
 end
@@ -350,7 +357,7 @@ for p = 1: length(prof)
     subplot(2,3,p)
     eval(["boxplot(slope_save_" + prof(p) + ");"]);
     title (["Profile " + prof(p)]);
-    xticks([1 2 3 ]);
+    xticks([1 2 3 4 5]);
     xticklabels(plot_list);
 end
 hold on; 
@@ -360,7 +367,7 @@ sgtitle(['Perception-tilt-Slope: AllSubjectsBoxPlot' datatype ]);
     saveas(gcf, [ 'Perception-tilt-SlopeAllSubjectsBoxPlot' datatype  ]); 
     cd(code_path);
     hold off;
-
+%%
 %all subjects averaged slope plot
 figure;
 
@@ -373,7 +380,7 @@ figure;
     saveas(gcf, [ 'Perception-tilt-Slope-All-ProfilesAllSubjects' datatype  ]); 
     cd(code_path);
     hold off; 
-
+%%
 figure;
 for p = 1: length(prof)
     subplot(2,3,p)
@@ -399,7 +406,7 @@ end
    eval(['  save ' ['SAllPerception-tilt-Slope' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    % eval (['clear ' vars_2_save])
-   close all;
+   % close all;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)
     %plot data 
