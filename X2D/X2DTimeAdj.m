@@ -8,9 +8,9 @@
 clc; clear; close all;
 
 %% set up
-subnum = [2073];  % Subject List 2049, 2051,2053:2062
+subnum = [2075];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
 numsub = length(subnum);
-subskip = [2058 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
 
 code_path = pwd; %save code directory
@@ -129,12 +129,12 @@ for sub = 1:numsub
 
     %cut off beginning and end 1s of trials and shift the shot response
     %data
-    [shot_4A,tilt_4A,GVS_4A] = shift_file(shot_4A,tilt_4A,GVS_4A,shot_start_avg, shot_end_avg);
-    [shot_4B,tilt_4B,GVS_4B] = shift_file(shot_4B,tilt_4B,GVS_4B,shot_start_avg, shot_end_avg);
-    [shot_5A,tilt_5A,GVS_5A] = shift_file(shot_5A,tilt_5A,GVS_5A,shot_start_avg, shot_end_avg);
-    [shot_5B,tilt_5B,GVS_5B] = shift_file(shot_5B,tilt_5B,GVS_5B,shot_start_avg, shot_end_avg);
-    [shot_6A,tilt_6A,GVS_6A] = shift_file(shot_6A,tilt_6A,GVS_6A,shot_start_avg, shot_end_avg);
-    [shot_6B,tilt_6B,GVS_6B] = shift_file(shot_6B,tilt_6B,GVS_6B,shot_start_avg, shot_end_avg);
+    [shot_4A,tilt_4A,GVS_4A, predict_4A] = shift_file(shot_4A,tilt_4A,GVS_4A,predict_4A,shot_start_avg, shot_end_avg);
+    [shot_4B,tilt_4B,GVS_4B, predict_4B] = shift_file(shot_4B,tilt_4B,GVS_4B,predict_4B,shot_start_avg, shot_end_avg);
+    [shot_5A,tilt_5A,GVS_5A, predict_5A] = shift_file(shot_5A,tilt_5A,GVS_5A,predict_5A,shot_start_avg, shot_end_avg);
+    [shot_5B,tilt_5B,GVS_5B, predict_5B] = shift_file(shot_5B,tilt_5B,GVS_5B,predict_5B,shot_start_avg, shot_end_avg);
+    [shot_6A,tilt_6A,GVS_6A, predict_6A] = shift_file(shot_6A,tilt_6A,GVS_6A,predict_6A,shot_start_avg, shot_end_avg);
+    [shot_6B,tilt_6B,GVS_6B, predict_6B] = shift_file(shot_6B,tilt_6B,GVS_6B,predict_6B,shot_start_avg, shot_end_avg);
 
     %redefine the end of the trial so that it can be properly used in other
     %scripts
@@ -147,7 +147,8 @@ for sub = 1:numsub
    cd(subject_path);
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
-       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min' ' avg_loc_rms_min'];
+       'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ' avg_time_rms_min' ' avg_loc_rms_min' ...
+       ' predict_4A predict_4B predict_5A predict_5B predict_6A predict_6B'];
    eval(['  save ' ['S', subject_str, 'Extract' datatype 'Time.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
@@ -197,9 +198,10 @@ function [avg_loc_rms_min,avg_time_rms_min] = find_time_shift(shot,tilt)
     avg_time_rms_min = mean(min_rms);
 end
 
-function [shot,tilt, GVS] = shift_file(shot,tilt,GVS,start_index, end_index)
+function [shot,tilt, GVS,predict] = shift_file(shot,tilt,GVS,predict, start_index, end_index)
     tilt  = tilt(51:end-50, :);
     shot  = shot(start_index:end_index, :);
     GVS  = GVS(51:end-50, :);
+    predict = predict(start_index:end_index, :);
 end
 

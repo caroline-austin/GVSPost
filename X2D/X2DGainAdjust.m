@@ -4,9 +4,9 @@
 clc; clear; close all; %warning off;
 
 %% set up
-subnum = [2073];  % Subject List 2049, 2051,2053:2062
+subnum = [2075];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
 numsub = length(subnum);
-subskip = [2058 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTime';
 
 code_path = pwd; %save code directory
@@ -139,7 +139,7 @@ for sub = 1:numsub
    vars_2_save = ['Label Trial_Info time trial_end shot_4A tilt_4A GVS_4A  ' ...
        ' shot_5A tilt_5A GVS_5A shot_6A tilt_6A GVS_6A shot_4B tilt_4B GVS_4B  ' ...
        'shot_5B tilt_5B GVS_5B shot_6B tilt_6B GVS_6B' ...
-       ' avg_gain'];
+       ' avg_gain predict_4A predict_4B predict_5A predict_5B predict_6A predict_6B'];
    eval(['  save ' ['S', subject_str, 'Extract' datatype 'Gain.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
 %    eval (['clear ' vars_2_save])
