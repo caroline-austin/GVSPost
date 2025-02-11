@@ -19,7 +19,13 @@ pitch_power <- subset(pitch_power, config != "Binaural")
 
 # run binaural anovas
 binaural_roll_power.aov <- anova_test(data = binaural_roll_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
+binaural_roll_power.aov <- anova_test(data ~ type + freq_interest +Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
 get_anova_table(binaural_roll_power.aov)
+get_anova_table(binaural_roll_power.aov)
+
+anova_result <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+summary(anova_result)
 
 binaural_yaw_power.aov <- anova_test(data = binaural_yaw_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
 get_anova_table(binaural_yaw_power.aov)
