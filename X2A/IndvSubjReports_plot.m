@@ -129,10 +129,10 @@ end
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllCurrentAreaPlotSymbols"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
 
 %% plotting code for Tingling
 [dim1, dim2, dim3, dim4] = size(All_Tingle_map);
@@ -209,10 +209,10 @@ end
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["Tingling" Profiles_safe(prof) "AllCurrentAreaPlotSymbols"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
 
 
 %% plotting code for Metallic Taste
@@ -290,10 +290,10 @@ end
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["Metallic" Profiles_safe(prof) "AllCurrentAreaPlotSymbols"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
 
 %% plotting code for Visual Flashes
 [dim1, dim2, dim3, dim4] = size(All_VisFlash_map);
@@ -370,7 +370,7 @@ end
         sgtitle( TotalTitle, "FontSize", 50);
         Filename = char(strjoin(["VisFlash" Profiles_safe(prof) "AllCurrentAreaPlotSymbols"]));
         
-        %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
