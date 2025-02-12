@@ -21,12 +21,17 @@ purple = [0.4196    0.3059    0.4431];
 red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
+type_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
+dir_simp_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:); Color_list(6,:);];
+time_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
+dir_color = [Color_list(1,:);Color_list(1,:); Color_list(2,:); Color_list(2,:); Color_list(3,:); Color_list(3,:); Color_list(4,:); Color_list(1,:); Color_list(2,:); Color_list(6,:);];
 
 %naming variables 
 Profiles = ["DC Right/Front"; "DC Left/Back"; "Sin 0.25Hz"; "Sin 0.5Hz"; "Sin 1Hz"];
 Profiles_safe = ["DCRight-Front"; "DCLeft-Back"; "Sin0_25Hz"; "Sin0_5Hz"; "Sin1Hz"];
 num_profiles = length(Profiles);
 num_config = 3;
+config_names = ["Binaural"; "Forehead"; "Temples"];
 
 
 %% 
@@ -105,7 +110,7 @@ cd(code_path);
 num_sub = length(subject_label); 
 numsub = 100;
 
-if contains(Include_plots,'1 ')
+if contains(Include_plots,'1 ') % replaced by plot #10
 %% Area Plots organized by side effects
 %Plots contain all 3 electrodes for a single property at a time
 % loops through for all 5 profiles
@@ -201,8 +206,8 @@ if contains(Include_plots,'1 ')
     end
 
 end
-if contains(Include_plots,'2')
-%% Reducece Area Plots organized by side effects
+if contains(Include_plots,'2') % replaced by plot #9
+%% Reduced Area Plots organized by side effects
 %Plots contain all 3 electrodes for a single property at a time
 % area plot only for part 1 of the experiment 
 
@@ -296,9 +301,9 @@ if contains(Include_plots,'2')
     end
 
 end
-if contains(Include_plots, ' 3')
+if contains(Include_plots, ' 3') % does not work
 %% Area Plots for Side Effects organized by the number of electrodes 
-%this has not been updated for the 4D rating arrays
+%this has not been updated for the 4D rating arrays so does not work
 % % these plots have all of the side effects on the same plot and then makes 
 % different plots for each electrode configuration for part 1 of the
 % experiment 
@@ -341,10 +346,10 @@ if contains(Include_plots, ' 3')
 end 
 % 
 % 
-if contains(Include_plots, '4')
+if contains(Include_plots, '4') % does not work
 %% Plots contain all 3 electrodes for a single property at a time
  % bar plot only for part 1 of the experiment 
- %
+ % does not work rn bc part 1 maps were not saved separately
 
     figure;
     t1 = tiledlayout(2,2);
@@ -428,30 +433,81 @@ end
 
 %plots for Direction, Type, and Timing all current amplitudes and all waveforms
 
-if contains(Include_plots,'5')
-    %% Plot Motion Direction (roll, pitch, yaw data)
+if contains(Include_plots,'5') % use in paper
+    %% Plot Motion Direction (full list)
     for prof = 1:num_profiles
     figure;
     t_dir = tiledlayout(2,2);
     for config = 1:num_config
         nexttile
         b = bar(All_Motion_map (:,:,config,prof));
+        for j = 1:length(dir_color) 
+            b(j).FaceColor = dir_color(j,:);
+        end
         ax = gca;
         ax.FontSize = 27;
         
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        % Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
     
     
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
+        if prof == 4
+            xlim([1.5 9.5])
+        end
+        grid minor;
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
-    lgd = legend('Roll','Pitch', 'Yaw', 'FontSize', 38 );
+    lgd = legend(Label.direction, 'FontSize', 38 ,'NumColumns',2);
+    lgd.Layout.Tile = 4;
+    overall_title = strjoin(["Reported Motion Direction",   Profiles(prof)]);
+    sgtitle(overall_title, "FontSize", 50)
+    
+    Filename = strtrim(strjoin(["ElectrodeMotionDirection" Profiles_safe(prof) "AllCurrentGroupedBar"]));
+    
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    end
+    %}
+
+     %% Plot Motion Direction (simplified list)
+     % color order: blue; green; yellow; red; navy; purple
+    for prof = 1:num_profiles
+    figure;
+    t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        b = bar(All_Motion_map_simple (:,:,config,prof));
+        
+        for j = 1:length(dir_simp_color) 
+            b(j).FaceColor = dir_simp_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 27;
+        
+        % Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
+        title(Title, "FontSize", 45)
+    
+    
+        Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
+        xticks([1 2 3 4 5 6 7 8 9]);
+        xticklabels(Current_levels_str);
+        ylim([0 10])
+        if prof == 4
+            xlim([1.5 9.5])
+        end
+        grid minor;
+    end
+    ylabel("                        Number of Responses", "FontSize", 35)
+    xlabel("Current mA", "FontSize", 37)
+    lgd = legend(Label.direction_simple, 'FontSize', 38 ,'NumColumns',2);
     lgd.Layout.Tile = 4;
     overall_title = strjoin(["Reported Motion Direction",   Profiles(prof)]);
     sgtitle(overall_title, "FontSize", 50)
@@ -471,18 +527,26 @@ if contains(Include_plots,'5')
     for config = 1:num_config
         nexttile
         b = bar(All_Timing_map (:,:,config,prof));
+        
+        for j = 1:length(time_color) 
+            b(j).FaceColor = time_color(j,:);
+        end
         ax = gca;
         ax.FontSize = 27;
         
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        % Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
+        grid minor;
+        if prof == 4
+            xlim([1.5 9.5])
+        end
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
@@ -506,17 +570,25 @@ if contains(Include_plots,'5')
     for config = 1:num_config
         nexttile
         b = bar(All_Type_map (:,:,config,prof));
+        
+        for j = 1:length(type_color) 
+            b(j).FaceColor = type_color(j,:);
+        end
         ax = gca;
         ax.FontSize = 27;
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        % Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
+        grid minor;
+        if prof == 4
+            xlim([1.5 9.5])
+        end
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
@@ -530,14 +602,14 @@ if contains(Include_plots,'5')
     % cd(plots_path);
     % saveas(gcf, [char(Filename) '.fig']);
     % cd(code_path);
-    disp("press any key to continue"); pause; 
-    close all
+    % disp("press any key to continue"); pause; 
+    % close all
     end
 end
 
 %plots for Direction, Type, and Timing for sham, low, high current amplitudes and all waveforms
-if contains(Include_plots, '6')
-%% Reduced Plot Motion Direction (roll, pitch, yaw data)
+if contains(Include_plots, '6') % not for use in paper just bonus visualization
+%% Reduced Plot Motion Direction Full (roll, pitch, yaw data)
     for prof = 1:num_profiles
     figure;
     t_dir = tiledlayout(2,2);
@@ -546,20 +618,22 @@ if contains(Include_plots, '6')
         b = bar(All_Motion_mapReduced (:,:,config,prof));
         ax = gca;
         ax.FontSize = 27;
+        for j = 1:length(dir_color) 
+            b(j).FaceColor = dir_color(j,:);
+        end
         
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
     
     
         Current_levels_str = ["0.1" "low" "high"];
         xticks([1 2 3]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
-    lgd = legend('Roll','Pitch', 'Yaw', 'FontSize', 38 );
+    lgd = legend(Label.direction, 'FontSize', 38 , 'NumColumns', 2);
     lgd.Layout.Tile = 4;
     overall_title = strjoin(["Reported Motion Direction",   Profiles(prof)]);
     sgtitle(overall_title, "FontSize", 50)
@@ -579,16 +653,18 @@ if contains(Include_plots, '6')
         b = bar(All_Timing_mapReduced (:,:,config,prof));
         ax = gca;
         ax.FontSize = 27;
+        for j = 1:length(time_color) 
+            b(j).FaceColor = time_color(j,:);
+        end
         
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
         Current_levels_str = ["0.1" "low" "high"];
         xticks([1 2 3]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
@@ -606,7 +682,7 @@ if contains(Include_plots, '6')
     
     
     %% Plot Motion Type (rhythmic, continuous, intermittent)
-    for prof = 1:num_profiles
+    for prof = 4%1:num_profiles
     figure;
     t_dir = tiledlayout(2,2);
     for config = 1:num_config
@@ -614,15 +690,19 @@ if contains(Include_plots, '6')
         b = bar(All_Type_mapReduced (:,:,config,prof));
         ax = gca;
         ax.FontSize = 27;
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+
+        for j = 1:length(type_color) 
+            b(j).FaceColor = type_color(j,:);
+        end
+        
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
         Current_levels_str = ["0.1" "low" "high"];
         xticks([1 2 3]);
         xticklabels(Current_levels_str);
-%         ylim([0 6])
+        ylim([0 10])
     end
     ylabel("                        Number of Responses", "FontSize", 35)
     xlabel("Current mA", "FontSize", 37)
@@ -641,7 +721,7 @@ if contains(Include_plots, '6')
     end
 end
 
-if contains(Include_plots, '7')
+if contains(Include_plots, '7') % probably won't use in paper
 %% Plot the Max/minCurrents
 %plots the maximum tolerable current amplitudes in different electrode configurations
 %responses vs current amplitude (mA), plots for 2/3/4 electrodes
@@ -683,7 +763,7 @@ if contains(Include_plots, '7')
     close all
 
 end
-if contains(Include_plots, '8')
+if contains(Include_plots, '8') % not for use in paper, just a good visual check
 %% Plot the Start/End Impedances
 %plots the starting/ending impedances(kOhm) for 10 different impedance configurations, 
 %plots as 10 histograms
@@ -740,15 +820,13 @@ if contains(Include_plots, '8')
     close all
 
 end
-if contains(Include_plots,'9')
+if contains(Include_plots,' 9') % not used in paper see IndvSubjReportsAllProfMaxCurrent_plot.m for similar, but better plots
 
+%% Reduced Area Plots organized by side effects
+% (Sand) Plots contain all 3 electrodes for a single side effect and only
+% consider the 0.1, low, high groupings
 
-
-%% Reducece Area Plots organized by side effects
-%Plots contain all 3 electrodes for a single property at a time
-% area plot only for part 1 of the experiment 
-
-    for prof = 1:2%:num_profiles
+    for prof = 1:num_profiles
         check = 0;
         [dim1, dim2, dim3, dim4] = size(All_Tingle_mapReduced);
         Prof_Tingle_mapReduced = [All_Tingle_mapReduced(:,:,:,prof) zeros(dim1,1,dim3)];
@@ -873,15 +951,11 @@ if contains(Include_plots,'9')
 
 end
 
-
-%plots... tbh im a little unsure about the difference between 10 and 9
-%plots as overlayed line charts
-if contains(Include_plots,'10')
+if contains(Include_plots,' 10') % version with subj symbols (for paper) is in IndvSubjReports_plot.m
 %% Area Plots organized by side effects With Subject Lines Overlayed
     %Sand plots reported sensations (tingling/flashes/taste/motion) at different
-%currents for all electrode configurations (2/3/4) using a sin 0.5Hz wave
-%plots as 3 overlayed line charts
-%Plots contain all 3 electrodes for a single property at a time
+%currents (0.5 -4mA) for all electrode configurations (2/3/4) using a sin 0.5Hz wave
+
 % Only Part 1 profile (4)
     prof = 4; 
         [dim1, dim2, dim3, dim4] = size(All_Tingle_map);
@@ -1030,7 +1104,7 @@ if contains(Include_plots,'10')
 
 end
 
-if contains(Include_plots, '11')
+if contains(Include_plots, '11') % use these in paper
 %this section plots motion timing, axis, and type, for several frequencies
 %and electron configurations
 %plots as 3 separate histograms
@@ -1044,14 +1118,12 @@ if contains(Include_plots, '11')
         nexttile
         bar_notation = Motion_map_Max (:,:,config)';
         b = bar(bar_notation);
-        dir_color = [Color_list(1,:);Color_list(6,:); Color_list(4,:)];
-        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+        for j = 1:length(dir_color) % 4 should acutally be a variable that is part of the size of All_map
             b(j).FaceColor = dir_color(j,:);
         end
         ax = gca;
         ax.FontSize = 25;
-        
-    %     legend("roll", "pitch", "yaw")
+
         Title = strjoin([num2str(config+1) " Electrodes"]);
         title(Title, "FontSize", 45)
     
@@ -1060,6 +1132,7 @@ if contains(Include_plots, '11')
         xticks([1 2 3 4 5]);
         xticklabels(Current_levels_str);
         ylim([0 10])
+        grid minor;
     end
     ylabel("                        Number of Responses", "FontSize", 35)
 %     xlabel("Current mA", "FontSize", 37)
@@ -1070,9 +1143,47 @@ if contains(Include_plots, '11')
     
     Filename = strtrim(strjoin(["ElectrodeMotionDirectionAllProfMaxCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+
+    %%  Reduced Plot Reported Motion Direction Simplified (lateral, fore-aft circular,, yaw)
+%this section plots the observed motion direction for several frequencies
+%and electron configurations
+%plots as 2 separate histograms
+    figure;
+    t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        b = bar(squeeze(All_Motion_map_simpleReduced(3,:,config,:))');
+        for j = 1:length(dir_simp_color) % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = dir_simp_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+        
+        Title = config_names(config);
+        title(Title, "FontSize", 45)
+    
+    
+        Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(Current_levels_str);
+        ylim([0 10])
+         grid minor;
+    end
+    ylabel("                        Number of Responses", "FontSize", 35)
+%     xlabel("Current mA", "FontSize", 37)
+    lgd = legend("lateral","fore/aft","circular","yaw", 'FontSize', 38 ,'NumColumns',2);
+    lgd.Layout.Tile = 4;
+    overall_title = strjoin(["Reported Motion Axis at Max Current Amplitude"]);
+    sgtitle(overall_title, "FontSize", 50)
+    
+    Filename = strtrim(strjoin(["ElectrodeReportedObservedMotionDirectionAllProfMaxCurrentGroupedBar"]));
+    
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
     
     %% Plot Motion Timing (rhythmic, continuous, intermittent)
     for prof = 1:num_profiles
@@ -1084,15 +1195,13 @@ if contains(Include_plots, '11')
         nexttile
         bar_notation = Timing_map_Max (:,:,config)';
         b = bar(bar_notation);
-        time_color = [Color_list(2,:);Color_list(1,:); Color_list(3,:)];
         for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
             b(j).FaceColor = time_color(j,:);
         end
         ax = gca;
         ax.FontSize = 25;
-        
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
        
@@ -1101,6 +1210,7 @@ if contains(Include_plots, '11')
         xticks([1 2 3 4 5]);
         xticklabels(Current_levels_str);
         ylim([0 10])
+        grid minor;
     end
     ylabel("                        Number of Responses", "FontSize", 35)
 %     xlabel("Current mA", "FontSize", 37)
@@ -1111,9 +1221,9 @@ if contains(Include_plots, '11')
     
     Filename = strtrim(strjoin(["ElectrodeMotionTimingAllProfMaxCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
  
     
     
@@ -1133,8 +1243,8 @@ if contains(Include_plots, '11')
         end
         ax = gca;
         ax.FontSize = 25;
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
@@ -1142,6 +1252,7 @@ if contains(Include_plots, '11')
         xticks([1 2 3 4 5]);
         xticklabels(Current_levels_str);
         ylim([0 10])
+        grid minor;
     end
     ylabel("                        Number of Responses", "FontSize", 35)
 %     xlabel("Current mA", "FontSize", 37)
@@ -1152,11 +1263,11 @@ if contains(Include_plots, '11')
     
     Filename = strtrim(strjoin(["ElectrodeMotionTypeAllProfMaxCurrentGroupedBar"]));
     
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-    disp("press any key to continue"); pause; 
-    close all
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
+    % disp("press any key to continue"); pause; 
+    % close all
 end
 
 if contains(Include_plots, '12')
@@ -1173,15 +1284,13 @@ if contains(Include_plots, '12')
         nexttile
         bar_notation = Observed_Motion_map_Max (:,:,config)';
         b = bar(bar_notation);
-        dir_color = [Color_list(1,:);Color_list(6,:); Color_list(4,:)];
-        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+        for j = 1:length(dir_color) % 4 should acutally be a variable that is part of the size of All_map
             b(j).FaceColor = dir_color(j,:);
         end
         ax = gca;
         ax.FontSize = 25;
         
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+        Title = config_names(config);
         title(Title, "FontSize", 45)
     
     
@@ -1220,8 +1329,8 @@ if contains(Include_plots, '12')
         end
         ax = gca;
         ax.FontSize = 25;
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
+
+        Title = config_names(config);
         title(Title, "FontSize", 45)
         
     
@@ -1262,8 +1371,7 @@ if contains(Include_plots, '12')
             %}
             ax = gca;
             ax.FontSize = 25;
-        %     legend("roll", "pitch", "yaw")
-            Title = strjoin([num2str(config+1) " Electrodes"]);
+            Title = config_names(config);
             title(Title, "FontSize", 45)
             
         
@@ -1289,93 +1397,6 @@ if contains(Include_plots, '12')
 end
 
 if contains(Include_plots, '13')
-%%  Reduced Plot Reported Motion Direction (right, left, up, down, forward, back, circular, roll, pitch, yaw)
-%this section plots the observed motion direction for several frequencies
-%and electron configurations
-%plots as 2 separate histograms
-    for prof = 1:num_profiles
-        Motion_map_Max(:,prof,:) = All_Motion_mapReduced (3,:,:,prof);
-    end
-    figure;
-    t_dir = tiledlayout(2,2);
-    for config = 1:num_config
-        nexttile
-        bar_notation = Motion_map_Max (:,:,config)';
-        bar_lateral = bar_notation(:,1)+bar_notation(:,2)+bar_notation(:,8);
-        bar_fore_aft = bar_notation(:,5)+bar_notation(:,6)+bar_notation(:,9);
-        bar_circular = bar_notation(:,7);
-        bar_yaw = bar_notation(:,10);
-        bar_data = [bar_lateral,bar_fore_aft,bar_circular,bar_yaw];
-        b = bar(bar_data);
-        dir_color = [Color_list(1,:);Color_list(6,:); Color_list(4,:)];
-        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
-            b(j).FaceColor = dir_color(j,:);
-        end
-        ax = gca;
-        ax.FontSize = 25;
-        
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
-        title(Title, "FontSize", 45)
-    
-    
-        Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
-        xticks([1 2 3 4 5]);
-        xticklabels(Current_levels_str);
-        ylim([0 20])
-    end
-    ylabel("                        Number of Responses", "FontSize", 35)
-%     xlabel("Current mA", "FontSize", 37)
-    lgd = legend("lateral","fore/aft","circular","yaw", 'FontSize', 38 ,'NumColumns',2);
-    lgd.Layout.Tile = 4;
-    overall_title = strjoin(["Reported Motion Axis at Max Current Amplitude"]);
-    sgtitle(overall_title, "FontSize", 50)
-    
-    Filename = strtrim(strjoin(["ElectrodeReportedObservedMotionDirectionAllProfMaxCurrentGroupedBar"]));
-    
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
 
-%% Reduced Plot Reported Motion Timing (rhythmic, continuous, intermittent)
 
-    for prof = 1:num_profiles
-        Timing_map_Max(:,prof,:) = All_Timing_mapReduced (3,:,:,prof);
-    end
-    figure;
-    t_dir = tiledlayout(2,2);
-    for config = 1:num_config
-        nexttile
-        bar_notation = Timing_map_Max (:,:,config)';
-        b = bar(bar_notation);
-        type_color = [Color_list(5,:);Color_list(2,:); Color_list(3,:)];
-        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
-            b(j).FaceColor = type_color(j,:);
-        end
-        ax = gca;
-        ax.FontSize = 25;
-    %     legend("roll", "pitch", "yaw")
-        Title = strjoin([num2str(config+1) " Electrodes"]);
-        title(Title, "FontSize", 45)
-        
-    
-       Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
-        xticks([1 2 3 4 5]);
-        xticklabels(Current_levels_str);
-        ylim([0 10])
-    end
-    ylabel("                        Number of Responses", "FontSize", 35)
-%     xlabel("Current mA", "FontSize", 37)
-    lgd = legend("rhythmic", "continuous", "intermittent", 'FontSize', 38 );
-    lgd.Layout.Tile = 4;
-    overall_title = strjoin(["Reported Motion Timing at Max Current Amplitude"]);
-    sgtitle(overall_title, "FontSize", 50)
-    
-    Filename = strtrim(strjoin(["ElectrodeReportedMotionTimingAllProfMaxCurrentGroupedBar"]));
-    
-    cd(plots_path);
-    saveas(gcf, [char(Filename) '.fig']);
-    cd(code_path);
-
-    close all
 end
