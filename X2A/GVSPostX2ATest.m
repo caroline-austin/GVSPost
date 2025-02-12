@@ -105,18 +105,25 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
      Motion_map1 = TextMatchMap(MotionSense1,TrialInfo1,possible_motions, 3);
      Motion_map2 = TextMatchMap(MotionSense2,TrialInfo2,possible_motions, 3);
      Motion_map = Motion_map1+Motion_map2; % combined into a single variable
+     Motion_map_simple = [Motion_map(:,1,:,:)+Motion_map(:,2,:,:)+ Motion_map(:,8,:,:) , Motion_map(:,3,:,:)+Motion_map(:,4,:,:)+ Motion_map(:,9,:,:), Motion_map(:,7,:,:), Motion_map(:,10,:,:) ];
+     Motion_map_simple(Motion_map_simple>= 1) = 1;
+     Label.direction = possible_motions;
+     Label.direction_simple = ["lateral", "fore-aft", "circular", "yaw"];
      Label.Motion_map = ["Current"; "Direction"; "Config";"Profile"];%labels are for the 4 dimensions of the array
      %take map variables and reduce it so that they only contain the responses
      %from the high (max), low (min), and sham (0.1) trials - the actual current values 
      % vary between subjects for high and low
      Motion_mapReduced = ReduceMapMultiple(Motion_map,MinCurrent,MaxCurrent,Label);
+     Motion_map_simpleReduced = ReduceMapMultiple(Motion_map_simple,MinCurrent,MaxCurrent,Label);
 
+     Label.timing = ["rhyt"; "cont"; "inter"];
      Timing_map1 = TextMatchMap(MotionSense1,TrialInfo1,["rhyt"; "cont"; "inter"], 4);
      Timing_map2 = TextMatchMap(MotionSense2,TrialInfo2,["rhyt"; "cont"; "inter"], 4);
      Timing_map = Timing_map1+Timing_map2;
      Label.Timing_map = ["Current"; "Timing"; "Config";"Profile"];
      Timing_mapReduced = ReduceMapMultiple(Timing_map,MinCurrent,MaxCurrent,Label);
 
+     Label.motion_type = ["tilt"; "trans"; "general"];
      Type_map1 = TextMatchMap(MotionSense1,TrialInfo1,["tilt"; "trans"; "general"], 2);
      Type_map2 = TextMatchMap(MotionSense2,TrialInfo2,["tilt"; "trans"; "general"], 2);
      Type_map = Type_map1+Type_map2;
@@ -152,7 +159,7 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
         ' Timing_map Type_map Observed_Timing_map Observed_Motion_map Tingle_mapReduced Motion_mapReduced '...
         'Observed_Motion_mapReduced Observed_Timing_mapReduced Metallic_mapReduced VisFlash_mapReduced MotionRating_mapReduced ' ...
         'ObservedRating_mapReduced Type_mapReduced Timing_mapReduced '...
-        ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
+        ' EndImpedance StartImpedance MaxCurrent MinCurrent Motion_map_simple Motion_map_simpleReduced']; 
     eval(['  save ' ['A', subject_str,'Extract.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
