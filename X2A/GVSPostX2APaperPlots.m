@@ -347,7 +347,7 @@ end
         TotalTitle = char(strjoin(["Side Effect Ratings" Profiles(prof)]));
         sgtitle( TotalTitle, "FontSize", 25);
         % 
-        Filename = char(strjoin(["SideEffectRatings" Profiles_safe(prof) "AllCurrentSandPlotWithSubSymbols"]));
+        Filename = char(strjoin(["Fig1SideEffectRatings" Profiles_safe(prof) "AllCurrentSandPlotWithSubSymbols"]));
 
         % %save plot
         % cd(plots_path);
@@ -362,11 +362,11 @@ end
      figure;
     t_dir = tiledlayout(3,4,"TileSpacing","none","Padding","tight");
 for prof = 4
-    
+
     for config = 1:num_config
         nexttile
         b = bar(All_Motion_map_simple (:,:,config,prof));
-        
+
         for j = 1:length(dir_simp_color) 
             b(j).FaceColor = dir_simp_color(j,:);
         end
@@ -375,7 +375,7 @@ for prof = 4
 
         Title = config_names(config);
         title(Title, "FontSize", 45)
-    
+
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
@@ -403,15 +403,15 @@ end
     for config = 1:num_config
         nexttile
         b = bar(All_Type_map (:,:,config,prof));
-        
+
         for j = 1:length(type_color) 
             b(j).FaceColor = type_color(j,:);
         end
         ax = gca;
         ax.FontSize = 25;
         title("", "FontSize", 1)
-        
-    
+
+
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
@@ -440,7 +440,7 @@ end
     for config = 1:num_config
         nexttile
         b = bar(All_Timing_map (:,:,config,prof));
-        
+
         for j = 1:length(time_color) 
             b(j).FaceColor = time_color(j,:);
         end
@@ -473,10 +473,12 @@ end
     overall_title = strjoin(["Reported Motion Characteristics",   Profiles(prof)]);
     sgtitle(overall_title, "FontSize", 50)
     % 
-    % Filename = strtrim(strjoin(["ElectrodeMotionTiming" Profiles_safe(prof) "AllCurrentGroupedBar"]));
-    
+    % Filename = strtrim(strjoin(["Fig2MotionCharacterizationReports" Profiles_safe(prof) "AllCurrentGroupedBar"]));
+
     % cd(plots_path);
     % saveas(gcf, [char(Filename) '.fig']);
     % cd(code_path);
     end
+
+
     
