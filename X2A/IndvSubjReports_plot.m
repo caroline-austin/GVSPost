@@ -23,6 +23,7 @@ Profiles = ["DC Right/Front"; "DC Left/Back"; "Sin 0.25Hz"; "Sin 0.5Hz"; "Sin 1H
 Profiles_safe = ["DCRight-Front"; "DCLeft-Back"; "Sin0_25Hz"; "Sin0_5Hz"; "Sin1Hz"];
 num_profiles = length(Profiles);
 num_config = 3;
+config_names = ["Binaural"; "Forehead"; "Temples"];
 % sub_symbols = ["-ow";"-+w"; "-*w"; "-xw"; "-squarew"; "-^w"; "->w"; "-vw";"-<w"; "-pentagramw"];
 sub_symbols = ["ow";"+w"; "*w"; "xw"; "squarew"; "^w"; ">w"; "vw";"<w"; "pentagramw"];
 
@@ -71,7 +72,7 @@ figure; %figure for Motion Rating
 t1 = tiledlayout(2,2);
 for config = 1:num_config %generate electrode subplots
     nexttile; 
-    Title = strjoin([num2str(config+1) " Electrodes"]);
+    Title = config_names(config);
     MapAreaPlot(Sin05Hz_MotionRating_map(2:end,:,config),Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
     hold on; 
     set(gca, 'color', [0 0 0]);
@@ -151,7 +152,7 @@ figure; %figure for Motion Rating
 t1 = tiledlayout(2,2);
 for config = 1:num_config %generate electrode subplots
     nexttile; 
-    Title = strjoin([num2str(config+1) " Electrodes"]);
+    Title = config_names(config);
     MapAreaPlot(Sin05Hz_Tingle_map(2:end,:,config),Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
     hold on; 
     set(gca, 'color', [0 0 0]);
@@ -232,7 +233,7 @@ figure; %figure for Motion Rating
 t1 = tiledlayout(2,2);
 for config = 1:num_config %generate electrode subplots
     nexttile; 
-    Title = strjoin([num2str(config+1) " Electrodes"]);
+    Title = config_names(config);
     MapAreaPlot(Sin05Hz_Metallic_map(2:end,:,config),Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
     hold on; 
     set(gca, 'color', [0 0 0]);
@@ -312,7 +313,7 @@ figure; %figure for Motion Rating
 t1 = tiledlayout(2,2);
 for config = 1:num_config %generate electrode subplots
     nexttile; 
-    Title = strjoin([num2str(config+1) " Electrodes"]);
+    Title = config_names(config);
     MapAreaPlot(Sin05Hz_VisFlash_map(2:end,:,config),Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
     hold on; 
     set(gca, 'color', [0 0 0]);
