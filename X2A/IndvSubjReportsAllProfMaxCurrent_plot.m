@@ -33,7 +33,9 @@ xoffset = [-0.2;-0.1;0;0.1;0.2;-0.2;-0.1;0;0.1;0.2];
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
+cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+cd(code_path)
 
 subnum = 2001:2010;  % Subject List 
 numsub = length(subnum);
@@ -142,9 +144,9 @@ end
         Filename = char(strjoin(["MotionRatings" Profiles_safe(prof) "AllWaveStackedBarPlotSymbols"]));
         
         %save plot
-        cd(plots_path);
-        saveas(gcf, [char(Filename) '.fig']);
-        cd(code_path);
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
 
 % %% plotting code for Tingling
 % [dim1, dim2, dim3, dim4] = size(All_Tingle_map);
@@ -156,10 +158,10 @@ end
 %             disp("error too many reports ")
 %         end
 %         Max_Tingle_map(j,end,i)=numsub-check;% may need to change back to num_sub
-%         
+% 
 %     end
 % end
-%         
+% 
 % figure; %figure for Motion Rating
 % t1 = tiledlayout(2,2);
 % for config = 1:num_config %generate electrode subplots
@@ -169,7 +171,7 @@ end
 %     hold on; 
 %     set(gca, 'color', [0 0 0]);
 %     xlim([0.35 4.15]);
-%     
+% 
 % 
 %     for sub = 1:numsub
 %         subject = subnum(sub);
@@ -188,11 +190,11 @@ end
 % %         d4 = 4;
 % %         d3max = 3;
 % %         d4max = 5;
-%            
+% 
 %         symbol_y_val = zeros(9,num_config, num_profiles);
 %         for row  = 1:9 %there are 9 current levels
 %             col = find(Tingle_map(row,:,config,prof));
-%     
+% 
 %             if isempty(col) && row >1
 %                symbol_y_val(row,config) = numsub -0.5;
 %             elseif isempty(col)
@@ -201,30 +203,30 @@ end
 %                num_same_responses = Max_Tingle_map(row, col, config);
 %                num_less_eq_responses = sum(Max_Tingle_map(row, 1:col, config));
 %                symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
-%     
+% 
 %             end
-%             
+% 
 %         end
 %         plot(Label.CurrentAmp+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
-%     
+% 
 %     end
 % end
 %         %add labels and info to the plot
 %         ylabel("                        Number of Responses", "FontSize", 35)
 %         xlabel("Current mA", "FontSize", 37)
-%         
+% 
 %         lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 38 );
 %         lgd.Layout.Tile = 4;
 %         lgd.Color =  [1 1 1];
-%         
+% 
 %         TotalTitle = char(strjoin(["Reported Tingling Sensation" Profiles(prof)]));
 %         sgtitle( TotalTitle, "FontSize", 50);
 %         Filename = char(strjoin(["Tingling" Profiles_safe(prof) "AllWaveStackedBarPlotSymbols"]));
-%         
-%         %save plot
-%         cd(plots_path);
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path);
+% 
+%         % %save plot
+%         % cd(plots_path);
+%         % saveas(gcf, [char(Filename) '.fig']);
+%         % cd(code_path);
 % 
 % 
 % %% plotting code for Metallic Taste
@@ -237,10 +239,10 @@ end
 %             disp("error too many reports ")
 %         end
 %         Max_Metallic_map(j,end,i)=numsub-check;% may need to change back to num_sub
-%         
+% 
 %     end
 % end
-%         
+% 
 % figure; %figure for Motion Rating
 % t1 = tiledlayout(2,2);
 % for config = 1:num_config %generate electrode subplots
@@ -250,7 +252,7 @@ end
 %     hold on; 
 %     set(gca, 'color', [0 0 0]);
 %     xlim([0.35 4.15]);
-%     
+% 
 % 
 %     for sub = 1:numsub
 %         subject = subnum(sub);
@@ -269,11 +271,11 @@ end
 % %         d4 = 4;
 % %         d3max = 3;
 % %         d4max = 5;
-%            
+% 
 %         symbol_y_val = zeros(9,num_config, num_profiles);
 %         for row  = 1:9 %there are 9 current levels
 %             col = find(Metallic_map(row,:,config,prof));
-%     
+% 
 %             if isempty(col) && row >1
 %                symbol_y_val(row,config) = numsub -0.5;
 %             elseif isempty(col)
@@ -282,30 +284,30 @@ end
 %                num_same_responses = Max_Metallic_map(row, col, config);
 %                num_less_eq_responses = sum(Max_Metallic_map(row, 1:col, config));
 %                symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
-%     
+% 
 %             end
-%             
+% 
 %         end
 %         plot(Label.CurrentAmp+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
-%     
+% 
 %     end
 % end
 %         %add labels and info to the plot
 %         ylabel("                        Number of Responses", "FontSize", 35)
 %         xlabel("Current mA", "FontSize", 37)
-%         
+% 
 %         lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 38 );
 %         lgd.Layout.Tile = 4;
 %         lgd.Color =  [1 1 1];
-%         
+% 
 %         TotalTitle = char(strjoin(["Reported Metallic Taste" Profiles(prof)]));
 %         sgtitle( TotalTitle, "FontSize", 50);
 %         Filename = char(strjoin(["Metallic" Profiles_safe(prof) "AllWaveStackedBarPlotSymbols"]));
-%         
-%         %save plot
-%         cd(plots_path);
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path);
+% 
+%         % %save plot
+%         % cd(plots_path);
+%         % saveas(gcf, [char(Filename) '.fig']);
+%         % cd(code_path);
 % 
 % %% plotting code for Visual Flashes
 % [dim1, dim2, dim3, dim4] = size(All_VisFlash_map);
@@ -317,10 +319,10 @@ end
 %             disp("error too many reports ")
 %         end
 %         Max_VisFlash_map(j,end,i)=numsub-check;% may need to change back to num_sub
-%         
+% 
 %     end
 % end
-%         
+% 
 % figure; %figure for Motion Rating
 % t1 = tiledlayout(2,2);
 % for config = 1:num_config %generate electrode subplots
@@ -330,7 +332,7 @@ end
 %     hold on; 
 %     set(gca, 'color', [0 0 0]);
 %     xlim([0.35 4.15]);
-%     
+% 
 % 
 %     for sub = 1:numsub
 %         subject = subnum(sub);
@@ -349,11 +351,11 @@ end
 % %         d4 = 4;
 % %         d3max = 3;
 % %         d4max = 5;
-%            
+% 
 %         symbol_y_val = zeros(9,num_config, num_profiles);
 %         for row  = 1:9 %there are 9 current levels
 %             col = find(VisFlash_map(row,:,config,prof));
-%     
+% 
 %             if isempty(col) && row >1
 %                symbol_y_val(row,config) = numsub -0.5;
 %             elseif isempty(col)
@@ -362,27 +364,27 @@ end
 %                num_same_responses = Max_VisFlash_map(row, col, config);
 %                num_less_eq_responses = sum(Max_VisFlash_map(row, 1:col, config));
 %                symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
-%     
+% 
 %             end
-%             
+% 
 %         end
 %         plot(Label.CurrentAmp+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
-%     
+% 
 %     end
 % end
 %         %add labels and info to the plot
 %         ylabel("                        Number of Responses", "FontSize", 35)
 %         xlabel("Current mA", "FontSize", 37)
-%         
+% 
 %         lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 38 );
 %         lgd.Layout.Tile = 4;
 %         lgd.Color =  [1 1 1];
-%         
+% 
 %         TotalTitle = char(strjoin(["Reported Visual Flashes" Profiles(prof)]));
 %         sgtitle( TotalTitle, "FontSize", 50);
 %         Filename = char(strjoin(["VisFlash" Profiles_safe(prof) "AllWaveStackedBarPlotSymbols"]));
-%         
-%         %save plot
-%         cd(plots_path);
-%         saveas(gcf, [char(Filename) '.fig']);
-%         cd(code_path);
+% 
+%         % %save plot
+%         % cd(plots_path);
+%         % saveas(gcf, [char(Filename) '.fig']);
+%         % cd(code_path);
