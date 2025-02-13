@@ -850,3 +850,407 @@ end
         % cd(plots_path);
         % saveas(gcf, [char(Filename) '.fig']);
         % cd(code_path);
+
+
+        %% Same plots for sham ratings
+
+%% plotting code for Motion Rating at min current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_MotionRating_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Sham_MotionRating_map = zeros(dim2+1,dim3,dim4);
+Sham_MotionRating_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_MotionRating_mapReduced(1,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Sham_MotionRating_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Sham_MotionRating_map(end,i,j) = numsub-check;
+        
+    end
+end
+        
+figure; %figure for Motion Rating
+t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = strjoin([num2str(config+1) " Electrodes"]);
+    MapStackedBarPlot(squeeze(Sham_MotionRating_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(profiles_str);
+        ylim([0 10])
+    
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(MotionRating_mapReduced(1,:,config,row));
+    
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Sham_MotionRating_map(col, config, row);
+               num_less_eq_responses = sum(Sham_MotionRating_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+    
+            end
+            
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
+    
+    end
+end
+        %add labels and info to the plot
+        ylabel("                        Number of Responses", "FontSize", 35)
+%         xlabel("Current mA", "FontSize", 37)
+        
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 34 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
+        
+        TotalTitle = char(strjoin(["Reported Motion Intensity at Low Current Amplitude"]));
+        sgtitle( TotalTitle, "FontSize", 50);
+        Filename = char(strjoin(["MotionRatingsAllWaveStackedBarPlotSymbols"]));
+        
+        %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+
+
+%% plotting code for Tingling Rating at Sham current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_Tingle_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Sham_Tingle_map = zeros(dim2+1,dim3,dim4);
+Sham_Tingle_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_Tingle_mapReduced(1,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Sham_Tingle_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Sham_Tingle_map(end,i,j) = numsub-check;
+        
+    end
+end
+        
+figure; %figure for Tingle Rating
+t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = strjoin([num2str(config+1) " Electrodes"]);
+    MapStackedBarPlot(squeeze(Sham_Tingle_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(profiles_str);
+        ylim([0 10])
+    
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(Tingle_mapReduced(1,:,config,row));
+    
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Sham_Tingle_map(col, config, row);
+               num_less_eq_responses = sum(Sham_Tingle_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+    
+            end
+            
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
+    
+    end
+end
+        %add labels and info to the plot
+        ylabel("                        Number of Responses", "FontSize", 35)
+%         xlabel("Current mA", "FontSize", 37)
+        
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 34 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
+        
+        TotalTitle = char(strjoin(["Reported Tingle Intensity at Low Current Amplitude"]));
+        sgtitle( TotalTitle, "FontSize", 50);
+        Filename = char(strjoin(["TingleRatingsAllWaveStackedBarPlotSymbols"]));
+        
+        %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+
+%% plotting code for Visual Flashes Rating at Sham current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_VisFlash_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Sham_VisFlash_map = zeros(dim2+1,dim3,dim4);
+Sham_VisFlash_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_VisFlash_mapReduced(1,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Sham_VisFlash_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Sham_VisFlash_map(end,i,j) = numsub-check;
+        
+    end
+end
+        
+figure; %figure for VisFlash Rating
+t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = strjoin([num2str(config+1) " Electrodes"]);
+    MapStackedBarPlot(squeeze(Sham_VisFlash_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(profiles_str);
+        ylim([0 10])
+    
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(VisFlash_mapReduced(1,:,config,row));
+    
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Sham_VisFlash_map(col, config, row);
+               num_less_eq_responses = sum(Sham_VisFlash_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+    
+            end
+            
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
+    
+    end
+end
+        %add labels and info to the plot
+        ylabel("                        Number of Responses", "FontSize", 35)
+%         xlabel("Current mA", "FontSize", 37)
+        
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 34 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
+        
+        TotalTitle = char(strjoin(["Reported Visual Flash Intensity at Low Current Amplitude"]));
+        sgtitle( TotalTitle, "FontSize", 50);
+        Filename = char(strjoin(["VisFlashRatingsAllWaveStackedBarPlotSymbols"]));
+        
+        %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
+
+%% plotting code for Metallic Taste Rating at Sham current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_Metallic_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Sham_Metallic_map = zeros(dim2+1,dim3,dim4);
+Sham_Metallic_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_Metallic_mapReduced(1,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Sham_Metallic_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Sham_Metallic_map(end,i,j) = numsub-check;
+        
+    end
+end
+        
+figure; %figure for Metallic Rating
+t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = strjoin([num2str(config+1) " Electrodes"]);
+    MapStackedBarPlot(squeeze(Sham_Metallic_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(profiles_str);
+        ylim([0 10])
+    
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(Metallic_mapReduced(1,:,config,row));
+    
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Sham_Metallic_map(col, config, row);
+               num_less_eq_responses = sum(Sham_Metallic_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+    
+            end
+            
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
+    
+    end
+end
+        %add labels and info to the plot
+        ylabel("                        Number of Responses", "FontSize", 35)
+%         xlabel("Current mA", "FontSize", 37)
+        
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 34 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
+        
+        TotalTitle = char(strjoin(["Reported Metallic Taste Intensity at Low Current Amplitude"]));
+        sgtitle( TotalTitle, "FontSize", 50);
+        Filename = char(strjoin(["MetallicRatingsAllWaveStackedBarPlotSymbols"]));
+        
+        %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
