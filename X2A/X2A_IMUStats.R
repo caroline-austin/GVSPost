@@ -9,6 +9,10 @@ setwd("C:/Users/caroa/OneDrive/Documents")
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchMontageTesting/Data/freq_power_anova.csv")
 
+freq_power$type <- factor(freq_power$type)
+freq_power$freq_interest <- factor(freq_power$freq_interest)
+freq_power$sub <- factor(freq_power$sub)
+
 # sort data into roll and pitch subsets for focused analysis
 binaural_power <- subset(freq_power, config == "Binaural")
 binaural_roll_power <- subset(binaural_power, dir == "roll")
@@ -17,23 +21,29 @@ binaural_yaw_power <- subset(binaural_power, dir == "yaw")
 pitch_power <- subset(freq_power, dir == "pitch")
 pitch_power <- subset(pitch_power, config != "Binaural")
 
+
 # run binaural anovas
-binaural_roll_power.aov <- anova_test(data = binaural_roll_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
-binaural_roll_power.aov <- anova_test(data ~ type + freq_interest +Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
-get_anova_table(binaural_roll_power.aov)
+binaural_roll_power.aov <- anova_test(data = binaural_roll_power[,1:6], dv = data, wid = sub, within = c(type , freq_interest))
 get_anova_table(binaural_roll_power.aov)
 
-anova_result <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
-anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
-summary(anova_result)
+anova_result_roll <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+#anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+summary(anova_result_roll)
 
 binaural_yaw_power.aov <- anova_test(data = binaural_yaw_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
 get_anova_table(binaural_yaw_power.aov)
+
+anova_result_yaw <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_yaw_power[,1:6])
+#anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+summary(anova_result_yaw)
 
 # run pitch anova
 pitch_power.aov <- anova_test(data = pitch_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest", "config" ))
 get_anova_table(pitch_power.aov)
 
+anova_result_pitch <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = pitch_power[,1:6])
+#anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
+summary(anova_result_pitch)
 
 # run full anova
 freq_power.aov <- anova_test(data = freq_power[,1:6], dv = data, wid = sub, within = c("type" , "config" , "dir", "freq_interest" ))
