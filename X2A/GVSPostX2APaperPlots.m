@@ -19,11 +19,12 @@ navy = [0.2196    0.2118    0.3804];
 purple = [0.4196    0.3059    0.4431];
 red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
-Color_list = [blue; green; yellow; red; navy; purple];
+black = [0 0 0];
+Color_list = [blue; green; yellow; red; black; navy; purple];
 type_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
-dir_simp_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:); Color_list(6,:);];
+dir_simp_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:); Color_list(7,:);];
 time_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
-dir_color = [Color_list(1,:);Color_list(1,:); Color_list(2,:); Color_list(2,:); Color_list(3,:); Color_list(3,:); Color_list(4,:); Color_list(1,:); Color_list(2,:); Color_list(6,:);];
+dir_color = [Color_list(1,:);Color_list(1,:); Color_list(2,:); Color_list(2,:); Color_list(3,:); Color_list(3,:); Color_list(4,:); Color_list(1,:); Color_list(2,:); Color_list(7,:);];
 
 
 %naming variables 
@@ -56,10 +57,11 @@ load(['All_X2A.mat']);
 cd(code_path);
 
 %% First Plot (Paper Experiment 1A Sand plot of side effect intensity reports)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 for prof = 4; % the sin 0.5Hz wave form only
 
     figure; %figure for all side effects (4 side effects/rows - 3 columns)
-    t1 = tiledlayout(4,3, 'Padding','tight','TileSpacing', 'none' );
+    t1 = tiledlayout(4,3, 'Padding','tight','TileSpacing', 'tight' );
 
 %  Motion Rating
 % current , response, config, profile
@@ -356,7 +358,7 @@ end
 end
 
 %% 2nd plot 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  %% Plot Motion Direction (simplified list)
      % color order: blue; green; yellow; red; navy; purple
      figure;
@@ -480,5 +482,500 @@ end
     % cd(code_path);
     end
 
+%% Third Plot ()
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% plotting code for Motion Rating at max current
+figure; %figure for Motion Rating
+t1 = tiledlayout(4,3, "TileSpacing","tight", "Padding","tight");
 
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_MotionRating_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Max_MotionRating_map = zeros(dim2+1,dim3,dim4);
+Max_MotionRating_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_MotionRating_mapReduced(end,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Max_MotionRating_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Max_MotionRating_map(end,i,j) = numsub-check;
+
+    end
+end
+
+
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = config_names(config);
+    MapStackedBarPlot(squeeze(Max_MotionRating_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+    ax = gca;
+    ax.FontSize = 20;
+
+        xticks([1 2 3 4 5]);
+        xticklabels([]);
+        ylim([0 10])
+        xlim([.25 5.75])
+
+        if config ~= 1
+            yticklabels([]);
+        else
+            ylabel("Motion Sensation") 
+        end
+
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(MotionRating_mapReduced(end,:,config,row));
+
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Max_MotionRating_map(col, config, row);
+               num_less_eq_responses = sum(Max_MotionRating_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+
+            end
+
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+
+    end
+end
+
+
+%% plotting code for Tingling Rating at max current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_Tingle_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Max_Tingle_map = zeros(dim2+1,dim3,dim4);
+Max_Tingle_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_Tingle_mapReduced(end,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Max_Tingle_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Max_Tingle_map(end,i,j) = numsub-check;
+
+    end
+end
+
+% figure; %figure for Tingle Rating
+% t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = "";
+    MapStackedBarPlot(squeeze(Max_Tingle_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        ax = gca;
+        ax.FontSize = 20;
+        xticks([1 2 3 4 5]);
+        xticklabels([]);
+        ylim([0 10])
+        xlim([.25 5.75])
+
+        if config ~= 1
+            yticklabels([]);
+        else
+            ylabel("Skin Tingling") 
+        end
+
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(Tingle_mapReduced(end,:,config,row));
+
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Max_Tingle_map(col, config, row);
+               num_less_eq_responses = sum(Max_Tingle_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+
+            end
+
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+
+    end
+end
+
+
+
+%% plotting code for Metallic Taste Rating at max current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_Metallic_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Max_Metallic_map = zeros(dim2+1,dim3,dim4);
+Max_Metallic_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_Metallic_mapReduced(end,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Max_Metallic_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Max_Metallic_map(end,i,j) = numsub-check;
+
+    end
+end
+
+% figure; %figure for Metallic Rating
+% t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = "";
+    MapStackedBarPlot(squeeze(Max_Metallic_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+                xticks([1 2 3 4 5]);
+        xticklabels([]);
+        ylim([0 10])
+        xlim([.25 5.75])
+        ax = gca;
+        ax.FontSize = 20;
+
+        if config ~= 1
+            yticklabels([]);
+        else
+            ylabel("Metallic Taste") 
+        end
+
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(Metallic_mapReduced(end,:,config,row));
+
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Max_Metallic_map(col, config, row);
+               num_less_eq_responses = sum(Max_Metallic_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+
+            end
+
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
+
+    end
+end
+
+
+        %% plotting code for Visual Flashes Rating at max current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_VisFlash_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Max_VisFlash_map = zeros(dim2+1,dim3,dim4);
+Max_VisFlash_map(1:dim2,1:dim3,1:dim4) = [squeeze(All_VisFlash_mapReduced(end,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4 % all 5 profiles
+        %check/calculate the number of recorded responses
+        check = sum(Max_VisFlash_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        %record/save the number of trials/subjects without reports
+        Max_VisFlash_map(end,i,j) = numsub-check;
+
+    end
+end
+
+% figure; %figure for VisFlash Rating
+% t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = "";
+    MapStackedBarPlot(squeeze(Max_VisFlash_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(profiles_str);
+        ylim([0 10])
+        xlim([.25 5.75])
+        ax = gca;
+        ax.FontSize = 20;
+
+        if config ~= 1
+            yticklabels([]);
+            if config == 2
+                xlabel("Current Waveform", "FontSize", 25)
+            end
+        else
+            ylabel("Visual Flashes") 
+        end
+
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
+
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        symbol_y_val = zeros(num_profiles,num_config);
+        for row  = 1:num_profiles
+            %indentify the location of the subject's report
+            col = find(VisFlash_mapReduced(end,:,config,row));
+
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(row,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Max_VisFlash_map(col, config, row);
+               num_less_eq_responses = sum(Max_VisFlash_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+
+            end
+
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
+
+    end
+end
+
+        TotalTitle = char(strjoin(["Side Effect Ratings at High Current Amplitude" ]));
+        sgtitle( TotalTitle, "FontSize", 25);
+        % 
+        Filename = char(strjoin(["Fig3SideEffectRatingsAllProvilesMaxCurrentStackeBarPlotWithSubSymbols"]));
+% 
+%         %save plot
+%         % cd(plots_path);
+%         % saveas(gcf, [char(Filename) '.fig']);
+%         % cd(code_path);
+
+%% Fourth Plot (X2A part 2 motion characteristics)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%  Reduced Plot Reported Motion Direction Simplified (lateral, fore-aft circular,, yaw)
+%this section plots the observed motion direction for several frequencies
+%and electron configurations
+%plots as 2 separate histograms
+    figure;
+    t_dir = tiledlayout(3,4,"TileSpacing","none", "Padding","tight");
+    for config = 1:num_config
+        nexttile
+        b = bar(squeeze(All_Motion_map_simpleReduced(3,:,config,:))');
+        for j = 1:length(dir_simp_color) % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = dir_simp_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+        
+        Title = config_names(config);
+        title(Title, "FontSize", 45)
+            
+        xticks([1 2 3 4 5]);
+        xticklabels([]);
+        ylim([0 10])
+        grid minor;
+        if config ~= 1
+            yticklabels([]);
+        else
+            ylabel("Motion Direction") 
+        end
+    end
+    lgd = legend(Label.direction_simple, 'FontSize', 38 );
+    lgd.Layout.Tile = 4;
     
+    %% Plot Motion Type (tilt, translation, general instability)
+    for prof = 1:num_profiles
+        Type_map_Max(:,prof,:) = All_Type_mapReduced (3,:,:,prof);
+    end
+    % figure;
+    % t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        bar_notation = Type_map_Max (:,:,config)';
+        b = bar(bar_notation);
+        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = type_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+
+               xticks([1 2 3 4 5]);
+        xticklabels([]);
+        ylim([0 10])
+        grid minor;
+        if config ~= 1
+            yticklabels([]);
+        else
+            ylabel("Motion Type") 
+        end
+    end
+    lgd = legend(Label.motion_type, 'FontSize', 38 );
+    lgd.Layout.Tile = 8;
+
+        %% Plot Motion Timing (rhythmic, continuous, intermittent)
+    for prof = 1:num_profiles
+        Timing_map_Max(:,prof,:) = All_Timing_mapReduced (3,:,:,prof);
+    end
+    % figure;
+    % t_dir = tiledlayout(2,2);
+    for config = 1:num_config
+        nexttile
+        bar_notation = Timing_map_Max (:,:,config)';
+        b = bar(bar_notation);
+        for j = 1:3 % 4 should acutally be a variable that is part of the size of All_map
+            b(j).FaceColor = time_color(j,:);
+        end
+        ax = gca;
+        ax.FontSize = 25;
+
+        Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks([1 2 3 4 5]);
+        xticklabels(Current_levels_str);
+        ylim([0 10])
+                grid minor;
+
+        if config ~= 1
+            yticklabels([]);
+            if config == 2
+                xlabel("Current Waveform", "FontSize", 25)
+            end
+        else
+            ylabel("Motion Timing") 
+        end
+
+    end
+    % ylabel("                        Number of Responses", "FontSize", 35)
+    % xlabel("Current mA", "FontSize", 37)
+    lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 38 );
+    lgd.Layout.Tile = 12;
+    overall_title = strjoin(["Reported Motion Characteristics at High Current Amplitude"]);
+    sgtitle(overall_title, "FontSize", 50)
+    % 
+    Filename = strtrim(strjoin(["Fig4MotionCharacterizationReportsAllProfilesMaxCurrentGroupedBar"]));
+
+    % cd(plots_path);
+    % saveas(gcf, [char(Filename) '.fig']);
+    % cd(code_path);
