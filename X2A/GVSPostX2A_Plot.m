@@ -1396,7 +1396,116 @@ if contains(Include_plots, '12')
     % close all
 end
 
-if contains(Include_plots, '13')
+if contains(Include_plots, '13') % combining sham, min, max ratings into single plot
+%% plotting code for Motion Rating at max current
+% current , response, config, profile
+[dim1, dim2, dim3, dim4] = size(All_MotionRating_mapReduced);
+% reduce 4D var into 3D var -> dims = response, config, profile and add
+% extra colummn for the "no report" responses
+Squeezed_MotionRating_map = zeros(dim2+1,dim3,dim4*(dim1+1));
+Squeezed_MotionRating_map(1:dim2,1:dim3,[1, dim1+2, dim1*2+3, dim1*3+4, dim1*4+5]) = [squeeze(All_MotionRating_mapReduced(1,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+Squeezed_MotionRating_map(1:dim2,1:dim3,[2, dim1+3, dim1*2+4, dim1*3+5, dim1*4+6]) = [squeeze(All_MotionRating_mapReduced(2,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+Squeezed_MotionRating_map(1:dim2,1:dim3,[3, dim1+4, dim1*2+5, dim1*3+6, dim1*4+7]) = [squeeze(All_MotionRating_mapReduced(3,:,:,:))];% zeros(dim2+1,dim3,dim4)]; 
+for i = 1:dim3 % all 3 configurations
+    for j = 1:dim4*(dim1+1) % all 5 profiles* 3 currents
+        %check/calculate the number of recorded responses
+        check = sum(Squeezed_MotionRating_map(:,i,j)); 
+        %make sure all double reports were removed
+        if check > numsub 
+            disp("error too many reports ")
+        end
+        if ~ismember(j, [4, 8, 12, 16 20 ])
+            %record/save the number of trials/subjects without reports
+            Squeezed_MotionRating_map(end,i,j) = numsub-check;
+        end
+        
+    end
+end
+        
+figure; %figure for Motion Rating
+t1 = tiledlayout(2,2);
+for config = 1:num_config %generate electrode subplots
+    nexttile; 
+    Title = config_names(config);
+    MapStackedBarPlot(squeeze(Squeezed_MotionRating_map(:,config,:))',Title,100, ["none", "noticeable", "moderate", "severe", "no report"],Color_list)
+    hold on; 
+%     set(gca, 'color', [0 0 0]);
+%     xlim([0.35 4.15]);
+        % tick_str = ["sham" "low" "high" "sham" "low" "high" "sham" "low" "high" "sham" "low" "high" "sham" "low" "high" ];
+        tick_str = ["" "DC+" "" "", "" "DC-" "" "", "" "0.25Hz" "" "" , "" "0.5Hz" "" "" , "" "1Hz" "" ""];
+        % profiles_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
+        xticks(1:20);
+        xticklabels(tick_str);
+        % xlabel(strjoin(profiles_str))
+        ylim([0 10])
+    
+% add individual subject responses on top
+    for sub = 1:numsub
+        subject = subnum(sub);
+        subject_str = num2str(subject);
+        % skip subjects that DNF'd or there is no data for
+        if ismember(subject,subskip) == 1
+           continue
+        end
+        %keep track of how many subjects included
+        used_sub = used_sub +1;
+        %save subject number for use elsewhere
+        subject_label(used_sub)= subject;
+        Label.Subject(used_sub)= subject;
 
+        %load subject's individaul data 
+        cd([file_path, '/' , subject_str]);
+        load(['A' subject_str 'Extract.mat'])
+        cd(code_path); 
+
+        %initialize the array that will store the location of the
+        %subject's symbols for each trial
+%                       row         col
+        index = 0;
+        symbol_y_val = zeros(num_profiles*(dim1+1),num_config);
+        for amplitude = 1:dim1
+        for row  = 1:num_profiles
+            index = index+1;
+            %indentify the location of the subject's report
+            col = find(MotionRating_mapReduced(amplitude,:,config,row));
+    
+            %calculate and store proper the location information value for
+            %the subject's symbol
+            if isempty(col) 
+                %no report
+               symbol_y_val(index,config) = numsub -0.5;
+            elseif length(col) >1
+                disp(['There are multiple reports for this value']);  
+            else 
+                % place the symbol at center of bar 
+               num_same_responses = Squeezed_MotionRating_map(col, config, row);
+               num_less_eq_responses = sum(Squeezed_MotionRating_map(1:col, config,row));
+               symbol_y_val(row,config) = (num_less_eq_responses - num_same_responses/2)+yoffset(sub);
+    
+            end
+            
+        end
+        end
+        %add symbols to plot
+        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub))
+    
+    end
+end
+        %add labels and info to the plot
+        ylabel("                        Number of Responses", "FontSize", 35)
+%         xlabel("Current mA", "FontSize", 37)
+        
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 34 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
+        
+        TotalTitle = char(strjoin(["Reported Motion Intensity at High Current Amplitude"]));
+        sgtitle( TotalTitle, "FontSize", 50);
+        Filename = char(strjoin(["MotionRatingsAllWaveStackedBarPlotSymbols"]));
+        
+        %save plot
+        % cd(plots_path);
+        % saveas(gcf, [char(Filename) '.fig']);
+        % cd(code_path);
 
 end
