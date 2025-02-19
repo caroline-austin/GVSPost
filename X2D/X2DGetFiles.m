@@ -11,9 +11,9 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = [2075];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
+subnum = [2078];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
 numsub = length(subnum);
-subskip = [2058 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2069:2077 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
