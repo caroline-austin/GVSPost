@@ -66,7 +66,7 @@ imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
 
 
 
-if contains(plots,' 1 ')
+if contains(plots,' 1 ') % not interested in for paper
 %% plot 1 - rms of anglular position in a box plot across current amps for the 0.5 Hz profile
 for prof = 1:num_profiles
     rms_plot.(Profiles_safe(prof)) = single_metric_plot(subnum,subskip,imu_dir(4:6), Config , [1:3], Current_amp',[1:9], Profiles_safe, [prof], 1, rms_save, "Current Amplitude (mA)", "RMS (deg)", sub_symbols, xoffset2);
@@ -76,7 +76,7 @@ pause
 close all;
 end
 
-if contains(plots,'2 ')
+if contains(plots,'2 ') % not interested in for paper
 %% plot 2 
 %  mean (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
@@ -90,7 +90,7 @@ pause
 close all;
 end
 
-if contains(plots,'3 ')
+if contains(plots,'3 ') % not interested in for paper
 %% plot 3 - 
 %  median (dominant) freq in angular position data in a box plot across 
 % current amps for the 0.5 Hz profile (first set of plots)
@@ -104,7 +104,7 @@ pause
 close all;
 end
 
-if contains(plots,' 4 ')
+if contains(plots,' 4 ') % not interested in for paper
 %% plot 4
 % phase shift, amplitude, and freq. fitted by the sinusodial fit model box
 % plot across current amps for the 0.5 Hz profile
@@ -118,7 +118,7 @@ pause
 close all;
 end
 
-if contains(plots,' 5 ')
+if contains(plots,' 5 ') % not interested in for paper
 %% plot 5
 % mean or median estimated sway amplitude (1/2* difference in peak to peak sway) 
 % (pulled for all peak time points in a trial, based on frequency fit by 
@@ -134,7 +134,7 @@ close all;
 end
 
 
-if contains(plots,'6 ')
+if contains(plots,'6 ') % won't use in paper as is, but interesting
 %% plot  6 
 % plots the power of the signal at select frequencies - box plot across
 % current amplitudes for each evaluated frequency within the 0.5 Hz profile
@@ -151,7 +151,7 @@ end
 end
 
 end
-if contains(plots,'7 ')
+if contains(plots,'7 ') % won't use in paper as is, but interesting
 %% plot  7
 % plots the power of the signal at select frequencies - box plot across
 % low/min/max current amplitudes for each evaluated frequency within  a 
@@ -168,7 +168,7 @@ for freq = [10 11]%1:length(freq_interest)
 end
 end
 end
-if contains(plots,'8 ')
+if contains(plots,'8 ') % won't use in paper as is, but interesting
 %% plot 8
 % plots the power of the signal across selected frequencies for a selected
 % current amplitude and profile compination
@@ -182,7 +182,7 @@ for current = [8]%1:length(freq_interest)
 end
 end
 end
-if contains(plots,'9 ')
+if contains(plots,'9 ') % won't use in paper as is, but good for comparison with plot 8
 %% plot 9
 % plots the power of the signal across selected frequencies for a selected
 % current amplitude (low min max) and profile compination
@@ -197,11 +197,11 @@ end
 end
 end
 
-if contains(plots,' 10 ')
+if contains(plots,' 10 ') % interesting visualization, but won't be used inpaper
 %% plot 10
-% 
+% angle displacement metric
 
-for prof = 1:num_profiles
+for prof = [1 2]%1:num_profiles
     angle_drift_plot.(Profiles_safe(prof))  = single_metric_plot(subnum,subskip,imu_dir(4:5), Config , [1:3], Label.CurrentAmpReduced',[1:3], Profiles_safe, [prof],1, angle_drift_reduced, "Current Amplitude (mA)", "Angle (deg)", sub_symbols, xoffset2);
 end
 
@@ -211,10 +211,20 @@ close all;
 end
 
 
-if contains(plots,'W ')
-%% plot W - plots angle over time for the max current experienced by each participant
-for prof = [1]%1:num_profiles
-    [~] = time_series_plot_mult_sub(subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
+if contains(plots,'V ') % not working right now
+%% plot V - plots angle over time for the max current experienced by each participant
+for prof = [4]%1:num_profiles
+    [~] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[8], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)", "Max");
+    disp(" press any key to close all") %subnum
+    pause;
+    close all;
+end
+end
+
+if contains(plots,'W ') % plots all subj reports on a single plot 
+%% plot W - plots angle over time 
+for prof = [2]%1:num_profiles
+    [~] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)", "Max");
     disp(" press any key to close all") %subnum
     pause;
     close all;
@@ -222,8 +232,7 @@ end
 end
 
 
-
-if contains(plots,'X ')
+if contains(plots,'X ') % visualizes each of the subjects curves overtime - need modified version for the paper
 %% plot X - plots angle over time
 for prof = [1]%1:num_profiles
     ang_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
@@ -236,7 +245,7 @@ end
 end
 
 
-if contains(plots,'Y ')
+if contains(plots,'Y ')    % visualization of acc. not needed
     %% plot Y - plots linear acceleration over time
 for prof = 1:num_profiles
     acc_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(1:3), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_imu_data, all_time, "acceleration (m/s)");
@@ -247,17 +256,30 @@ end
 
 end
 
-
 %% functions
 %list of subjects, % %list of variables to
 %separate the suplots by
-function data_plot = time_series_plot_mult_sub(subnum,subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
-    numsub = length(subnum);
+function data_plot = time_series_plot_mult_sub(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+numsub = length(subnum);
 num_figure_var = length(figure_var);
 num_subplot_var = length(subplot_var);
 num_trial_var = length(trial_var);
 num_extra_var = length(extra_var);
-color_grad = turbo(num_trial_var);
+num_trial_indices = length(trial_indices);
+
+if extra_var_indices == 1 || extra_var_indices ==5
+    num_trial_indices = 2;
+    color_grad = turbo(num_trial_indices*numsub); 
+elseif extra_var_indices == 2 || extra_var_indices ==3
+    num_trial_indices = 2;
+    color_grad = turbo(num_trial_indices*numsub); % update to 3 if planning to run
+elseif extra_var_indices == 4
+    color_grad = turbo(num_trial_indices*numsub);
+end
+legend_key_top = [];
+legend_key_mid = [];
+legend_key_bot = [];
+color_index = 0;
 
 for figure_index =1:num_figure_var
     f(figure_index) = figure();
@@ -266,7 +288,7 @@ for figure_index =1:num_figure_var
 end
 
 for sub = 1:numsub
-    
+    tile_track = zeros(num_figure_var,1);
     subject = subnum(sub);
     subject_str = num2str(subject);
      if ismember(subject,subskip) == 1
@@ -274,48 +296,77 @@ for sub = 1:numsub
      end
 
  for subplot_index = subplot_indices
+     
          for figure_index =1:num_figure_var
             figure(f(figure_index) );
-            nexttile
-        end 
+            if tile_track(figure_index) ==0 
+                nexttile(1)
+
+            elseif tile_track(figure_index) ==1 
+                nexttile(2)
+            elseif tile_track(figure_index) ==2 
+                nexttile(3)
+            end
+            tile_track(figure_index) = tile_track(figure_index) +1;
+         end 
+        color_index = sub*num_trial_indices;
         for trial_index = trial_indices
+            
             for extra_index = extra_var_indices %might actually want to move this to be outermost loop?
             if isempty(data.(['A', subject_str]){trial_index,extra_index,subplot_index})
                         continue
             end
-
+            
             data_plot.(subplot_var(subplot_index)).time{:,trial_index} = time.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,1);
             
-            for figure_index =1:num_figure_var
-                data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
+                for figure_index =1:num_figure_var
+                    
+                    data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
+                    
+                    figure(f(figure_index));
+                    plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(color_index,:), "LineWidth", 2); hold on;
+                    hold on;
+                    title(subplot_var(subplot_index));
+    
+                    % should proabably manually build the legend here
+                    if subplot_index == 1 && figure_index ==1
+                        legend_key_top = [legend_key_top, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                    elseif subplot_index == 2 && figure_index ==1
+                        legend_key_mid = [legend_key_mid, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                    elseif subplot_index == 3 && figure_index ==1
+                        legend_key_bot = [legend_key_bot, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+    
+                    end
+                   
+                    if subplot_index ==2
+                        ylabel(y_label)
+                    elseif subplot_index == 3
+                    xlabel("Time (ms)")
+                    end
+                    % ylim([0 0.25]);
+                % grid minor
+    
                 
-                figure(f(figure_index));
-                plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(trial_index,:)); hold on;
-                hold on;
-                title(subplot_var(subplot_index));
-
-                % should proabably manually build the legend here
-               
-                if subplot_index ==2
-                    ylabel(y_label)
-                elseif subplot_index == 3
-                xlabel("Time (ms)")
-                end
-                % ylim([0 0.25]);
-            % grid minor
-
-            
-            end             
-           
+                end             
+            color_index = color_index +1;
             end
         end
+
         for figure_index =1:num_figure_var
              figure(f(figure_index))
-             legend(num2str(trial_var(trial_indices)));
+            if subplot_index == 1
+                legend(legend_key_top )
+            elseif subplot_index == 2
+                legend(legend_key_mid )
+            elseif subplot_index == 3
+                legend(legend_key_bot )
+            end
         end
 
  end
- end
+end
+
+
 end
 
 
