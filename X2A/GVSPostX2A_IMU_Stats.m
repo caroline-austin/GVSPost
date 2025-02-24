@@ -1,6 +1,8 @@
 %% script 3
 % Created by: Caroline Austin
 % Modified by: Caroline Austin
+% exports data to .csv for R analysis and runs basic non-parametric tests
+% and creates box plots for the metrics
 % 10/23/24
 
 clear all; close all; clc;
@@ -117,43 +119,74 @@ bilateral_yaw_power = bilateral_power(bilateral_power.dir == "yaw",:);
 
 pitch_power = freq_power_anova(freq_power_anova.dir == "pitch",:);
 pitch_power = pitch_power(pitch_power.config ~= "Binaural",:);
+
+bilateral_roll_power.type(bilateral_roll_power.type == "exp" ) = "GVS"; 
+bilateral_roll_power.type(bilateral_roll_power.type == "control" ) = "Control"; 
+
+bilateral_yaw_power.type(bilateral_yaw_power.type == "exp" ) = "GVS"; 
+bilateral_yaw_power.type(bilateral_yaw_power.type == "control" ) = "Control"; 
+
+pitch_power.type(pitch_power.type == "exp" ) = "GVS"; 
+pitch_power.type(pitch_power.type == "control" ) = "Control"; 
+
+pitch_power.config(pitch_power.config == "Cevete" ) = "Forehead"; 
+pitch_power.config(pitch_power.config == "Aoyama" ) = "Temples"; 
 %%
 
 bilateral_roll_power_data = cell2mat(table2cell(bilateral_roll_power(:,1)));
-bilateral_roll_power_group = strcat(string(bilateral_roll_power.type) , ": ", string(bilateral_roll_power.freq_interest), " Hz");
+bilateral_roll_power_group = strcat(string(bilateral_roll_power.freq_interest), " Hz ", string(bilateral_roll_power.type));
 
 bilateral_yaw_power_data = cell2mat(table2cell(bilateral_yaw_power(:,1)));
-bilateral_yaw_power_group = strcat(string(bilateral_yaw_power.type) , ": ", string(bilateral_yaw_power.freq_interest), " Hz");
+bilateral_yaw_power_group = strcat(string(bilateral_yaw_power.freq_interest), " Hz ", string(bilateral_yaw_power.type) );
 
 pitch_power_data = cell2mat(table2cell(pitch_power(:,1)));
-pitch_power_group = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz");
-pitch_power_group_montage = strcat(string(pitch_power.type) , ": ", string(pitch_power.freq_interest), " Hz ", string(pitch_power.config));
+pitch_power_group = strcat( string(pitch_power.freq_interest), " Hz ", string(pitch_power.type));
+pitch_power_group_montage = strcat(  string(pitch_power.config), " ", string(pitch_power.type));
 
-% %%
-% figure;
-% boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
+%%
+figure; 
+tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
+nexttile
+boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
-% title("Bilateral Roll")
-% 
-% figure;
-% boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-% title("Bilateral Yaw")
-% 
-% figure;
-% boxplot(pitch_power_data , pitch_power_group)
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-% title("Pitch")
-% 
-% figure;
-% boxplot(pitch_power_data , pitch_power_group_montage)
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-% title("Pitch Montages")
+title("Binaural Roll Sway")
+ylim([-30 30]);
 
+nexttile
+boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+xlabel("Experimental Condition")
+title("Binaural Yaw Sway")
+ylim([-30 30]);
+
+nexttile
+boxplot(pitch_power_data , pitch_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+title("Forehead + Temples Pitch Sway")
+ylim([-30 30]);
+
+sgtitle("Sway For Montage-Direction Combinations of Interest")
+
+figure;
+tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
+nexttile
+boxplot(pitch_power_data(1:24) , pitch_power_group_montage(1:24))
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+title("Sine 0.25Hz")
+ylim([-21 21]);
+
+nexttile
+boxplot(pitch_power_data (25:48) , pitch_power_group_montage(25:48))
+xlabel("Experimental Condition")
+title("Sine 0.5Hz")
+ylim([-21 21]);
+
+nexttile
+boxplot(pitch_power_data (49:72) , pitch_power_group_montage(49:72))
+title("Sine 1Hz")
+ylim([-21 21]);
 
 %% stats for angle displacement 
 control_current = 1; 
@@ -234,30 +267,63 @@ bilateral_roll_disp = bilateral_disp(bilateral_disp.dir == "roll",:);
 
 pitch_disp = ang_disp_anova(ang_disp_anova.dir == "pitch",:);
 pitch_disp = pitch_disp(pitch_disp.config ~= "Binaural",:);
+
+bilateral_roll_disp.type(bilateral_roll_disp.type == "exp" ) = "GVS"; 
+bilateral_roll_disp.type(bilateral_roll_disp.type == "control" ) = "Control"; 
+
+bilateral_roll_disp.profile(bilateral_roll_disp.profile == "DCRight_Front" ) = "+ DC ";
+bilateral_roll_disp.profile(bilateral_roll_disp.profile == "DCLeft_Back" ) = "- DC "; 
+
+pitch_disp.type(pitch_disp.type == "exp" ) = "GVS"; 
+pitch_disp.type(pitch_disp.type == "control" ) = "Control"; 
+
+pitch_disp.profile(pitch_disp.profile == "DCRight_Front" ) = "+ DC "; 
+pitch_disp.profile(pitch_disp.profile == "DCLeft_Back" ) = "- DC "; 
+
+pitch_disp.config(pitch_disp.config == "Cevete" ) = "Forehead "; 
+pitch_disp.config(pitch_disp.config == "Aoyama" ) = "Temples "; 
+
 %%
 
 bilateral_roll_disp_data = cell2mat(table2cell(bilateral_roll_disp(:,1)));
-bilateral_roll_disp_group = strcat(string(bilateral_roll_disp.type) , ": ", string(bilateral_roll_disp.profile));
+bilateral_roll_disp_group = strcat(string(bilateral_roll_disp.profile), string( bilateral_roll_disp.type) );
 
 pitch_disp_data = cell2mat(table2cell(pitch_disp(:,1)));
-pitch_disp_group = strcat(string(pitch_disp.type) , ": ", string(pitch_disp.profile));
-pitch_disp_group_montage = strcat(string(pitch_disp.type) , ": ", string(pitch_disp.profile),  string(pitch_disp.config));
+pitch_disp_group = strcat( string(pitch_disp.profile), string(pitch_disp.type) );
+pitch_disp_group_montage = strcat( string(pitch_disp.config), string(pitch_disp.type ));
 
 %%
 figure;
+tiledlayout(1,2,"TileSpacing","tight", "Padding","tight")
+nexttile
 boxplot(bilateral_roll_disp_data , bilateral_roll_disp_group)
 ylabel("Sway Displacement (deg)")
-xlabel("Experimental Condition")
-title("Bilateral Roll")
+% xlabel("Experimental Condition")
+title("Binaural Roll Sway")
+ylim([-82 82]);
 
-figure;
+nexttile
 boxplot(pitch_disp_data , pitch_disp_group)
-ylabel("Sway Displacement (deg)")
+% ylabel("Sway Displacement (deg)")
 xlabel("Experimental Condition")
-title("Pitch")
+title("Forehead + Temples Pitch Sway")
+ylim([-10 10]);
+sgtitle("Sway For Montage-Direction Combinations of Interest")
 
 figure;
-boxplot(pitch_disp_data , pitch_disp_group_montage)
+tiledlayout(1,2,"TileSpacing","tight", "Padding","tight")
+nexttile
+boxplot(pitch_disp_data (1:36), pitch_disp_group_montage(1:36))
 ylabel("Sway Displacement (deg)")
 xlabel("Experimental Condition")
-title("Pitch Montages")
+title("DC +")
+ylim([-10 10]);
+
+nexttile
+boxplot(pitch_disp_data (37:72), pitch_disp_group_montage(37:72))
+% ylabel("Sway Displacement (deg)")
+xlabel("Experimental Condition")
+title("DC -")
+ylim([-10 10]);
+
+%%%%%%
