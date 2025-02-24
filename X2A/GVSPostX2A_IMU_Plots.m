@@ -30,7 +30,7 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
  % amplitude
 
  %% initialize  
-
+fs =100; % sampling freq of 100Hz
 % colors- first 5 are color blind friendly colors
 blue = [ 0.2118    0.5255    0.6275];
 green = [0.5059    0.7451    0.6314];
@@ -58,7 +58,7 @@ cd([file_path]);
 load(['Allimu.mat'])
 cd(code_path);
 
-Config = Label.Config;
+Config = ["Binaural", "Forehead", "Temples"]; %Label.Config;
 num_config = length(Config);
 Current_amp = Label.CurrentAmp ;
 num_current = length(Current_amp);
@@ -211,8 +211,55 @@ close all;
 end
 
 
-if contains(plots,'V ') % not working right now
-%% plot V - plots angle over time for the max current experienced by each participant
+
+if contains(plots,'U ') % plot for Torin
+%% plot U - plots angle over time for the max current experienced by each participant
+for prof = [1]%1:num_profiles
+    [~,f] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3],["sham" "low" "max"],[3], Profiles_safe, [prof], all_ang_reduced, all_time_reduced, "Angle (deg)", "Max");
+    
+    for figure_index =1:length (imu_dir(7:9))
+             figure(f(figure_index))
+            for sub_plot_index = 1:length(Config)
+                nexttile(sub_plot_index)
+
+                if prof == 1 || prof ==2
+                    plot([5 5], [-40 40], '--k')
+                    plot([fs*10+5 fs*10+5], [-40 40], '--k')
+
+                end
+
+                if figure_index == 1
+                    ylim([-40 40])
+                    
+                elseif figure_index ==3 && sub_plot_index ==1
+                    ylim([-40 40])
+                    
+                else
+                    ylim([-10 10])
+                end
+
+                
+
+            end
+
+            if figure_index ==1
+                sgtitle(strjoin(['Yaw Sway for' Profiles(prof)]));
+            elseif figure_index ==2
+                sgtitle(strjoin(['Pitch Sway for' Profiles(prof)]));
+
+            elseif figure_index ==3
+                sgtitle(strjoin(['Roll Sway for' Profiles(prof)]));
+            end
+    end
+
+    % disp(" press any key to close all") %subnum
+    % pause;
+    % close all;
+end
+end
+
+if contains(plots,'V ') %
+%% plot V - plots angle over time for the specified currents experienced by each participant
 for prof = [4]%1:num_profiles
     [~] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[8], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)", "Max");
     disp(" press any key to close all") %subnum
@@ -259,7 +306,7 @@ end
 %% functions
 %list of subjects, % %list of variables to
 %separate the suplots by
-function data_plot = time_series_plot_mult_sub(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+function [data_plot,f] = time_series_plot_mult_sub(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
 numsub = length(subnum);
 num_figure_var = length(figure_var);
 num_subplot_var = length(subplot_var);
