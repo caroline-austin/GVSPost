@@ -1,4 +1,5 @@
 %% Mbientlab IMU Balance Analysis
+% script 1 of IMU analysis
 % Created by: Aaron Allred
 % Modified by: Caroline Austin
 % Date: 10/11/2024
