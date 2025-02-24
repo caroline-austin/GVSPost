@@ -38,18 +38,18 @@ for sub = 1:numsub
     [l, w , h] = size(imu_data);
 
 % rms, others
-    % for current = 1:l
-    %     for profile =1:w
-    %         for config = 1:h
-    %             rms_out = rms(imu_data{current,profile,config});
-    %             if isnan(rms_out)
-    %                 rms_out = [NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN];
-    %             end
-    % 
-    %             rms_save{current, profile, config}(sub,:) = rms_out;
-    %         end
-    %     end
-    % end
+%     for current = 1:l
+%         for profile =1:w
+%             for config = 1:h
+%                 rms_out = rms(imu_data{current,profile,config});
+%                 if isnan(rms_out)
+%                     rms_out = [NaN NaN NaN NaN NaN NaN NaN NaN NaN NaN];
+%                 end
+% 
+%                 rms_save{current, profile, config}(sub,:) = rms_out;
+%             end
+%         end
+%     end
 
      all_imu_data.(['A', subject_str])= imu_data;
 
@@ -86,7 +86,7 @@ for sub = 1:numsub
                         buffer = floor((len - 12*fs)/2);
                         trial_eulers = trial_eulers(buffer:len - buffer,:); % take middle 10s of long trials
                         trial_time_e = trial_time(buffer:len - buffer,:);
-
+                        
                     elseif len <12*fs
                          buffer = floor(abs((len - 12*fs)/2));
                          trial_eulers = [trial_eulers; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
@@ -94,7 +94,8 @@ for sub = 1:numsub
                     else 
                          trial_time_e = trial_time;
                     end
-                       trial_eulers = unwrap(trial_eulers);
+                    trial_eulers = unwrap(trial_eulers);
+                       % trial_eulers = unwrap(trial_eulers);
                     % if subject == 2004
                     %     neg_loc=find(trial_eulers < -70); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
                     % trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
@@ -105,6 +106,7 @@ for sub = 1:numsub
                     % 
                     bias = mean(trial_eulers);
                     trial_eulers = trial_eulers - bias; 
+                    
                     all_ang.(['A', subject_str]){current,profile,config} =  trial_eulers;
 
                     roll_ang = trial_eulers(:,3);
@@ -118,15 +120,15 @@ for sub = 1:numsub
                     [mean_freq(current, profile, config,sub,:), mean_power(current, profile, config, sub,:)]=meanfreq(roll_ang,fs);
 
                     power_interest(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
-                    
+
                     mdl = fittype('a*sin(b*x+c)','indep','x');
                     fittedmdl1 = fit(trial_time_e,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
                     y_model = fittedmdl1(trial_time_e);
-                  
+
                     phase_shift(current, profile, config,sub,:) = fittedmdl1.c;
                     fit_freq(current, profile, config, sub,:) = fittedmdl1.b;
                     fit_amp(current, profile, config, sub,:) = fittedmdl1.a;
-                    
+
                     [val, loc]=findpeaks(abs(y_model));
                     amps = abs(diff(roll_ang (loc)))/2;
                     mean_amp(current, profile, config, sub,:) = mean(amps);
@@ -138,7 +140,7 @@ for sub = 1:numsub
                     % hold on; plot(fittedmdl1);
                     % hold on;plot(trial_time_e(loc),roll_ang(loc))
                     % title(strjoin([subject_str "Profile:" Label.Config(config) Label.Profile(profile)  Label.CurrentAmp(current) " mA"]));
-                                
+
                    angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                    angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
@@ -146,7 +148,7 @@ for sub = 1:numsub
                         angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;
                         angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
                    end
-                    if profile == 2 && config ==2 && subject == 2005 && current == 8
+                    if profile == 2 && config ==2 && subject == 2005 && current == 8 % correct for participant who did not do max in the max condition
                         angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                         angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
@@ -183,7 +185,9 @@ for sub = 1:numsub
 
     [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
 
-    % [all_ang_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(all_ang,MinCurrent,MaxCurrent,Label,sub);
+    [all_ang_reduced.(['A', subject_str])] = ReduceTimeSeriesMultiple(all_ang.(['A', subject_str]),MinCurrent,MaxCurrent,Label,sub);
+    [all_time_reduced.(['A', subject_str])] = ReduceTimeSeriesMultiple(all_time.(['A', subject_str]),MinCurrent,MaxCurrent,Label,sub);
+    
 
 end
 %%
@@ -201,7 +205,7 @@ Label.CurrentAmpReduced = ["Low" "Min" "Max"];
         'phase_shift fit_freq fit_amp mean_amp med_amp rms_save_reduced' ...
         ' power_interest_reduced  med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
         'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced' ...
-        ' angle_drift angle_drift_reduced'];% ...
+        ' angle_drift angle_drift_reduced all_ang_reduced all_time_reduced'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
@@ -264,14 +268,16 @@ function [Reduced_var] = ReduceTimeSeriesMultiple(Var,MinCurrent,MaxCurrent,Labe
 % dim1 is current, dim2 is variable of interest,dim 3 electrode configuration,is dim 4 is profile
 
 %get size of the original map and pre-allocate the reduced map
-[dim1, dim3, dim4,~,~,~] = size(Var);
+[dim1, dim2, dim3,~,~,~] = size(Var); %dim1 = current, dim2 = profiles, dim3 = config.
 % Reduced_var = zeros(3,dim3,dim4);
 for index_1 = 1:dim1
-for outer = 1: dim4  %cycle through the different electrode configurations
-    for inner = 1:dim3 %cycle through the different profiles
+for outer = 1: dim3  %cycle through the different electrode configurations
+    for inner = 1:dim2 %cycle through the different profiles
         %find locations where a response is recorded 
         % test = Var{:,inner,outer}(sub_index,:);
-        [row,col] = find(Var(index_1,inner,outer,sub_index,:,:));
+        % [row,col] = find(Var(index_1,inner,outer));
+        nonEmptyCells = cellfun(@(x) ~isempty(x), Var(:,inner,outer));
+        [row,col] = find(nonEmptyCells);
 
         num_trials = length(row); %number of responses
         %initialize checking variables
@@ -280,20 +286,20 @@ for outer = 1: dim4  %cycle through the different electrode configurations
         check_max = 0;
         for k = 1:num_trials %cycle through all identified responses
             if Label.CurrentAmp(index_1) == 0.1 %for sham condition
-                Reduced_var(1, inner, outer,1,:,:) = Var(index_1,inner, outer,sub_index,:,:);
+                Reduced_var(1, inner, outer,1) = Var(index_1,inner, outer);
                 check_low = 1;
             elseif Label.CurrentAmp(index_1) == MinCurrent{outer} %for low current condition
-                Reduced_var(2, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                Reduced_var(2, inner, outer,1,:,:) = Var(index_1, inner, outer);
                 check_min = 1;
             elseif Label.CurrentAmp(index_1) == MaxCurrent{outer} %for high current conditions 
-                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer);
                 check_max = 1;
                 %below is meant to handle a couple of trials where the
                 %current provided in a part 2 trial was less than the
                 %predetermined max while still meant to represent the max
                 %report
             elseif Label.CurrentAmp(index_1) <= MaxCurrent{outer} && Label.CurrentAmp(index_1) >= MinCurrent{outer} && inner ~= 4 %not 0.5hz profile
-                Reduced_var(3, inner, outer,1,:,:) = Var(index_1, inner, outer,sub_index,:,:);
+                Reduced_var(3, inner, outer) = Var(index_1, inner, outer);
                 check_max = 1;
             end
         end
