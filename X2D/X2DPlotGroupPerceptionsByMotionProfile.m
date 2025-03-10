@@ -1,5 +1,8 @@
 Type = '4A';
 code_path = pwd; 
+
+% note that I think the negative angle coupling is actually the amplifying
+% and the positive angle coupling is actually the attenuating
 %%
 % Plots of Dynamic Data
 % 7/28/23
@@ -38,6 +41,8 @@ LC = [226 107 109;128 128 128;90 160 163]/255;
 %         conditions = [6 4 2];
 %         Title = 'Semi Coupled GVS';
 % end
+
+Type = '6B';
 Title = Type;
 conditions = [4 3 1; 5 3 2];
 motions = ["4"];

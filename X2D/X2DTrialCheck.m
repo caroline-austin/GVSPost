@@ -8,14 +8,17 @@
 % trial number in the master excel sheet to 0, and re-running script 2.
 % This script can take input from script 2 and 4(s)
 
+% note that I think the negative angle coupling is actually the amplifying
+% and the positive angle coupling is actually the attenuating
+
 close all; 
 clear all; 
 clc; 
 
 %% set up
-subnum = [2081];  % Subject List 2049, 2051,2053:2062
+subnum = [2078];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2069:2077 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2069:2077  2083 2085  2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain'; %can change this to specify which data you want to use for the checkng
 % '' = regular , 'Time' = time adjusted, 'Adj' = Bias adjusted (can stack
 % multiple)
