@@ -144,7 +144,7 @@ for sub = 1:numsub
                    angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                    angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
-                   if config ==2 % flipping for the cevette bc the profiles were generated with the wrong polarity label 
+                   if config ==3 % flipping for the aoyama bc the profiles were generated with the wrong polarity label 
                         angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;
                         angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
                    end
