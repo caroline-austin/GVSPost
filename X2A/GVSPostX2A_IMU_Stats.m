@@ -121,13 +121,13 @@ pitch_power = freq_power_anova(freq_power_anova.dir == "pitch",:);
 pitch_power = pitch_power(pitch_power.config ~= "Binaural",:);
 
 bilateral_roll_power.type(bilateral_roll_power.type == "exp" ) = "GVS"; 
-bilateral_roll_power.type(bilateral_roll_power.type == "control" ) = "Control"; 
+bilateral_roll_power.type(bilateral_roll_power.type == "control" ) = "Sham"; 
 
 bilateral_yaw_power.type(bilateral_yaw_power.type == "exp" ) = "GVS"; 
-bilateral_yaw_power.type(bilateral_yaw_power.type == "control" ) = "Control"; 
+bilateral_yaw_power.type(bilateral_yaw_power.type == "control" ) = "Sham"; 
 
 pitch_power.type(pitch_power.type == "exp" ) = "GVS"; 
-pitch_power.type(pitch_power.type == "control" ) = "Control"; 
+pitch_power.type(pitch_power.type == "control" ) = "Sham"; 
 
 pitch_power.config(pitch_power.config == "Cevete" ) = "Forehead"; 
 pitch_power.config(pitch_power.config == "Aoyama" ) = "Temples"; 
@@ -274,13 +274,13 @@ pitch_disp = ang_disp_anova(ang_disp_anova.dir == "pitch",:);
 pitch_disp = pitch_disp(pitch_disp.config ~= "Binaural",:);
 
 bilateral_roll_disp.type(bilateral_roll_disp.type == "exp" ) = "GVS"; 
-bilateral_roll_disp.type(bilateral_roll_disp.type == "control" ) = "Control"; 
+bilateral_roll_disp.type(bilateral_roll_disp.type == "control" ) = "Sham"; 
 
 bilateral_roll_disp.profile(bilateral_roll_disp.profile == "DCRight_Front" ) = "+ DC ";
 bilateral_roll_disp.profile(bilateral_roll_disp.profile == "DCLeft_Back" ) = "- DC "; 
 
 pitch_disp.type(pitch_disp.type == "exp" ) = "GVS"; 
-pitch_disp.type(pitch_disp.type == "control" ) = "Control"; 
+pitch_disp.type(pitch_disp.type == "control" ) = "Sham"; 
 
 pitch_disp.profile(pitch_disp.profile == "DCRight_Front" ) = "+ DC "; 
 pitch_disp.profile(pitch_disp.profile == "DCLeft_Back" ) = "- DC "; 
@@ -331,4 +331,46 @@ xlabel("Experimental Condition")
 title("DC -")
 ylim([-10 10]);
 
-%%%%%%
+%% paper plot 
+figure('Position', [100, 100, 1200, 900]);
+tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
+
+
+nexttile
+boxplot(pitch_power_data , pitch_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+title("Forehead + Temples Pitch Sway")
+ylim([-40 30]);
+
+nexttile
+boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+title("Binaural Roll Sway")
+ylim([-40 30]);
+
+nexttile
+boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% xlabel("Experimental Condition")
+title("Binaural Yaw Sway")
+ylim([-40 30]);
+
+
+nexttile
+boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group([1:30 37:42]))
+ylabel("Sway Displacement (deg)")
+% xlabel("Experimental Condition")
+title("Forehead + Temples Pitch Sway")
+ylim([-8 16]);
+xticklabels(["+DC" "Sham" "-DC"])
+
+nexttile(5)
+boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18)) 
+% ylabel("Sway Displacement (deg)")
+% xlabel("Experimental Condition")
+title("Binaural Roll Sway")
+ylim([-8 16]);
+xticklabels(["+DC" "Sham" "-DC"])
+sgtitle("Sway For Montage-Direction Combinations of Interest")
