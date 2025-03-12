@@ -16,7 +16,8 @@ file_path = uigetdir; %user selects file directory './Subject Data/'; %I replace
 subnum = [2001:2010];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
 subskip = [2001 2004 2008 2010];  %DNF'd subjects
-fs =100; % sampling freq of 100Hz
+fs =25; % sampling freq of 100Hz
+dt = 1/fs;
 profile_freq = [ 0 0 0.25 0.5 1];
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
 num_freq = length(freq_interest);
@@ -79,39 +80,76 @@ for sub = 1:numsub
                     trial_accel = all_imu_data.(['A', subject_str]){current,profile,config}(:,1:3);
                     trial_gyro = all_imu_data.(['A', subject_str]){current,profile,config}(:,4:6);
                     trial_eulers = all_imu_data.(['A', subject_str]){current,profile,config}(:,7:9);
+                    trial_angles = all_imu_data.(['A', subject_str]){current,profile,config}(:,11:13)*180/pi();
                     [len, wid] = size(trial_eulers);
+                    
 
-                    % make all trials only 10s
+                    % make all trials only 12s
                     if len > 12*fs && (profile == 4 || profile == 3 || profile == 5 )
                         buffer = floor((len - 12*fs)/2);
-                        trial_eulers = trial_eulers(buffer:len - buffer,:); % take middle 10s of long trials
-                        trial_time_e = trial_time(buffer:len - buffer,:);
+                        trial_gyro = trial_gyro(buffer:len - buffer,:); % take middle 10s of long trials
+                        trial_accel = trial_accel(buffer:len - buffer,:); % take middle 10s of long trials
+                        trial_angles = trial_angles(buffer:len - buffer,:); % take middle 10s of long trials
+                        trial_time_a = trial_time(buffer:len - buffer,:);
                         
                     elseif len <12*fs
                          buffer = floor(abs((len - 12*fs)/2));
-                         trial_eulers = [trial_eulers; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
-                         trial_time_e = [trial_time; NaN(2*buffer,wid)];
+                         trial_gyro = [trial_gyro; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
+                         trial_accel = [trial_accel; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
+                         trial_angles = [trial_angles; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
+                         trial_time_a = [trial_time; NaN(2*buffer,wid)];
                     else 
-                         trial_time_e = trial_time;
+                         trial_time_a = trial_time;
                     end
-                    trial_eulers = unwrap(trial_eulers);
-                       % trial_eulers = unwrap(trial_eulers);
-                    % if subject == 2004
-                    %     neg_loc=find(trial_eulers < -70); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
-                    % trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
-                    % else
-                    %     neg_loc=find(trial_eulers < -100); % needs to be -70 for 2004 but -100 for every other sub to make roll and pitch look good
-                    %     trial_eulers(neg_loc) = trial_eulers(neg_loc)+360;
-                    % end
-                    % 
-                    bias = mean(trial_eulers);
-                    trial_eulers = trial_eulers - bias; 
-                    
-                    all_ang.(['A', subject_str]){current,profile,config} =  trial_eulers;
 
-                    roll_ang = trial_eulers(:,3);
-                    pitch_ang = trial_eulers(:,2);
-                    yaw_ang = trial_eulers(:,1);
+
+                    %% calculate roll and pitch angles
+
+                      % Initialize variables
+                    roll_ang = zeros(size(trial_time_a));    % Roll angle
+                    pitch_ang = zeros(size(trial_time_a));   % Pitch angle
+                    yaw_ang = zeros(size(trial_time_a));     % Yaw angle (this example doesn't calculate yaw)
+                    gyro_angle = zeros(3, length(trial_time_a)); % Gyro angle
+                    acc_angle = zeros(3, length(trial_time_a)); % Accelerometer angle
+                    alpha = .99; % Complementary filter constant (tune this value)
+            
+                    % Initial angles from accelerometer (first estimate)
+                    acc_angle(1, 1) = atan2(trial_accel(2,1), trial_accel(3,1)); % Roll
+                    acc_angle(2, 1) = atan2(-trial_accel(1,1), sqrt(trial_accel(2,1)^2 + trial_accel(3,1)^2)); % Pitch
+                    
+                    % Process each time step
+                    for i = 2:length(trial_time_a)
+                        % Gyroscope integration to get the angular velocity
+                        gyro_angle(:, i) = gyro_angle(:, i-1) + trial_gyro(i-1,: )' * dt; % Integrate gyro data to get angle
+                        
+                        % Accelerometer-based angle estimation (assuming accelerometer gives tilt)
+                        acc_angle(1, i) = atan2(trial_accel(i,2), trial_accel(i,3)); % Roll from accelerometer
+                        acc_angle(2, i) = atan2(-trial_accel(i,1), sqrt(trial_accel(i,2)^2 + trial_accel(i,3)^2)); % Pitch from accelerometer
+                    
+                        % Apply complementary filter to combine accelerometer and
+                        % gyroscope data- accelerometer data corrects for the gyroscope
+                        % drift
+                        roll_ang(i) = alpha * (roll_ang(i-1) + trial_gyro( i-1,1) * dt) + (1 - alpha) * acc_angle(1,i); % Roll estimate
+                        pitch_ang(i) = alpha * (pitch_ang(i-1) + trial_gyro(i-1,2) * dt) + (1 - alpha) * acc_angle(2,i); % Pitch estimate
+                    
+                        % If you want to calculate yaw, you would need magnetometer
+                        % data or use more advanced sensor fusion to correct for the
+                        % drift
+                        yaw_ang(i) = yaw_ang(i-1) + trial_gyro(i-1,3 ) * dt; % Gyroscope yaw estimate (if available)
+                    end
+
+                    trial_angles2 = [roll_ang pitch_ang yaw_ang]*180/pi;
+                    roll_ang = roll_ang*180/pi();
+                    pitch_ang = pitch_ang*180/pi();
+                    yaw_ang = yaw_ang*180/pi();
+
+                    % figure;
+                    % plot(trial_angles2)
+                    % hold on;
+                    % plot(trial_angles)
+                    % legend(["roll2" "pitch2" "yaw2" "roll" "pitch" "yaw"])
+
+                    all_ang.(['A', subject_str]){current,profile,config} =  trial_angles;
 
                     [power_interest(current, profile, config, sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
                     [power_interest(current, profile, config, sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
@@ -122,8 +160,8 @@ for sub = 1:numsub
                     power_interest(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
 
                     mdl = fittype('a*sin(b*x+c)','indep','x');
-                    fittedmdl1 = fit(trial_time_e,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
-                    y_model = fittedmdl1(trial_time_e);
+                    fittedmdl1 = fit(trial_time_a,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
+                    y_model = fittedmdl1(trial_time_a);
 
                     phase_shift(current, profile, config,sub,:) = fittedmdl1.c;
                     fit_freq(current, profile, config, sub,:) = fittedmdl1.b;
@@ -141,8 +179,8 @@ for sub = 1:numsub
                     % hold on;plot(trial_time_e(loc),roll_ang(loc))
                     % title(strjoin([subject_str "Profile:" Label.Config(config) Label.Profile(profile)  Label.CurrentAmp(current) " mA"]));
 
-                   angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
-                   angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
+                   angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*5:fs*5+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
+                   angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*5:fs*5+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
                    if config ==3 % flipping for the aoyama bc the profiles were generated with the wrong polarity label 
                         angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;

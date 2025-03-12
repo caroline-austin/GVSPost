@@ -30,7 +30,7 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
  % amplitude
 
  %% initialize  
-fs =100; % sampling freq of 100Hz
+fs =25; % sampling freq of 100Hz
 % colors- first 5 are color blind friendly colors
 blue = [ 0.2118    0.5255    0.6275];
 green = [0.5059    0.7451    0.6314];
@@ -62,7 +62,7 @@ Config = ["Binaural", "Forehead", "Temples"]; %Label.Config;
 num_config = length(Config);
 Current_amp = Label.CurrentAmp ;
 num_current = length(Current_amp);
-imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "yaw" "pitch" "roll"];
+imu_dir = ['x' 'y' 'z' "roll" "pitch" "yaw" "roll" "pitch" "yaw"];
 
 
 
@@ -224,30 +224,30 @@ for prof = [1]%1:num_profiles
 
                 if prof == 1 || prof ==2
                     plot([5 5], [-40 40], '--k')
-                    plot([fs*10+5 fs*10+5], [-40 40], '--k')
+                    plot([fs*5+5 fs*5+5], [-40 40], '--k')
 
                 end
 
                 if figure_index == 1
-                    ylim([-40 40])
+                    ylim([-15 15])
                     
                 elseif figure_index ==3 && sub_plot_index ==1
-                    ylim([-40 40])
+                    % ylim([-40 40])
                     
                 else
-                    ylim([-10 10])
+                    % ylim([-10 10])
                 end
 
                 
 
             end
 
-            if figure_index ==1
+            if figure_index ==3
                 sgtitle(strjoin(['Yaw Sway for' Profiles(prof)]));
             elseif figure_index ==2
                 sgtitle(strjoin(['Pitch Sway for' Profiles(prof)]));
 
-            elseif figure_index ==3
+            elseif figure_index ==1
                 sgtitle(strjoin(['Roll Sway for' Profiles(prof)]));
             end
     end
@@ -281,7 +281,7 @@ end
 
 if contains(plots,'X ') % visualizes each of the subjects curves overtime - need modified version for the paper
 %% plot X - plots angle over time
-for prof = [1]%1:num_profiles
+for prof = [4]%1:num_profiles
     ang_plot.(Profiles_safe(prof))  = time_series_plot(subnum,subskip,imu_dir(7:9), Config , [1:3], Current_amp',[2:9], Profiles_safe, [prof], all_ang, all_time, "Angle (deg)");
     disp(" press any key to close all") %subnum
     pause;
@@ -388,7 +388,7 @@ for sub = 1:numsub
                     if subplot_index ==2
                         ylabel(y_label)
                     elseif subplot_index == 3
-                    xlabel("Time (ms)")
+                    xlabel("Time steps")
                     end
                     % ylim([0 0.25]);
                 % grid minor
@@ -465,7 +465,7 @@ for sub = 1:numsub
                 if subplot_index ==2
                     ylabel(y_label)
                 elseif subplot_index == 3
-                xlabel("Time (ms)")
+                xlabel("Time steps")
                 end
                 % ylim([0 0.25]);
             % grid minor
