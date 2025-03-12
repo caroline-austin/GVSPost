@@ -197,6 +197,7 @@ profile_freq = [0 0 0.25 0.5 1];
 index = 0;
 index2 = 0;
 ang_disp_anova = table;
+sub_include = [2 3 5 6 7 9];
 
 for profile = interest_profile
     for config = 1:num_config
@@ -204,10 +205,14 @@ for profile = interest_profile
 
                index = index +1;
                 % Label.power_stats(index) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
-                displacement_control(:,index) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,:,dir)), nan);
+                displacement_control(:,index) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,sub_include,dir)), nan);
                 
+                if profile == 1
                 
-                displacement_eval(:,index) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,:,dir)), nan);
+                    displacement_eval(:,index) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,sub_include,dir)), nan);
+                elseif profile ==2
+                    displacement_eval(:,index) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,sub_include,dir)), nan);
+                end
                 
                 % save data into table
                 num_subs = height(displacement_eval);
@@ -238,9 +243,9 @@ for profile = interest_profile
                 
                index2 = index2+1;
                 Label.angle_drift_stats(index2) = strjoin([Config(config) Profiles_safe(profile) imu_dir(dir+3)]);
-                drift_control(:,index2) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,:,dir)), nan);
+                drift_control(:,index2) = changem(squeeze(angle_drift_reduced(control_current,control_profile,config,sub_include,dir)), nan);
                 
-                drift_eval(:,index2) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,:,dir)), nan);
+                drift_eval(:,index2) = changem(squeeze(angle_drift_reduced(interest_current,profile,config,sub_include,dir)), nan);
                             
         end
     end
@@ -296,7 +301,7 @@ pitch_disp_group_montage = strcat( string(pitch_disp.config), string(pitch_disp.
 figure;
 tiledlayout(1,2,"TileSpacing","tight", "Padding","tight")
 nexttile
-boxplot(bilateral_roll_disp_data , bilateral_roll_disp_group)
+boxplot(bilateral_roll_disp_data , bilateral_roll_disp_group) 
 ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
 title("Binaural Roll Sway")
@@ -313,14 +318,14 @@ sgtitle("Sway For Montage-Direction Combinations of Interest")
 figure;
 tiledlayout(1,2,"TileSpacing","tight", "Padding","tight")
 nexttile
-boxplot(pitch_disp_data (1:36), pitch_disp_group_montage(1:36))
+boxplot(pitch_disp_data (1:24), pitch_disp_group_montage(1:24))
 ylabel("Sway Displacement (deg)")
 xlabel("Experimental Condition")
 title("DC +")
 ylim([-10 10]);
 
 nexttile
-boxplot(pitch_disp_data (37:72), pitch_disp_group_montage(37:72))
+boxplot(pitch_disp_data (25:48), pitch_disp_group_montage(25:48))
 % ylabel("Sway Displacement (deg)")
 xlabel("Experimental Condition")
 title("DC -")
