@@ -290,6 +290,16 @@ end
 
 
 end
+% plan to use in the paper
+if contains(plots,'Z ') % visualizes a single participants data only for combinations of interest at the maximum current amplitude, 3 subplots each with 5 curves
+%% plot Z - plots angle over time
+    ang_plot.(Profiles_safe(5))  = time_series_plot_combine(subnum,subskip,imu_dir(7:8), Config , [1:3], ["sham" "low" "max"],[3], Profiles_safe, [1:5], all_ang_reduced, all_time_reduced, "Angle (deg)");
+    disp(" press any key to close all") %subnum
+    pause;
+    close all;
+
+
+end
 
 
 if contains(plots,'Y ')    % visualization of acc. not needed
@@ -400,6 +410,115 @@ for sub = 1:numsub
         end
 
         for figure_index =1:num_figure_var
+             figure(f(figure_index))
+            if subplot_index == 1
+                legend(legend_key_top )
+            elseif subplot_index == 2
+                legend(legend_key_mid )
+            elseif subplot_index == 3
+                legend(legend_key_bot )
+            end
+        end
+
+ end
+end
+
+
+end
+%%
+function [data_plot,f] = time_series_plot_combine(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+numsub = length(subnum);
+num_figure_var = length(figure_var);
+num_subplot_var = length(subplot_var);
+num_trial_var = length(trial_var);
+num_extra_var = length(extra_var);
+num_trial_indices = length(trial_indices);
+
+legend_key_top = [];
+legend_key_mid = [];
+legend_key_bot = [];
+color_index = 0;
+
+color_grad = turbo(num_extra_var);
+
+
+for sub = 1:numsub
+    tile_track = zeros(num_figure_var,1);
+    subject = subnum(sub);
+    subject_str = num2str(subject);
+     if ismember(subject,subskip) == 1
+       continue
+     end
+     for figure_index =1
+        f(figure_index) = figure();
+        tiledlayout(num_subplot_var,1, 'Padding', 'none', 'TileSpacing', 'compact'); 
+        sgtitle ([subject_str])
+     end
+
+ for subplot_index = subplot_indices
+
+     for figure_index =1
+            figure(f(figure_index) );
+            if tile_track(figure_index) ==0 
+                nexttile(1)
+
+            elseif tile_track(figure_index) ==1 
+                nexttile(2)
+            elseif tile_track(figure_index) ==2 
+                nexttile(3)
+            end
+            tile_track(figure_index) = tile_track(figure_index) +1;
+     end 
+        
+        for trial_index = trial_indices
+            
+            for extra_index = extra_var_indices 
+            if isempty(data.(['A', subject_str]){trial_index,extra_index,subplot_index})
+                        continue
+            end
+            color_index = extra_index;
+            
+            data_plot.(subplot_var(subplot_index)).time{:,trial_index} = time.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,1)-time.(['A' subject_str ]){trial_index,extra_index,subplot_index}(1,1);
+            
+                for figure_index =1
+                    
+                    if subplot_index == 1% subplot variable corresponds to the montage - if a roll montage, pull the roll data 
+                        data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,1);
+                    elseif subplot_index == 2 || subplot_index == 3 % subplot variable corresponds to the montage - if a pitch montage, pull the pitch data 
+                        data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,2);
+                    end
+
+                    figure(f(figure_index));
+                    plot( data_plot.(subplot_var(subplot_index)).time{:,trial_index}, data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(color_index,:), "LineWidth", 2); hold on;
+                    hold on;
+                    title(subplot_var(subplot_index));
+                    xlim([0 12])
+    
+                    % should proabably manually build the legend here
+                    if subplot_index == 1 && figure_index ==1
+                        legend_key_top = [legend_key_top, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                    elseif subplot_index == 2 && figure_index ==1
+                        legend_key_mid = [legend_key_mid, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                    elseif subplot_index == 3 && figure_index ==1
+                        legend_key_bot = [legend_key_bot, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+    
+                    end
+                   
+                    if subplot_index ==2
+                        ylabel(y_label)
+                    elseif subplot_index == 3
+                    xlabel("Time steps")
+                    end
+                    % ylim([0 0.25]);
+                % grid minor
+    
+                
+                end             
+            color_index = color_index +1;
+            end
+        end
+
+        for figure_index =1
              figure(f(figure_index))
             if subplot_index == 1
                 legend(legend_key_top )
