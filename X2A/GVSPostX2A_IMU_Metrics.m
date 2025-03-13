@@ -76,7 +76,7 @@ for sub = 1:numsub
                         continue
                     end
                     trial_time = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
-                    all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
+                    % all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
                     trial_accel = all_imu_data.(['A', subject_str]){current,profile,config}(:,1:3);
                     trial_gyro = all_imu_data.(['A', subject_str]){current,profile,config}(:,4:6);
                     trial_eulers = all_imu_data.(['A', subject_str]){current,profile,config}(:,7:9);
@@ -101,7 +101,7 @@ for sub = 1:numsub
                     else 
                          trial_time_a = trial_time;
                     end
-
+                    all_time.(['A', subject_str]){current,profile,config}(:,1) = trial_time_a;
 
                     %% calculate roll and pitch angles
 
