@@ -8,9 +8,9 @@
 clc; clear; close all;
 
 %% set up
-subnum = [2090];  % Subject List 2049, 2051,2053:2049, 2051,2053:2059, 2060:2062, 2069:2074
+subnum = [2049, 2051,2053:2062, 2078:2082 2084 2086:2090 ];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2069:2077  2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
 
 code_path = pwd; %save code directory
