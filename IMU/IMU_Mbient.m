@@ -86,7 +86,7 @@ p2pXa = rmsXYa; p2pYa = p2pXa;
         yaw = zeros(size(time));     % Yaw angle (this example doesn't calculate yaw)
         gyro_angle = zeros(3, length(time)); % Gyro angle
         acc_angle = zeros(3, length(time)); % Accelerometer angle
-        alpha = .99; % Complementary filter constant (tune this value)
+        alpha = .98; % Complementary filter constant (tune this value)
 
         % Initial angles from accelerometer (first estimate)
         acc_angle(1, 1) = atan2(acc_aligned(2,1), acc_aligned(3,1)); % Roll
@@ -94,37 +94,60 @@ p2pXa = rmsXYa; p2pYa = p2pXa;
         
         % Process each time step
         for i = 2:length(time)
-            % Gyroscope integration to get the angular velocity
-            gyro_angle(:, i) = gyro_angle(:, i-1) + gyro_aligned(i-1,: )' * dt; % Integrate gyro data to get angle
-            
+            % % Gyroscope integration to get the angular velocity
+            % gyro_angle(:, i) = gyro_angle(:, i-1) + gyro_aligned(i-1,: )' * dt; % Integrate gyro data to get angle
+            % 
+            % % Accelerometer-based angle estimation (assuming accelerometer gives tilt)
+            % acc_angle(1, i) = atan2(acc_aligned(i,2), acc_aligned(i,3)); % Roll from accelerometer
+            % acc_angle(2, i) = atan2(-acc_aligned(i,1), sqrt(acc_aligned(i,2)^2 + acc_aligned(i,3)^2)); % Pitch from accelerometer
+            % 
+            % % Apply complementary filter to combine accelerometer and
+            % % gyroscope data- accelerometer data corrects for the gyroscope
+            % % drift
+            % roll(i) = alpha * (roll(i-1) + gyro_aligned( i-1,1) * dt) + (1 - alpha) * acc_angle(1,i); % Roll estimate
+            % pitch(i) = alpha * (pitch(i-1) + gyro_aligned(i-1,2) * dt) + (1 - alpha) * acc_angle(2,i); % Pitch estimate
+            % 
+            % % If you want to calculate yaw, you would need magnetometer
+            % % data or use more advanced sensor fusion to correct for the
+            % % drift
+            % yaw(i) = yaw(i-1) + gyro_aligned(i-1,3 ) * dt; % Gyroscope yaw estimate (if available)
+
+
+             gyro_angle(:, i) = gyro_angle(:, i-1) + gyro(i-1,: )' * dt; % Integrate gyro data to get angle
+
             % Accelerometer-based angle estimation (assuming accelerometer gives tilt)
-            acc_angle(1, i) = atan2(acc_aligned(i,2), acc_aligned(i,3)); % Roll from accelerometer
-            acc_angle(2, i) = atan2(-acc_aligned(i,1), sqrt(acc_aligned(i,2)^2 + acc_aligned(i,3)^2)); % Pitch from accelerometer
-        
+            acc_angle(1, i) = atan2(acc(i,2), acc(i,1)); % Roll from accelerometer
+            acc_angle(2, i) = atan2(-acc(i,1), sqrt(acc(i,2)^2 + acc(i,1)^2)); % Pitch from accelerometer
+
             % Apply complementary filter to combine accelerometer and
             % gyroscope data- accelerometer data corrects for the gyroscope
             % drift
-            roll(i) = alpha * (roll(i-1) + gyro_aligned( i-1,1) * dt) + (1 - alpha) * acc_angle(1,i); % Roll estimate
-            pitch(i) = alpha * (pitch(i-1) + gyro_aligned(i-1,2) * dt) + (1 - alpha) * acc_angle(2,i); % Pitch estimate
-        
+            roll(i) = alpha * (roll(i-1) + gyro( i-1,3) * dt) + (1 - alpha) * acc_angle(1,i); % Roll estimate
+            pitch(i) = alpha * (pitch(i-1) + gyro(i-1,2) * dt) + (1 - alpha) * acc_angle(2,i); % Pitch estimate
+
             % If you want to calculate yaw, you would need magnetometer
             % data or use more advanced sensor fusion to correct for the
             % drift
-            yaw(i) = yaw(i-1) + gyro_aligned(i-1,3 ) * dt; % Gyroscope yaw estimate (if available)
+            yaw(i) = yaw(i-1) + gyro(i-1,3 ) * dt; % Gyroscope yaw estimate (if available)
         end
 
 
         %% plot roll and pitch angles
         figure; 
+        plot(gyro_aligned(:,1)*180/pi())
+        hold on
+        plot(gyro_aligned(:,2)*180/pi())
+
+        figure; 
         plot(roll*180/pi())
         hold on
         plot(pitch*180/pi())
         % plot(yaw)
-%% plot euler angles
-        figure; 
-        euler_angles= unwrap(euler_angles);
-        euler_angles= euler_angles-mean(euler_angles, 'omitnan');
-        plot(euler_angles)
+% %% plot euler angles
+%         figure; 
+%         euler_angles= unwrap(euler_angles);
+%         euler_angles= euler_angles-mean(euler_angles, 'omitnan');
+%         plot(euler_angles)
         %%
 
         % Get Trial Times
