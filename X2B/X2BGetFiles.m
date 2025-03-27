@@ -37,6 +37,7 @@ for sub = 1:numsub
     Label.MainResultsCol = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','B22:C22');
     Label.MainResultsRow = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','A23:A25');
     main_results = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','B23:E25');
+    bonus_results = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','B39:E41');
     Label.Impedance = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','P5:P14');
     start_impedance = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','Q5:Q14');
     end_impedance = readcell('NewPitchMontage3Electrodes.xlsx','Sheet',['S' subject_str],'Range','R5:R14');
@@ -67,7 +68,7 @@ for sub = 1:numsub
             % create appropriate indexing variables
             trial = trial+ 1; % only keep track of trials
             trial_row = ceil(trial/2); % the row increments every other because two trials per row
-            trial_col = 2+rem(trial,2); % the column changes based on the first v. second trial in the set
+            trial_col = 2+rem(trial+1,2); % the column changes based on the first v. second trial in the set
             %
             cd([file_path, '/' , subject_str, '/IMU']);
             imu_table = readtable(IMU_files{file});
@@ -76,7 +77,9 @@ for sub = 1:numsub
 
     % assemble save file name - use Label.TrialInfo to map what the columns
     % are
-        if trial <25
+        if trial <10
+            imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,trial_col} '_' num2str(main_match_ups{trial_row,4}) main_match_ups{trial_row,5} '_' main_match_ups{trial_row,6} num2str(main_match_ups{trial_row,7}) 'Hz_0' num2str(trial)], '.', '_'), ' ', '_');
+        elseif trial<25
             imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,trial_col} '_' num2str(main_match_ups{trial_row,4}) main_match_ups{trial_row,5} '_' main_match_ups{trial_row,6} num2str(main_match_ups{trial_row,7}) 'Hz_' num2str(trial)], '.', '_'), ' ', '_');
         else
             imu_filename = strrep(strrep(['S' subject_str '_' final_match_ups{trial_row-12,trial_col} '_' num2str(final_match_ups{trial_row-12,4}) final_match_ups{trial_row-12,5} '_' final_match_ups{trial_row-12,6} num2str(final_match_ups{trial_row-12,7}) 'Hz_' num2str(trial)], '.', '_'), ' ', '_');
@@ -91,7 +94,7 @@ for sub = 1:numsub
     end
 
     cd([file_path, '/' , subject_str]);
-    vars_2_save = ['Label main_match_ups main_results final_match_ups best_tingling best_motion start_impedance end_impedance'];
+    vars_2_save = ['Label main_match_ups main_results bonus_results final_match_ups best_tingling best_motion start_impedance end_impedance'];
     eval(strjoin(['  save ' strjoin(['S' subject_str ".mat "],'') vars_2_save  '  vars_2_save']));     
     cd(code_path);
 
