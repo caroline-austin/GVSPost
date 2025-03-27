@@ -28,6 +28,7 @@ xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25];
 
 %%
 total_results = zeros(3,4);
+total_bonus_results = zeros(3,2);
 total_forhead_shoulder = [0,0];
 total_shoulder_neck = [0,0];
 total_neck_forhead = [0,0];
@@ -45,6 +46,7 @@ for sub = 1:numsub
     load(['S' subject_str '.mat']);
 
     main_results = cell2mat(main_results);
+    bonus_results = cell2mat(bonus_results(:,1:2));
     % main_match_ups = cell2mat(main_match_ups);
 
     %% calculate relative wins 
@@ -53,7 +55,7 @@ for sub = 1:numsub
     neck_forhead = [0,0];
     for match_up = 1:height(main_match_ups)
         
-        if contains(main_match_ups{match_up,2}, 'Three Forehead')
+        if contains(main_match_ups{match_up,2}, 'Three Forhead')
             if contains(main_match_ups{match_up,3}, 'Three Shoulder')
                 if main_match_ups{match_up,8} == 1
                     forhead_shoulder(1) = forhead_shoulder(1)+1;
@@ -78,7 +80,7 @@ for sub = 1:numsub
                     shoulder_neck(2) = shoulder_neck(2)+1;
                 end
 
-            elseif contains(main_match_ups{match_up,3} , 'Three Forehead')
+            elseif contains(main_match_ups{match_up,3} , 'Three Forhead')
                 if main_match_ups{match_up,8} == 1
                     forhead_shoulder(2) = forhead_shoulder(2)+1;
                 elseif main_match_ups{match_up,8} == 2
@@ -87,7 +89,7 @@ for sub = 1:numsub
 
             end
         elseif contains(main_match_ups{match_up,2} ,'Three Neck')
-            if contains(main_match_ups{match_up,3} , 'Three Forehead')
+            if contains(main_match_ups{match_up,3} , 'Three Forhead')
                 if main_match_ups{match_up,8} == 1
                     neck_forhead(1) = neck_forhead(1)+1;
                 elseif main_match_ups{match_up,8} == 2
@@ -130,6 +132,7 @@ for sub = 1:numsub
 
     % aggregating results
     total_results = total_results +main_results;
+    total_bonus_results = total_bonus_results +bonus_results;
     total_neck_forhead = total_neck_forhead + neck_forhead;
     total_shoulder_neck = total_shoulder_neck + shoulder_neck;
     total_forhead_shoulder = total_forhead_shoulder + forhead_shoulder;
