@@ -28,15 +28,6 @@ dt = 1/fs;
 
 %%
 total_results = zeros(3,2);
-forhead_fft_SpHz_accx = NaN(10,numsub);
-shoulder_fft_SpHz_accx = NaN(10,numsub);
-neck_fft_SpHz_accx = NaN(10,numsub);
-forhead_fft_SpHz_accy = NaN(10,numsub);
-shoulder_fft_SpHz_accy = NaN(10,numsub);
-neck_fft_SpHz_accy = NaN(10,numsub);
-forhead_fft_SpHz_accz = NaN(10,numsub);
-shoulder_fft_SpHz_accz = NaN(10,numsub);
-neck_fft_SpHz_accz = NaN(10,numsub);
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -46,10 +37,16 @@ for sub = 1:numsub
     end
     subject_path = [file_path '/' subject_str];
 
+    % load excel data for the subj
+    cd([subject_path]);
+    load(['S' subject_str '.mat']);
+
+    all_match_ups = [main_match_ups; final_match_ups];
+
     % find IMU data
     cd(code_path); cd ..;
     [IMU_files]=file_path_info2(code_path, [file_path, '/' , subject_str, '/IMU']); % get filenames from file folder
-     
+         
 
     file_count = 0;
     f_index = 0;
@@ -65,6 +62,7 @@ for sub = 1:numsub
         %load trial data
         cd([subject_path '/IMU']);
         load(IMU_files{file});
+       
         x_tick_label{file_count,sub} = IMU_files{file}(13:16);
 
         trial =  str2num(IMU_files{file}(end-5:end-4));
@@ -83,17 +81,6 @@ for sub = 1:numsub
         if length(timeimu) > 285
             time_cut = timeimu > 2 & timeimu < 9.5;
         else
-            fft_SpHz_acc(file_count,sub) = NaN;
-            fft_SpHz_accx(file_count,sub) = NaN;
-            fft_SpHz_accy(file_count,sub) = NaN;
-            fft_SpHz_accz(file_count,sub) = NaN;
-            fft_SpHz_accmag(file_count,sub) = NaN;
-
-            freq_SpHz(file_count,sub) = NaN;
-            freq_SpHzx(file_count,sub) = NaN;
-            freq_SpHzy(file_count,sub) = NaN;
-            freq_SpHzz(file_count,sub) = NaN;
-            freq_SpHzmag(file_count,sub) = NaN;
             % continue;
         end
 %%
@@ -154,7 +141,7 @@ for sub = 1:numsub
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label  imu_data imu_angles acc_aligned gyro_aligned ' ...
-        '']; 
+        'all_match_ups']; 
     eval(['  save ' ['A', subject_str,'imu.mat '] vars_2_save ' vars_2_save fs']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data

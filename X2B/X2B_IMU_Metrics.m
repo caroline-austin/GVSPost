@@ -47,7 +47,7 @@ for sub = 1:numsub
         index1 = 1;
         index2 = 1;
         index3 = 1;
-        for trial = 1:w               
+        for trial = 1:w   % calculate all metrics and aggregate the data            
                 
                     if isempty(all_imu_angles.(['A', subject_str]){trial})
                         mean_freq(current, profile, config,sub,:) = NaN();
@@ -134,7 +134,65 @@ for sub = 1:numsub
         end
         All_Label.all_trials{sub,:}= Label.trial;
 
+        for trial =1:2:w % compare imu metrics to verbal reporting metrics
+            match_up = ceil(trial/2);
+            % grab sway power for each trial in the match up
+            power_1 = power_interest(trial, sub,2,10); % 2 is the pitch dir, 10 is the 0.5Hz freq
+            power_2 = power_interest(trial+1, sub,2,10);
+
+            sway_diff(match_up,sub) = (power_1 - power_2);
+
+            if power_1 > power_2
+                sway_win_index = 2;
+            elseif power_2 >power_1
+                sway_win_index = 3;
+            end
+
+            % determine whether trial 1 or 2 in the match up won the verbal
+            % report for sway intensisty 
+            
+            verbal_win_index = all_match_ups{match_up,8}+1;
+            
+            if verbal_win_index ==2
+                power_verbal_win(match_up, sub) = power_1;
+                power_verbal_loss(match_up, sub) = power_2;
+
+            elseif verbal_win_index ==3 
+                power_verbal_win(match_up, sub) = power_2;
+                power_verbal_loss(match_up, sub) = power_1;
+            end
+            
+
+            if sway_win_index == verbal_win_index
+                sway_verbal_congruent(match_up, sub) = 1;
+                
+            else
+                sway_verbal_congruent(match_up, sub) = 0;
+            end
+
+        end
+        
 end
+
+        [index_con] = find(sway_verbal_congruent);
+        congruent_mean_sway_diff = mean(abs(sway_diff(index_con)),"all");
+        congruent_sway_diff = sway_diff(index_con);
+        [index_non] = find(sway_verbal_congruent-1);
+        non_congruent_mean_sway_diff = mean(abs(sway_diff(index_non)),"all");
+        non_congruent_sway_diff = sway_diff(index_non);
+        non_congruent_sway_diff = [non_congruent_sway_diff ; NaN(length(congruent_sway_diff)-length(non_congruent_sway_diff),1)];
+
+        % figure; boxplot([abs(congruent_sway_diff) abs(non_congruent_sway_diff)])
+        % xticklabels(["Macthed Sway-Verbal (78)" "Conflicting Sway-Verbal (62)"])
+        % ylabel("Diff in sway power dB deg^2 /Hz")
+        % title("Comparison of Sway Magnitude and Verbal Reports")
+
+        % figure;
+        % boxplot([reshape(power_verbal_win,[],1) reshape(power_verbal_loss,[],1)])
+        % xticklabels(["Sway for Verbal Wins" "Sway for Verbal Losses"])
+        % ylabel("Sway power dB deg^2 /Hz")
+        % title("Comparison of Sway Magnitude for Verbal win/loss")
+
 %%
 Label.IMUmetrics = ["trial" "Subject" "Direction" "VarIndex"];
 Label.all_trials = All_Label.all_trials;
@@ -150,7 +208,7 @@ Label.sort = ["tiral order", "Subject",  "direction", "time or freq", ];
     %between variable names 
     vars_2_save =  ['Label all_imu_angles all_ang all_time ' ...
         'freq_interest power_interest  med_freq mean_freq ' ...
-        ' all_trials_sort power_interest_sort'];% ...
+        ' all_trials_sort power_interest_sort sway_diff sway_verbal_congruent'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
