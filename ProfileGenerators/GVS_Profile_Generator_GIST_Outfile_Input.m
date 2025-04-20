@@ -9,7 +9,7 @@ fs=50;
 % file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
 % file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
 % file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization';
-file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\RollerCoaster';
+file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization\X04182025';
 %'/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt';
 % uncomment the mkdir line if the folder does not already exist
 mkdir(file_path) 
@@ -35,7 +35,7 @@ Num_Electrode = 2;
 % weighted, closer to 8 is more angle weighted)
 Proportional = 8;
 
-PmA = [-5 ]; %[- 4 0 4];
+PmA = [2.5 ]; %[- 4 0 4];
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
 
@@ -78,7 +78,7 @@ Profile_Type = 1;
 % Default waveform for coupling is "DC" , "DC+SD" is DC plus a custom
 % waveform (code should prompt for the additional custom waveform)
 Waveform = "DC";
-mA_max = 5; % maximum current for coupling
+mA_max = 2.5; % maximum current for coupling
 % doesn't apply for the DC, but I think this is the sampling freq for the 
 % custom waveform
 freq = 0.5; 
@@ -86,33 +86,33 @@ SD_period = 0; % in seconds (this might actually be for the custom waveform)
 
 % angle and velocity at which the maximum current is realized
 max_angle = 10; % set to 10 for optimal roll coupling
-max_vel = 6; % set to 6 for optimal roll coupling
+max_vel = 20; % set to 6 for optimal roll coupling % set to 15, 20, or 30 for comfort coupling
 
 % Zvelocity = roll velocity, X velocity = pitch velocity, Y velocity = yaw
 % velocity
 
 % Channel 1
 Ch1 = 1;
-K1 = 999; % set as 999 for optimal roll coupling
+K1 = 999; % set as -999 for optimal roll coupling % Note for actual GIST + current for leftward tilt (- current for rightward tilt) 
 Couple_1 = "Roll";
 Threshold_1 = 0;
-K2 = 999; % set at 999 for optimal roll coupling
+K2 = -999; % set at 999 for optimal roll coupling
 Couple_2 = "ZVelocity";
 Threshold_2 = 0;
 % Channel 2
-Ch2 = 0;
+Ch2 = 1;
 K3 = 999;
 Couple_3 = "Pitch";
 Threshold_3 = 0;
-K4 = 999;
+K4 = -999; % GIST positive current for pitch forward
 Couple_4 = "XVelocity";
 Threshold_4 = 0;
 % Channel 3
-Ch3 = 0;
+Ch3 = 1;
 K5 = 999;
 Couple_5 = "Pitch";
 Threshold_5 = 0;
-K6 = 999;
+K6 = -999;
 Couple_6 = "XVelocity";
 Threshold_6 = 0;
 %%
@@ -616,8 +616,8 @@ elseif Num_Electrode==4 && GIST_electrodes ==6
     Electrode_2_Sig=GVS_Signal_1 + GVS_Signal_3; % right mastoid
 
     
-    Electrode_3_Sig=GVS_Signal_2; %left distal
-    Electrode_4_Sig=GVS_Signal_3; % right distal
+    Electrode_3_Sig=-GVS_Signal_2; %left distal
+    Electrode_4_Sig=-GVS_Signal_3; % right distal
     Electrode_5_Sig=zeros(1,T);
 
 end
