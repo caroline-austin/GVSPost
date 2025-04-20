@@ -2,15 +2,17 @@
 clc;clear;
 addpath("./Observer/");
 addpath("./assets/")
+%
 
 GVS_Params = [0.0245, 0];
 
-% if the TTS is in pitch config set to 1 else = 0
-TTS_pitch = 1;
+% if the TTS is in pitch config set to 1 else = 0; for GIST with roll and
+% pitch use 2
+TTS_pitch = 2;
 
 code_path = pwd;
-[input_filearg,input_path] = uigetfile('*.txt');
-% [input_filearg,input_path] = uigetfile('*.csv');
+% [input_filearg,input_path] = uigetfile('*.txt');
+[input_filearg,input_path] = uigetfile('*.csv');
 fprintf([input_filearg '\n']);
 
 cd(input_path) %make sure the profile you want to run is in this folder
@@ -68,6 +70,7 @@ loc =find(isnan(model_motion));
 model_motion(loc) = 0;
 
 %% Run observer simulations of -1 mA peak
+% select GVS profile
 
 Results = cell(1,1);
 
@@ -132,7 +135,7 @@ tilt_est = atand(g_est(:,2)./g_est(:,3));
 tilt_p = atand(g_head(:,1)./g_head(:,3));
 tilt_est_p = atand(g_est(:,1)./g_est(:,3));
 Results{1} = [ts tilt_est];
-%
+
 figure;
 subplot(3,1,1)
 
@@ -180,7 +183,7 @@ if TTS_pitch ==1
 
 end
 
-%% pitch plot
+% pitch plot
 if TTS_pitch ==1 
 else
 figure;
@@ -208,7 +211,7 @@ subplot(3,1,2)
 ylim([-20 20])
 sgtitle(strrep(input_filearg, '_' , '-'));
 end
-%%
+
 max(tilt_est)
 max(tilt)
 min(tilt_est)
