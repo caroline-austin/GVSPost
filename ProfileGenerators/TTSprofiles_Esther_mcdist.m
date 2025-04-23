@@ -11,7 +11,7 @@
 clc; clear all; close all; 
 
 
-[fname,fpath]=uiputfile('Esther_MC_Distmax20deg.txt','Select directory to save profiles to:');
+[fname,fpath]=uiputfile('Esther_MC_Distmax8deg.txt','Select directory to save profiles to:');
 cd(fpath)
 
 
@@ -48,8 +48,8 @@ a = [1.2475     %1
     0.1247      %11 
     0.1247];    %12
 % a = a*1.5;   % for safety testing or for 12 deg
-% a = a*1.875;   % for 15 deg
-a = a*2.5;   % for 15 deg
+% a = a*1.875;   % for 15 deg - also use for training profiles (~+/-6 deg)
+% a = a*2.5;   % for 20 deg
 
 %Insert Frequencies
 f = [0.014      %1
@@ -66,21 +66,22 @@ f = [0.014      %1
     0.668];     %12
 
 % Insert Phases (deg)
-p = [31          %1
-    42          %2
-    74          %3
-    98          %4
-    120         %5
-    235         %6
-    294         %7
-    99          %8, tweak this from 259 to get it to be symmetric and zero-mean
-    331         %9
-    352         %10
-    11          %11
-    61];        %12
+% p = [0;0;0;0;0;0;0;0;0;0;0;0]; % for training profiles
+p = [31+90          %1
+    42+90          %2
+    74+90          %3
+    98+90          %4
+    120+90         %5
+    235+90         %6
+    294+90         %7
+    99+90          %8, tweak this from 259 to get it to be symmetric and zero-mean
+    331+90         %9
+    352+90         %10
+    11+90          %11
+    61+90];        %12
 
 dt = 1/sr;
-StopTime = 120;              % Total Duration of Trial
+StopTime = 120;              % Total Duration of Trial - 120 for full trials - 30 for training trials
 % StopTime = 120 *1.2;            % for safety testing
 t = (0:dt:StopTime-dt)';     % seconds
 
@@ -89,6 +90,8 @@ y = zeros(length(t),1);
 for j = 1:length(p)
     y = y + sin(2*pi*f(j)*t + p(j)*pi/180)*a(j);
 end
+
+% y= y- mean(y); %use when making training trials to ensure a zero mean 
 
 %Ramp up/down
 ramp = 5;           % 5 seconds to ramp up and down
