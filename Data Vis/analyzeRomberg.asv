@@ -1,0 +1,88 @@
+function [data_compiled] = analyzeRomberg(fileName,plotB)
+%%%%%%%%%%%
+%%%% Inputs
+%   fileName - "String" Name of FMT data file
+%   individual - "double (1-11)" Indicate row # for individual data set
+%   reference
+%   plot - "bool" for plotting or not
+%%%% Outputs
+%   
+%   
+%   
+%%%%%%%%%%%%
+%% Read File Generation
+load(fileName);
+%% Begin all data analysis
+data = romberg_EXCEL_all(:,:);
+failTime = zeros(11*24,1);
+headTilt = zeros(11*24,1);
+GVS_admin = zeros(11*24,1);
+trial_order = zeros(11*24,1);
+for ii = 1:12
+    for iii = 1:11
+        data_t = data{iii,ii*2-1};
+        failTime(24*iii + 2*ii-1 - 24,1) = data_t{1,10};
+        failTime(24*iii + 2*ii - 24,1) = data_t{1,11};
+        if data_t{1,7} == "yes"
+            headTilt(24*iii + 2*ii - 1 - 24,1) = 1;
+            headTilt(24*iii + 2*ii - 24,1) = 1;
+        elseif data_t{1,7} == "No"
+            headTilt(24*iii + 2*ii - 1 - 24,1) = 0;
+            headTilt(24*iii + 2*ii - 24,1) = 0;
+        else
+            disp('Error');
+        end
+        GVS_admin(24*iii + 2*ii-1 - 24,1) = data_t{1,5};
+        GVS_admin(24*iii + 2*ii - 24,1) = data_t{1,5};
+        trial_order(24*iii + 2*ii-1 - 24,1) = data_t{1,2}*2-1;
+        trial_order(24*iii + 2*ii - 24,1) = data_t{1,2}*2;
+    end
+end
+    
+data_compiled = [failTime headTilt GVS_admin trial_order];
+
+%% Data Visualization
+ %%%Plotting
+    if plotB == 1
+
+        %%% Pure Dasa Visualization
+        figure(); hold on;
+        sgtitle('FMT Perfomance Data')
+        subplot(2,1,1)
+        scatter(GVS_admin, raw_time_data);
+        xlabel('GVS Gain Value');
+        ylabel('Raw Time of Course Completion (s)')
+        subplot(2,1,2)
+        scatter(GVS_admin, error_data);
+        xlabel('GVS Gain Value');
+        ylabel('Amount of Errors');
+        
+
+        %%% Learning Effect over time
+        figure(); hold on;
+        sgtitle('FMT Perfomance Data over Time')
+        subplot(2,1,1)
+        scatter(trial_order, raw_time_data);
+        xlabel('Trial Sequence');
+        ylabel('Raw Time of Course Completion (s)')
+        subplot(2,1,2)
+        scatter(trial_order, error_data);
+        xlabel('Trial Sequence');
+        ylabel('Amount of Errors');
+
+        %%% Net Time of completion 
+        figure(); hold on;
+        sgtitle('FMT Summed Perfomance Data')
+        subplot(2,1,1)
+        scatter(GVS_admin, net_time_data);
+        xlabel('GVS Gain Value');
+        ylabel('Net Time of Course Completion (s)')
+        subplot(2,1,2)
+        scatter(trial_order, net_time_data);
+        xlabel('Trial Order');
+        ylabel('Net Time of Course Completion (s)');
+
+    
+
+
+end
