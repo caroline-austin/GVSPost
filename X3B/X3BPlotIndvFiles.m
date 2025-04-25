@@ -64,9 +64,11 @@ for sub = 1:numsub
            TTS_data.tilt_actual =  TTS_data.tilt_actual(1:6004); 
            TTS_data.joystick_actual = TTS_data.joystick_actual(1:6004);
            TTS_data.GVS_actual_mV = TTS_data.GVS_actual_mV(1:6004);
+       else
+           
        end
 
-       rms_save(sub,i) = rms(TTS_data.tilt_actual);
+       rms_save(sub,i) = rms(TTS_data.tilt_actual - mean(TTS_data.tilt_actual));
        mae_save(sub,i) = rms(TTS_data.joystick_actual);
 
        if contains(current_mat_file, '2_0') || contains(current_mat_file, '2_1') || contains(current_mat_file, '2_2')
@@ -91,7 +93,7 @@ for sub = 1:numsub
        hold on;
        title("disturbance profile")
        subplot(4,1,2)
-       plot(TTS_data.tilt_actual)
+       plot(TTS_data.tilt_actual- mean(TTS_data.tilt_actual))
        title("actual motion")
        hold on;
        subplot(4,1,3)
@@ -130,3 +132,4 @@ figure
 bar(rms_save')
 xticks([1:24])
 xticklabels(["" (Label.trial)])
+title("Mean Removed RMS")
