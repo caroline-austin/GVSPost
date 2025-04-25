@@ -182,7 +182,7 @@ for sub = 1:numsub
         end
 
         cd(ROM_path);
-       vars_2_save = ['ROM_GIST_data ROM_Wii_trial ROM_trial_info' ...
+       vars_2_save = ['ROM_GIST_data ROM_Wii_trial ROM_trial_info ROM_pass' ...
            ];
        eval(['  save ' [char(ROM_trial_name), '.mat '] vars_2_save ' vars_2_save']);      
        cd(code_path)
@@ -192,133 +192,138 @@ for sub = 1:numsub
     end
 
 
-    % get info on the csv files (TTS output files) for the current subject
-    cd([code_path '/..']);
-    TTS_path = [subject_path '\TTS'] ;
-    [subject_filenames]=file_path_info2(code_path,TTS_path ); % get files from file folder
-    num_sub_files = length(subject_filenames);
-    cd([code_path '/..']);
-    csv_filenames = get_filetype(subject_filenames, 'csv');
-    num_csv_files = length(csv_filenames);
-
-    % for each of the TTS output files extract the recorded data, add in the
-    % intended GVS and TTS data, and then save as a matlab file 
-    for i = 1:num_csv_files
-       current_csv_file = char(csv_filenames(i));
-       if ~ contains(current_csv_file, 'Dist') 
-           continue
-       end
-       % start by pulling out the important identifying info and use it to
-       % create the filename for saving
-       % currently using the info from the master spread sheet to do this 
-       
-       % pull the trial number from the TTS output file
-       trial_loc = find(current_csv_file == ' ', 1,"last"); % there should be a space right before the trial number
-       trial_number = current_csv_file(trial_loc+1:trial_loc+2);
-       %find the matching trial number from the master spreadsheet
-       row = find(Trial_Num_TTS == str2num(trial_number),1);
-       % if there is not a matching number in the master spreadsheet skip
-       % (could be a practice trial or a trial that was thrown out)
-       if isempty(row)
-           continue;
-       end
-       % just in case we forget to start at trial 11 make it a 2 digit
-       % number
-       if str2num(trial_number)<10
-           trial_number = ['0', strrep(trial_number, '.', '')];
-       end
-
-       % % figure out the filename of the GVS profile that was run
-       GVS_profile_name = char(strjoin([ string(Trial_Info_TTS(row,3))]));
-        
-       % %figure out what the current was proportional to (7,7.5,8) and store
-       % %in a string to use later for file naming
-       % if contains(GVS_profile_name, '.')
-       %      decimal_loc = find(GVS_profile_name(:) == '.');
-       % 
-       %      proportion= strrep(strjoin([string(GVS_profile_name(decimal_loc-1)) ...
-       %          '_' GVS_profile_name(decimal_loc+1) '0']),' ', '');
-       %  else
-       %      proportion = [GVS_profile_name(end) '_00'];
-       %  end
-       % 
-       GVS_profile_name = strrep([strrep(char(GVS_profile_name), '.', '_') ], ' ', '');
-       % 
-       % figure out name of the TTS profile that was run (this is 
-       % based on the master spread sheet, not the csv filename)
-       TTS_profile = char(string(Trial_Info_TTS(row,4)));%this might change if additional GVS columns are added
-       TTS_profile_name = ['Esther_MC_', TTS_profile ];
-
-       %check actual v. perscribed physical motion profile
-       if ~ contains(current_csv_file, TTS_profile)
-            disp(["For trial ", trial_number, "the TTS csv profile does " + ...
-                "not match the listed master spread sheet profile "])
-       end
-
-       % %use N or P instead of +/- for the current amplitude
-       %  if contains(GVS_profile_name, '-')
-       %      polarity = 'N';
-       %      current_amp = string(abs(str2num(string(Trial_Info(row,5)))));
-       %  else
-       %      polarity = 'P';
-       %      current_amp = string(Trial_Info(row,5));
-       %  end
-        
-       %generate filename 
-       filesave_name = strrep(strjoin([ "S" subject_str '_' GVS_profile_name '_' TTS_profile ... % add in GVS info here
-             '_' trial_number]), ' ', '');
-       % %load GVS profile commanded by sparky
-       % cd(gvs_path)
-       % Commanded_GVS= load(GVS_profile_name);
-       % cd (code_path);
-       % GVS_command1 = (Commanded_GVS.Profile(1,2:end));
-       % GVS_command = (cellfun(@str2num,(GVS_command1))')/100;
-       % % load the profile stored on the TTS
-       % cd(tts_path)
-       % Commanded_TTS= load([TTS_profile_name, '.txt']);
-       % cd (code_path);
-       % tilt_velocity = (Commanded_TTS(2:end,7))/200;
-
-       %load the TTS output csv file and store appropriate data with
-       %unit conversions
-       cd(subject_path);
-       TTS_data = readtable(current_csv_file); 
-       cd(code_path);
-       time = table2array(TTS_data(1:end-1,1));
-       plot_time = (time -time(1))/1000;
-       tilt_force = table2array(TTS_data(1:end-1,2))/200; %deg; % the disturbance profile without joystick input
-       tilt_command = table2array(TTS_data(1:end-1,3))/200; %deg %the net command of disturbance + joystick
-       tilt_actual = table2array(TTS_data(1:end-1,5))/200; %deg % the net output moiton of disturbance + joystick
-       joystick_actual = table2array(TTS_data(1:end-1,7))/1000; %deg %the joystick input
-       GVS_actual_mV= table2array(TTS_data(1:end-1,10))/1000; %mV (not mA) % the GVS signal recorded by the TTS 
-       mustBeNonsparse(GVS_actual_mV);
-       mustBeFinite(GVS_actual_mV);
-       GVS_actual_filt = lowpass(GVS_actual_mV,1,50); %filter raw GVS data
-       trial_end = find(time,1, 'last');
-
-       % Find where there are the random 0s because data was not sent and use
-       % linear interpolation to fill them in with representative values
-        ind = [];
-        for j = 2:length(tilt_command)-1
-            if tilt_command(j) == 0 && (tilt_command(j-1) ~= 0)
-                % there is a random zero, so replace with linear interpolating
-                ind = [ind j];
-                tilt_command(j) = interp1([time(j-1) time(j+1)], [tilt_command(j-1) tilt_command(j+1)], time(j));
-            end
-        end
-
-        %save the individual trial data into a matlab file and clear
-        %variables
-       cd(subject_path);
-       vars_2_save = ['TTS_data tilt_force tilt_command  tilt_actual joystick_actual' ...
-           ' time plot_time  trial_end GVS_actual_mV GVS_actual_filt' ...
-           ' '];%tilt_velocity 
-       eval(['  save ' [char(filesave_name), '.mat '] vars_2_save ' vars_2_save']);      
-       cd(code_path)
-       eval (['clear ' vars_2_save])
-    
-    end
+    % % get info on the csv files (TTS output files) for the current subject
+    % cd([code_path '/..']);
+    % TTS_path = [subject_path '\TTS'] ;
+    % [subject_filenames]=file_path_info2(code_path,TTS_path ); % get files from file folder
+    % num_sub_files = length(subject_filenames);
+    % cd([code_path '/..']);
+    % csv_filenames = get_filetype(subject_filenames, 'csv');
+    % num_csv_files = length(csv_filenames);
+    % 
+    % % for each of the TTS output files extract the recorded data, add in the
+    % % intended GVS and TTS data, and then save as a matlab file 
+    % for i = 1:num_csv_files
+    %    current_csv_file = char(csv_filenames(i));
+    %    if ~ contains(current_csv_file, 'Dist') 
+    %        continue
+    %    end
+    %    % start by pulling out the important identifying info and use it to
+    %    % create the filename for saving
+    %    % currently using the info from the master spread sheet to do this 
+    % 
+    %    % pull the trial number from the TTS output file
+    %    trial_loc = find(current_csv_file == ' ', 1,"last"); % there should be a space right before the trial number
+    %    trial_number = current_csv_file(trial_loc+1:trial_loc+2);
+    %    %find the matching trial number from the master spreadsheet
+    %    row = find(Trial_Num_TTS == str2num(trial_number),1);
+    %    % if there is not a matching number in the master spreadsheet skip
+    %    % (could be a practice trial or a trial that was thrown out)
+    %    if isempty(row)
+    %        continue;
+    %    end
+    %    % just in case we forget to start at trial 11 make it a 2 digit
+    %    % number
+    %    if str2num(trial_number)<10
+    %        trial_number = ['0', strrep(trial_number, '.', '')];
+    %    end
+    % 
+    %    % % figure out the filename of the GVS profile that was run
+    %    GVS_profile_name = char(strjoin([ string(Trial_Info_TTS(row,3))]));
+    % 
+    %    % %figure out what the current was proportional to (7,7.5,8) and store
+    %    % %in a string to use later for file naming
+    %    % if contains(GVS_profile_name, '.')
+    %    %      decimal_loc = find(GVS_profile_name(:) == '.');
+    %    % 
+    %    %      proportion= strrep(strjoin([string(GVS_profile_name(decimal_loc-1)) ...
+    %    %          '_' GVS_profile_name(decimal_loc+1) '0']),' ', '');
+    %    %  else
+    %    %      proportion = [GVS_profile_name(end) '_00'];
+    %    %  end
+    %    % 
+    %    GVS_profile_name = strrep([strrep(char(GVS_profile_name), '.', '_') ], ' ', '');
+    %    % 
+    %    % figure out name of the TTS profile that was run (this is 
+    %    % based on the master spread sheet, not the csv filename)
+    %    TTS_profile = char(string(Trial_Info_TTS(row,4)));%this might change if additional GVS columns are added
+    %    TTS_profile_name = ['Esther_MC_', TTS_profile ];
+    % 
+    %    %check actual v. perscribed physical motion profile
+    %    if ~ contains(current_csv_file, TTS_profile)
+    %         disp(["For trial ", trial_number, "the TTS csv profile does " + ...
+    %             "not match the listed master spread sheet profile "])
+    %    end
+    % 
+    %    % %use N or P instead of +/- for the current amplitude
+    %    %  if contains(GVS_profile_name, '-')
+    %    %      polarity = 'N';
+    %    %      current_amp = string(abs(str2num(string(Trial_Info(row,5)))));
+    %    %  else
+    %    %      polarity = 'P';
+    %    %      current_amp = string(Trial_Info(row,5));
+    %    %  end
+    % 
+    %    %generate filename 
+    %    filesave_name = strrep(strjoin([ "S" subject_str '_' GVS_profile_name '_' TTS_profile ... % add in GVS info here
+    %          '_' trial_number]), ' ', '');
+    %    % %load GVS profile commanded by sparky
+    %    % cd(gvs_path)
+    %    % Commanded_GVS= load(GVS_profile_name);
+    %    % cd (code_path);
+    %    % GVS_command1 = (Commanded_GVS.Profile(1,2:end));
+    %    % GVS_command = (cellfun(@str2num,(GVS_command1))')/100;
+    %    % % load the profile stored on the TTS
+    %    % cd(tts_path)
+    %    % Commanded_TTS= load([TTS_profile_name, '.txt']);
+    %    % cd (code_path);
+    %    % tilt_velocity = (Commanded_TTS(2:end,7))/200;
+    % 
+    %    %load the TTS output csv file and store appropriate data with
+    %    %unit conversions
+    %    cd(subject_path);
+    %    TTS_data = readtable(current_csv_file); 
+    %    cd(code_path);
+    %    time = table2array(TTS_data(1:end-1,1));
+    %    plot_time = (time -time(1))/1000;
+    %    tilt_force = table2array(TTS_data(1:end-1,2))/200; %deg; % the disturbance profile without joystick input
+    %    tilt_command = table2array(TTS_data(1:end-1,3))/200; %deg %the net command of disturbance + joystick
+    %    tilt_actual = table2array(TTS_data(1:end-1,5))/200; %deg % the net output moiton of disturbance + joystick
+    %    joystick_actual = table2array(TTS_data(1:end-1,7))/1000; %deg %the joystick input
+    %    GVS_actual_mV= table2array(TTS_data(1:end-1,10))/1000; %mV (not mA) % the GVS signal recorded by the TTS 
+    %    mustBeNonsparse(GVS_actual_mV);
+    %    mustBeFinite(GVS_actual_mV);
+    %    GVS_actual_filt = lowpass(GVS_actual_mV,1,50); %filter raw GVS data
+    %    trial_end = find(time,1, 'last');
+    % 
+    %    % Find where there are the random 0s because data was not sent and use
+    %    % linear interpolation to fill them in with representative values
+    %     ind = [];
+    %     for j = 2:length(tilt_command)-1
+    %         if tilt_command(j) == 0 && (tilt_command(j-1) ~= 0)
+    %             % there is a random zero, so replace with linear interpolating
+    %             ind = [ind j];
+    %             tilt_command(j) = interp1([time(j-1) time(j+1)], [tilt_command(j-1) tilt_command(j+1)], time(j));
+    %         end
+    %     end
+    % 
+    %     %save the individual trial data into a matlab file and clear
+    %     %variables
+    %    cd(subject_path);
+    %    vars_2_save = ['TTS_data tilt_force tilt_command  tilt_actual joystick_actual' ...
+    %        ' time plot_time  trial_end GVS_actual_mV GVS_actual_filt' ...
+    %        ' '];%tilt_velocity 
+    %    eval(['  save ' [char(filesave_name), '.mat '] vars_2_save ' vars_2_save']);      
+    %    cd(code_path)
+    %    eval (['clear ' vars_2_save])
+    % 
+    % end
     %save the master sheet info into a single file
+    Trial_Info.ROM = Trial_Info_ROM;
+    Trial_Info.TDM = Trial_Info_TDM;
+    Trial_Info.TTS = Trial_Info_TTS;
+    Trial_Info.FMT = Trial_Info_FMT;
+
     cd(subject_path);
     eval(['  save ' ['S', subject_str, '.mat '] ' Label Trial_Info ']); %add impedance, MS, GVS susceptibility
     cd(code_path) 
