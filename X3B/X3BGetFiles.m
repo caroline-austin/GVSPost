@@ -9,7 +9,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3091:3091];  % Subject List 1011:1022
+subnum = [ 3092:3092];  % Subject List 1011:1022; 3091:3092
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -63,7 +63,7 @@ for sub = 1:numsub
 
     % TTS info
     Trial_Info_TTS = readcell('FunctionalMobilityTesting.xlsx','Sheet', ... % ManualControlTrials.xlsx
-        ['S' subject_str],'Range','N3:T19'); % may need to increase beyond 35, but make sure those rows have zeros
+        ['S' subject_str],'Range','N8:T19'); % may need to increase beyond 35, but make sure those rows have zeros
     Trial_Num_TTS = cell2mat(Trial_Info_TTS(:,1));
     Label.DataColumnsTTS = readcell('FunctionalMobilityTesting.xlsx','Sheet',... 
         ['S' subject_str], 'Range','N2:T2');
@@ -94,19 +94,19 @@ for sub = 1:numsub
         cd(ROM_GIST_path);
         ROM_GIST_data = readtable(current_file); 
         cd(code_path);
-        
+
 
         if Wii_trial_index > num_Wii_trials
             Wii_file_index = Wii_file_index +1;
             cd(ROM_Wii_path);
             ROM_Wii_data = readtable(char(ROM_Wii_filenames(Wii_file_index)));
             cd(code_path);
-            
+
             for j = 2:length(ROM_Wii_data.Var1)
                 timesteps(j) = ROM_Wii_data.Var1(j) - ROM_Wii_data.Var1(j-1);    
             end
 
-            trial_start_loc = [1 find(timesteps > 100)];
+            trial_start_loc = [1 find(timesteps > 500)];
             num_Wii_trials = length(trial_start_loc);
             trial_start_loc = [trial_start_loc length(ROM_Wii_data.Var1)];
             Wii_trial_index = 1;
@@ -114,26 +114,26 @@ for sub = 1:numsub
         end
 
         ROM_Wii_trial = ROM_Wii_data{trial_start_loc(Wii_trial_index):(trial_start_loc(Wii_trial_index+1)-1) ,:};
-        
+
 
         % get Trial Info from excel sheet
         if Wii_file_index == 1
             ROM_trial_row_index = Wii_trial_index;
             ROM_trial_col_index = 7;
-            
+
         elseif num_ROM_Wii_files >2 % for blocking 
-            ROM_trial_row_index = 6*(Wii_trial_index-1)+ 1+ rem((Wii_trial_index+1),2);
-            ROM_trial_col_index = 7+ rem((Wii_trial_index+1),2);
+            ROM_trial_row_index = 6+(Wii_file_index-2)*2+  (ceil(Wii_trial_index/3));
+            ROM_trial_col_index = 7+ rem((Wii_trial_index+2),3);
 
         else % for the single giant file
-            ROM_trial_row_index = 6+(ceil(Wii_trial_index/2));%- rem((Wii_trial_index+1),2);
-            ROM_trial_col_index = 7+ rem((Wii_trial_index+1),2);
-            
+            ROM_trial_row_index = 6+(ceil(Wii_trial_index/3));%- rem((Wii_trial_index+1),2);
+            ROM_trial_col_index = 7+ rem((Wii_trial_index+2),3);
+
         end
 
         ROM_trial_info = Trial_Info_ROM(ROM_trial_row_index, :) ;
         ROM_pass = ROM_trial_info{ROM_trial_col_index};
-        
+
         ROM_trial_name = 'ROM';
         % put together trial_name
         switch ROM_trial_info{4}
@@ -189,6 +189,203 @@ for sub = 1:numsub
        eval (['clear ' vars_2_save])
 
         Wii_trial_index = Wii_trial_index+1;
+    end
+
+%%
+     % get info on FMT files 
+     
+    cd([code_path '/..']);
+    FMT_path = [subject_path '\FMT'] ;
+    FMT_GIST_path = [subject_path '\FMT\GIST'] ;
+    [FMT_GIST_filenames]=file_path_info2(code_path,FMT_GIST_path ); % get files from file folder
+    num_FMT_GIST_files = length(FMT_GIST_filenames);
+
+    FMT_trial_index = 0;
+
+    for i = 1:num_FMT_GIST_files
+        current_file = char(FMT_GIST_filenames(i));
+       if ~ contains(current_file, 'csv') 
+           continue
+       end
+
+      % for each FMT GIST file (trial) grab data and condition info for 
+    % naming then save as a matlab file. 
+        FMT_trial_index = FMT_trial_index +1;
+        % if i == 4 
+        %     FMT_trial_index = FMT_trial_index +2;
+        % end
+        cd(FMT_GIST_path);
+        FMT_GIST_data = readtable(current_file); 
+        cd(code_path);
+
+        FMT_trial_info = Trial_Info_FMT(FMT_trial_index, :) ;
+        FMT_raw_time = FMT_trial_info{4};
+        FMT_errors = FMT_trial_info{5};
+        FMT_adj_time = FMT_trial_info{6};
+
+        FMT_trial_name = 'FMT';
+        % put together trial_name
+
+        switch FMT_trial_info{3}
+            case 'Sham'
+                FMT_trial_name = [FMT_trial_name '_SHAMGVS'];
+
+            case 'DC Offset'
+                FMT_trial_name = [FMT_trial_name '_DCSDGVS'];
+
+            case 'DC Wave'
+                FMT_trial_name = [FMT_trial_name '_DCONGVS'];
+        end
+
+        if FMT_trial_index <10
+            FMT_trial_name = [FMT_trial_name '_0' num2str(FMT_trial_index)];
+        else
+            FMT_trial_name = [FMT_trial_name '_' num2str(FMT_trial_index)];
+        end
+
+        cd(FMT_path);
+       vars_2_save = ['FMT_GIST_data FMT_trial_info FMT_raw_time FMT_errors FMT_adj_time' ...
+           ];
+       eval(['  save ' [char(FMT_trial_name), '.mat '] vars_2_save ' vars_2_save']);      
+       cd(code_path)
+       eval (['clear ' vars_2_save])
+    end
+
+ 
+
+
+    %%
+     % get info on Tandem files 
+    cd([code_path '/..']);
+    TDM_path = [subject_path '\Tandem'] ;
+    TDM_GIST_path = [subject_path '\Tandem\GIST'] ;
+    [TDM_GIST_filenames]=file_path_info2(code_path,TDM_GIST_path ); % get files from file folder
+    num_TDM_GIST_files = length(TDM_GIST_filenames);
+
+    TDM_trial_index = 0;
+
+    for i = 1:num_TDM_GIST_files
+        current_file = char(TDM_GIST_filenames(i));
+       if ~ contains(current_file, 'csv') 
+           continue
+       end
+        TDM_trial_index = TDM_trial_index +1;
+
+        cd(TDM_GIST_path);
+        TDM_GIST_data = readtable(current_file); 
+        cd(code_path);
+
+        TDM_trial_info = Trial_Info_TDM(TDM_trial_index, :) ;
+        TDM_correct_steps = TDM_trial_info{5};
+
+        TDM_trial_name = 'TDM';
+        % put together trial_name
+
+        switch TDM_trial_info{4}
+            case 'Open'
+                TDM_trial_name = [TDM_trial_name '_EO'];
+
+            case 'Closed'
+                TDM_trial_name = [TDM_trial_name '_EC'];
+        end
+
+        switch TDM_trial_info{3}
+            case 'Sham'
+                TDM_trial_name = [TDM_trial_name '_SHAMGVS'];
+
+            case 'DC Offset'
+                TDM_trial_name = [TDM_trial_name '_DCSDGVS'];
+
+            case 'DC Wave'
+                TDM_trial_name = [TDM_trial_name '_DCONGVS'];
+        end
+
+        if TDM_trial_index <10
+            TDM_trial_name = [TDM_trial_name '_0' num2str(TDM_trial_index)];
+        else
+            TDM_trial_name = [TDM_trial_name '_' num2str(TDM_trial_index)];
+        end
+
+        cd(TDM_path);
+       vars_2_save = ['TDM_GIST_data TDM_trial_info TDM_correct_steps ' ...
+           ];
+       eval(['  save ' [char(TDM_trial_name), '.mat '] vars_2_save ' vars_2_save']);      
+       cd(code_path)
+       eval (['clear ' vars_2_save])
+    end
+
+    %%
+ % get info on TTS MC files 
+    cd([code_path '/..']);
+    TTS_path = [subject_path '\TTS'] ;
+    TTS_GIST_path = [subject_path '\TTS\GIST'] ;
+    TTS_MC_path = [subject_path '\TTS\TTS'] ;
+    [TTS_GIST_filenames]=file_path_info2(code_path,TTS_GIST_path ); % get files from file folder
+    cd([code_path '/..']);
+    [TTS_MC_filenames]=file_path_info2(code_path,TTS_MC_path ); % get files from file folder
+    num_TTS_GIST_files = length(TTS_GIST_filenames);
+    num_TTS_MC_files = length(TTS_MC_filenames);
+
+    % for each romberg GIST file (trial) grab associated Wii Force Plate
+    % data and condition info for naming then save as a matlab file. 
+    MC_file_index = 0;
+    MC_trial_index = 1;
+    num_MC_trials = 0;
+    TTS_trial_index = 0;
+    for i = 1:num_TTS_GIST_files
+        current_file = char(TTS_GIST_filenames(i));
+       if ~ contains(current_file, 'csv') 
+           continue
+       end
+       TTS_trial_index = TTS_trial_index +1;
+        cd(TTS_GIST_path);
+        TTS_GIST_data = readtable(current_file); 
+        cd(code_path);
+
+        TTS_trial_info = Trial_Info_TTS(TTS_trial_index, :) ;
+        TTS_profile = TTS_trial_info{4};
+        TTS_file_num = TTS_trial_info{1};
+
+        idx = cellfun(@(x) contains(x, TTS_profile) && contains(x, [' ' num2str( TTS_file_num)]), TTS_MC_filenames);
+        MC_file_index  = find(idx);
+
+        % MC_file_index = find(all(contains(TTS_MC_filenames, TTS_profile) && contains(TTS_MC_filenames,TTS_trial_info{3})));
+        % MC_file_index = MC_file_index +1;
+        cd(TTS_MC_path);
+            TTS_MC_data = readtable(char(TTS_MC_filenames(MC_file_index)));
+        cd(code_path);
+
+
+        TTS_trial_name = 'TTS';
+        % put together trial_name
+        TTS_trial_name = [TTS_trial_name '_' TTS_trial_info{4}];
+
+
+        switch TTS_trial_info{3}
+            case 'Sham'
+                TTS_trial_name = [TTS_trial_name '_SHAMGVS'];
+
+            case 'DC Offset'
+                TTS_trial_name = [TTS_trial_name '_DCSDGVS'];
+
+            case 'DC Wave'
+                TTS_trial_name = [TTS_trial_name '_DCONGVS'];
+        end
+
+        if TTS_trial_index <10
+            TTS_trial_name = [TTS_trial_name '_0' num2str(TTS_trial_index)];
+        else
+            TTS_trial_name = [TTS_trial_name '_' num2str(TTS_trial_index)];
+        end
+
+        cd(TTS_path);
+       vars_2_save = ['TTS_GIST_data TTS_MC_data TTS_trial_info TTS_profile ' ...
+           ];
+       eval(['  save ' [char(TTS_trial_name), '.mat '] vars_2_save ' vars_2_save']);      
+       cd(code_path)
+       eval (['clear ' vars_2_save])
+
+        MC_trial_index = MC_trial_index+1;
     end
 
 
