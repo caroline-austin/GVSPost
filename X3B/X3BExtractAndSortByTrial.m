@@ -6,7 +6,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3091:3091];  % Subject List 1011:1022
+subnum = [ 3092:3092];  % Subject List 1011:1022 , 3091:3092
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -93,7 +93,140 @@ for sub = 1:numsub
     end
 
 
-    
+    %  aggreagating/sorting the FMT files
+    cd([code_path '/..']); 
+    [FMT_filenames]=file_path_info2(code_path, FMT_path); % get file names from Romberg folder
+    cd(code_path);
+
+    cd([code_path '/..']); 
+    FMT_mat_filenames = get_filetype(FMT_filenames, 'mat');
+    num_FMT_mat_files = length(FMT_mat_filenames);
+    data.FMT.Num_Trials = num_FMT_mat_files;
+    previous_file = 'z';
+
+    for file = 1:num_FMT_mat_files
+
+       current_file = char(FMT_mat_filenames(file));
+       %skip files that aren't the trial files 
+       % if ~contains(current_file,'mA')  %length(current_file)<25
+       %     continue
+       % end
+
+              %get info about and load trial file
+      test_type = current_file(1:3);
+      GVS_type = current_file(5:11);
+      trial_number = current_file(end-5:end-4);
+
+       cd(FMT_path);
+       load(current_file);
+       cd(code_path); 
+
+       if  contains(current_file, previous_file)
+
+         trial_index = trial_index+1;
+       else
+           trial_index = 1;
+       end
+
+       data.(test_type).GIST.(GVS_type){sub,trial_index} = FMT_GIST_data;
+       data.(test_type).raw_time.(GVS_type){sub,trial_index} = FMT_raw_time;
+       data.(test_type).errors.(GVS_type){sub,trial_index} = FMT_errors;
+       data.(test_type).adj_time.(GVS_type){sub,trial_index} = FMT_adj_time;
+       data.(test_type).Trial_Num.(GVS_type){sub,trial_index} = trial_number;
+
+       previous_file = [ GVS_type];
+       
+    end
+
+     %  aggreagating/sorting the Tandem files
+    cd([code_path '/..']); 
+    [TDM_filenames]=file_path_info2(code_path, TDM_path); % get file names from Tandem folder
+    cd(code_path);
+
+    cd([code_path '/..']); 
+    TDM_mat_filenames = get_filetype(TDM_filenames, 'mat');
+    num_TDM_mat_files = length(TDM_mat_filenames);
+    data.TDM.Num_Trials = num_TDM_mat_files;
+    previous_file = 'z';
+
+    for file = 1:num_TDM_mat_files
+
+       current_file = char(TDM_mat_filenames(file));
+       %skip files that aren't the trial files 
+       % if ~contains(current_file,'mA')  %length(current_file)<25
+       %     continue
+       % end
+
+              %get info about and load trial file
+      test_type = current_file(1:3);
+      eyes_type = current_file(5:6);
+      GVS_type = current_file(8:14);
+      trial_number = current_file(end-5:end-4);
+
+       cd(TDM_path);
+       load(current_file);
+       cd(code_path); 
+
+       if  contains(current_file, previous_file)
+
+         trial_index = trial_index+1;
+       else
+           trial_index = 1;
+       end
+
+       data.(test_type).GIST.(eyes_type).(GVS_type){sub,trial_index} = TDM_GIST_data;
+       data.(test_type).raw_time.(eyes_type).(GVS_type){sub,trial_index} = TDM_correct_steps;
+       data.(test_type).Trial_Num.(eyes_type).(GVS_type){sub,trial_index} = trial_number;
+
+       previous_file = [ eyes_type '_' GVS_type];
+       
+    end
+
+
+       %  aggreagating/sorting the TTS files
+    cd([code_path '/..']); 
+    [TTS_filenames]=file_path_info2(code_path, TTS_path); % get file names from Romberg folder
+    cd(code_path);
+
+    cd([code_path '/..']); 
+    TTS_mat_filenames = get_filetype(TTS_filenames, 'mat');
+    num_TTS_mat_files = length(TTS_mat_filenames);
+    data.TTS.Num_Trials = num_TTS_mat_files;
+    previous_file = 'z';
+    trial_index = 0;
+
+    for file = 1:num_TTS_mat_files
+
+       current_file = char(TTS_mat_filenames(file));
+       %skip files that aren't the trial files 
+       % if ~contains(current_file,'mA')  %length(current_file)<25
+       %     continue
+       % end
+
+              %get info about and load trial file
+      test_type = current_file(1:3);
+      profile = current_file(5:9);
+      GVS_type = current_file(11:17);
+      trial_number = current_file(end-5:end-4);
+
+       cd(TTS_path);
+       load(current_file);
+       cd(code_path); 
+
+       if  contains(current_file, previous_file)
+
+       else
+           trial_index = trial_index+1;
+       end
+
+       data.(test_type).GIST.(GVS_type){sub,trial_index} = TTS_GIST_data;
+       data.(test_type).TTS.(GVS_type){sub,trial_index} = TTS_MC_data;
+       data.(test_type).profile.(GVS_type){sub,trial_index} = TTS_profile;
+       data.(test_type).Trial_Num.(GVS_type){sub,trial_index} = trial_number;
+
+       previous_file = [ profile];
+       
+    end
 
     cd(subject_path);
     eval(['  save ' ['S', subject_str, 'Extract.mat '] ' Label Trial_Info data ']); %add impedance, MS, GVS susceptibility
