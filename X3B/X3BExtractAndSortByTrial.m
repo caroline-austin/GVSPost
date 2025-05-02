@@ -6,7 +6,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3092:3092];  % Subject List 1011:1022 , 3091:3092
+subnum = [ 3091:3094];  % Subject List 1011:1022 , 3091:3092
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -228,9 +228,17 @@ for sub = 1:numsub
        
     end
 
-    cd(subject_path);
-    eval(['  save ' ['S', subject_str, 'Extract.mat '] ' Label Trial_Info data ']); %add impedance, MS, GVS susceptibility
-    cd(code_path) 
+    if numsub == 1
+        cd(subject_path);
+        eval(['  save ' ['S', subject_str, 'Extract.mat '] ' Label Trial_Info data ']); %add impedance, MS, GVS susceptibility
+        cd(code_path) 
+    else
+        cd(file_path);
+        eval(['  save ' ['SAll.mat '] ' Label Trial_Info data ']); %add impedance, MS, GVS susceptibility
+        cd(code_path) 
+
+    end
+
 
 
 end
