@@ -93,10 +93,10 @@ max_vel = 20; % set to 6 for optimal roll coupling % set to 15, 20, or 30 for co
 
 % Channel 1
 Ch1 = 1;
-K1 = 999; % set as -999 for optimal roll coupling % Note for actual GIST + current for leftward tilt (- current for rightward tilt) 
+K1 = 999; % set as 999 for optimal roll coupling (5/2/25)  % Note for actual GIST + current for leftward tilt (- current for rightward tilt) 
 Couple_1 = "Roll";
 Threshold_1 = 0;
-K2 = -999; % set at 999 for optimal roll coupling
+K2 = -999; % set at -999 for current (5/2/25) optimal roll coupling
 Couple_2 = "ZVelocity";
 Threshold_2 = 0;
 % Channel 2
@@ -104,7 +104,7 @@ Ch2 = 1;
 K3 = 999;
 Couple_3 = "Pitch";
 Threshold_3 = 0;
-K4 = -999; % GIST positive current for pitch forward
+K4 = 999; % GIST positive current for pitch forward
 Couple_4 = "XVelocity";
 Threshold_4 = 0;
 % Channel 3
@@ -112,7 +112,7 @@ Ch3 = 1;
 K5 = 999;
 Couple_5 = "Pitch";
 Threshold_5 = 0;
-K6 = -999;
+K6 = 999;
 Couple_6 = "XVelocity";
 Threshold_6 = 0;
 %%
