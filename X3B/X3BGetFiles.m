@@ -9,7 +9,7 @@
 close all; clear; clc; 
 
 %% setup
-subnum = [ 3092:3092];  % Subject List 1011:1022; 3091:3092
+subnum = [ 3091:3094];  % Subject List 1011:1022; 3091:3092
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
@@ -85,6 +85,7 @@ for sub = 1:numsub
     Wii_trial_index = 1;
     num_Wii_trials = 0;
     ROM_trial_index = 0;
+    
     for i = 1:num_ROM_GIST_files
         current_file = char(ROM_GIST_filenames(i));
        if ~ contains(current_file, 'csv') 
@@ -102,6 +103,7 @@ for sub = 1:numsub
             ROM_Wii_data = readtable(char(ROM_Wii_filenames(Wii_file_index)));
             cd(code_path);
 
+            timesteps = 0;
             for j = 2:length(ROM_Wii_data.Var1)
                 timesteps(j) = ROM_Wii_data.Var1(j) - ROM_Wii_data.Var1(j-1);    
             end
@@ -211,14 +213,25 @@ for sub = 1:numsub
       % for each FMT GIST file (trial) grab data and condition info for 
     % naming then save as a matlab file. 
         FMT_trial_index = FMT_trial_index +1;
-        % if i == 4 
-        %     FMT_trial_index = FMT_trial_index +2;
-        % end
+
         cd(FMT_GIST_path);
         FMT_GIST_data = readtable(current_file); 
         cd(code_path);
 
         FMT_trial_info = Trial_Info_FMT(FMT_trial_index, :) ;
+        trial_num = FMT_trial_info{1};
+        % there will be between 3 and 5 training trials - check to see if
+        % training trials 4 or 5 were completed, other wise skip over them
+        if trial_num ==0
+            FMT_trial_index = FMT_trial_index +1;
+            FMT_trial_info = Trial_Info_FMT(FMT_trial_index, :) ;
+            trial_num = FMT_trial_info{1};
+        end
+        if trial_num ==0
+            FMT_trial_index = FMT_trial_index +1;
+            FMT_trial_info = Trial_Info_FMT(FMT_trial_index, :) ;
+            trial_num = FMT_trial_info{1};
+        end
         FMT_raw_time = FMT_trial_info{4};
         FMT_errors = FMT_trial_info{5};
         FMT_adj_time = FMT_trial_info{6};
