@@ -12,6 +12,7 @@ file_path = uigetdir; %user selects file directory
 
 cd(file_path);
 load('SAll.mat');
+cd(code_path);
 %% example ROM CoP plots
 % 
 sham_CoP1 = data.ROM.Wii.EC_FS_NHT.SHAMGVS{2,3}(:, [1 6:7]);
@@ -275,4 +276,68 @@ ylim([15 40])
 ylabel("Time (s)");
 title([{"Functional Mobility Obstacle Course"} {"Net Completion Time"}]);
 grid on;
+ %% TTS
 
+ GVS_type = fieldnames(data.TTS.TTS);
+
+ for condition = 1:length(GVS_type)
+     [num_sub, replicates]= size(data.TTS.TTS.(GVS_type{condition})); 
+     for sub = 1:num_sub
+         for trial = 1:replicates
+             TTS_time = (data.TTS.TTS.(GVS_type{condition}){sub,trial}(1:end,1) - data.TTS.TTS.(GVS_type{condition}){sub,trial}(1,1));
+             TTS_time = TTS_time{:,:}/1000;
+
+             TTS_tilt = (data.TTS.TTS.(GVS_type{condition}){sub,trial}(1:end,5));
+             TTS_tilt = TTS_tilt{:,:}/200;
+
+             TTS_joystick = (data.TTS.TTS.(GVS_type{condition}){sub,trial}(1:end,7));
+             TTS_joystick = TTS_joystick{:,:}/200;
+
+             Nulling_RMSE = rms(TTS_tilt);
+             Nulling_mean = mean(TTS_tilt);
+             Nulling_MeanRemovedRMSE = rms(TTS_tilt-Nulling_mean);
+
+             data.TTS.RMSE.(GVS_type{condition}){sub, trial} = Nulling_RMSE;
+             data.TTS.Mean.(GVS_type{condition}){sub, trial} = Nulling_mean;
+             data.TTS.MeanRemovedRMSE.(GVS_type{condition}){sub, trial} = Nulling_MeanRemovedRMSE;
+
+         end
+
+     end
+
+ end
+%%
+
+ MC(:,:,1) = cell2mat(data.TTS.MeanRemovedRMSE.SHAMGVS(:,1:4));
+MC(:,:,2) = cell2mat(data.TTS.MeanRemovedRMSE.DCONGVS(:,1:4));
+MC(:,:,3) = cell2mat(data.TTS.MeanRemovedRMSE.DCSDGVS(:,1:4));
+
+f=figure;
+set(gcf, 'defaultLegendInterpreter', 'latex');
+f.Position = [100,100, 600, 400];
+plot([1.03 2.03 3.03],squeeze(MC(1,1,:)), 'bd','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.07 2.07 3.07],squeeze(MC(1,2,:)), 'rd','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.07 2.07 3.07],squeeze(MC(1,3,:)), 'cd','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.03 2.03 3.03],squeeze(MC(1,4,:)), 'gd','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.13 2.13 3.13],squeeze(MC(2,1,:)), 'bo','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.17 2.17 3.17],squeeze(MC(2,2,:)), 'ro','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.17 2.17 3.17],squeeze(MC(2,3,:)), 'co','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([1.13 2.13 3.13],squeeze(MC(2,4,:)), 'go','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.83 1.83 2.83],squeeze(MC(3,1,:)), 'bs','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.87 1.87 2.87],squeeze(MC(3,2,:)), 'rs','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.87 1.87 2.87],squeeze(MC(3,3,:)), 'cs','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.83 1.83 2.83],squeeze(MC(3,4,:)), 'gs','MarkerFaceColor','k', MarkerSize= 10); hold on;
+
+plot([0.93 1.93 2.93],squeeze(MC(4,1,:)), 'b^','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.97 1.97 2.97],squeeze(MC(4,2,:)), 'r^','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.97 1.97 2.97],squeeze(MC(4,3,:)), 'c^','MarkerFaceColor','k', MarkerSize= 10); hold on;
+plot([0.93 1.93 2.93],squeeze(MC(4,4,:)), 'g^','MarkerFaceColor','k', MarkerSize= 10); hold on;
+xticks([1 2 3])
+% xticklabels({"NO GVS" "Tilt Coupled GVS" "Tilt Coupled + Disturbance GVS"})
+set(gca, 'FontSize', 21);
+xticklabels({"" "" ""})
+xlim([0.5 3.5])
+ylim([1 3.25])
+ylabel(" RMSE (deg)");
+title([{"Manual Control Nulling"} {"Mean Removed RMSE"}]);
+grid on;
