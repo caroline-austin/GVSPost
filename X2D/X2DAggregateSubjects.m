@@ -201,6 +201,14 @@ for sub = 1:numsub
         end
     end
 
+    shot_diff_4A(:,sub,:) = shot_save_4A(:,sub,:)- ((shot_save_4A(:,sub,3)+ fillmissing(shot_save_4A(:,sub,4), 'constant', 0))/2);
+    shot_diff_4B(:,sub,:) = shot_save_4B(:,sub,:)- ((shot_save_4B(:,sub,3)+ fillmissing(shot_save_4B(:,sub,4), 'constant', 0))/2);
+    shot_diff_5A(:,sub,:) = shot_save_5A(:,sub,:)- ((shot_save_5A(:,sub,3)+ fillmissing(shot_save_5A(:,sub,4), 'constant', 0))/2);
+    shot_diff_5B(:,sub,:) = shot_save_5B(:,sub,:)- ((shot_save_5B(:,sub,3)+ fillmissing(shot_save_5B(:,sub,4), 'constant', 0))/2);
+    shot_diff_6A(:,sub,:) = shot_save_6A(:,sub,:)- ((shot_save_6A(:,sub,3)+ fillmissing(shot_save_6A(:,sub,4), 'constant', 0))/2);
+    shot_diff_6B(:,sub,:) = shot_save_6B(:,sub,:)- ((shot_save_6B(:,sub,3)+ fillmissing(shot_save_6B(:,sub,4), 'constant', 0))/2);
+
+    
 %% GVS variables
 
     for i = 1:length(Label.GVS_4A) %1:24
@@ -249,6 +257,70 @@ for sub = 1:numsub
 
 
 end
+%% calc diff from baseline series 
+
+%4
+All_shot_diff_4A = squeeze(sum(fillmissing(shot_diff_4A, 'constant', 0),2));
+All_shot_diff_4B = squeeze(sum(fillmissing(shot_diff_4B, 'constant', 0),2));
+All_shot_diff_4 = All_shot_diff_4A- All_shot_diff_4B;
+num_trials_4= num_trials_4A + num_trials_4B;
+
+All_shot_diff_4A = All_shot_diff_4A./num_trials_4A;
+STD_shot_diff_4A(:,:,:) = squeeze(std(shot_save_4A(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_4A = STD_shot_diff_4A./sqrt(num_trials_4A);
+
+All_shot_diff_4B = All_shot_diff_4B./num_trials_4B;
+STD_shot_diff_4B(:,:,:) = squeeze(std(shot_save_4B(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_4B = STD_shot_diff_4B./sqrt(num_trials_4B);
+
+All_shot_diff_4 = All_shot_diff_4./num_trials_4;
+STD_shot_diff_4 = sqrt( ...
+    ((num_trials_4A-1).*STD_shot_diff_4A.^2 + (num_trials_4B-1).*STD_shot_diff_4B.^2 ...
+    + num_trials_4A .* (All_shot_diff_4A - All_shot_diff_4).^2 + num_trials_4B .* (All_shot_diff_4B - All_shot_diff_4).^2 ) ...
+    ./(num_trials_4A+num_trials_4B -1));
+SEM_shot_diff_4 = STD_shot_diff_4./sqrt(num_trials_4);
+%5
+All_shot_diff_5A = squeeze(sum(fillmissing(shot_diff_5A, 'constant', 0),2));
+All_shot_diff_5B = squeeze(sum(fillmissing(shot_diff_5B, 'constant', 0),2));
+All_shot_diff_5 = All_shot_diff_5A- All_shot_diff_5B;
+num_trials_5= num_trials_5A + num_trials_5B;
+
+All_shot_diff_5A = All_shot_diff_5A./num_trials_5A;
+STD_shot_diff_5A(:,:,:) = squeeze(std(shot_save_5A(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_5A = STD_shot_diff_5A./sqrt(num_trials_5A);
+
+All_shot_diff_5B = All_shot_diff_5B./num_trials_5B;
+STD_shot_diff_5B(:,:,:) = squeeze(std(shot_save_5B(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_5B = STD_shot_diff_5B./sqrt(num_trials_5B);
+
+All_shot_diff_5 = All_shot_diff_5./num_trials_5;
+STD_shot_diff_5 = sqrt( ...
+    ((num_trials_5A-1).*STD_shot_diff_5A.^2 + (num_trials_5B-1).*STD_shot_diff_5B.^2 ...
+    + num_trials_5A .* (All_shot_diff_5A - All_shot_diff_5).^2 + num_trials_5B .* (All_shot_diff_5B - All_shot_diff_5).^2 ) ...
+    ./(num_trials_5A+num_trials_5B -1));
+SEM_shot_diff_5 = STD_shot_diff_5./sqrt(num_trials_5);
+
+%6
+All_shot_diff_6A = squeeze(sum(fillmissing(shot_diff_6A, 'constant', 0),2));
+All_shot_diff_6B = squeeze(sum(fillmissing(shot_diff_6B, 'constant', 0),2));
+All_shot_diff_6 = All_shot_diff_6A- All_shot_diff_6B;
+num_trials_6= num_trials_6A + num_trials_6B;
+
+All_shot_diff_6A = All_shot_diff_6A./num_trials_6A;
+STD_shot_diff_6A(:,:,:) = squeeze(std(shot_save_6A(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_6A = STD_shot_diff_6A./sqrt(num_trials_6A);
+
+All_shot_diff_6B = All_shot_diff_6B./num_trials_6B;
+STD_shot_diff_6B(:,:,:) = squeeze(std(shot_save_6B(:,:,:),[],2, 'omitnan'));
+SEM_shot_diff_6B = STD_shot_diff_6B./sqrt(num_trials_6B);
+
+All_shot_diff_6 = All_shot_diff_6./num_trials_6;
+STD_shot_diff_6 = sqrt( ...
+    ((num_trials_6A-1).*STD_shot_diff_6A.^2 + (num_trials_6B-1).*STD_shot_diff_6B.^2 ...
+    + num_trials_6A .* (All_shot_diff_6A - All_shot_diff_6).^2 + num_trials_6B .* (All_shot_diff_6B - All_shot_diff_6).^2 ) ...
+    ./(num_trials_6A+num_trials_6B -1));
+SEM_shot_diff_6 = STD_shot_diff_6./sqrt(num_trials_6);
+
 %%
 % Taking std of all subjects at each point in time:
 % std(data to include, any speicial weighting, dimensions to calculate the std over)
@@ -275,6 +347,7 @@ STD_shot_save_6A = reshape(STD_shot_save_6A,timeSeriesLength,5);
 STD_shot_save_6B(:,:,[1 2 4 5]) = std(shot_save_6B(:,:,[1 2 5 6]),[],2, 'omitnan');
 STD_shot_save_6B(:,:,3) = std(shot_save_6B(:,:,[3 4]),[],[2 3], 'omitnan');
 STD_shot_save_6B = reshape(STD_shot_save_6B,timeSeriesLength,5);
+
 
 %%
 % combine the 3 and 4 columns which both have the NoGVS conditions 
@@ -304,6 +377,7 @@ num_trials_6B= [num_trials_6B(1) num_trials_6B(2) num_trials_6B(3)+num_trials_6B
 
 All_shot_6 = All_shot_6A- All_shot_6B;
 num_trials_6= num_trials_6A + num_trials_6B;
+
 
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects 
@@ -364,7 +438,14 @@ Label.shot_6B = match_list;
        'All_GVS_4A All_GVS_4B All_GVS_5A All_GVS_5B All_GVS_6A All_GVS_6B ' ...
        'SEM_shot_save_4A SEM_shot_save_4B SEM_shot_save_5A SEM_shot_save_5B ' ...
        'SEM_shot_save_6A SEM_shot_save_6B All_shot_4 All_shot_5 All_shot_6 ' ...
-       'SEM_shot_save_4 SEM_shot_save_5 SEM_shot_save_6'];
+       'SEM_shot_save_4 SEM_shot_save_5 SEM_shot_save_6 ' ...
+       'shot_save_4A shot_save_4B shot_save_5A shot_save_5B shot_save_6A ' ...
+       'shot_save_6B shot_diff_4A shot_diff_4B shot_diff_5A shot_diff_5B ' ... 
+       'shot_diff_6A shot_diff_6B ' ...
+       'SEM_shot_diff_4A SEM_shot_diff_4B SEM_shot_diff_5A SEM_shot_diff_5B ' ...
+       'SEM_shot_diff_6A SEM_shot_diff_6B SEM_shot_diff_4 SEM_shot_diff_5 SEM_shot_diff_6 ' ... 
+       'All_shot_diff_4A All_shot_diff_4B  All_shot_diff_5A  All_shot_diff_5B '...
+       'All_shot_diff_6A All_shot_diff_6B All_shot_diff_4 All_shot_diff_5  All_shot_diff_6 '];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    %eval (['clear ' vars_2_save])
