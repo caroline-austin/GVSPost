@@ -15,9 +15,9 @@ clear;
 clc; 
 
 %% set up
-subnum = [2049, 2051,2053:2059, 2060:2062, 2078:2090];  % Subject List 2049, 2051,2053:2062
+subnum = [  2049, 2051 ,2053:2057, 2061:2062 2078:2090];  % Subject List 2049, 2051 ,2053:2057, 2061:2062 2078:2090
 numsub = length(subnum);
-subskip = [2058 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2059 2060 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
 datatype = 'BiasTimeGain';      % options are '', 'Bias', 'BiasTime', 'BiasTimeGain'
 
@@ -284,17 +284,26 @@ num_trials_4A= [num_trials_4A(1) num_trials_4A(2) num_trials_4A(3)+num_trials_4A
 All_shot_4B = [All_shot_4B(:,1) All_shot_4B(:,2) All_shot_4B(:,3)+ All_shot_4B(:,4)  All_shot_4B(:,5) All_shot_4B(:,6)];
 num_trials_4B= [num_trials_4B(1) num_trials_4B(2) num_trials_4B(3)+num_trials_4B(4) num_trials_4B(5) num_trials_4B(6)];
 
+All_shot_4 = All_shot_4A- All_shot_4B;
+num_trials_4= num_trials_4A + num_trials_4B;
+
 All_shot_5A = [All_shot_5A(:,1) All_shot_5A(:,2) All_shot_5A(:,3)+ All_shot_5A(:,4)  All_shot_5A(:,5) All_shot_5A(:,6)];
 num_trials_5A= [num_trials_5A(1) num_trials_5A(2) num_trials_5A(3)+num_trials_5A(4) num_trials_5A(5) num_trials_5A(6)];
 
 All_shot_5B = [All_shot_5B(:,1) All_shot_5B(:,2) All_shot_5B(:,3)+ All_shot_5B(:,4)  All_shot_5B(:,5) All_shot_5B(:,6)];
 num_trials_5B= [num_trials_5B(1) num_trials_5B(2) num_trials_5B(3)+num_trials_5B(4) num_trials_5B(5) num_trials_5B(6)];
 
+All_shot_5 = All_shot_5A- All_shot_5B;
+num_trials_5= num_trials_5A + num_trials_5B;
+
 All_shot_6A = [All_shot_6A(:,1) All_shot_6A(:,2) All_shot_6A(:,3)+ All_shot_6A(:,4)  All_shot_6A(:,5) All_shot_6A(:,6)];
 num_trials_6A= [num_trials_6A(1) num_trials_6A(2) num_trials_6A(3)+num_trials_6A(4) num_trials_6A(5) num_trials_6A(6)];
 
 All_shot_6B = [All_shot_6B(:,1) All_shot_6B(:,2) All_shot_6B(:,3)+ All_shot_6B(:,4)  All_shot_6B(:,5) All_shot_6B(:,6)];
 num_trials_6B= [num_trials_6B(1) num_trials_6B(2) num_trials_6B(3)+num_trials_6B(4) num_trials_6B(5) num_trials_6B(6)];
+
+All_shot_6 = All_shot_6A- All_shot_6B;
+num_trials_6= num_trials_6A + num_trials_6B;
 
 %divide the aggregate report by the number of trials added into it to get
 %the average report across subjects 
@@ -305,6 +314,10 @@ All_shot_5B = All_shot_5B./num_trials_5B;
 All_shot_6A = All_shot_6A./num_trials_6A;
 All_shot_6B = All_shot_6B./num_trials_6B;
 
+All_shot_4 = All_shot_4./num_trials_4;
+All_shot_5 = All_shot_5./num_trials_5;
+All_shot_6 = All_shot_6./num_trials_6;
+
 %%
 % caclulate SEM for each motion profile coupling scheme combo
 SEM_shot_save_4A = STD_shot_save_4A./sqrt(num_trials_4A);
@@ -313,6 +326,26 @@ SEM_shot_save_5A = STD_shot_save_5A./sqrt(num_trials_5A);
 SEM_shot_save_5B = STD_shot_save_5B./sqrt(num_trials_5B);
 SEM_shot_save_6A = STD_shot_save_6A./sqrt(num_trials_6A);
 SEM_shot_save_6B = STD_shot_save_6B./sqrt(num_trials_6B);
+
+% calculate std and SEM for the 4,5,6
+STD_shot_save_4 = sqrt( ...
+    ((num_trials_4A-1).*STD_shot_save_4A.^2 + (num_trials_4B-1).*STD_shot_save_4B.^2 ...
+    + num_trials_4A .* (All_shot_4A - All_shot_4).^2 + num_trials_4B .* (All_shot_4B - All_shot_4).^2 ) ...
+    ./(num_trials_4A+num_trials_4B -1));
+
+STD_shot_save_5 = sqrt( ...
+    ((num_trials_5A-1).*STD_shot_save_5A.^2 + (num_trials_5B-1).*STD_shot_save_5B.^2 ...
+    + num_trials_5A .* (All_shot_5A - All_shot_5).^2 + num_trials_5B .* (All_shot_5B - All_shot_5).^2 ) ...
+    ./(num_trials_5A+num_trials_5B -1));
+
+STD_shot_save_6 = sqrt( ...
+    ((num_trials_6A-1).*STD_shot_save_6A.^2 + (num_trials_6B-1).*STD_shot_save_6B.^2 ...
+    + num_trials_6A .* (All_shot_6A - All_shot_6).^2 + num_trials_6B .* (All_shot_6B - All_shot_6).^2 ) ...
+    ./(num_trials_6A+num_trials_6B -1));
+
+SEM_shot_save_4 = STD_shot_save_4./sqrt(num_trials_4);
+SEM_shot_save_5 = STD_shot_save_5./sqrt(num_trials_5);
+SEM_shot_save_6 = STD_shot_save_6./sqrt(num_trials_6);
 
 match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
 %update the label
@@ -330,7 +363,8 @@ Label.shot_6B = match_list;
        'All_shot_4B tilt_4B GVS_4B  All_shot_5B tilt_5B GVS_5B All_shot_6B tilt_6B GVS_6B ' ...
        'All_GVS_4A All_GVS_4B All_GVS_5A All_GVS_5B All_GVS_6A All_GVS_6B ' ...
        'SEM_shot_save_4A SEM_shot_save_4B SEM_shot_save_5A SEM_shot_save_5B ' ...
-       'SEM_shot_save_6A SEM_shot_save_6B'];
+       'SEM_shot_save_6A SEM_shot_save_6B All_shot_4 All_shot_5 All_shot_6 ' ...
+       'SEM_shot_save_4 SEM_shot_save_5 SEM_shot_save_6'];
    eval(['  save ' ['S' 'All' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    %eval (['clear ' vars_2_save])
