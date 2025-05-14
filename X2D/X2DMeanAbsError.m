@@ -6,14 +6,14 @@ close all;
 clear; 
 clc; 
 %% set up
-subnum =  [2049, 2051,2053:2056, 2060:2062]; % Subject List 2049, 2051, 2053:2054  % Subject List 
+subnum = [2049, 2051 ,2053:2057, 2061:2062 2078:2090 ];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2059  40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2059 2060 2069:2077 2083 2085 2070 2072 2081 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
 
-Color_List = [ "black"; "blue";"red";"blue"];
-match_list = [ "N_4_00mA_8_00"; "0_00mA"; "P_4_00mA_8_00"];
-plot_list = [ "N Ang"; "None"; "P Ang"];
+Color_List = [ "black"; "blue";"magenta";"red";"blue"; "magenta"];
+match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
+plot_list = [ "N Ang"; "N Opt"; "None"; "P Ang"; "P Opt"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
 
 % colors- first 5 are color blind friendly colors
@@ -25,12 +25,11 @@ red =[0.7373  0.1529    0.1922];
 yellow = [255 190 50]/255;
 Color_list = [blue; green; yellow; red; navy; purple];
 
-sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "bpentagram";"b<";"bhexagram";"b>"; "bdiamond";"bv";"bo";"b+"; "b*"; "bx"; "bsquare"; "b^"; "kx"; "ksquare"; "k^"];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
-xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
-
+xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25; -0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
 % set up pathing
 code_path = pwd; %save code directory
@@ -59,6 +58,8 @@ for p = 1: length(prof)
     All_avg_mae_all_norm= zeros(1,length(match_list));
     num_trials_all= zeros(1, length(match_list));
     num_sub_trials_all= zeros(numsub, length(match_list));
+    num_trials_all_norm= zeros(1, length(match_list));
+    num_sub_trials_all_norm= zeros(numsub, length(match_list));
     mae_save_all= zeros(numsub, length(match_list));
     mae_save_all_norm= zeros(numsub, length(match_list));
 end 
@@ -81,11 +82,11 @@ for sub = 1:numsub
     if ismac || isunix
         subject_path = [file_path, '/' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group', datatype '.mat']);
+        load(['S', subject_str, 'Extract', datatype '.mat']);
     elseif ispc
         subject_path = [file_path, '\' , subject_str];
         cd(subject_path);
-        load(['S', subject_str, 'Group', datatype '.mat ']);
+        load(['S', subject_str, 'Extract', datatype '.mat ']);
     end
     
     cd(code_path);
@@ -109,7 +110,7 @@ for j = 1:length(match_list)
         + "(51:end-50)))/(length(shot_" + match_list(j) + "));"]); %MAE from zero 
      eval(["mae_all(j)= mae_" + match_list(j) + ";"]);
 end
-mae_all_norm = mae_all-mae_all(2);
+mae_all_norm = mae_all-mae_all(3);
 % MAE calculation for trials grouped by motion profile
 for p = 1: length(prof)
 %     eval(["mae_" + prof(p) + "= sum(abs(shot_" + prof(p) ...
@@ -152,9 +153,9 @@ end
         ,mae_save_all,num_sub_trials_all, match_list);
 
 
-[All_avg_mae_all_norm,num_trials_all ,mae_save_all_norm,num_sub_trials_all] =  AggregateSingleMetric( ...
-    mae_all_norm, match_list, sub, All_avg_mae_all_norm,num_trials_all ...
-        ,mae_save_all_norm,num_sub_trials_all, match_list);
+[All_avg_mae_all_norm,num_trials_all_norm ,mae_save_all_norm,num_sub_trials_all_norm] =  AggregateSingleMetric( ...
+    mae_all_norm, match_list, sub, All_avg_mae_all_norm,num_trials_all_norm ...
+        ,mae_save_all_norm,num_sub_trials_all_norm, match_list);
 
 cd(code_path)
 %update the label
@@ -188,7 +189,7 @@ end
 figure;
 b = boxplot(mae_save_all);
 % b.BoxFaceColor = blue;
-plot_label = ["- Angle"; "No GVS";"+ Angle" ];
+plot_label = ["- Angle"; "- Optimal" ; "No GVS";"+ Angle"; "+ Optimal" ];
 % xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
@@ -241,7 +242,7 @@ for j = 1:numsub
         hold on;
     end
 end
-xticks([1 2 3 ]);
+xticks([1 2 3 4 5]);
 xticklabels(plot_list);
 hold on; 
 sgtitle(['MAE-Sham-Removed-All-Profiles: AllSubjectsBoxPlot' datatype ]);
@@ -258,7 +259,7 @@ for p = 1: length(prof)
     subplot(2,3,p)
     eval(["boxplot(mae_save_" + prof(p) + ");"]);
     title (["Profile " + prof(p)]);
-    xticks([1 2 3 ]);
+    xticks([1 2 3 4 5]);
     xticklabels(plot_list);
 end
 hold on; 
@@ -321,7 +322,7 @@ end
    eval(['  save ' ['SAllMeanAbsErrorShort' datatype '.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    % eval (['clear ' vars_2_save])
-   close all;
+   % close all;
 
 function plot_single_outcomes(outcome,label, Color_List,match_list)
     %plot data 
