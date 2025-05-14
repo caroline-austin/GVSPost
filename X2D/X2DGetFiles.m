@@ -13,9 +13,9 @@ close all; clear; clc;
 warning off;
 
 %% setup
-subnum = [2049, 2051,2053:2059, 2060:2062, 2078:2090];  % Subject List 2049, 2051,2053:2062
+subnum = [2049, 2051,2053:2057, 2061:2062, 2078:2090];  % Subject List 2049, 2051,2053:2062
 numsub = length(subnum);
-subskip = [2058 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2059 2060 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
@@ -184,6 +184,11 @@ for sub = 1:numsub
        shot_actual = table2array(TTS_data(1:end-1,6))/-1000; %deg - % negative sign included bc shot is flipped in this config
        GVS_actual1_mV= table2array(TTS_data(1:end-1,12))/1000; %mV (not mA)
        GVS_actual2_mV= table2array(TTS_data(1:end-1,13))/1000; %mV (not mA)
+       if subject >=2078
+            GVS_actual1_mV= GVS_actual1_mV*-1;
+            GVS_actual2_mV= GVS_actual2_mV*-1;
+
+       end
        mustBeNonsparse(GVS_actual1_mV);
        mustBeFinite(GVS_actual1_mV);
        GVS_actual1_filt = lowpass(GVS_actual1_mV,1,50); %filter raw GVS data
