@@ -6,9 +6,9 @@
 clear; 
 clc; 
 %% set up
-subnum = [2049, 2051,2053:2062, 2078:2082 2084 2086:2090 ];  % Subject List 2049, 2051,2053:2062
+subnum = [ 2086];  % Subject List 2049, 2051 ,2053:2057, 2061:2062 2078:2090
 numsub = length(subnum);
-subskip = [2058 2069:2077 2083 2085 2070 2072 2081 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
+subskip = [2058 2059 2060 2069:2077 2083 2085 2070 2072 2081 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain';
 
 % colors- first 5 are color blind friendly colors
@@ -24,7 +24,7 @@ Color_List = [ "black"; "blue";"magenta";"red";"blue"; "magenta"];
 match_list = [ "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA"; "P_4_00mA_8_00"; "P_5_00mA_0_00"];
 plot_list = [ "N Ang"; "N Opt"; "None"; "P Ang"; "P Opt"];
 prof = ["4A"; "5A"; "6A"; "4B";"5B"; "6B"; ];
-sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "kx"; "ksquare"; "k^";"bpentagram";"b<";"bhexagram";"b>"; "bdiamond";"bv";"bo";"b+"; "b*"; "bx"; "bsquare"; "b^";];
+sub_symbols = ["kpentagram";"k<";"khexagram";"k>"; "kdiamond";"kv";"ko";"k+"; "k*"; "bpentagram";"b<";"bhexagram";"b>"; "bdiamond";"bv";"bo";"b+"; "b*"; "bx"; "bsquare"; "b^"; "kx"; "ksquare"; "k^"];
 yoffset = [0.1;0.1;0.1;0.1;0.1;-0.1;-0.1;-0.1;-0.1;-0.1;0]; 
 yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05]; 
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
