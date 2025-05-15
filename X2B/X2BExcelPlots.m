@@ -173,9 +173,9 @@ set(gcf,'position',[100,100,700,800])
 
 %% box plots for motion and tingling 
 figure;
-tiledlayout(2,1,"TileSpacing","compact")
+tiledlayout(2,2,"TileSpacing","compact")
 sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
-nexttile
+nexttile 
 b=boxplot(sub_motion');
 hold on;
 for j = 1:numsub
@@ -192,9 +192,11 @@ ax = gca;
 set(ax, 'FontSize', 18);
 xticklabels([])
 ylabel("Number of Reports")
-ylim([0 8.5])
+ylim([-0.5 8.5])
 grid minor
-nexttile
+
+% nexttile
+nexttile(3)
 h = boxplot(sub_tingle');
 hold on;
 for j = 1:numsub
@@ -211,15 +213,16 @@ ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Tingling",'FontSize', 18);
 ylabel("Number of Reports")
-ylim([0 8.5])
+ylim([-0.5 8.5])
 grid minor
 set(gcf,'position',[100,100,700,800])  
 
-%% box plots for metallic taste and visual flashes 
-figure;
-tiledlayout(2,1,"TileSpacing","compact")
-sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
-nexttile
+% box plots for metallic taste and visual flashes 
+% figure;
+% tiledlayout(2,1,"TileSpacing","compact")
+% sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
+% nexttile
+nexttile(2)
 b=boxplot(sub_metal');
 hold on;
 for j = 1:numsub
@@ -235,10 +238,11 @@ set(b, 'Color', 'k');
 ax = gca; 
 set(ax, 'FontSize', 18);
 xticklabels([])
-ylabel("Number of Reports")
-ylim([0 8.5])
+% ylabel("Number of Reports")
+ylim([-0.5 8.5])
 grid minor
-nexttile
+% nexttile
+nexttile(4)
 h = boxplot(sub_vis');
 hold on;
 for j = 1:numsub
@@ -254,10 +258,10 @@ set(h, 'Color', 'k');
 ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Visual Flashes",'FontSize', 18);
-ylabel("Number of Reports")
-ylim([0 8.5])
+% ylabel("Number of Reports")
+ylim([-0.5 8.5])
 grid minor
-set(gcf,'position',[100,100,700,800])  
+set(gcf,'position',[100,100,1400,800])  
 
 %% can add any aggregate subj plots here
 figure;
