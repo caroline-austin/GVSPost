@@ -114,5 +114,6 @@ if contains(plots, "3 ")
         elseif dir ==2
             sgtitle("Pitch Sway Power at 0.5Hz")
         end
+        ylabel('Sway at Freq of Interest (deg dB/Hz)');
     end
 end
