@@ -199,7 +199,7 @@ Label.all_trials = All_Label.all_trials;
 Label.all_config = All_Label.config;
 Label.all_trials_sort = All_Label.trial_sort;
 Label.all_config_sort = All_Label.config_sort;
-Label.sort = ["tiral order", "Subject",  "direction", "time or freq", ];
+Label.sort = ["trial order", "Subject",  "direction", "time or freq", ];
 
 
 %% save data
