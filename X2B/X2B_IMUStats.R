@@ -5,12 +5,17 @@ library(rstatix)
 library(dplyr)
 library('ARTool')
 library(lmtest)
+library(BradleyTerry2)
 
 #navigate to the directory
 setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/freq_power_anova.csv")
+verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/verbal.csv")
+
+verbal$condition1 <-factor(verbal$condition1)
+verbal$condition2 <-factor(verbal$condition2)
 
 freq_power$type <- factor(freq_power$type)
 freq_power$freq_interest <- factor(freq_power$freq_interest)
@@ -25,7 +30,24 @@ neck_power <- subset(freq_power, config == "Neck")
 shoulder_power <- subset(freq_power, config == "Shoulder")
 forehead_power <- subset(freq_power, config == "Forehead")
 
+####################################
+# run verbal stats (Bradley Terry Model)
+BT_motion_model <- (BTm(cbind(motion_wins1,motion_wins2),  condition1, condition2, data =verbal))
+summary(BT_motion_model)
+#% likelihood compared to reference
+exp(BT_motion_model$coefficients)/(1+exp(BT_motion_model$coefficients))
 
+BT_tingling_model <- (BTm(cbind(tingling_wins1,tingling_wins2),  condition1, condition2, data =verbal))
+summary(BT_tingling_model)
+exp(BT_tingling_model$coefficients)/(1+exp(BT_tingling_model$coefficients))
+
+BT_vis_model <- (BTm(cbind(vis_wins1,vis_wins2),  condition1, condition2, data =verbal))
+summary(BT_vis_model)
+exp(BT_vis_model$coefficients)/(1+exp(BT_vis_model$coefficients))
+
+BT_metallic_model <- (BTm(cbind(metallic_wins1,metallic_wins2),  condition1, condition2, data =verbal))
+summary(BT_metallic_model)
+exp(BT_metallic_model$coefficients)/(1+exp(BT_metallic_model$coefficients))
 
 #################################
 # run pitch only anova

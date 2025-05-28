@@ -29,9 +29,9 @@ xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25];
 %%
 total_results = zeros(3,4);
 total_bonus_results = zeros(3,2);
-total_forhead_shoulder = [0,0];
-total_shoulder_neck = [0,0];
-total_neck_forhead = [0,0];
+total_forhead_shoulder = [0,0; 0,0 ;0,0; 0,0];
+total_shoulder_neck = [0,0; 0,0 ;0,0; 0,0];
+total_neck_forhead = [0,0; 0,0 ;0,0; 0,0];
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -50,23 +50,25 @@ for sub = 1:numsub
     % main_match_ups = cell2mat(main_match_ups);
 
     %% calculate relative wins 
-    forhead_shoulder = [0,0];
-    shoulder_neck = [0,0];
-    neck_forhead = [0,0];
+    
+    for side_effect = 8:11
+        forhead_shoulder = [0,0];
+        shoulder_neck = [0,0];
+        neck_forhead = [0,0];
     for match_up = 1:height(main_match_ups)
         
         if contains(main_match_ups{match_up,2}, 'Three Forhead')
             if contains(main_match_ups{match_up,3}, 'Three Shoulder')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     forhead_shoulder(1) = forhead_shoulder(1)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     forhead_shoulder(2) = forhead_shoulder(2)+1;
                 end
 
             elseif contains(main_match_ups{match_up,3},'Three Neck')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     neck_forhead(2) = neck_forhead(2)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     neck_forhead(1) = neck_forhead(1)+1;
                 end
 
@@ -74,32 +76,32 @@ for sub = 1:numsub
 
         elseif contains(main_match_ups{match_up,2}, 'Three Shoulder')
             if contains(main_match_ups{match_up,3}, 'Three Neck')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     shoulder_neck(1) = shoulder_neck(1)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     shoulder_neck(2) = shoulder_neck(2)+1;
                 end
 
             elseif contains(main_match_ups{match_up,3} , 'Three Forhead')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     forhead_shoulder(2) = forhead_shoulder(2)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     forhead_shoulder(1) = forhead_shoulder(1)+1;
                 end
 
             end
         elseif contains(main_match_ups{match_up,2} ,'Three Neck')
             if contains(main_match_ups{match_up,3} , 'Three Forhead')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     neck_forhead(1) = neck_forhead(1)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     neck_forhead(2) = neck_forhead(2)+1;
                 end
 
             elseif contains(main_match_ups{match_up,3} , 'Three Shoulder')
-                if main_match_ups{match_up,8} == 1
+                if main_match_ups{match_up,side_effect} == 1
                     shoulder_neck(2) = shoulder_neck(2)+1;
-                elseif main_match_ups{match_up,8} == 2
+                elseif main_match_ups{match_up,side_effect} == 2
                     shoulder_neck(1) = shoulder_neck(1)+1;
                 end
 
@@ -133,9 +135,12 @@ for sub = 1:numsub
     % aggregating results
     total_results = total_results +main_results;
     total_bonus_results = total_bonus_results +bonus_results;
-    total_neck_forhead = total_neck_forhead + neck_forhead;
-    total_shoulder_neck = total_shoulder_neck + shoulder_neck;
-    total_forhead_shoulder = total_forhead_shoulder + forhead_shoulder;
+    total_neck_forhead(side_effect-7,:) = total_neck_forhead(side_effect-7,:) + neck_forhead;
+    total_shoulder_neck(side_effect-7,:) = total_shoulder_neck(side_effect-7,:) + shoulder_neck;
+    total_forhead_shoulder(side_effect-7,:) = total_forhead_shoulder(side_effect-7,:) + forhead_shoulder;
+
+    end 
+
     sub_motion(:,sub) = main_results(:,1); 
     sub_tingle(:,sub) = main_results(:,2); 
     sub_metal(:,sub) = main_results(:,3); 
@@ -144,6 +149,19 @@ for sub = 1:numsub
     sub_shoulder_neck (sub,:)= shoulder_neck;
     sub_forhead_shoulder (sub,:)= forhead_shoulder;
 end
+
+%% save data
+    cd([file_path]); %move to directory where file will be saved
+    %add all variables that we want to save to a list must include space
+    %between variable names 
+    vars_2_save =  ['Label total_results total_bonus_results ' ...
+        'total_neck_forhead total_shoulder_neck total_forhead_shoulder ' ...
+        ' sub_motion sub_tingle sub_metal sub_vis sub_neck_forhead ' ...
+        ' sub_shoulder_neck sub_forhead_shoulder'];% ...
+        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
+    eval(['  save ' ['AllVerbal.mat '] vars_2_save ' vars_2_save']); %save file     
+    cd(code_path) %return to code directory
+
 
 %% can add any aggregate subj plots here
 figure;
@@ -267,7 +285,7 @@ set(gcf,'position',[100,100,1400,800])
 figure;
 sgtitle(['SAll Paired Wins'])
 % subplot(2,1,1)
-bar([total_forhead_shoulder, total_shoulder_neck, total_neck_forhead]);
+bar([total_forhead_shoulder(1,:), total_shoulder_neck(1,:), total_neck_forhead(1,:)]);
 title ("Most Motion Sensation");
 xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
 

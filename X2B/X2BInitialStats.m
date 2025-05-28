@@ -30,9 +30,45 @@ Config = ["Forhead" "Shoulder" "Neck"];
 %% load data 
 cd([file_path]);
 load(['Allimu.mat'])
+Label_IMU = Label;
+load(['AllVerbal.mat'])
 cd(code_path);
 
 imu_dir = ["roll" "pitch" "yaw" ];
+
+%% Verbal report data export
+verbal = table;
+% verbal.condition1 = ["Neck" "Neck"  "Shoulder" ]';
+% verbal.condition2 = ["Shoulder" "Forehead" "Forehead" ]';
+verbal.condition1 = ["Forehead"   "Shoulder" "Neck" ]';
+verbal.condition2 = ["Shoulder" "Neck" "Forehead"  ]';
+verbal.motion_wins1 = [ total_forhead_shoulder(1,1) total_shoulder_neck(1,1) total_neck_forhead(1,1) ]';
+verbal.motion_wins2 = [ total_forhead_shoulder(1,2) total_shoulder_neck(1,2) total_neck_forhead(1,2) ]';
+
+verbal.tingling_wins1 = [ total_forhead_shoulder(2,1) total_shoulder_neck(2,1) total_neck_forhead(2,1) ]';
+verbal.tingling_wins2 = [ total_forhead_shoulder(2,2) total_shoulder_neck(2,2) total_neck_forhead(2,2) ]';
+
+verbal.vis_wins1 = [ total_forhead_shoulder(3,1) total_shoulder_neck(3,1) total_neck_forhead(3,1) ]';
+verbal.vis_wins2 = [ total_forhead_shoulder(3,2) total_shoulder_neck(3,2) total_neck_forhead(3,2) ]';
+
+verbal.metallic_wins1 = [ total_forhead_shoulder(4,1) total_shoulder_neck(4,1) total_neck_forhead(4,1) ]';
+verbal.metallic_wins2 = [ total_forhead_shoulder(4,2) total_shoulder_neck(4,2) total_neck_forhead(4,2) ]';
+
+
+cd(file_path)
+writetable(verbal, "verbal.csv");
+cd(code_path)
+
+%% congruency between sway and verbal reports
+congruent = table;
+for sub = 1:numsub
+        congruent.SID(sub) = sub;
+        congruent.correct(sub) = sum(sway_verbal_congruent(1:12,sub))/(length(sway_verbal_congruent)-2);
+end
+
+cd(file_path)
+writetable(congruent, "congruent.csv");
+cd(code_path)
 
 
 %% power_interest stats 
@@ -55,7 +91,7 @@ for profile = interest_profile
         else
             replicate_order = trial-20;
         end
-        config = Label.all_config_sort(:,trial);
+        config = Label_IMU.all_config_sort(:,trial);
 
         for dir = 1:2
             for freq = 1:length(freq_interest)
@@ -87,7 +123,7 @@ for profile = interest_profile
 
 
                 index2 = index2+1;
-                Label.power_stats(index2) = strjoin([ "trial" num2str(trial) imu_dir(dir) Config(max(config))]);
+                Label_IMU.power_stats(index2) = strjoin([ "trial" num2str(trial) imu_dir(dir) Config(max(config))]);
                 power_eval_mat(:,index2) =  power_eval(:,index);
 
             end
