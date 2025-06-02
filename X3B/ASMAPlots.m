@@ -200,7 +200,7 @@ TDM_EC(:,:,3) = cell2mat(data.TDM.raw_time.EC.DCSDGVS(:,1:2));
 
 f=figure;
 set(gcf, 'defaultLegendInterpreter', 'latex');
-f.Position = [100,100, 600, 400];
+f.Position = [100,100, 1000, 400];
 plot([1.03 2.03 3.03],squeeze(TDM_EC(1,1,:)), 'bd-','MarkerFaceColor','k', MarkerSize= 10); hold on;
 plot([1.07 2.07 3.07],squeeze(TDM_EC(1,2,:)), 'rd-','MarkerFaceColor','k', MarkerSize= 10); hold on;
 plot([1.13 2.13 3.13],squeeze(TDM_EC(2,1,:)), 'bo-.','MarkerFaceColor','k', MarkerSize= 10); hold on;
@@ -226,7 +226,7 @@ TDM_EO(:,:,3) = cell2mat(data.TDM.raw_time.EO.DCSDGVS(:,1:2));
 
 f=figure;
 set(gcf, 'defaultLegendInterpreter', 'latex');
-f.Position = [100,100, 600, 400];
+f.Position = [100,100, 1000, 400];
 plot([1.03 2.03 3.03],squeeze(TDM_EO(1,1,:)), 'bd-','MarkerFaceColor','k', MarkerSize= 10); hold on;
 plot([1.07 2.07 3.07],squeeze(TDM_EO(1,2,:)), 'rd-','MarkerFaceColor','k', MarkerSize= 10); hold on;
 plot([1.13 2.13 3.13],squeeze(TDM_EO(2,1,:)), 'bo-.','MarkerFaceColor','k', MarkerSize= 10); hold on;
