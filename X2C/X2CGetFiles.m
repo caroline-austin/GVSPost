@@ -33,9 +33,9 @@ for sub = 1:numsub
     % pull info from the Excel Sheet  
     cd(file_path);
     Label.TrialInfo = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','A1:O1');
-    Label.MainResultsCol = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B33:D33');
+    Label.MainResultsCol = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B33:E33');
     Label.MainResultsRow = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','A34:A35');
-    main_results = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B34:D35');
+    main_results = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B34:E35');
     Label.Impedance = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','Q5:Q14');
     start_impedance = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','R5:R14');
     end_impedance = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','S5:S14');
@@ -50,9 +50,14 @@ for sub = 1:numsub
     end
 
     total_motion_wins_3 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B34:B34');
-    total_tingle_wins_3 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','D34:D34');
+    total_tingle_wins_3 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','C34:C34');
     total_motion_wins_4 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','B35:B35');
-    total_tingle_wins_4 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','D35:D35');
+    total_tingle_wins_4 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','C35:C35');
+
+    total_mettalic_wins_3 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','D34:D34');
+    total_visual_wins_3 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','E34:E34');
+    total_metallic_wins_4 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','D35:D35');
+    total_visual_wins_4 = readcell('NewPitchMontage.xlsx','Sheet',['S' subject_str],'Range','E35:E35');
     
     % find IMU data
     cd(code_path); cd ..;
@@ -68,8 +73,9 @@ for sub = 1:numsub
             % create appropriate indexing variables
             trial = trial+ 1; % only keep track of trials
             trial_row = ceil(trial/2); % the row increments every other because two trials per row
-            montage_col = 2+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
-            current_col = 3+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
+            trial_col = 2+rem(trial+1,2); % the column changes based on the first v. second trial in the set
+            montage_col = 2+rem(trial+1,2)*2; % the column changes based on the first v. second trial in the set
+            current_col = 3+rem(trial+1,2)*2; % the column changes based on the first v. second trial in the set
             %
             cd([file_path, '/' , subject_str, '/IMU']);
             imu_table = readtable(IMU_files{file});
@@ -78,20 +84,32 @@ for sub = 1:numsub
 
     % assemble save file name - use Label.TrialInfo to map what the columns
     % are
-        if main_match_ups{trial_row,1} > 0.1
-            imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_' num2str(main_match_ups{trial_row,1})], '.', '_'), ' ', '_');
-        else
-            % if the trial number (which is stored in the variable being
-            % checked is =0 then that means the row should be skipped for
-            % data analysis so increment beyond it) this code shouldn't be
-            % needed
-            trial = trial +1;
-            trial_row = ceil(trial/2); % the row increments every other because two trials per row
-            montage_col = 2+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
-            current_col = 3+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
-            imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_' num2str(main_match_ups{trial_row,1})], '.', '_'), ' ', '_');
 
+        % assemble save file name - use Label.TrialInfo to map what the columns
+    % are
+        if trial <10
+            imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_0'  num2str(trial)], '.', '_'), ' ', '_');
+            % imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,trial_col} '_' num2str(main_match_ups{trial_row,4}) main_match_ups{trial_row,5} '_' main_match_ups{trial_row,6} num2str(main_match_ups{trial_row,7}) 'Hz_0' num2str(trial)], '.', '_'), ' ', '_');
+        elseif trial<60
+            imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_' num2str(trial)], '.', '_'), ' ', '_');
+            % imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,trial_col} '_' num2str(main_match_ups{trial_row,4}) main_match_ups{trial_row,5} '_' main_match_ups{trial_row,6} num2str(main_match_ups{trial_row,7}) 'Hz_' num2str(trial)], '.', '_'), ' ', '_');
         end
+        % 
+        % if main_match_ups{trial_row,1} > 0.1
+        %     imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_' num2str(main_match_ups{trial_row,1})], '.', '_'), ' ', '_');
+        % else
+        %     % if the trial number (which is stored in the variable being
+        %     % checked is =0 then that means the row should be skipped for
+        %     % data analysis so increment beyond it) this code shouldn't be
+        %     % needed
+        %     trial = trial +1;
+        %     trial_row = ceil(trial/2); % the row increments every other because two trials per row
+        %     montage_col = 2+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
+        %     current_col = 3+rem(trial,2)*2; % the column changes based on the first v. second trial in the set
+        %     imu_filename = strrep(strrep(['S' subject_str '_' main_match_ups{trial_row,montage_col} '_' num2str(main_match_ups{trial_row,current_col}) main_match_ups{trial_row,6} '_' main_match_ups{trial_row,7} num2str(main_match_ups{trial_row,8}) 'Hz_' num2str(main_match_ups{trial_row,1})], '.', '_'), ' ', '_');
+        % 
+        % end
+
         % save file
 
         cd([file_path, '/' , subject_str, '/IMU']);
