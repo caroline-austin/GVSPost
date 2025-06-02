@@ -13,9 +13,12 @@ setwd("C:/Users/caroa/OneDrive/Documents")
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/freq_power_anova.csv")
 verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/verbal.csv")
+congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/congruent.csv")
 
 verbal$condition1 <-factor(verbal$condition1)
 verbal$condition2 <-factor(verbal$condition2)
+
+congruent$SID <-factor(congruent$SID)
 
 freq_power$type <- factor(freq_power$type)
 freq_power$freq_interest <- factor(freq_power$freq_interest)
@@ -48,6 +51,14 @@ exp(BT_vis_model$coefficients)/(1+exp(BT_vis_model$coefficients))
 BT_metallic_model <- (BTm(cbind(metallic_wins1,metallic_wins2),  condition1, condition2, data =verbal))
 summary(BT_metallic_model)
 exp(BT_metallic_model$coefficients)/(1+exp(BT_metallic_model$coefficients))
+##################################
+# stats on consistency between sway and verbal reports
+t.test(congruent$correct, mu = 0.5)
+
+total_congruent = sum(congruent$correct)*12
+total_responses = 120;
+
+binom.test(total_congruent, total_responses, p=0.5)
 
 #################################
 # run pitch only anova
