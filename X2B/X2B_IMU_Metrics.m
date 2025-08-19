@@ -50,9 +50,11 @@ for sub = 1:numsub
         for trial = 1:w   % calculate all metrics and aggregate the data            
                 
                     if isempty(all_imu_angles.(['A', subject_str]){trial})
-                        mean_freq(current, profile, config,sub,:) = NaN();
-                        med_freq(current, profile, config,sub,:) = NaN();
-                        power_interest(trial, sub,1,1:num_freq) = NaN(1:num_freq)
+                        % right now there are no trials that trip this
+                        % condition
+                        mean_freq(trial, sub,1,:) = NaN();
+                        med_freq(trial, sub,1,:) = NaN();
+                        power_interest(trial, sub,1,1:num_freq) = NaN(1:num_freq);
    
                     end
                     trial_angles = all_imu_angles.(['A', subject_str]){trial}(:,1:3)*180/pi();
