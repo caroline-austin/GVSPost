@@ -13,9 +13,9 @@ code_path = pwd;
 %% Experimental Methods Specifications
 file_path = uigetdir; %user selects file directory './Subject Data/'; %I replaced this so the person can directly choose where to pull the data from
 
-subnum = [2034:2043];  % Subject List 2001:2010 2001:2010
+subnum = [2044:2048, 2050,2052, 2063:2065];  % Subject List 2001:2010 2001:2010
 numsub = length(subnum);
-subskip = [2001 2004 2008 2010];  %DNF'd subjects
+subskip = [2001 2049 2004 2008 2010];  %DNF'd subjects
 fs =30; % sampling freq of 30Hz
 dt = 1/fs;
 profile_freq = [ 0.5 ];
@@ -47,14 +47,21 @@ for sub = 1:numsub
         index1 = 1;
         index2 = 1;
         index3 = 1;
+        index4 = 1;
+        index5 = 1;
+        index6 = 1;
+        index7 = 1;
+        index8 = 1;
+        index9 = 1;
         for trial = 1:w   % calculate all metrics and aggregate the data            
                 
                     if isempty(all_imu_angles.(['A', subject_str]){trial})
-                        mean_freq(current, profile, config,sub,:) = NaN();
-                        med_freq(current, profile, config,sub,:) = NaN();
-                        power_interest(trial, sub,1,1:num_freq) = NaN(1:num_freq)
-   
-                    end
+                        mean_freq(trial, sub,1,:) = NaN();
+                        med_freq(trial, sub,1,:) = NaN();
+                        power_interest(trial, sub,1,1:num_freq) = NaN();
+                        
+                        continue
+                     end
                     trial_angles = all_imu_angles.(['A', subject_str]){trial}(:,1:3)*180/pi();
                     trial_time = (0:dt:length(trial_angles))';
                     % all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
@@ -66,7 +73,7 @@ for sub = 1:numsub
                     % make all trials only 12s
                     if len > 12*fs 
                         buffer = floor((len - 12*fs)/2);
-                        trial_angles = trial_angles(buffer:len - buffer,:); % take middle 10s of long trials
+                        trial_angles = trial_angles(buffer:len - buffer,:); 
                         trial_time_a = trial_time(buffer:len - buffer);
                         
                     % elseif len <12*fs
@@ -108,27 +115,81 @@ for sub = 1:numsub
                     end
                    
                     
-                    if contains(Label.trial(trial),"Forhead")
+                    % this should be good to go, but I did not debug super
+                    % rigorously
+                    if contains(Label.trial(trial),"3_electrode_0") % should be 2 trials 
+                        pad = 0;
                         All_Label.config(sub,trial) = 1;
-                        all_trials_sort(index1, sub,:,:) = trial_angles';
-                        power_interest_sort(index1, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
-                        All_Label.config_sort(sub,index1) = 1;
-                        All_Label.trial_sort{sub,index1} = Label.trial(trial);
+                        all_trials_sort(index1+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index1+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index1+pad) = 1;
+                        All_Label.trial_sort{sub,index1+pad} = Label.trial(trial);
                         index1= index1+1;
-                    elseif contains(Label.trial(trial),"Shoulder")
-                        All_Label.config(sub,trial) = 2;
-                        all_trials_sort(index2+10, sub,:,:) = trial_angles';
-                        power_interest_sort(index2+10, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
-                        All_Label.config_sort(sub,10+index2) = 2;
-                        All_Label.trial_sort{sub,index2+10} = Label.trial(trial);
+                    elseif contains(Label.trial(trial),"3_electrode_2") % should be 10 trials
+                        pad = 2;
+                        All_Label.config(sub,trial) = 1;
+                        all_trials_sort(index2+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index2+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index2+pad) = 1;
+                        All_Label.trial_sort{sub,index2+pad} = Label.trial(trial);
                         index2= index2+1;
-                    elseif contains(Label.trial(trial),"Neck")
-                        All_Label.config(sub,trial) = 3;
-                        all_trials_sort(index3+20, sub,:,:) = trial_angles';
-                        power_interest_sort(index3+20, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
-                        All_Label.config_sort(sub,20+index3) = 3;
-                        All_Label.trial_sort{sub,index3+20} = Label.trial(trial);
+                    elseif contains(Label.trial(trial),"3_electrode_3") % should be 8 trials
+                        pad = 10;
+                        All_Label.config(sub,trial) = 1;
+                        all_trials_sort(index3+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index3+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index3+pad) = 1;
+                        All_Label.trial_sort{sub,index3+pad} = Label.trial(trial);
                         index3= index3+1;
+                    elseif contains(Label.trial(trial),"3_electrode_4") % should be 8 trials
+                        pad = 18;
+                        All_Label.config(sub,trial) = 1;
+                        all_trials_sort(index4+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index4+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index4+pad) = 1;
+                        All_Label.trial_sort{sub,index4+pad} = Label.trial(trial);
+                        index4= index4+1;
+                    elseif contains(Label.trial(trial),"4_electrode_0") % should be 2 trials
+                        pad = 28;
+                        All_Label.config(sub,trial) = 2;
+                        all_trials_sort(index5+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index5+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index5+pad) = 2;
+                        All_Label.trial_sort{sub,index5+pad} = Label.trial(trial);
+                        index5= index5+1;
+                    elseif contains(Label.trial(trial),"4_electrode_1") % should be 6 trials
+                        pad = 30;
+                        All_Label.config(sub,trial) = 2;
+                        all_trials_sort(index6+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index6+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index6+pad) = 2;
+                        All_Label.trial_sort{sub,index6+pad} = Label.trial(trial);
+                        index6= index6+1;
+                    elseif contains(Label.trial(trial),"4_electrode_2") % should be 6 trials
+                        pad = 36;
+                        All_Label.config(sub,trial) = 2;
+                        all_trials_sort(index7+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index7+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index7+pad) = 2;
+                        All_Label.trial_sort{sub,index7+pad} = Label.trial(trial);
+                        index7= index7+1;
+                    elseif contains(Label.trial(trial),"4_electrode_3") % should be 6 trials
+                        pad = 42;
+                        All_Label.config(sub,trial) = 2;
+                        all_trials_sort(index8+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index8+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index8+pad) = 2;
+                        All_Label.trial_sort{sub,index8+pad} = Label.trial(trial);
+                        index8= index8+1;
+                    elseif contains(Label.trial(trial),"4_electrode_4") % should be 8 trials
+                        pad = 48;
+                        All_Label.config(sub,trial) = 2;
+                        all_trials_sort(index9+pad, sub,:,:) = trial_angles';
+                        power_interest_sort(index9+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
+                        All_Label.config_sort(sub,index9+pad) = 2;
+                        All_Label.trial_sort{sub,index9+pad} = Label.trial(trial);
+                        index9= index9+1;
+
                     end
 
         end
@@ -151,7 +212,7 @@ for sub = 1:numsub
             % determine whether trial 1 or 2 in the match up won the verbal
             % report for sway intensisty 
             
-            verbal_win_index = all_match_ups{match_up,8}+1;
+            verbal_win_index = all_match_ups{match_up,9}+1;
             
             if verbal_win_index ==2
                 power_verbal_win(match_up, sub) = power_1;
@@ -174,6 +235,7 @@ for sub = 1:numsub
         
 end
 
+%% this is where I left off on updating/checking the code
         [index_con] = find(sway_verbal_congruent);
         congruent_mean_sway_diff = mean(abs(sway_diff(index_con)),"all");
         congruent_sway_diff = sway_diff(index_con);
@@ -182,16 +244,18 @@ end
         non_congruent_sway_diff = sway_diff(index_non);
         non_congruent_sway_diff = [non_congruent_sway_diff ; NaN(length(congruent_sway_diff)-length(non_congruent_sway_diff),1)];
 
-        % figure; boxplot([abs(congruent_sway_diff) abs(non_congruent_sway_diff)])
-        % xticklabels(["Macthed Sway-Verbal (78)" "Conflicting Sway-Verbal (62)"])
-        % ylabel("Diff in sway power dB deg^2 /Hz")
-        % title("Comparison of Sway Magnitude and Verbal Reports")
+        % these plots just show that verbal reports of greater sensations
+        % generally coincided measurements of larger sway
+        figure; boxplot([abs(congruent_sway_diff) abs(non_congruent_sway_diff)])
+        xticklabels(["Macthed Sway-Verbal (206)" "Conflicting Sway-Verbal (74)"])
+        ylabel("Diff in sway power dB deg^2 /Hz")
+        title("Comparison of Sway Magnitude and Verbal Reports")
 
-        % figure;
-        % boxplot([reshape(power_verbal_win,[],1) reshape(power_verbal_loss,[],1)])
-        % xticklabels(["Sway for Verbal Wins" "Sway for Verbal Losses"])
-        % ylabel("Sway power dB deg^2 /Hz")
-        % title("Comparison of Sway Magnitude for Verbal win/loss")
+        figure;
+        boxplot([reshape(power_verbal_win,[],1) reshape(power_verbal_loss,[],1)])
+        xticklabels(["Sway for Verbal Win trials" "Sway for Verbal Loss trials"])
+        ylabel("Sway power dB deg^2 /Hz")
+        title("Comparison of Sway Magnitude for Verbal win/loss")
 
 %%
 Label.IMUmetrics = ["trial" "Subject" "Direction" "VarIndex"];
