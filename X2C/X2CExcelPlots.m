@@ -29,14 +29,13 @@ xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25];
 %%
 total_motion_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
 total_tingle_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+total_vis_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+total_metal_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
 total_motion_wins = [0,0,0,0,0 ; 0,0,0,0,0];
 total_tingle_wins = [0,0,0,0,0 ; 0,0,0,0,0];
 total_vis_wins = [0,0,0,0,0 ; 0,0,0,0,0];
 total_metal_wins = [0,0,0,0,0 ; 0,0,0,0,0];
 
-% total_forhead_shoulder = [0,0];
-% total_shoulder_neck = [0,0];
-% total_neck_forhead = [0,0];
 for sub = 1:numsub
     subject = subnum(sub);
     subject_str = num2str(subject);
@@ -61,6 +60,8 @@ for sub = 1:numsub
     metal_wins = [0,0,0,0,0 ; 0,0,0,0,0];
     motion_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
     tingle_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+    vis_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
+    metal_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
     Label.combos = ["Four 1mA Three 2mA","Four 1mA Three 3mA","Four 1mA Three 4mA"; ...
         "Four 2mA Three 2mA","Four 2mA Three 3mA","Four 2mA Three 4mA"; ...
         "Four 3mA Three 2mA","Four 3mA Three 3mA","Four 3mA Three 4mA"; ...
@@ -310,9 +311,28 @@ for sub = 1:numsub
             else 
                 tingle_combo_win=1;
             end
+
+            if win_incr(1,3) == row_1 % if row 1 =1 and the (1,1) index of win_incr = 1 that means 3 electrode won
+                vis_combo_win=-1;
+            elseif win_incr(2,3) == row_2 % if row 2 = 1 and the (2,1) index of win_incr = 1 that means 3 electrode won
+                vis_combo_win=-1;
+            else 
+                vis_combo_win=1;
+            end
+
+            if win_incr(1,4) == row_1 % if row 1 =1 and the (1,2) index of win_incr = 1 that means 3 electrode won
+                metal_combo_win=-1;
+            elseif win_incr(2,4) == row_2 % if row 2 = 1 and the (2,2) index of win_incr = 1 that means 3 electrode won
+                metal_combo_win=-1;
+            else 
+                metal_combo_win=1;
+            end
             
             motion_combo(combo_row,combo_col) = motion_combo(combo_row,combo_col)+ motion_combo_win;
             tingle_combo(combo_row,combo_col) = tingle_combo(combo_row,combo_col)+ tingle_combo_win;
+            vis_combo(combo_row,combo_col) = vis_combo(combo_row,combo_col)+ vis_combo_win;
+            metal_combo(combo_row,combo_col) = metal_combo(combo_row,combo_col)+ metal_combo_win;
+
     end 
        
              
@@ -343,6 +363,8 @@ for sub = 1:numsub
     % % aggregating results
     total_motion_combo = total_motion_combo +motion_combo;
     total_tingle_combo = total_tingle_combo +tingle_combo;
+    total_vis_combo = total_vis_combo +vis_combo;
+    total_metal_combo = total_metal_combo +metal_combo;
     total_motion_wins = total_motion_wins+motion_wins;
     total_tingle_wins = total_tingle_wins+tingle_wins;
     total_vis_wins = total_vis_wins+vis_wins;
@@ -359,6 +381,42 @@ for sub = 1:numsub
     sub_total_tingle_wins(sub,2)= cell2mat(total_tingle_wins_4);
     
 end
+Label.combos_stats_org_row = reshape(Label.combos, 12, 1);
+Label.combos_stats_org_col = ["Four electrode Wins", "Three electrode Wins", "Net Wins"] ;
+total_motion_combo_stats_org= reshape(total_motion_combo, 12, 1);
+total_motion_combo_stats_org(:,2) = (20+ total_motion_combo_stats_org(:,1))/2;
+total_motion_combo_stats_org(:,3) = 20- total_motion_combo_stats_org(:,2);
+total_motion_combo_stats_org = [total_motion_combo_stats_org(:,2) total_motion_combo_stats_org(:,3) total_motion_combo_stats_org(:,1) ];
+
+total_tingle_combo_stats_org= reshape(total_tingle_combo, 12, 1);
+total_tingle_combo_stats_org(:,2) = (20+ total_tingle_combo_stats_org(:,1))/2;
+total_tingle_combo_stats_org(:,3) = 20- total_tingle_combo_stats_org(:,2);
+total_tingle_combo_stats_org = [total_tingle_combo_stats_org(:,2) total_tingle_combo_stats_org(:,3) total_tingle_combo_stats_org(:,1) ];
+
+total_vis_combo_stats_org= reshape(total_vis_combo, 12, 1);
+total_vis_combo_stats_org(:,2) = (20+ total_vis_combo_stats_org(:,1))/2;
+total_vis_combo_stats_org(:,3) = 20- total_vis_combo_stats_org(:,2);
+total_vis_combo_stats_org = [total_vis_combo_stats_org(:,2) total_vis_combo_stats_org(:,3) total_vis_combo_stats_org(:,1) ];
+
+total_metal_combo_stats_org= reshape(total_metal_combo, 12, 1);
+total_metal_combo_stats_org(:,2) = (20+ total_metal_combo_stats_org(:,1))/2;
+total_metal_combo_stats_org(:,3) = 20- total_metal_combo_stats_org(:,2);
+total_metal_combo_stats_org = [total_metal_combo_stats_org(:,2) total_metal_combo_stats_org(:,3) total_metal_combo_stats_org(:,1) ];
+
+%% save data
+    cd([file_path]); %move to directory where file will be saved
+    %add all variables that we want to save to a list must include space
+    %between variable names 
+    vars_2_save =  ['Label total_motion_combo total_tingle_combo ' ...
+        ' total_vis_combo total_metal_combo ' ...
+        'total_motion_wins total_tingle_wins total_vis_wins total_metal_wins ' ...
+        ' sub_motion_combo sub_tingle_combo sub_motion_wins sub_tingle_wins ' ...
+        'sub_metal_wins sub_vis_wins sub_total_motion_wins  ' ...
+        ' sub_total_tingle_wins total_motion_combo_stats_org total_tingle_combo_stats_org ' ...
+        ' total_vis_combo_stats_org total_metal_combo_stats_org'];% ...
+        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
+    eval(['  save ' ['AllVerbal.mat '] vars_2_save ' vars_2_save']); %save file     
+    cd(code_path) %return to code directory
 
 % %% can add any aggregate subj plots here
 % figure;
