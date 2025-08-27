@@ -375,10 +375,16 @@ for sub = 1:numsub
     sub_tingle_wins(:,:,sub)= tingle_wins;
     sub_vis_wins(:,:,sub)= vis_wins;
     sub_metal_wins(:,:,sub)= metal_wins;
-    sub_total_motion_wins(sub,1)= cell2mat(total_motion_wins_3);
-    sub_total_motion_wins(sub,2)= cell2mat(total_motion_wins_4);
-    sub_total_tingle_wins(sub,1)= cell2mat(total_tingle_wins_3);
-    sub_total_tingle_wins(sub,2)= cell2mat(total_tingle_wins_4);
+    sub_total_motion_wins_montage(sub,1)= cell2mat(total_motion_wins_3);
+    sub_total_motion_wins_montage(sub,2)= cell2mat(total_motion_wins_4);
+    sub_total_tingle_wins_montage(sub,1)= cell2mat(total_tingle_wins_3);
+    sub_total_tingle_wins_montage(sub,2)= cell2mat(total_tingle_wins_4);
+
+    sub_total_motion_wins(sub,:)= ([motion_wins(1,:) motion_wins(2,:)]);
+    sub_total_tingle_wins(sub,:)= ([tingle_wins(1,:) tingle_wins(2,:)]);
+    sub_total_vis_wins(sub,:)= ([vis_wins(1,:) vis_wins(2,:)]);
+    sub_total_metal_wins(sub,:)= ([metal_wins(1,:) metal_wins(2,:)]);
+    
     
 end
 Label.combos_stats_org_row = reshape(Label.combos, 12, 1);
@@ -437,12 +443,12 @@ sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 % subplot(2,1,1)
 tiledlayout(2,1, "TileSpacing","compact")
 nexttile
-b=boxplot(sub_total_motion_wins);
+b=boxplot(sub_total_motion_wins_montage);
 hold on;
 for j = 1:numsub
-    for i = 1:width(sub_total_motion_wins)
+    for i = 1:width(sub_total_motion_wins_montage)
 
-        plot(i+xoffset2(j), sub_total_motion_wins(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+        plot(i+xoffset2(j), sub_total_motion_wins_montage(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
         hold on;
     end
 end
@@ -457,12 +463,12 @@ ylim([0 25])
 
 % subplot(2,1,2)
 nexttile
-h = boxplot(sub_total_tingle_wins);
+h = boxplot(sub_total_tingle_wins_montage);
 hold on;
 for j = 1:numsub
-    for i = 1:width(sub_total_tingle_wins)
+    for i = 1:width(sub_total_tingle_wins_montage)
 
-        plot(i+xoffset2(j), sub_total_tingle_wins(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+        plot(i+xoffset2(j), sub_total_tingle_wins_montage(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
         hold on;
     end
 end
@@ -476,6 +482,102 @@ title ("Tingling",'FontSize', 18);
 ylabel("Number of Reports")
 ylim([0 25])
 set(gcf,'position',[100,100,700,800])  
+%%
+figure;
+% subplot(2,1,1)
+tiledlayout(2,2, "TileSpacing","compact")
+nexttile
+motion_plot = [sub_total_motion_wins(:,3:4) sub_total_motion_wins(:,5)-2 sub_total_motion_wins(:,7:9) sub_total_motion_wins(:,10)-2];
+b=boxplot(motion_plot);
+hold on;
+for j = 1:numsub
+    for i = 1:width(motion_plot)
+        for k = 1:height(motion_plot)
+
+            plot(i+xoffset2(j), motion_plot(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+            hold on;
+        end
+    end
+end
+title ("Motion Sensation",'FontSize', 18);
+set(b, 'LineWidth', 2);
+set(b, 'Color', 'k');
+ax = gca; 
+set(ax, 'FontSize', 18);
+xticklabels([])
+ylabel("Number of Reports")
+ylim([0 8])
+
+% subplot(2,1,2)
+nexttile(3)
+tingle_plot = [sub_total_tingle_wins(:,3:4) sub_total_tingle_wins(:,5)-2 sub_total_tingle_wins(:,7:9) sub_total_tingle_wins(:,10)-2];
+
+h = boxplot(tingle_plot);
+hold on;
+for j = 1:numsub
+    for i = 1:width(tingle_plot)
+
+        plot(i+xoffset2(j), tingle_plot(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+        hold on;
+    end
+end
+% xticklabels([Label.MainResultsRow])
+xticklabels(["Shoulder 2mA" "Shoulder 3mA" "Shoulder 4mA" "Temples 1mA" "Temples 2mA" "Temples 3mA" "Temples 4mA"])
+set(h, 'LineWidth', 2);
+set(h, 'Color', 'k');
+ax = gca;
+set(ax, 'FontSize', 18); 
+title ("Skin Tingling",'FontSize', 18);
+ylabel("Number of Reports")
+ylim([0 8])
+set(gcf,'position',[100,100,700,800])  
+
+nexttile(2)
+vis_plot = [sub_total_vis_wins(:,3:4) sub_total_vis_wins(:,5)-2 sub_total_vis_wins(:,7:9) sub_total_vis_wins(:,10)-2];
+b=boxplot(vis_plot);
+hold on;
+for j = 1:numsub
+    for i = 1:width(vis_plot)
+        for k = 1:height(vis_plot)
+
+            plot(i+xoffset2(j), vis_plot(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+            hold on;
+        end
+    end
+end
+title ("Visual Flashes",'FontSize', 18);
+set(b, 'LineWidth', 2);
+set(b, 'Color', 'k');
+ax = gca; 
+set(ax, 'FontSize', 18);
+xticklabels([])
+% ylabel("Number of Reports")
+ylim([0 8])
+
+% subplot(2,1,2)
+nexttile(4)
+metal_plot = [sub_total_metal_wins(:,3:4) sub_total_metal_wins(:,5)-2 sub_total_metal_wins(:,7:9) sub_total_metal_wins(:,10)-2];
+
+h = boxplot(metal_plot);
+hold on;
+for j = 1:numsub
+    for i = 1:width(metal_plot)
+
+        plot(i+xoffset2(j), metal_plot(j, i),sub_symbols(j),'MarkerSize',10,"LineWidth", 1.5);
+        hold on;
+    end
+end
+% xticklabels([Label.MainResultsRow])
+xticklabels(["Shoulder 2mA" "Shoulder 3mA" "Shoulder 4mA" "Temples 1mA" "Temples 2mA" "Temples 3mA" "Temples 4mA"])
+set(h, 'LineWidth', 2);
+set(h, 'Color', 'k');
+ax = gca;
+set(ax, 'FontSize', 18); 
+title ("Metallic Taste",'FontSize', 18);
+% ylabel("Number of Reports")
+ylim([0 8])
+set(gcf,'position',[100,100,1600,800])  
+
 
 %%
 figure;
