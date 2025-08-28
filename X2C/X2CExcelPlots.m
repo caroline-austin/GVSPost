@@ -393,21 +393,29 @@ total_motion_combo_stats_org= reshape(total_motion_combo, 12, 1);
 total_motion_combo_stats_org(:,2) = (20+ total_motion_combo_stats_org(:,1))/2;
 total_motion_combo_stats_org(:,3) = 20- total_motion_combo_stats_org(:,2);
 total_motion_combo_stats_org = [total_motion_combo_stats_org(:,2) total_motion_combo_stats_org(:,3) total_motion_combo_stats_org(:,1) ];
+total_motion_combo_table_org= reshape(total_motion_combo_stats_org(:,1), 4, 3);
+% total_motion_combo_table = array2table(reshape(total_motion_combo_stats_org(:,1), 4, 3));
+% total_motion_combo_table.Properties.VariableNames = {'Shoulder 2mA', 'Shoulder 3mA' ,'Shoulder 4mA'};
+% total_motion_combo_table.Properties.RowNames = {'Temples 1mA', 'Temples 2mA', 'Temples 3mA' ,'Temples 4mA'};
+
 
 total_tingle_combo_stats_org= reshape(total_tingle_combo, 12, 1);
 total_tingle_combo_stats_org(:,2) = (20+ total_tingle_combo_stats_org(:,1))/2;
 total_tingle_combo_stats_org(:,3) = 20- total_tingle_combo_stats_org(:,2);
 total_tingle_combo_stats_org = [total_tingle_combo_stats_org(:,2) total_tingle_combo_stats_org(:,3) total_tingle_combo_stats_org(:,1) ];
+total_tingle_combo_table_org= reshape(total_tingle_combo_stats_org(:,1), 4, 3);
 
 total_vis_combo_stats_org= reshape(total_vis_combo, 12, 1);
 total_vis_combo_stats_org(:,2) = (20+ total_vis_combo_stats_org(:,1))/2;
 total_vis_combo_stats_org(:,3) = 20- total_vis_combo_stats_org(:,2);
 total_vis_combo_stats_org = [total_vis_combo_stats_org(:,2) total_vis_combo_stats_org(:,3) total_vis_combo_stats_org(:,1) ];
+total_vis_combo_table_org= reshape(total_vis_combo_stats_org(:,1), 4, 3);
 
 total_metal_combo_stats_org= reshape(total_metal_combo, 12, 1);
 total_metal_combo_stats_org(:,2) = (20+ total_metal_combo_stats_org(:,1))/2;
 total_metal_combo_stats_org(:,3) = 20- total_metal_combo_stats_org(:,2);
 total_metal_combo_stats_org = [total_metal_combo_stats_org(:,2) total_metal_combo_stats_org(:,3) total_metal_combo_stats_org(:,1) ];
+total_metal_combo_table_org= reshape(total_metal_combo_stats_org(:,1), 4, 3);
 
 %% save data
     cd([file_path]); %move to directory where file will be saved
@@ -436,7 +444,301 @@ total_metal_combo_stats_org = [total_metal_combo_stats_org(:,2) total_metal_comb
 % xticklabels([Label.MainResultsRow])
 % title ("Most Tingling");
 % 
+%% Table plot
+rowNames = {'Temples\n1mA', 'Temples\n2mA', 'Temples\n3mA' ,'Temples\n4mA'};
+colNames = {'Shoulder\n2(1)mA', 'Shoulder\n3(1.5)mA' ,'Shoulder\n4(2)mA'};
 
+% Create figure
+figure('Color', 'w', 'Position', [100 100 1300 900]);
+tiledlayout(2,2,'TileSpacing','tight')
+nexttile
+title(sprintf("                Motion Sensation"),'FontSize',20)
+axis off;
+hold on;
+
+% motion sensation 
+[nRows, nCols] = size(total_motion_combo_table_org);
+cellW = 5;
+cellH = 10;
+x0 = 10;  % Starting x
+y0 = 10;  % Starting y
+
+% Color scale thresholds (you can customize this logic)
+minVal = 0;
+maxVal = 20;
+
+% Color function (higher = darker green)
+colorFunc = @(val) repmat(1 - (val - minVal)/(maxVal*1.4 - minVal), 1, 3);
+% Draw table cells with text
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if c ==1 || r ==1
+            val = minVal;
+        else
+            val = total_motion_combo_table_org(r-1, c-1);
+        end
+        color = colorFunc(val);
+
+        % Draw colored rectangle
+        if c ==1 ||r ==1 
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'w');
+
+        elseif (r==2 && c==2) || (r==3 && (c==2 || c==4)) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30, 'FontWeight','bold');
+        else
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30);
+        end
+
+        
+    end
+end
+
+% Add column headers
+for c = 2:nCols+1
+    text(x0 + (c-0.5)*cellW, y0- 1*cellH + cellH/2, sprintf(colNames{c-1}), ...
+        'HorizontalAlignment', 'center', 'FontWeight', 'bold','FontSize', 20);
+end
+
+% Add row names
+for r = 2:nRows+1
+    text(x0 + (0.95)*cellW, y0 - r*cellH + cellH/2, sprintf(rowNames{r-1}), ...
+        'HorizontalAlignment', 'right', 'FontWeight', 'bold','FontSize', 20);
+end
+
+% tingling
+nexttile(3)
+title("                 Skin Tingling",'FontSize',20)
+axis off;
+hold on;
+
+[nRows, nCols] = size(total_tingle_combo_table_org);
+cellW = 5;
+cellH = 10;
+x0 = 10;  % Starting x - from left
+y0 = 10;  % Starting y - from top
+
+% Color scale thresholds (you can customize this logic)
+minVal = 0;
+maxVal = 20;
+
+% Color function (higher = darker green)
+colorFunc = @(val) repmat(1 - (val - minVal)/(maxVal*1.4 - minVal), 1, 3);
+% Draw table cells with text
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if c ==1 || r ==1
+            val = minVal;
+        else
+            val = total_tingle_combo_table_org(r-1, c-1);
+        end
+        color = colorFunc(val);
+
+        % Draw colored rectangle
+        if c ==1 ||r ==1 
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'w');
+
+        elseif (r==2 && c==2) || (r==3 && (c==2 || c==4)) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30, 'FontWeight','bold');
+        else
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30);
+        end
+
+        
+    end
+end
+
+% Add column headers
+for c = 2:nCols+1
+    text(x0 + (c-0.5)*cellW, y0- 1*cellH + cellH/2, sprintf(colNames{c-1}), ...
+        'HorizontalAlignment', 'center', 'FontWeight', 'bold','FontSize', 20);
+end
+
+% Add row names
+for r = 2:nRows+1
+    text(x0 + (0.95)*cellW, y0 - r*cellH + cellH/2, sprintf(rowNames{r-1}), ...
+        'HorizontalAlignment', 'right', 'FontWeight', 'bold','FontSize', 20);
+end
+ 
+% Visual flashes
+nexttile(2)
+title("                   Visual Flashes",'FontSize',20)
+axis off;
+hold on;
+
+[nRows, nCols] = size(total_vis_combo_table_org);
+cellW = 5;
+cellH = 10;
+x0 = 10;  % Starting x - from left
+y0 = 10;  % Starting y - from top
+
+% Color scale thresholds (you can customize this logic)
+minVal = 0;
+maxVal = 20;
+
+% Color function (higher = darker green)
+colorFunc = @(val) repmat(1 - (val - minVal)/(maxVal*1.4 - minVal), 1, 3);
+% Draw table cells with text
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if c ==1 || r ==1
+            val = minVal;
+        else
+            val = total_vis_combo_table_org(r-1, c-1);
+        end
+        color = colorFunc(val);
+
+        % Draw colored rectangle
+        if c ==1 ||r ==1 
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'w');
+
+        elseif (r==2 && c==2) || (r==3 && (c==2 || c==4)) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30, 'FontWeight','bold');
+        else
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30);
+        end
+
+        
+    end
+end
+
+% Add column headers
+for c = 2:nCols+1
+    text(x0 + (c-0.5)*cellW, y0- 1*cellH + cellH/2, sprintf(colNames{c-1}), ...
+        'HorizontalAlignment', 'center', 'FontWeight', 'bold','FontSize', 20);
+end
+
+% Add row names
+for r = 2:nRows+1
+    text(x0 + (0.95)*cellW, y0 - r*cellH + cellH/2, sprintf(rowNames{r-1}), ...
+        'HorizontalAlignment', 'right', 'FontWeight', 'bold','FontSize', 20);
+end
+
+
+%Metallic Taste
+nexttile(4)
+title("                 Metallic Taste",'FontSize',20)
+axis off;
+hold on;
+
+[nRows, nCols] = size(total_metal_combo_table_org);
+cellW = 5;
+cellH = 10;
+x0 = 10;  % Starting x - from left
+y0 = 10;  % Starting y - from top
+
+% Color scale thresholds (you can customize this logic)
+minVal = 0;
+maxVal = 20;
+
+% Color function (higher = darker green)
+colorFunc = @(val) repmat(1 - (val - minVal)/(maxVal*1.4 - minVal), 1, 3);
+% Draw table cells with text
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if c ==1 || r ==1
+            val = minVal;
+        else
+            val = total_metal_combo_table_org(r-1, c-1);
+        end
+        color = colorFunc(val);
+
+        % Draw colored rectangle
+        if c ==1 ||r ==1 
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'w');
+
+        elseif (r==2 && c==2) || (r==3 && (c==2 || c==4)) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30, 'FontWeight','bold');
+        else
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'FaceColor', color, ...
+                  'EdgeColor', 'k');
+            % Insert text
+            text(x0 + (c-0.5)*cellW, y0 - r*cellH + cellH/2, ...
+            num2str(val), ...
+            'HorizontalAlignment', 'center', ...
+            'VerticalAlignment', 'middle', ...
+            'FontSize', 30);
+        end
+
+        
+    end
+end
+
+% Add column headers
+for c = 2:nCols+1
+    text(x0 + (c-0.5)*cellW, y0- 1*cellH + cellH/2, sprintf(colNames{c-1}), ...
+        'HorizontalAlignment', 'center', 'FontWeight', 'bold','FontSize', 20);
+end
+
+% Add row names
+for r = 2:nRows+1
+    text(x0 + (0.95)*cellW, y0 - r*cellH + cellH/2, sprintf(rowNames{r-1}), ...
+        'HorizontalAlignment', 'right', 'FontWeight', 'bold','FontSize', 20);
+end
 %%
 figure;
 sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
