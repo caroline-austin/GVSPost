@@ -19,10 +19,11 @@ subskip = [2001 2049 2004 2008 2010];  %DNF'd subjects
 fs =30; % sampling freq of 30Hz
 dt = 1/fs;
 profile_freq = [ 0.5 ];
-freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
+freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25, 0.49, 0.51];
 num_freq = length(freq_interest);
 
 all_trials_sort = NaN(30,numsub, 3,fs*12+2);
+power_interest_log_sort = NaN(30, numsub,3,num_freq);
 power_interest_sort = NaN(30, numsub,3,num_freq);
 %% load data 
 for sub = 1:numsub
@@ -105,7 +106,8 @@ for sub = 1:numsub
                     [med_freq(trial, sub,:), med_power(trial, sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq(trial,sub,:), mean_power(trial, sub,:)]=meanfreq(roll_ang,fs);
 
-                    power_interest(trial, sub,:,1:num_freq) = log10(power_interest(trial, sub,:,1:num_freq))*10;
+                    % power_interest(trial, sub,:,1:num_freq) = power_interest(trial, sub,:,1:num_freq);
+                    power_interest_log(trial, sub,:,1:num_freq) = log10(power_interest(trial, sub,:,1:num_freq))*10;
 
                     [len, wid] = size(trial_angles);
                     if len <12*fs+2
@@ -121,6 +123,7 @@ for sub = 1:numsub
                         pad = 0;
                         All_Label.config(sub,trial) = 1;
                         all_trials_sort(index1+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index1+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index1+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index1+pad) = 1;
                         All_Label.trial_sort{sub,index1+pad} = Label.trial(trial);
@@ -129,6 +132,7 @@ for sub = 1:numsub
                         pad = 2;
                         All_Label.config(sub,trial) = 1;
                         all_trials_sort(index2+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index2+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index2+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index2+pad) = 1;
                         All_Label.trial_sort{sub,index2+pad} = Label.trial(trial);
@@ -137,6 +141,7 @@ for sub = 1:numsub
                         pad = 10;
                         All_Label.config(sub,trial) = 1;
                         all_trials_sort(index3+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index3+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index3+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index3+pad) = 1;
                         All_Label.trial_sort{sub,index3+pad} = Label.trial(trial);
@@ -145,6 +150,7 @@ for sub = 1:numsub
                         pad = 18;
                         All_Label.config(sub,trial) = 1;
                         all_trials_sort(index4+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index4+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index4+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index4+pad) = 1;
                         All_Label.trial_sort{sub,index4+pad} = Label.trial(trial);
@@ -153,6 +159,7 @@ for sub = 1:numsub
                         pad = 28;
                         All_Label.config(sub,trial) = 2;
                         all_trials_sort(index5+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index5+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index5+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index5+pad) = 2;
                         All_Label.trial_sort{sub,index5+pad} = Label.trial(trial);
@@ -161,6 +168,7 @@ for sub = 1:numsub
                         pad = 30;
                         All_Label.config(sub,trial) = 2;
                         all_trials_sort(index6+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index6+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index6+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index6+pad) = 2;
                         All_Label.trial_sort{sub,index6+pad} = Label.trial(trial);
@@ -169,6 +177,7 @@ for sub = 1:numsub
                         pad = 36;
                         All_Label.config(sub,trial) = 2;
                         all_trials_sort(index7+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index7+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index7+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index7+pad) = 2;
                         All_Label.trial_sort{sub,index7+pad} = Label.trial(trial);
@@ -177,6 +186,7 @@ for sub = 1:numsub
                         pad = 42;
                         All_Label.config(sub,trial) = 2;
                         all_trials_sort(index8+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index8+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index8+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index8+pad) = 2;
                         All_Label.trial_sort{sub,index8+pad} = Label.trial(trial);
@@ -185,6 +195,7 @@ for sub = 1:numsub
                         pad = 48;
                         All_Label.config(sub,trial) = 2;
                         all_trials_sort(index9+pad, sub,:,:) = trial_angles';
+                        power_interest_log_sort(index9+pad, sub,:,:) = power_interest_log(trial, sub,:,1:num_freq);
                         power_interest_sort(index9+pad, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         All_Label.config_sort(sub,index9+pad) = 2;
                         All_Label.trial_sort{sub,index9+pad} = Label.trial(trial);
@@ -234,28 +245,31 @@ for sub = 1:numsub
         end
         
 end
+%%
 
-%% this is where I left off on updating/checking the code
-        [index_con] = find(sway_verbal_congruent);
-        congruent_mean_sway_diff = mean(abs(sway_diff(index_con)),"all");
-        congruent_sway_diff = sway_diff(index_con);
-        [index_non] = find(sway_verbal_congruent-1);
-        non_congruent_mean_sway_diff = mean(abs(sway_diff(index_non)),"all");
-        non_congruent_sway_diff = sway_diff(index_non);
-        non_congruent_sway_diff = [non_congruent_sway_diff ; NaN(length(congruent_sway_diff)-length(non_congruent_sway_diff),1)];
+power_values_sort = (power_interest_sort(:,:,:,19) + power_interest_sort(:,:,:,20)+ power_interest_sort(:,:,:,10) )*(-freq_interest(19)+freq_interest(20))/2;
+power_values_sort = sqrt(power_values_sort);
+%% 
+[index_con] = find(sway_verbal_congruent);
+congruent_mean_sway_diff = mean(abs(sway_diff(index_con)),"all");
+congruent_sway_diff = sway_diff(index_con);
+[index_non] = find(sway_verbal_congruent-1);
+non_congruent_mean_sway_diff = mean(abs(sway_diff(index_non)),"all");
+non_congruent_sway_diff = sway_diff(index_non);
+non_congruent_sway_diff = [non_congruent_sway_diff ; NaN(length(congruent_sway_diff)-length(non_congruent_sway_diff),1)];
 
-        % these plots just show that verbal reports of greater sensations
-        % generally coincided measurements of larger sway
-        figure; boxplot([abs(congruent_sway_diff) abs(non_congruent_sway_diff)])
-        xticklabels(["Macthed Sway-Verbal (206)" "Conflicting Sway-Verbal (74)"])
-        ylabel("Diff in sway power dB deg^2 /Hz")
-        title("Comparison of Sway Magnitude and Verbal Reports")
+% these plots just show that verbal reports of greater sensations
+% generally coincided measurements of larger sway
+figure; boxplot([abs(congruent_sway_diff) abs(non_congruent_sway_diff)])
+xticklabels(["Macthed Sway-Verbal (206)" "Conflicting Sway-Verbal (74)"])
+ylabel("Diff in sway power deg^2 /Hz")
+title("Comparison of Sway Magnitude and Verbal Reports")
 
-        figure;
-        boxplot([reshape(power_verbal_win,[],1) reshape(power_verbal_loss,[],1)])
-        xticklabels(["Sway for Verbal Win trials" "Sway for Verbal Loss trials"])
-        ylabel("Sway power dB deg^2 /Hz")
-        title("Comparison of Sway Magnitude for Verbal win/loss")
+figure;
+boxplot([reshape(power_verbal_win,[],1) reshape(power_verbal_loss,[],1)])
+xticklabels(["Sway for Verbal Win trials" "Sway for Verbal Loss trials"])
+ylabel("Sway power deg^2 /Hz")
+title("Comparison of Sway Magnitude for Verbal win/loss")
 
 %%
 Label.IMUmetrics = ["trial" "Subject" "Direction" "VarIndex"];
@@ -267,16 +281,17 @@ Label.sort = ["trial order", "Subject",  "direction", "time or freq", ];
 
 
 %% save data
-    cd([file_path]); %move to directory where file will be saved
-    %add all variables that we want to save to a list must include space
-    %between variable names 
-    vars_2_save =  ['Label all_imu_angles all_ang all_time ' ...
-        'freq_interest power_interest  med_freq mean_freq ' ...
-        ' all_trials_sort power_interest_sort sway_diff sway_verbal_congruent'];% ...
-        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
-    eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
-    cd(code_path) %return to code directory
-    %clear saved variables to prevent them from affecting next subjects' data
-    eval (['clear ' vars_2_save]) 
+cd([file_path]); %move to directory where file will be saved
+%add all variables that we want to save to a list must include space
+%between variable names 
+vars_2_save =  ['Label all_imu_angles all_ang all_time ' ...
+    'freq_interest power_interest_log power_interest  med_freq mean_freq ' ...
+    ' all_trials_sort power_interest_log_sort sway_diff sway_verbal_congruent ' ...
+    ' power_values_sort power_interest_sort'];% ...
+    % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
+eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
+cd(code_path) %return to code directory
+%clear saved variables to prevent them from affecting next subjects' data
+% eval (['clear ' vars_2_save]) 
 
    
