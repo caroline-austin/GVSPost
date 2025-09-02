@@ -214,7 +214,7 @@ ylim([-0.5 8.5])
 grid minor
 
 % nexttile
-nexttile(3)
+nexttile(2)
 h = boxplot(sub_tingle');
 hold on;
 for j = 1:numsub
@@ -224,13 +224,13 @@ for j = 1:numsub
         hold on;
     end
 end
-xticklabels(["Forehead","Shoulder","Neck"])
+xticklabels([])
 set(h, 'LineWidth', 2);
 set(h, 'Color', 'k');
 ax = gca;
 set(ax, 'FontSize', 18); 
-title ("Tingling",'FontSize', 18);
-ylabel("Number of Reports")
+title ("Skin Tingling",'FontSize', 18);
+% ylabel("Number of Reports")
 ylim([-0.5 8.5])
 grid minor
 set(gcf,'position',[100,100,700,800])  
@@ -240,7 +240,7 @@ set(gcf,'position',[100,100,700,800])
 % tiledlayout(2,1,"TileSpacing","compact")
 % sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 % nexttile
-nexttile(2)
+nexttile(3)
 b=boxplot(sub_metal');
 hold on;
 for j = 1:numsub
@@ -255,8 +255,8 @@ set(b, 'LineWidth', 2);
 set(b, 'Color', 'k');
 ax = gca; 
 set(ax, 'FontSize', 18);
-xticklabels([])
-% ylabel("Number of Reports")
+xticklabels(["Forehead","Shoulder","Neck"])
+ylabel("Number of Reports")
 ylim([-0.5 8.5])
 grid minor
 % nexttile
