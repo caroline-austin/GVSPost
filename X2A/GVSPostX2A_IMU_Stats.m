@@ -335,42 +335,106 @@ ylim([-10 10]);
 figure('Position', [100, 100, 1200, 900]);
 tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
 
+colors = [0 0 0; .5 .5 .5; 0 0 0; .5 .5 .5; 0 0 0; .5 .5 .5];
+nexttile(3)
+% boxplot(pitch_power_data , pitch_power_group, 'Colors', colors)
 
-nexttile
-boxplot(pitch_power_data , pitch_power_group)
+% Unique groups and color map
+uniqueGroups = categories(categorical(pitch_power_group));
+% Plot using boxchart
+for i = 1:numel(uniqueGroups)
+    idx = pitch_power_group == uniqueGroups{i};
+    boxchart(ones(sum(idx),1)*i, pitch_power_data(idx), 'BoxFaceColor', colors(i,:));
+    hold on;
+end
+
+xticks([1 2 3 4 5 6])
+xticklabels(uniqueGroups)
+
 % ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
 title("Forehead + Temples Pitch Sway")
 ylim([-40 30]);
 
-nexttile
-boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+nexttile(1)
+% boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
+
+% Unique groups and color map
+uniqueGroups = categories(categorical(bilateral_roll_power_group));
+% Plot using boxchart
+for i = 1:numel(uniqueGroups)
+    idx = bilateral_roll_power_group == uniqueGroups{i};
+    boxchart(ones(sum(idx),1)*i, bilateral_roll_power_data(idx), 'BoxFaceColor', colors(i,:));
+    hold on;
+end
+
+xticks([1 2 3 4 5 6])
+xticklabels(uniqueGroups)
+
 ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
 title("Binaural Roll Sway")
 ylim([-40 30]);
 
-nexttile
-boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+nexttile(2)
+% boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+
+% Unique groups and color map
+uniqueGroups = categories(categorical(bilateral_yaw_power_group));
+% Plot using boxchart
+for i = 1:numel(uniqueGroups)
+    idx = bilateral_yaw_power_group == uniqueGroups{i};
+    boxchart(ones(sum(idx),1)*i, bilateral_yaw_power_data(idx), 'BoxFaceColor', colors(i,:));
+    hold on;
+end
+
 % ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
 title("Binaural Yaw Sway")
 ylim([-40 30]);
 
+xticks([1 2 3 4 5 6])
+xticklabels(uniqueGroups)
 
-nexttile
+nexttile(6)
 boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group([1:30 37:42]))
+
+pitch_disp_data_plot = pitch_disp_data([1:30 37:42]);
+pitch_disp_group_plot = pitch_disp_group([1:30 37:42]);
+% Unique groups and color map
+uniqueGroups = categories(categorical(pitch_disp_group_plot));
+% Plot using boxchart
+for i = 1:numel(uniqueGroups)
+    idx = pitch_disp_group_plot == uniqueGroups{i};
+    boxchart(ones(sum(idx),1)*i, pitch_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
+    hold on;
+end
+
 ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
 title("Forehead + Temples Pitch Sway")
 ylim([-8 16]);
+xticks([1 2 3])
 xticklabels(["+DC" "Sham" "-DC"])
 
-nexttile(5)
-boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18)) 
+nexttile(4)
+% boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18))
+
+bilateral_roll_disp_data_plot = bilateral_roll_disp_data(1:18);
+bilateral_roll_disp_group_plot = bilateral_roll_disp_group(1:18);
+% Unique groups and color map
+uniqueGroups = categories(categorical(pitch_disp_group_plot));
+% Plot using boxchart
+for i = 1:numel(uniqueGroups)
+    idx = bilateral_roll_disp_group_plot == uniqueGroups{i};
+    boxchart(ones(sum(idx),1)*i, bilateral_roll_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
+    hold on;
+end
+
 % ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
 title("Binaural Roll Sway")
 ylim([-8 16]);
+xticks([1 2 3])
 xticklabels(["+DC" "Sham" "-DC"])
 sgtitle("Sway For Montage-Direction Combinations of Interest")
