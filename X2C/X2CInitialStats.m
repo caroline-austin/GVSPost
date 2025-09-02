@@ -113,6 +113,7 @@ for profile = interest_profile % in this case there was only the 0.5 Hz profile/
                 index = index +1;            
                 
                 power_eval(:,index) = changem(squeeze(power_interest_sort(trial,:,dir,freq)), nan);
+                % power_eval(:,index) = changem(squeeze(power_values_sort(trial,:,dir)), nan);
                 
                 % save data into table
                 num_subs = height(power_eval);
