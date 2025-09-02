@@ -18,12 +18,21 @@ green = [0.5059    0.7451    0.6314];
 navy = [0.2196    0.2118    0.3804];
 purple = [0.4196    0.3059    0.4431];
 red =[0.7373  0.1529    0.1922];
+orange = [0.9020, 0.6235, 0.0000];  % golden orange
+skyblue = [0.3373, 0.7059, 0.9137]; % sky blue
+pink = [0.8353, 0.3686, 0.0000];    % strong warm pink
+teal = [0.2667, 0.4471, 0.3843];    % muted teal
+% yellow = [0.9451, 0.8941, 0.2588];  % soft yellow
+brown = [0.7059, 0.3961, 0.1137];   % medium brown
 yellow = [255 190 50]/255;
 black = [0 0 0];
 Color_list = [blue; green; yellow; red; black; navy; purple];
-type_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
-dir_simp_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:); Color_list(7,:);];
-time_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
+% type_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
+% dir_simp_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:); Color_list(7,:);];
+% time_color = [Color_list(1,:);Color_list(2,:); Color_list(3,:);];
+dir_simp_color = [green; skyblue; orange; pink] ;
+type_color = [teal; purple; brown];
+time_color = [ blue; yellow; red];
 dir_color = [Color_list(1,:);Color_list(1,:); Color_list(2,:); Color_list(2,:); Color_list(3,:); Color_list(3,:); Color_list(4,:); Color_list(1,:); Color_list(2,:); Color_list(7,:);];
 
 
@@ -96,10 +105,17 @@ for config = 1:num_config %generate electrode subplots
 
     title(Title, "FontSize", 20)
     xticklabels([]);
-    if config ~= 1
+    if config == 1
+        % ylabel("Distribution of Reports")      
+    elseif config ==3
+        yticklabels([" ", " ", " "]);
+        yyaxis right
         yticklabels([]);
+        ylab = ylabel("Motion Sensation", "Color",'k') ;
+        set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+        
     else
-        ylabel("Motion Sensation") 
+        yticklabels([]);
     end
 
 
@@ -163,10 +179,16 @@ for config = 1:num_config %generate electrode subplots
     ax.FontSize = 20;
     title("", "FontSize", 1)
     xticklabels([]);
-    if config ~= 1
+    if config == 1
+        % ylabel("Distribution of Reports")      
+    elseif config ==3
+        yticklabels([" ", " ", " "]);
+        yyaxis right
         yticklabels([]);
+        ylab = ylabel("Skin Tingling", "Color",'k'); 
+        set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
     else
-        ylabel("Skin Tingling") 
+        yticklabels([]);
     end
 
 
@@ -231,10 +253,16 @@ for config = 1:num_config %generate electrode subplots
     ax.FontSize = 20;
     title("", "FontSize", 1)
     xticklabels([]);
-    if config ~= 1
+    if config == 1
+        ylabel("                 Number of subjects rating (N=10)")      
+    elseif config ==3
+        yticklabels([" ", " ", " "]);
+        yyaxis right
         yticklabels([]);
+        ylab = ylabel("Metallic Taste", "Color",'k') ;
+        set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
     else
-        ylabel("Metallic Taste") 
+        yticklabels([]);
     end
 
 
@@ -298,14 +326,24 @@ for config = 1:num_config %generate electrode subplots
     ax.FontSize = 20;
     title("", "FontSize", 1)
 
-    if config ~= 1
+    if config == 1
+        % ylabel("Distribution of Reports")  
+    elseif config == 2
         yticklabels([]);
-        if config == 2
-            xlabel("Current mA", "FontSize", 25)
-        end
+        xlabel("Current Amplitude mA", "FontSize", 25)
+        xticks([ 1, 2, 3, 4])
+        xticklabels(["1(0.5)", "2(1)","3(1.5)", "4(2)"]);
+        
+    elseif config ==3
+        yticklabels([" ", " ", " "]);
+        yyaxis right
+        yticklabels([]);
+        ylab = ylabel("Visual Flashes", "Color",'k') ;
+        set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
     else
-        ylabel("Visual Flashes") 
+        yticklabels([]);
     end
+
 
     for sub = 1:numsub
         subject = subnum(sub);
@@ -346,8 +384,8 @@ end
         % lgd.Layout.Tile = 4;
         % lgd.Color =  [1 1 1];
 
-        TotalTitle = char(strjoin(["Side Effect Ratings" Profiles(prof)]));
-        sgtitle( TotalTitle, "FontSize", 25);
+        % TotalTitle = char(strjoin(["Side Effect Ratings" Profiles(prof)]));
+        % sgtitle( TotalTitle, "FontSize", 25);
         % 
         Filename = char(strjoin(["Fig1SideEffectRatings" Profiles_safe(prof) "AllCurrentSandPlotWithSubSymbols"]));
 
@@ -373,7 +411,7 @@ for prof = 4
             b(j).FaceColor = dir_simp_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
 
         Title = config_names(config);
         title(Title, "FontSize", 45)
@@ -394,7 +432,7 @@ for prof = 4
     end
     % ylabel("                        Number of Responses", "FontSize", 35)
     % xlabel("Current mA", "FontSize", 37)
-    lgd = legend(Label.direction_simple, 'FontSize', 38 );
+    lgd = legend(Label.direction_simple, 'FontSize', 30 );
     lgd.Layout.Tile = 4;
 
 end
@@ -410,7 +448,7 @@ end
             b(j).FaceColor = type_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
         title("", "FontSize", 1)
 
 
@@ -430,7 +468,7 @@ end
     end
     % ylabel("                        Number of Responses", "FontSize", 35)
     % xlabel("Current mA", "FontSize", 37)
-    lgd = legend('Tilt','Translation', sprintf('General \n Instability'), 'FontSize', 38 );
+    lgd = legend('Tilt','Translation', sprintf('General \n Instability'), 'FontSize', 30 );
     lgd.Layout.Tile = 8;
     % overall_title = strjoin(["Reported Motion Type",   Profiles(prof)]);
     % sgtitle(overall_title, "FontSize", 50)
@@ -447,12 +485,14 @@ end
             b(j).FaceColor = time_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
         title("", "FontSize", 1)
 
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
         xticklabels(Current_levels_str);
+        
+
         ylim([0 10])
         grid minor;
         if prof == 4
@@ -461,7 +501,9 @@ end
         if config ~= 1
             yticklabels([]);
             if config == 2
-                xlabel("Current mA", "FontSize", 25)
+                xlabel("Current mA", "FontSize", 22)
+                Current_levels_str = ["0.1(0.05)" ".5(0.25)" "1(0.5)" "1.5(0.75)" "2(1)" "2.5(1.25)" "3(1.5)" "3.5(1.75)" "4(2)"];
+                xticklabels(Current_levels_str);
             end
         else
             ylabel("Motion Timing") 
@@ -470,7 +512,7 @@ end
     end
     % ylabel("                        Number of Responses", "FontSize", 35)
     % xlabel("Current mA", "FontSize", 37)
-    lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 38 );
+    lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 30 );
     lgd.Layout.Tile = 12;
     overall_title = strjoin(["Reported Motion Characteristics",   Profiles(prof)]);
     sgtitle(overall_title, "FontSize", 50)
@@ -524,12 +566,19 @@ for config = 1:num_config %generate electrode subplots
         ylim([0 10])
         xlim([.25 5.75])
 
-        if config ~= 1
+        if config ==3
             yticklabels([]);
-        else
-            ylabel("Motion Sensation") 
+            yyaxis right
+            yticklabels([]);
+            ylab = ylabel("Motion Sensation", "Color",'k') ;
+            set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+        elseif config ~= 1
+            yticklabels([]);
+           
+            
         end
 
+        
 % add individual subject responses on top
     for sub = 1:numsub
         subject = subnum(sub);
@@ -617,10 +666,15 @@ for config = 1:num_config %generate electrode subplots
         ylim([0 10])
         xlim([.25 5.75])
 
-        if config ~= 1
+        if config ==3
             yticklabels([]);
-        else
-            ylabel("Skin Tingling") 
+            yyaxis right
+            yticklabels([]);
+            ylab = ylabel("Skin Tingling", "Color",'k') ;
+            set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+        elseif config ~= 1
+            yticklabels([]);
+
         end
 
 % add individual subject responses on top
@@ -711,10 +765,17 @@ for config = 1:num_config %generate electrode subplots
         ax = gca;
         ax.FontSize = 20;
 
-        if config ~= 1
+        if config ==3
             yticklabels([]);
-        else
-            ylabel("Metallic Taste") 
+            yyaxis right
+            yticklabels([]);
+            ylab = ylabel("Metallic Taste", "Color",'k') ;
+            set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+        elseif config == 1
+            ylabel("                  Number of subjects rating (N=10)")
+        elseif config ~= 1
+            yticklabels([]);
+
         end
 
 % add individual subject responses on top
@@ -805,13 +866,19 @@ for config = 1:num_config %generate electrode subplots
         ax = gca;
         ax.FontSize = 20;
 
-        if config ~= 1
+
+        if config ==3
             yticklabels([]);
-            if config == 2
+            yyaxis right
+            yticklabels([]);
+            ylab = ylabel("Visual Flashes", "Color",'k') ;
+            set(ylab, 'Rotation', -90, 'VerticalAlignment', 'bottom', 'HorizontalAlignment', 'center');
+        
+        elseif config == 2
+            yticklabels([]);
                 xlabel("Current Waveform", "FontSize", 25)
-            end
-        else
-            ylabel("Visual Flashes") 
+        elseif config ~= 1
+            yticklabels([]);
         end
 
 % add individual subject responses on top
@@ -888,7 +955,7 @@ end
             b(j).FaceColor = dir_simp_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
         
         Title = config_names(config);
         title(Title, "FontSize", 45)
@@ -903,7 +970,7 @@ end
             ylabel("Motion Direction") 
         end
     end
-    lgd = legend(Label.direction_simple, 'FontSize', 38 );
+    lgd = legend(Label.direction_simple, 'FontSize', 30 );
     lgd.Layout.Tile = 4;
     
     %% Plot Motion Type (tilt, translation, general instability)
@@ -920,7 +987,7 @@ end
             b(j).FaceColor = type_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
 
                xticks([1 2 3 4 5]);
         xticklabels([]);
@@ -932,7 +999,7 @@ end
             ylabel("Motion Type") 
         end
     end
-    lgd = legend(Label.motion_type, 'FontSize', 38 );
+    lgd = legend(Label.motion_type, 'FontSize', 30 );
     lgd.Layout.Tile = 8;
 
         %% Plot Motion Timing (rhythmic, continuous, intermittent)
@@ -949,7 +1016,7 @@ end
             b(j).FaceColor = time_color(j,:);
         end
         ax = gca;
-        ax.FontSize = 25;
+        ax.FontSize = 22;
 
         Current_levels_str = ["DC+" "DC-" "0.25Hz" "0.5Hz" "1Hz"];
         xticks([1 2 3 4 5]);
@@ -960,7 +1027,7 @@ end
         if config ~= 1
             yticklabels([]);
             if config == 2
-                xlabel("Current Waveform", "FontSize", 25)
+                xlabel("Current Waveform", "FontSize", 22)
             end
         else
             ylabel("Motion Timing") 
@@ -969,10 +1036,10 @@ end
     end
     % ylabel("                        Number of Responses", "FontSize", 35)
     % xlabel("Current mA", "FontSize", 37)
-    lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 38 );
+    lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 30 );
     lgd.Layout.Tile = 12;
     overall_title = strjoin(["Reported Motion Characteristics at High Current Amplitude"]);
-    sgtitle(overall_title, "FontSize", 50)
+    sgtitle(overall_title, "FontSize", 40)
     % 
     Filename = strtrim(strjoin(["Fig4MotionCharacterizationReportsAllProfilesMaxCurrentGroupedBar"]));
 
