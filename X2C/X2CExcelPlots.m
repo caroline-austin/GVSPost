@@ -26,6 +26,15 @@ yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05];
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
 xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+yellow = [255 190 50]/255;
+Color_list = [blue; green; yellow; red; navy; purple];
+
 %%
 total_motion_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
 total_tingle_combo = [0,0,0; 0, 0,0; 0,0,0; 0,0,0];
@@ -445,7 +454,7 @@ total_metal_combo_table_org= reshape(total_metal_combo_stats_org(:,1), 4, 3);
 % title ("Most Tingling");
 % 
 %% Table plot
-rowNames = {'Temples\n1mA', 'Temples\n2mA', 'Temples\n3mA' ,'Temples\n4mA'};
+rowNames = {'Temples\n1(1)mA', 'Temples\n2(2)mA', 'Temples\n3(3)mA' ,'Temples\n4(4)mA'};
 colNames = {'Shoulder\n2(1)mA', 'Shoulder\n3(1.5)mA' ,'Shoulder\n4(2)mA'};
 
 % Create figure
@@ -467,7 +476,7 @@ y0 = 10;  % Starting y
 minVal = 0;
 maxVal = 20;
 
-% Color function (higher = darker green)
+% Color function (higher = darker gray)
 colorFunc = @(val) repmat(1 - (val - minVal)/(maxVal*1.4 - minVal), 1, 3);
 % Draw table cells with text
 for r = 1:nRows+1
@@ -482,7 +491,6 @@ for r = 1:nRows+1
         % Draw colored rectangle
         if c ==1 ||r ==1 
             rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
-                  'FaceColor', color, ...
                   'EdgeColor', 'w');
 
         elseif (r==2 && c==2) || (r==3 && (c==2 || c==4)) || (r==4 && c == 3) || (r==5 && c == 4)
@@ -510,6 +518,18 @@ for r = 1:nRows+1
         
     end
 end
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if (r==2 && c==2) || (r==3 && c==4) 
+        rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', green, 'LineWidth', 3);
+
+        elseif  (r==3 && c==2 ) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', red, 'LineWidth', 3);
+        end
+    end
+end
 
 % Add column headers
 for c = 2:nCols+1
@@ -524,7 +544,7 @@ for r = 2:nRows+1
 end
 
 % tingling
-nexttile(3)
+nexttile(2)
 title("                 Skin Tingling",'FontSize',20)
 axis off;
 hold on;
@@ -582,6 +602,18 @@ for r = 1:nRows+1
         
     end
 end
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if (r==2 && c==2) || (r==3 && c==4) 
+        rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', green, 'LineWidth', 3);
+
+        elseif  (r==3 && c==2 ) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', red, 'LineWidth', 3);
+        end
+    end
+end
 
 % Add column headers
 for c = 2:nCols+1
@@ -596,7 +628,7 @@ for r = 2:nRows+1
 end
  
 % Visual flashes
-nexttile(2)
+nexttile(4)
 title("                   Visual Flashes",'FontSize',20)
 axis off;
 hold on;
@@ -655,6 +687,19 @@ for r = 1:nRows+1
     end
 end
 
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if (r==2 && c==2) || (r==3 && c==4) 
+        rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', green, 'LineWidth', 3);
+
+        elseif  (r==3 && c==2 ) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', red, 'LineWidth', 3);
+        end
+    end
+end
+
 % Add column headers
 for c = 2:nCols+1
     text(x0 + (c-0.5)*cellW, y0- 1*cellH + cellH/2, sprintf(colNames{c-1}), ...
@@ -669,7 +714,7 @@ end
 
 
 %Metallic Taste
-nexttile(4)
+nexttile(3)
 title("                 Metallic Taste",'FontSize',20)
 axis off;
 hold on;
@@ -725,6 +770,19 @@ for r = 1:nRows+1
         end
 
         
+    end
+end
+
+for r = 1:nRows+1
+    for c = 1:nCols+1
+        if (r==2 && c==2) || (r==3 && c==4) 
+        rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', green, 'LineWidth', 3);
+
+        elseif  (r==3 && c==2 ) || (r==4 && c == 3) || (r==5 && c == 4)
+            rectangle('Position', [x0 + (c-1)*cellW, y0 - r*cellH, cellW, cellH], ...
+                  'EdgeColor', red, 'LineWidth', 3);
+        end
     end
 end
 
