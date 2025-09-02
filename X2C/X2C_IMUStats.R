@@ -7,6 +7,11 @@ library('ARTool')
 library(lmtest)
 library(BradleyTerry2)
 
+library(lme4)
+library(lmerTest)
+library(emmeans)
+
+
 #navigate to the directory
 setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
@@ -26,19 +31,106 @@ freq_power$config <- factor(freq_power$config)
 freq_power$dir <- factor(freq_power$dir)
 freq_power$sub <- factor(freq_power$sub)
 freq_power$mA <- factor(freq_power$mA)
+freq_power$condition <- paste(freq_power$config, freq_power$mA)
+freq_power$condition <-factor(freq_power$condition)
 
-freq_power<-subset(freq_power, mA != "0.1")
-freq_power<-subset(freq_power, mA != "1")
-freq_power<-subset(freq_power, order <= 6)
+#freq_power<-subset(freq_power, mA != "0.1")
+#freq_power<-subset(freq_power, mA != "1")
+#freq_power<-subset(freq_power, mA != 0.1)
+#freq_power<-subset(freq_power, mA != 1)
+#freq_power<-subset(freq_power, order <= 6)
 
 pitch_power<-subset(freq_power, dir == "pitch")
 roll_power<-subset(freq_power, dir == "roll")
+# (mA == "1" & config == "Four")
+#   (mA == "2" & config == "Three")
+
+freq_power1 <-subset(freq_power, ((mA == "1" & config == "Four") | (mA == "2" & config == "Three")) )
+freq_power2 <-subset(freq_power, ((mA == "2" & config == "Four") | (mA == "4" & config == "Three")) )
+
+pitch_power1 <-subset(freq_power1,  dir == "pitch" )
+pitch_power2 <-subset(freq_power2,  dir == "pitch" )
+
 
 temples_power <- subset(freq_power, config == "Four")
 shoulder_power <- subset(freq_power, config == "Three")
 
 
 ####################################
+# run verbal stats -> checking binomial probability?
+t.test(verbal$motion_wins1, mu = 10)
+
+total_wins =  # there are 2 forced choice comparisons per condition
+total_responses = 20; # 2*10 subj
+
+# motion
+# all are significantly different from 0.5 in the expected direction except the 2 conditions
+# where current at the mastoids is the same (1 and 10 where p is around 0.5)
+binom.test(verbal$motion_wins1[1], total_responses, p=0.5) # Temples 1mA, Shoulder 2mA 
+binom.test(verbal$motion_wins1[2], total_responses, p=0.5) # Temples 2mA, Shoulder 2mA
+binom.test(verbal$motion_wins1[3], total_responses, p=0.5) # Temples 3mA, Shoulder 2mA
+binom.test(verbal$motion_wins1[4], total_responses, p=0.5) # Temples 4mA, Shoulder 2mA
+binom.test(verbal$motion_wins1[5], total_responses, p=0.5) # Temples 1mA, Shoulder 3mA 
+binom.test(verbal$motion_wins1[6], total_responses, p=0.5) # Temples 2mA, Shoulder 3mA 
+binom.test(verbal$motion_wins1[7], total_responses, p=0.5) # Temples 3mA, Shoulder 3mA 
+binom.test(verbal$motion_wins1[8], total_responses, p=0.5) # Temples 4mA, Shoulder 3mA 
+binom.test(verbal$motion_wins1[9], total_responses, p=0.5) # Temples 1mA, Shoulder 4mA 
+binom.test(verbal$motion_wins1[10], total_responses, p=0.5) # Temples 2mA, Shoulder 4mA 
+binom.test(verbal$motion_wins1[11], total_responses, p=0.5) # Temples 3mA, Shoulder 4mA 
+binom.test(verbal$motion_wins1[12], total_responses, p=0.5) # Temples 4mA, Shoulder 4mA 
+
+
+# tingling
+# all are significantly different from 0.5 in the expected direction except the 2 conditions
+# where current at the mastoids is the same (1 and 10 where p is around 0.5)
+binom.test(verbal$tingling_wins1[1], total_responses, p=0.5) # Temples 1mA, Shoulder 2mA 
+binom.test(verbal$tingling_wins1[2], total_responses, p=0.5) # Temples 2mA, Shoulder 2mA
+binom.test(verbal$tingling_wins1[3], total_responses, p=0.5) # Temples 3mA, Shoulder 2mA
+binom.test(verbal$tingling_wins1[4], total_responses, p=0.5) # Temples 4mA, Shoulder 2mA
+binom.test(verbal$tingling_wins1[5], total_responses, p=0.5) # Temples 1mA, Shoulder 3mA 
+binom.test(verbal$tingling_wins1[6], total_responses, p=0.5) # Temples 2mA, Shoulder 3mA 
+binom.test(verbal$tingling_wins1[7], total_responses, p=0.5) # Temples 3mA, Shoulder 3mA 
+binom.test(verbal$tingling_wins1[8], total_responses, p=0.5) # Temples 4mA, Shoulder 3mA 
+binom.test(verbal$tingling_wins1[9], total_responses, p=0.5) # Temples 1mA, Shoulder 4mA 
+binom.test(verbal$tingling_wins1[10], total_responses, p=0.5) # Temples 2mA, Shoulder 4mA 
+binom.test(verbal$tingling_wins1[11], total_responses, p=0.5) # Temples 3mA, Shoulder 4mA 
+binom.test(verbal$tingling_wins1[12], total_responses, p=0.5) # Temples 4mA, Shoulder 4mA 
+
+
+# visual
+# all are significantly different from 0.5 in the expected direction except the 2 conditions
+# where current at the mastoids is the same (1 and 10 where p is around 0.5)
+binom.test(verbal$vis_wins1[1], total_responses, p=0.5) # Temples 1mA, Shoulder 2mA 
+binom.test(verbal$vis_wins1[2], total_responses, p=0.5) # Temples 2mA, Shoulder 2mA
+binom.test(verbal$vis_wins1[3], total_responses, p=0.5) # Temples 3mA, Shoulder 2mA
+binom.test(verbal$vis_wins1[4], total_responses, p=0.5) # Temples 4mA, Shoulder 2mA
+binom.test(verbal$vis_wins1[5], total_responses, p=0.5) # Temples 1mA, Shoulder 3mA 
+binom.test(verbal$vis_wins1[6], total_responses, p=0.5) # Temples 2mA, Shoulder 3mA 
+binom.test(verbal$vis_wins1[7], total_responses, p=0.5) # Temples 3mA, Shoulder 3mA 
+binom.test(verbal$vis_wins1[8], total_responses, p=0.5) # Temples 4mA, Shoulder 3mA 
+binom.test(verbal$vis_wins1[9], total_responses, p=0.5) # Temples 1mA, Shoulder 4mA 
+binom.test(verbal$vis_wins1[10], total_responses, p=0.5) # Temples 2mA, Shoulder 4mA 
+binom.test(verbal$vis_wins1[11], total_responses, p=0.5) # Temples 3mA, Shoulder 4mA 
+binom.test(verbal$vis_wins1[12], total_responses, p=0.5) # Temples 4mA, Shoulder 4mA 
+
+# metallic
+# all are significantly different from 0.5 in the expected direction except the 2 conditions
+# where current at the mastoids is the same (1 and 10 where p is around 0.5)
+binom.test(verbal$metallic_wins1[1], total_responses, p=0.5) # Temples 1mA, Shoulder 2mA 
+binom.test(verbal$metallic_wins1[2], total_responses, p=0.5) # Temples 2mA, Shoulder 2mA
+binom.test(verbal$metallic_wins1[3], total_responses, p=0.5) # Temples 3mA, Shoulder 2mA
+binom.test(verbal$metallic_wins1[4], total_responses, p=0.5) # Temples 4mA, Shoulder 2mA
+binom.test(verbal$metallic_wins1[5], total_responses, p=0.5) # Temples 1mA, Shoulder 3mA 
+binom.test(verbal$metallic_wins1[6], total_responses, p=0.5) # Temples 2mA, Shoulder 3mA 
+binom.test(verbal$metallic_wins1[7], total_responses, p=0.5) # Temples 3mA, Shoulder 3mA 
+binom.test(verbal$metallic_wins1[8], total_responses, p=0.5) # Temples 4mA, Shoulder 3mA 
+binom.test(verbal$metallic_wins1[9], total_responses, p=0.5) # Temples 1mA, Shoulder 4mA 
+binom.test(verbal$metallic_wins1[10], total_responses, p=0.5) # Temples 2mA, Shoulder 4mA 
+binom.test(verbal$metallic_wins1[11], total_responses, p=0.5) # Temples 3mA, Shoulder 4mA 
+binom.test(verbal$metallic_wins1[12], total_responses, p=0.5) # Temples 4mA, Shoulder 4mA 
+
+########
+
 # run verbal stats (Bradley Terry Model)
 BT_motion_model <- (BTm(cbind(motion_wins1,motion_wins2),  condition1, condition2, data =verbal))
 summary(BT_motion_model)
@@ -65,7 +157,10 @@ total_responses = 280; # 28*10 subj
 
 binom.test(total_congruent, total_responses, p=0.5)
 
-#################################
+################################# IMU stats
+# run linear mixed model
+pitch_power_lme_model <- lmer(Var ~ config * mA + (1 | sub), data = pitch_power)
+
 # run pitch only anova
 # pooling the pitch data there is no difference between the montages
 pitch_power.aov <- anova_test(data = pitch_power[,1:8], dv = Var, wid = sub, within = c(  "config", "order", "mA" ))
@@ -94,6 +189,15 @@ pairwise.t.test(freq_power[,1],freq_power[,5],p.adj = "bonf") # direction
 pairwise.t.test(freq_power[,1],freq_power[,3],p.adj = "bonf") # order
 
 pairwise.t.test(roll_power[,1],roll_power[,4],p.adj = "bonf") # roll only montage
+##use this one for the paperv
+pairwise.t.test(pitch_power[,1],pitch_power[,9],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_power[,1],pitch_power[,9],p.adj = "none") # pitch only montage
+
+pairwise.t.test(freq_power1[,1],freq_power1[,4],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
+pairwise.t.test(freq_power2[,1],freq_power2[,4],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
+
+pairwise.t.test(pitch_power1[,1],pitch_power1[,4],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
+pairwise.t.test(pitch_power2[,1],pitch_power2[,4],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
 
 ######################### pitch
 #check data normality and homoscedacity 
