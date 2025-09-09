@@ -29,8 +29,8 @@ end
 % xticklabels(Current_levels_str);
 
 ax = gca;
-ax.FontSize = 27;
-title(Title, "FontSize", 45)
+ax.FontSize = 20;
+title(Title, "FontSize", 35)
 % title(Title)
 % legend(Legend);
 % xlabel("Current mA")

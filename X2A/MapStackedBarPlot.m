@@ -14,6 +14,6 @@ end
 % % yticks([1 6]); 
 
 ax = gca;
-ax.FontSize = 25; %27;
-title(Title, "FontSize", 45)
+ax.FontSize = 20; %27;
+title(Title, "FontSize", 30)
 end

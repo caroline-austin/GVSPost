@@ -101,9 +101,9 @@ for config = 1:num_config %generate electrode subplots
     set(gca, 'color', [0 0 0]);
     xlim([0.35 4.15]);
     ax = gca;
-    ax.FontSize = 20;
+    % ax.FontSize = 20;
 
-    title(Title, "FontSize", 20)
+    title(Title, "FontSize", 30)
     xticklabels([]);
     if config == 1
         % ylabel("Distribution of Reports")      
@@ -414,7 +414,7 @@ for prof = 4
         ax.FontSize = 22;
 
         Title = config_names(config);
-        title(Title, "FontSize", 45)
+        title(Title, "FontSize", 30)
 
         Current_levels_str = ["0.1" ".5" "1" "1.5" "2" "2.5" "3" "3.5" "4"];
         xticks([1 2 3 4 5 6 7 8 9]);
@@ -515,7 +515,7 @@ end
     lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 30 );
     lgd.Layout.Tile = 12;
     overall_title = strjoin(["Reported Motion Characteristics",   Profiles(prof)]);
-    sgtitle(overall_title, "FontSize", 50)
+    % sgtitle(overall_title, "FontSize", 50)
     % 
     % Filename = strtrim(strjoin(["Fig2MotionCharacterizationReports" Profiles_safe(prof) "AllCurrentGroupedBar"]));
 
@@ -559,7 +559,7 @@ for config = 1:num_config %generate electrode subplots
 %     set(gca, 'color', [0 0 0]);
 %     xlim([0.35 4.15]);
     ax = gca;
-    ax.FontSize = 20;
+    % ax.FontSize = 20;
 
         xticks([1 2 3 4 5]);
         xticklabels([]);
@@ -931,7 +931,7 @@ for config = 1:num_config %generate electrode subplots
 end
 
         TotalTitle = char(strjoin(["Side Effect Ratings at High Current Amplitude" ]));
-        sgtitle( TotalTitle, "FontSize", 25);
+        % sgtitle( TotalTitle, "FontSize", 25);
         % 
         Filename = char(strjoin(["Fig3SideEffectRatingsAllProvilesMaxCurrentStackeBarPlotWithSubSymbols"]));
 % 
@@ -958,7 +958,7 @@ end
         ax.FontSize = 22;
         
         Title = config_names(config);
-        title(Title, "FontSize", 45)
+        title(Title, "FontSize", 30)
             
         xticks([1 2 3 4 5]);
         xticklabels([]);
@@ -1039,7 +1039,7 @@ end
     lgd = legend('Rhythmic','Continuous', 'Intermittent', 'FontSize', 30 );
     lgd.Layout.Tile = 12;
     overall_title = strjoin(["Reported Motion Characteristics at High Current Amplitude"]);
-    sgtitle(overall_title, "FontSize", 40)
+    % sgtitle(overall_title, "FontSize", 40)
     % 
     Filename = strtrim(strjoin(["Fig4MotionCharacterizationReportsAllProfilesMaxCurrentGroupedBar"]));
 
