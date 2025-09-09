@@ -293,10 +293,11 @@ end
 % plan to use in the paper
 if contains(plots,'Z ') % visualizes a single participants data only for combinations of interest at the maximum current amplitude, 3 subplots each with 5 curves
 %% plot Z - plots angle over time
-    ang_plot.(Profiles_safe(5))  = time_series_plot_combine(subnum,subskip,imu_dir(7:8), Config , [1:3], ["sham" "low" "max"],[3], Profiles_safe, [1:5], all_ang_reduced, all_time_reduced, "Angle (deg)");
-    disp(" press any key to close all") %subnum
-    pause;
-    close all;
+    ang_plot.(Profiles_safe(5))  = time_series_plot_combine(subnum(2),subskip,imu_dir(7:8), Config , [1:3], ["sham" "low" "max"],[3], Profiles_safe, [1:5], all_ang_reduced, all_time_reduced, "Angle (deg)", Color_list);
+    % disp(" press any key to close all") %subnum
+    % pause;
+    % close all;
+    sgtitle("");
 
 
 end
@@ -398,7 +399,7 @@ for sub = 1:numsub
                     if subplot_index ==2
                         ylabel(y_label)
                     elseif subplot_index == 3
-                    xlabel("Time steps")
+                        xlabel("Time steps")
                     end
                     % ylim([0 0.25]);
                 % grid minor
@@ -426,20 +427,22 @@ end
 
 end
 %%
-function [data_plot,f] = time_series_plot_combine(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+function [data_plot,f] = time_series_plot_combine(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, Color_list, comparison)
 numsub = length(subnum);
 num_figure_var = length(figure_var);
 num_subplot_var = length(subplot_var);
 num_trial_var = length(trial_var);
 num_extra_var = length(extra_var);
 num_trial_indices = length(trial_indices);
+extra_var_plot = ["+DC"; "-DC"; "0.25 Hz" ;"0.5Hz"; "1Hz"];
 
 legend_key_top = [];
 legend_key_mid = [];
 legend_key_bot = [];
 color_index = 0;
 
-color_grad = turbo(num_extra_var);
+% color_grad = turbo(num_extra_var);
+color_grad = [Color_list(4,:); Color_list(3,:); Color_list(2,:);Color_list(1,:); Color_list(6,:)];
 
 
 for sub = 1:numsub
@@ -489,14 +492,20 @@ for sub = 1:numsub
                     end
 
                     figure(f(figure_index));
-                    plot( data_plot.(subplot_var(subplot_index)).time{:,trial_index}, data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(color_index,:), "LineWidth", 2); hold on;
+                    plot( data_plot.(subplot_var(subplot_index)).time{:,trial_index}, ... 
+                        (data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} ...
+                        - data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}(1)), ...
+                        "Color", color_grad(color_index,:), "LineWidth", 2); hold on;
                     hold on;
-                    title(subplot_var(subplot_index));
+                    ax = gca;
+                    ax.FontSize = 12; %27;
+                    title(subplot_var(subplot_index),'FontSize', 20);
                     xlim([0 12])
     
                     % should proabably manually build the legend here
                     if subplot_index == 1 && figure_index ==1
-                        legend_key_top = [legend_key_top, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                        % legend_key_top = [legend_key_top, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
+                        legend_key_top = [legend_key_top, strjoin([extra_var_plot(extra_index) ])];
                     elseif subplot_index == 2 && figure_index ==1
                         legend_key_mid = [legend_key_mid, strjoin(['S' string(subject_str) string(num2str(trial_var(trial_index))) 'mA'])];
                     elseif subplot_index == 3 && figure_index ==1
@@ -506,8 +515,14 @@ for sub = 1:numsub
                    
                     if subplot_index ==2
                         ylabel(y_label)
+                        xticklabels([])
+                        ylim([-10 3])
                     elseif subplot_index == 3
-                    xlabel("Time steps")
+                        xlabel("Time (s)")
+                        ylim([-6.5 6.5])
+                    elseif subplot_index ==1
+                        xticklabels([])
+                        ylim([-6.5 6.5])
                     end
                     % ylim([0 0.25]);
                 % grid minor
@@ -523,9 +538,9 @@ for sub = 1:numsub
             if subplot_index == 1
                 legend(legend_key_top )
             elseif subplot_index == 2
-                legend(legend_key_mid )
+                % legend(legend_key_mid )
             elseif subplot_index == 3
-                legend(legend_key_bot )
+                % legend(legend_key_bot )
             end
         end
 
