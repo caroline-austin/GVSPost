@@ -136,7 +136,42 @@ if contains(plots, "3 ")
     end
 end
 
-
+% plots the mag interest results for the 0.5 Hz frequency - data is
+% pooled across replicate trials and subjects and compared only at the
+% montage level
+if contains(plots, "3 ")
+    %%
+    for dir = 2%1:2
+        figure;
+        forehead_power= mag_interest_sort(1:8, :,dir,1);
+        shoulder_power= mag_interest_sort(11:18, :,dir,1);
+        neck_power= mag_interest_sort(21:28, :,dir,1);
+        mean_forehead_power = mean(forehead_power);
+        mean_shoulder_power = mean(shoulder_power);
+        mean_neck_power = mean(neck_power);
+        median_forehead_power = median(forehead_power);
+        median_shoulder_power = median(shoulder_power);
+        median_neck_power = median(neck_power);
+        forehead_power_group= reshape(forehead_power,[],1);
+        shoulder_power_group= reshape(shoulder_power,[],1);
+        neck_power_group= reshape(neck_power,[],1);
+        boxplot([forehead_power_group shoulder_power_group neck_power_group]);
+        hold on; 
+        for sub = 1:numsub % num of sub
+            plot(1+xoffset2(sub), median_forehead_power(sub), sub_symbols(sub))
+            plot(2+xoffset2(sub), median_shoulder_power(sub), sub_symbols(sub))
+            plot(3+xoffset2(sub), median_neck_power(sub), sub_symbols(sub))
+        end
+        xticklabels(["Forehead" "Shoulder" "Neck"]); 
+        ylim([0 1])
+        if dir ==1
+            sgtitle("Roll Sway Power at 0.5Hz")
+        elseif dir ==2
+            sgtitle("Pitch Sway Power at 0.5Hz")
+        end
+        ylabel('Sway at Freq of Interest (deg)');
+    end
+end
 % plots the power interest results for the 0.5 Hz frequency - data is
 % pooled across replicate trials and subjects and compared only at the
 % montage level
