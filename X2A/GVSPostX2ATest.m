@@ -148,7 +148,6 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
     Label.Observed_Timing_map = ["Current"; "Timing"; "Config";"Profile"];
     Observed_Timing_mapReduced = ReduceMapMultiple(Observed_Timing_map,MinCurrent,MaxCurrent,Label);
 
-
     
 %% Save file
     cd([file_path, '/' , subject_str]); %move to directory where file will be saved
@@ -284,10 +283,6 @@ end
 
 % for debugging both subject 2 and 3 are missing some of their reports;
 % subject 3 is missing for the 3 and 4 electrode configuration of profile 1
-
-%need to fix Min and max current are ordered Bi, Ay, Cv instead of Bi, Cv,
-%Ay (which is what everything else in the code is ordered) - need to fix
-%this
 
 function [Reduced_map] = ReduceMapMultiple(Rating_map,MinCurrent,MaxCurrent,Label)
 %this function takes a previously generated map and reduces it so that the
