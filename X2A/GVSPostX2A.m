@@ -19,7 +19,7 @@ cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
 cd(code_path)
 
-subnum = 2009:2010;  % Subject List 
+subnum = 2001:2010;  % Subject List 
 numsub = length(subnum);
 subskip = [40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 
@@ -59,15 +59,40 @@ for sub = 1:numsub
     % get data from part 2
     % the 76 may need to be reduced to 73 (because the first subject had 3
     % extra trials
-    TrialInfo2 = readcell(['A' subject_str '.xlsx'],'Range','A44:G73');
-    SideEffects2 = readcell(['A' subject_str '.xlsx'],'Range','H44:J73');
-    MotionSense2 = readcell(['A' subject_str '.xlsx'],'Range','K44:O73');
-    Observed2 = readcell(['A' subject_str '.xlsx'],'Range','P44:T73');
+    if subnum(sub) == 2001
+        TrialInfo2 = readcell(['A' subject_str '.xlsx'],'Range','A44:G76');
+        SideEffects2 = readcell(['A' subject_str '.xlsx'],'Range','H44:J76');
+        MotionSense2 = readcell(['A' subject_str '.xlsx'],'Range','K44:O76');
+        Observed2 = readcell(['A' subject_str '.xlsx'],'Range','P44:T76');
+    else
+        TrialInfo2 = readcell(['A' subject_str '.xlsx'],'Range','A44:G73');
+        SideEffects2 = readcell(['A' subject_str '.xlsx'],'Range','H44:J73');
+        MotionSense2 = readcell(['A' subject_str '.xlsx'],'Range','K44:O73');
+        Observed2 = readcell(['A' subject_str '.xlsx'],'Range','P44:T73');
+    end
 
     TrialInfo2(cellfun(@(x) any(ismissing(x)), TrialInfo2)) = {''};
     SideEffects2(cellfun(@(x) any(ismissing(x)), SideEffects2)) = {''};
     MotionSense2(cellfun(@(x) any(ismissing(x)), MotionSense2)) = {''};
     Observed2(cellfun(@(x) any(ismissing(x)), Observed2)) = {''};
+
+
+    % swap aoyama DC+ and DC- report labels because the current profiles
+    % used were backwards from the cevette labeling (note that the front
+    % and back labels were applied based on the anticipated sway direction
+    % from the Fitzpatrick and Day theory, but the experiment proved that
+    % in reality sway response is in the opposite direction - so the
+    % "front" label here is intended to be positive, but actually leads to
+    % backwards sway
+    for trial = 1:length(TrialInfo2)
+        if contains(TrialInfo2{trial,4},'Aoyama') && contains(TrialInfo2{trial,6},'DC')
+            if contains(TrialInfo2{trial,7},'front')
+                TrialInfo2{trial,7} = 'back';
+            elseif contains(TrialInfo2{trial,7},'back')
+                TrialInfo2{trial,7} = 'front';
+            end
+        end
+    end
 
     % get other subject information
     EndImpedance = readcell(['A' subject_str '.xlsx'],'Range','X3:X12');
@@ -85,8 +110,8 @@ for sub = 1:numsub
     %In the excel spreadsheet the min/max is order Bi, Ay, Cv but
     %everywhere else in this code it's Bi, Cv, Ay so this makes things more
     %streamlined later on
-    MinCurrent = [MinCurrent(1), MinCurrent(3), MinCurrent(2)];
-    MaxCurrent = [MaxCurrent(1), MaxCurrent(3), MaxCurrent(2)];
+    MinCurrent = [MinCurrent(1), MinCurrent(3), MinCurrent(2)]';
+    MaxCurrent = [MaxCurrent(1), MaxCurrent(3), MaxCurrent(2)]';
 
 % insert code that will count the number of each type of response
 
