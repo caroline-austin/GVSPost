@@ -19,8 +19,15 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
 fs =25; % sampling freq of 100Hz
 dt = 1/fs;
 profile_freq = [ 0 0 0.25 0.5 1];
-freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
+freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25, 0.24, 0.26, 0.49, 0.51, 0.99, 1.01];
 num_freq = length(freq_interest);
+freq_interest_reduced = [ 0.25 0.5 1 ];
+num_freq_reduced = length(freq_interest_reduced);
+% initialize data size
+                   % current, profile, config, sub, dir, var interest
+mag_interest = NaN(9, 5,3,numsub,3, num_freq_reduced );
+power_interest = NaN(9, 5,3,numsub,3, num_freq);
+power_interest_log = NaN(9, 5,3,numsub,3, num_freq );
 %% load data 
 for sub = 1:numsub
     subject = subnum(sub);
@@ -86,13 +93,20 @@ for sub = 1:numsub
 
                     % make all trials only 12s
                     if len > 12*fs && (profile == 4 || profile == 3 || profile == 5 )
-                        buffer = floor((len - 12*fs)/2);
-                        trial_gyro = trial_gyro(buffer:len - buffer,:); % take middle 10s of long trials
-                        trial_accel = trial_accel(buffer:len - buffer,:); % take middle 10s of long trials
-                        trial_angles = trial_angles(buffer:len - buffer,:); % take middle 10s of long trials
-                        trial_time_a = trial_time(buffer:len - buffer,:);
+                        start_buffer = floor((len - 12*fs)/2);
+                        end_buffer = ((len - 12*fs) -start_buffer)+1;
+                        trial_gyro = trial_gyro(start_buffer:len - end_buffer,:); % take middle 12s of long trials
+                        trial_accel = trial_accel(start_buffer:len - end_buffer,:); % take middle 12s of long trials
+                        trial_angles = trial_angles(start_buffer:len - end_buffer,:); % take middle 12s of long trials
+                        trial_time_a = trial_time(start_buffer:len - end_buffer,:);
+
+                    elseif len > 12*fs && (profile == 1 || profile == 2 )
+                        trial_gyro = trial_gyro(1:12*fs,:); % take first 12s of long trials
+                        trial_accel = trial_accel(1:12*fs,:); % take first 12s of long trials
+                        trial_angles = trial_angles(1:12*fs,:); % take first 12s of long trials
+                        trial_time_a = trial_time(1:12*fs,:);
                         
-                    elseif len <12*fs
+                    elseif len <12*fs % this condition never hits
                          buffer = floor(abs((len - 12*fs)/2));
                          trial_gyro = [trial_gyro; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
                          trial_accel = [trial_accel; NaN(2*buffer,wid)]; % buffer the end of short trials with NaN's
@@ -154,10 +168,29 @@ for sub = 1:numsub
                     [power_interest(current, profile, config, sub,1,1:num_freq),~] = periodogram(roll_ang,[],freq_interest,fs);
                     [power_interest(current, profile, config, sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
                     [power_interest(current, profile, config, sub,3,1:num_freq),~] = periodogram(yaw_ang,[],freq_interest,fs);
+                    [pxx_roll,f_roll] = periodogram(roll_ang,hamming(length(roll_ang)),length(roll_ang),fs,'power');
+                    [pxx_pitch,f_pitch] = periodogram(pitch_ang,hamming(length(pitch_ang)),length(pitch_ang),fs,'power');
+                    [pxx_yaw,f_yaw] = periodogram(yaw_ang,hamming(length(yaw_ang)),length(yaw_ang),fs,'power');
                     [med_freq(current, profile, config,sub,:), med_power(current, profile, config, sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq(current, profile, config,sub,:), mean_power(current, profile, config, sub,:)]=meanfreq(roll_ang,fs);
+                    
+                    if length(roll_ang) ==12*fs
+                        ind_f_roll = find(ismember(f_roll,freq_interest_reduced)); % find the index that is closest to each freq_interest
+                        pwr_f_roll = pxx_roll(ind_f_roll);
+                        mag_interest(current, profile, config, sub,1,1:num_freq_reduced) = sqrt(pwr_f_roll *2);
+                        
+                        ind_f_pitch = find(ismember(f_pitch,freq_interest_reduced)); % find the index that is closest to f0
+                        pwr_f_pitch = pxx_pitch(ind_f_pitch);
+                        mag_interest(current, profile, config, sub,2,1:num_freq_reduced) = sqrt(pwr_f_pitch *2);
+    
+                        ind_f_yaw = find(ismember(f_yaw,freq_interest_reduced));% find the index that is closest to f0
+                        pwr_f_yaw = pxx_yaw(ind_f_yaw);
+                        mag_interest(current, profile, config, sub,3,1:num_freq_reduced) = sqrt(pwr_f_yaw *2);
+                    else 
+                        mag_interest(current, profile, config, sub,1:3,1:num_freq_reduced) = NaN;
+                    end
 
-                    power_interest(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
+                    power_interest_log(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
 
                     mdl = fittype('a*sin(b*x+c)','indep','x');
                     fittedmdl1 = fit(trial_time_a,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
@@ -182,10 +215,12 @@ for sub = 1:numsub
                    angle_drift(current, profile, config, sub,1,:) = mean(roll_ang(fs*5:fs*5+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                    angle_drift(current, profile, config, sub,2,:) = mean(pitch_ang(fs*5:fs*5+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
-                   if config ==3 % flipping for the aoyama bc the profiles were generated with the wrong polarity label 
-                        angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;
-                        angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
-                   end
+                   % commenting this out/removing because I made a change
+                   % to the labels upstream so this isn't an issue anymore
+                   % if config ==3 % flipping for the aoyama bc the profiles were generated with the wrong polarity label 
+                   %      angle_drift(current, profile, config, sub,1,:) = angle_drift(current, profile, config, sub,1,:)*-1;
+                   %      angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
+                   % end
                     if profile == 2 && config ==2 && subject == 2005 && current == 8 % correct for participant who did not do max in the max condition
                         angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
                         angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
@@ -221,7 +256,17 @@ for sub = 1:numsub
     [fit_amp_reduced(:,:,:,sub,:)] = ReduceVarMultiple(fit_amp,MinCurrent,MaxCurrent,Label,sub);
     [angle_drift_reduced(:,:,:,sub,:)] = ReduceVarMultiple(angle_drift,MinCurrent,MaxCurrent,Label,sub);
 
+    
+    % start with 0.25Hz profile then 0.5 and 1 Hz
+    power_values(:,:,:,sub,:,1) = (power_interest(:,:,:,sub,:,19) + power_interest(:,3,:,sub,:,20)+ power_interest(:,3,:,sub,:,6) )*(-freq_interest(19)+freq_interest(20))/2;
+    power_values(:,:,:,sub,:,2) = (power_interest(:,:,:,sub,:,21) + power_interest(:,3,:,sub,:,22)+ power_interest(:,3,:,sub,:,10) )*(-freq_interest(21)+freq_interest(22))/2;
+    power_values(:,:,:,sub,:,3) = (power_interest(:,:,:,sub,:,23) + power_interest(:,3,:,sub,:,24)+ power_interest(:,3,:,sub,:,15) )*(-freq_interest(23)+freq_interest(24))/2;
+    
+
     [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
+    [power_interest_log_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest_log,MinCurrent,MaxCurrent,Label,sub);
+    [power_values_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_values,MinCurrent,MaxCurrent,Label,sub);
+    [mag_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(mag_interest,MinCurrent,MaxCurrent,Label,sub);
 
     [all_ang_reduced.(['A', subject_str])] = ReduceTimeSeriesMultiple(all_ang.(['A', subject_str]),MinCurrent,MaxCurrent,Label,sub);
     [all_time_reduced.(['A', subject_str])] = ReduceTimeSeriesMultiple(all_time.(['A', subject_str]),MinCurrent,MaxCurrent,Label,sub);
@@ -231,7 +276,8 @@ end
 %%
 Label.IMUmetrics = ["Current" "Profile" "Config" "Subject" "Direction" "VarIndex"];
 Label.CurrentAmpReduced = ["Low" "Min" "Max"];
-
+power_values= sqrt(power_values);
+power_values_reduced = sqrt(power_values_reduced);
 
 
 %% save data
@@ -239,11 +285,11 @@ Label.CurrentAmpReduced = ["Low" "Min" "Max"];
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ...
-        'freq_interest power_interest  med_freq med_power mean_freq mean_power ' ...
+        'freq_interest power_interest power_interest_log power_values med_freq med_power mean_freq mean_power ' ...
         'phase_shift fit_freq fit_amp mean_amp med_amp rms_save_reduced' ...
-        ' power_interest_reduced  med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
+        ' power_interest_reduced power_interest_log_reduced  power_values_reduced med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
         'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced' ...
-        ' angle_drift angle_drift_reduced all_ang_reduced all_time_reduced'];% ...
+        ' angle_drift angle_drift_reduced all_ang_reduced all_time_reduced mag_interest mag_interest_reduced'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
