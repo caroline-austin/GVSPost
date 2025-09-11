@@ -12,19 +12,15 @@ colors;
 cd(code_path);
 LC = [226 107 109;128 128 128;90 160 163]/255;
 
-
 %% Make Figure
 
 switch Type
-    case 'Velocity'
-        conditions = [5 4 1];
-        Title = 'Velocity Coupled GVS';
     case 'Angle'
-        conditions = [1 2 3];
+        conditions = [1 3 4];
         Title = 'Angle Coupled GVS';
-    case 'Semi'
-        conditions = [6 4 2];
-        Title = 'Semi Coupled GVS';
+    case 'Opt'
+        conditions = [2 3 5];
+        Title = 'Optimally Coupled GVS';
 end
 motions = ["4","5","6"];
 

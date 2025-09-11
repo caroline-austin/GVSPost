@@ -50,9 +50,10 @@ for j = 1:3
             indvdata = percplot(:,subnum);
 
             if shift == 1
+                indvdata = indvdata - indvdata(1);
             elseif shift == 2
                 indvdata = indvdata - (indvdata(1)+indvdata(end))/2;
-                indvdata = indvdata - indvdata(1);
+                
             end
 
             plot(timeplot,indvdata,'-','LineWidth',LW,'LineStyle',LS(i),'Color',LC(i,:))
