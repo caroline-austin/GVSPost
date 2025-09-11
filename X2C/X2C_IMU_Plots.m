@@ -41,7 +41,7 @@ if contains(plots, "1 ")
     for sub = 1:numsub
         subject = subnum(sub);
         subject_str = num2str(subject);
-        for dir = 1:2
+        for dir = 2%1:2
         figure;
         subplot(2,1,1)
         for trial = 1:56
@@ -56,6 +56,7 @@ if contains(plots, "1 ")
             end
             plot(squeeze(all_trials_sort(trial, sub,dir,:))');
             hold on;
+            xlim([0 240])
 
         end
         sgtitle([subject_str imu_dir(dir)])
@@ -224,7 +225,138 @@ if contains(plots, "3 ")
     
 end
 
-if contains(plots, "3 ")
+
+% plots the power interest results for the 0.5 Hz frequency - data is
+% pooled across replicate trials and subjects and compared only at the
+% montage level
+% pitch version of this plot to be used in the paper (I think)
+if contains(plots, "3b ")
+    %% mag interest
+    for dir = 2%1:2
+        % figure;
+        shoulder_0_1mA_mag= [mag_interest_sort(1:2, :,dir,1); NaN(8,10)]; % 
+        shoulder_2mA_mag= [mag_interest_sort(3:10, :,dir,1); NaN(2,10)];
+        shoulder_3mA_mag= [mag_interest_sort(11:18, :,dir,1); NaN(2,10)];
+        shoulder_4mA_mag= mag_interest_sort(19:28, :,dir,1);
+    
+        temples_0_1mA_mag= [mag_interest_sort(29:30, :,dir,1); NaN(8,10)]; % 
+        temples_1mA_mag= [mag_interest_sort(31:36, :,dir,1); NaN(4,10)];
+        temples_2mA_mag= [mag_interest_sort(37:42, :,dir,1); NaN(4,10)];
+        temples_3mA_mag= [mag_interest_sort(43:48, :,dir,1); NaN(4,10)];
+        temples_4mA_mag= [mag_interest_sort(49:56, :,dir,1); NaN(2,10)];
+
+        mean_shoulder_0_1mA_mag = mean(shoulder_0_1mA_mag, 'omitnan');
+        mean_shoulder_2mA_mag = mean(shoulder_2mA_mag, 'omitnan');
+        mean_shoulder_3mA_mag = mean(shoulder_3mA_mag, 'omitnan');
+        mean_shoulder_4mA_mag = mean(shoulder_4mA_mag, 'omitnan');
+
+        mean_temples_0_1mA_mag = mean(temples_0_1mA_mag, 'omitnan');
+        mean_temples_1mA_mag = mean(temples_1mA_mag, 'omitnan');
+        mean_temples_2mA_mag = mean(temples_2mA_mag, 'omitnan');
+        mean_temples_3mA_mag = mean(temples_3mA_mag, 'omitnan');
+        mean_temples_4mA_mag = mean(temples_4mA_mag, 'omitnan');
+        
+        median_shoulder_0_1mA_mag = median(shoulder_0_1mA_mag, 'omitnan');
+        median_shoulder_2mA_mag = median(shoulder_2mA_mag, 'omitnan');
+        median_shoulder_3mA_mag = median(shoulder_3mA_mag, 'omitnan');
+        median_shoulder_4mA_mag = median(shoulder_4mA_mag, 'omitnan');
+
+        median_temples_0_1mA_mag = median(temples_0_1mA_mag, 'omitnan');
+        median_temples_1mA_mag = median(temples_1mA_mag, 'omitnan');
+        median_temples_2mA_mag = median(temples_2mA_mag, 'omitnan');
+        median_temples_3mA_mag = median(temples_3mA_mag, 'omitnan');
+        median_temples_4mA_mag = median(temples_4mA_mag, 'omitnan');
+
+        
+        shoulder_0_1mA_mag_group= reshape(shoulder_0_1mA_mag,[],1);
+        shoulder_2mA_mag_group= reshape(shoulder_2mA_mag,[],1);
+        shoulder_3mA_mag_group= reshape(shoulder_3mA_mag,[],1);
+        shoulder_4mA_mag_group= reshape(shoulder_4mA_mag,[],1);
+
+        temples_0_1mA_mag_group= reshape(temples_0_1mA_mag,[],1);
+        temples_1mA_mag_group= reshape(temples_1mA_mag,[],1);
+        temples_2mA_mag_group= reshape(temples_2mA_mag,[],1);
+        temples_3mA_mag_group= reshape(temples_3mA_mag,[],1);
+        temples_4mA_mag_group= reshape(temples_4mA_mag,[],1);
+
+        % boxplot([shoulder_0_1mA_mag_group temples_0_1mA_mag_group shoulder_2mA_mag_group ... 
+        %     temples_1mA_mag_group shoulder_3mA_mag_group shoulder_4mA_mag_group  ...
+        %      temples_2mA_mag_group temples_3mA_mag_group ...
+        %     temples_4mA_mag_group]);
+        % hold on; 
+        % for sub = 1:numsub % num of sub
+        %     plot(1+xoffset2(sub), median_shoulder_0_1mA_mag(sub), sub_symbols(sub))
+        %     plot(2+xoffset2(sub), median_temples_0_1mA_mag(sub), sub_symbols(sub))
+        %     plot(3+xoffset2(sub), median_shoulder_2mA_mag(sub), sub_symbols(sub))
+        %     plot(4+xoffset2(sub), median_temples_1mA_mag(sub), sub_symbols(sub))
+        %     plot(5+xoffset2(sub), median_shoulder_3mA_mag(sub), sub_symbols(sub))
+        %     plot(6+xoffset2(sub), median_shoulder_4mA_mag(sub), sub_symbols(sub))
+        %     plot(7+xoffset2(sub), median_temples_2mA_mag(sub), sub_symbols(sub))
+        %     plot(8+xoffset2(sub), median_temples_3mA_mag(sub), sub_symbols(sub))
+        %     plot(9+xoffset2(sub), median_temples_4mA_mag(sub), sub_symbols(sub))
+        % end
+        % xticklabels(["Shoulder 0.1mA" "Temples 0.1mA"  "Shoulder 2mA" "Temples 1mA"... 
+        %         "Shoulder 3mA" "Shoulder 4mA" "Temples 2mA"  "Temples 3mA" "Temples 4mA"]); 
+        % ylim([0.005 5])
+        % yscale("log")
+        % yticks([0.005 0.05 0.5 5]) 
+        % if dir ==1
+        %     sgtitle("Roll Sway Power at 0.5Hz")
+        % elseif dir ==2
+        %     sgtitle("Pitch Sway Power at 0.5Hz")
+        % end
+        % ylabel('Sway at Freq of Interest (deg)');
+        % set(gcf, 'Position', [100, 100, 1200, 600]);
+
+        % 2nd plot with different order of montage/current amplitude
+        figure; 
+        % boxplot([shoulder_0_1mA_mag_group  shoulder_2mA_mag_group shoulder_3mA_mag_group shoulder_4mA_mag_group... 
+        %     temples_0_1mA_mag_group temples_1mA_mag_group   ...
+        %      temples_2mA_mag_group temples_3mA_mag_group ...
+        %     temples_4mA_mag_group]);
+        boxchart([median_shoulder_0_1mA_mag;  median_shoulder_2mA_mag; median_shoulder_3mA_mag; median_shoulder_4mA_mag; ... 
+            median_temples_0_1mA_mag; median_temples_1mA_mag;   ...
+             median_temples_2mA_mag; median_temples_3mA_mag; ...
+            median_temples_4mA_mag]', 'BoxFaceColor', [0 0 0]);
+        hold on; 
+        for sub = 1:numsub % num of sub
+            plot(1+xoffset2(sub), median_shoulder_0_1mA_mag(sub), sub_symbols(sub))
+            plot(2+xoffset2(sub), median_shoulder_2mA_mag(sub), sub_symbols(sub)) 
+            plot(3+xoffset2(sub), median_shoulder_3mA_mag(sub), sub_symbols(sub))
+            plot(4+xoffset2(sub), median_shoulder_4mA_mag(sub), sub_symbols(sub))
+            plot(5+xoffset2(sub), median_temples_0_1mA_mag(sub), sub_symbols(sub))
+            plot(6+xoffset2(sub), median_temples_1mA_mag(sub), sub_symbols(sub))
+            plot(7+xoffset2(sub), median_temples_2mA_mag(sub), sub_symbols(sub))
+            plot(8+xoffset2(sub), median_temples_3mA_mag(sub), sub_symbols(sub))
+            plot(9+xoffset2(sub), median_temples_4mA_mag(sub), sub_symbols(sub))
+        end
+        xticklabels(["Shoulder 0.1mA"  "Shoulder 2mA" "Shoulder 3mA" "Shoulder 4mA" ... 
+                 "Temples 0.1mA" "Temples 1mA" "Temples 2mA"  "Temples 3mA" "Temples 4mA"]); 
+        ylim([0.005 5])
+        yscale("log")
+        yticks([0.005 0.05 0.5 5]) 
+        if dir ==1
+            sgtitle("Roll Sway Power at 0.5Hz")
+        elseif dir ==2
+            sgtitle("Pitch Sway Power at 0.5Hz")
+        end
+        ylabel('Sway at Freq of Interest (deg)');
+        set(gcf, 'Position', [100, 100, 1200, 600]);
+
+
+   
+    end
+    
+end
+
+
+
+
+
+
+
+
+if contains(plots, "3x ")
     %%
     for dir = 1:2
         figure;

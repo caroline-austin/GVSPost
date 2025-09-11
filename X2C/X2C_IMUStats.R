@@ -17,6 +17,7 @@ setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/freq_power_anova.csv")
+freq_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/freq_psd_anova.csv")
 verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/verbal.csv")
 congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/congruent.csv")
 
@@ -45,8 +46,11 @@ roll_power<-subset(freq_power, dir == "roll")
 # (mA == "1" & config == "Four")
 #   (mA == "2" & config == "Three")
 
-freq_power1 <-subset(freq_power, ((mA == "1" & config == "Four") | (mA == "2" & config == "Three")) )
-freq_power2 <-subset(freq_power, ((mA == "2" & config == "Four") | (mA == "4" & config == "Three")) )
+#freq_power1 <-subset(freq_power, ((mA == "1" & config == "Four") | (mA == "2" & config == "Three")) )
+#freq_power2 <-subset(freq_power, ((mA == "2" & config == "Four") | (mA == "4" & config == "Three")) )
+
+freq_power1 <-subset(freq_power, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three")) )
+freq_power2 <-subset(freq_power, ((mA == "2" & config == "Four") | (mA == "2" & config == "Three")) )
 
 pitch_power1 <-subset(freq_power1,  dir == "pitch" )
 pitch_power2 <-subset(freq_power2,  dir == "pitch" )
@@ -54,6 +58,36 @@ pitch_power2 <-subset(freq_power2,  dir == "pitch" )
 
 temples_power <- subset(freq_power, config == "Four")
 shoulder_power <- subset(freq_power, config == "Three")
+
+
+freq_psd$type <- factor(freq_psd$type)
+freq_psd$freq_interest <- factor(freq_psd$freq_interest)
+freq_psd$config <- factor(freq_psd$config)
+freq_psd$dir <- factor(freq_psd$dir)
+freq_psd$sub <- factor(freq_psd$sub)
+freq_psd$mA <- factor(freq_psd$mA)
+freq_psd$condition <- paste(freq_psd$config, freq_psd$mA)
+freq_psd$condition <-factor(freq_psd$condition)
+
+pitch_psd<-subset(freq_psd, dir == "pitch")
+roll_psd<-subset(freq_psd, dir == "roll")
+# (mA == "1" & config == "Four")
+#   (mA == "2" & config == "Three")
+
+#freq_psd1 <-subset(freq_psd, ((mA == "1" & config == "Four") | (mA == "2" & config == "Three")) )
+#freq_psd2 <-subset(freq_psd, ((mA == "2" & config == "Four") | (mA == "4" & config == "Three")) )
+
+freq_psd1 <-subset(freq_psd, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three")) )
+freq_psd2 <-subset(freq_psd, ((mA == "2" & config == "Four") | (mA == "2" & config == "Three")) )
+
+freq_psd_match <-subset(freq_psd, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three") | (mA == "2" & config == "Four") | (mA == "2" & config == "Three")) | (mA =="0.1") )
+
+pitch_psd1 <-subset(freq_psd1,  dir == "pitch" )
+pitch_psd2 <-subset(freq_psd2,  dir == "pitch" )
+pitch_psd_match <-subset(freq_psd_match,  dir == "pitch" )
+
+temples_psd <- subset(freq_psd, config == "Four")
+shoulder_psd <- subset(freq_psd, config == "Three")
 
 
 ####################################
@@ -185,7 +219,7 @@ shapiro_test((anova_result_all$`sub:config`$residuals))
 
 # post hoc tests
 pairwise.t.test(freq_power[,1],freq_power[,4],p.adj = "bonf") # montage
-pairwise.t.test(freq_power[,1],freq_power[,5],p.adj = "bonf") # direction
+pairwise.t.test(freq_power[,1],freq_power[,5],p.adj = "bonf") # current amplitude
 pairwise.t.test(freq_power[,1],freq_power[,3],p.adj = "bonf") # order
 
 pairwise.t.test(roll_power[,1],roll_power[,4],p.adj = "bonf") # roll only montage
@@ -198,6 +232,23 @@ pairwise.t.test(freq_power2[,1],freq_power2[,4],p.adj = "bonf") # diff in sway f
 
 pairwise.t.test(pitch_power1[,1],pitch_power1[,4],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
 pairwise.t.test(pitch_power2[,1],pitch_power2[,4],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
+
+########## median stats
+pitch_psd.aov <- anova_test(data = pitch_psd[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" ))
+get_anova_table(pitch_psd.aov)
+
+anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd[,1:6])
+shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
+
+pairwise.t.test(pitch_psd[,1],pitch_psd[,8],p.adj = "bonf") # pitch only montage
+
+pairwise.t.test(freq_psd1[,1],freq_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
+pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
+
+pairwise.t.test(pitch_psd1[,1],pitch_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
+pairwise.t.test(pitch_psd2[,1],pitch_psd2[,3],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
+
+pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,8],p.adj = "bonf") # pitch only montage
 
 ######################### pitch
 #check data normality and homoscedacity 

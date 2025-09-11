@@ -78,12 +78,14 @@ interest_profile = 1;
 condition_interest = ["3_electrode_0_1mA" "3_electrode_2mA" "3_electrode_3mA" ... 
     "3_electrode_4mA" "4_electrode_0_1mA"  "4_electrode_1mA"  ... 
     "4_electrode_2mA" "4_electrode_3mA" "4_electrode_4mA"];
-current_interest = [0.1 2 3 4 0.1 1 2 3 4];
+% current_interest = [0.1 2 3 4 0.1 1 2 3 4];
+current_interest = [0.1 1 1.5 2 0.1 1 2 3 4];
 
 profile_freq = [ 0.5 ];
 index = 0;
 index2 = 0;
 freq_power_anova = table;
+freq_psd_anova = table;
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
 
 for profile = interest_profile % in this case there was only the 0.5 Hz profile/waveform
@@ -112,7 +114,7 @@ for profile = interest_profile % in this case there was only the 0.5 Hz profile/
                 
                 index = index +1;            
                 
-                power_eval(:,index) = changem(squeeze(power_interest_sort(trial,:,dir,freq)), nan);
+                power_eval(:,index) = changem(squeeze(power_interest_log_sort(trial,:,dir,freq)), nan);
                 % power_eval(:,index) = changem(squeeze(power_values_sort(trial,:,dir)), nan);
                 
                 % save data into table
@@ -152,4 +154,104 @@ power_eval_save = power_eval(~isnan(power_eval));
 
 cd(file_path)
 writetable(freq_power_anova, "freq_power_anova.csv");
+cd(code_path)
+
+
+%% my psd calcs at 0.5Hz (log)
+index = 0;
+for dir = 1:2
+% 
+% 
+        shoulder_0_1mA_psd= [psd_interest_sort(1:2, :,dir,1); NaN(8,10)]; % 
+        shoulder_2mA_psd= [psd_interest_sort(3:10, :,dir,1); NaN(2,10)];
+        shoulder_3mA_psd= [psd_interest_sort(11:18, :,dir,1); NaN(2,10)];
+        shoulder_4mA_psd= psd_interest_sort(19:28, :,dir,1);
+    
+        temples_0_1mA_psd= [psd_interest_sort(29:30, :,dir,1); NaN(8,10)]; % 
+        temples_1mA_psd= [psd_interest_sort(31:36, :,dir,1); NaN(4,10)];
+        temples_2mA_psd= [psd_interest_sort(37:42, :,dir,1); NaN(4,10)];
+        temples_3mA_psd= [psd_interest_sort(43:48, :,dir,1); NaN(4,10)];
+        temples_4mA_psd= [psd_interest_sort(49:56, :,dir,1); NaN(2,10)];
+
+        mean_shoulder_0_1mA_psd = mean(shoulder_0_1mA_psd, 'omitnan');
+        mean_shoulder_2mA_psd = mean(shoulder_2mA_psd, 'omitnan');
+        mean_shoulder_3mA_psd = mean(shoulder_3mA_psd, 'omitnan');
+        mean_shoulder_4mA_psd = mean(shoulder_4mA_psd, 'omitnan');
+
+        mean_temples_0_1mA_psd = mean(temples_0_1mA_psd, 'omitnan');
+        mean_temples_1mA_psd = mean(temples_1mA_psd, 'omitnan');
+        mean_temples_2mA_psd = mean(temples_2mA_psd, 'omitnan');
+        mean_temples_3mA_psd = mean(temples_3mA_psd, 'omitnan');
+        mean_temples_4mA_psd = mean(temples_4mA_psd, 'omitnan');
+        
+        median_shoulder_0_1mA_psd = median(shoulder_0_1mA_psd, 'omitnan');
+        median_shoulder_2mA_psd = median(shoulder_2mA_psd, 'omitnan');
+        median_shoulder_3mA_psd = median(shoulder_3mA_psd, 'omitnan');
+        median_shoulder_4mA_psd = median(shoulder_4mA_psd, 'omitnan');
+
+        median_temples_0_1mA_psd = median(temples_0_1mA_psd, 'omitnan');
+        median_temples_1mA_psd = median(temples_1mA_psd, 'omitnan');
+        median_temples_2mA_psd = median(temples_2mA_psd, 'omitnan');
+        median_temples_3mA_psd = median(temples_3mA_psd, 'omitnan');
+        median_temples_4mA_psd = median(temples_4mA_psd, 'omitnan');
+% 
+%      max_forehead_freq_psd = max(forehead_freq_psd);
+%     max_shoulder_freq_psd = max(shoulder_freq_psd);
+%     max_neck_freq_psd = max(neck_freq_psd);
+% 
+    num_subs = length(median_shoulder_0_1mA_psd);
+% 
+    for condition = 1:length(condition_interest) % counting the number of replicates using replicate order as an index
+        replicate_order = 0;
+        current_mA = current_interest(condition);
+        index = index +1; 
+
+        switch condition
+            case 1
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_0_1mA_psd;
+                config = 1;
+            case 2 
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_2mA_psd;
+                config = 1;
+            case 3
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_3mA_psd;
+                config = 1;
+            case 4
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_4mA_psd;
+                config = 1;
+            case 5 
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_0_1mA_psd;
+                config = 2;
+            case 6 
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_1mA_psd;
+                config = 2;
+            case 7 
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_2mA_psd;
+                config = 2;
+            case 8
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_3mA_psd;
+                config = 2;
+            case 9 
+                freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_4mA_psd;
+                config = 2; 
+        end
+
+        freq_psd_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+
+        freq_psd_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =Config(config);
+
+        freq_psd_anova.mA((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =current_mA;
+
+        freq_psd_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir);
+
+        freq_psd_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 0.5;
+
+        freq_psd_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+
+    end
+end
+
+freq_psd_anova( any(ismissing(freq_psd_anova),2), :) = [];
+cd(file_path)
+writetable(freq_psd_anova, "freq_psd_anova.csv");
 cd(code_path)
