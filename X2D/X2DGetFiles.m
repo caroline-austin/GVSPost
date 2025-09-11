@@ -184,7 +184,7 @@ for sub = 1:numsub
        shot_actual = table2array(TTS_data(1:end-1,6))/-1000; %deg - % negative sign included bc shot is flipped in this config
        GVS_actual1_mV= table2array(TTS_data(1:end-1,12))/1000; %mV (not mA)
        GVS_actual2_mV= table2array(TTS_data(1:end-1,13))/1000; %mV (not mA)
-       if subject >=2078
+       if subject >=2078 % cables were plugged in differently for 2nd half of study?
             GVS_actual1_mV= GVS_actual1_mV*-1;
             GVS_actual2_mV= GVS_actual2_mV*-1;
 
