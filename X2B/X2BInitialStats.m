@@ -80,6 +80,9 @@ profile_freq = [ 0.5 ];
 index = 0;
 index2 = 0;
 freq_power_anova = table;
+mag_anova = table;
+psd_anova = table;
+freq_psd_anova = table;
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
 
 for profile = interest_profile
@@ -141,6 +144,164 @@ power_eval_save = power_eval(~isnan(power_eval));
 cd(file_path)
 writetable(freq_power_anova, "freq_power_anova.csv");
 cd(code_path)
+
+%% mag interest stats
+index = 0;
+for dir = 1:2
+    
+
+    forehead_mag= mag_interest_sort(1:8, :,dir,1);
+    shoulder_mag= mag_interest_sort(11:18, :,dir,1);
+    neck_mag= mag_interest_sort(21:28, :,dir,1);
+    mean_forehead_mag = mean(forehead_mag);
+    mean_shoulder_mag = mean(shoulder_mag);
+    mean_neck_mag = mean(neck_mag);
+    median_forehead_mag = median(forehead_mag, 'omitnan');
+    median_shoulder_mag = median(shoulder_mag, 'omitnan');
+    median_neck_mag = median(neck_mag, 'omitnan');
+
+     max_forehead_mag = max(forehead_mag);
+    max_shoulder_mag = max(shoulder_mag);
+    max_neck_mag = max(neck_mag);
+
+    num_subs = length(max_forehead_mag);
+
+    for config = 1:3
+        index = index +1;  
+        if config ==1
+    
+            mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_forehead_mag;
+        elseif config ==2
+            mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_mag;
+    
+        elseif config ==3 
+            mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_neck_mag;
+    
+        end
+                     
+        mag_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+    
+        mag_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =Config(config);
+    
+        mag_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir);
+    
+        mag_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 0.5;
+    
+        mag_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+    
+    end
+end
+
+mag_anova( any(ismissing(mag_anova),2), :) = [];
+cd(file_path)
+writetable(mag_anova, "mag_anova.csv");
+cd(code_path)
+
+%%
+%% my psd calcs at 0.5Hz (log)
+index = 0;
+for dir = 1:2
+    
+
+    forehead_freq_psd= psd_05_sort(1:8, :,dir,1);
+    shoulder_freq_psd= psd_05_sort(11:18, :,dir,1);
+    neck_freq_psd= psd_05_sort(21:28, :,dir,1);
+    mean_forehead_freq_psd = mean(forehead_freq_psd);
+    mean_shoulder_freq_psd = mean(shoulder_freq_psd);
+    mean_neck_freq_psd = mean(neck_freq_psd);
+    median_forehead_freq_psd = median(forehead_freq_psd, 'omitnan');
+    median_shoulder_freq_psd = median(shoulder_freq_psd, 'omitnan');
+    median_neck_freq_psd = median(neck_freq_psd, 'omitnan');
+
+     max_forehead_freq_psd = max(forehead_freq_psd);
+    max_shoulder_freq_psd = max(shoulder_freq_psd);
+    max_neck_freq_psd = max(neck_freq_psd);
+
+    num_subs = length(max_forehead_freq_psd);
+
+    for config = 1:3
+        index = index +1;  
+        if config ==1
+    
+            freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_forehead_freq_psd;
+        elseif config ==2
+            freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_freq_psd;
+    
+        elseif config ==3 
+            freq_psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_neck_freq_psd;
+    
+        end
+                     
+        freq_psd_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+    
+        freq_psd_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =Config(config);
+    
+        freq_psd_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir);
+    
+        freq_psd_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 0.5;
+    
+        freq_psd_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+    
+    end
+end
+
+freq_psd_anova( any(ismissing(freq_psd_anova),2), :) = [];
+cd(file_path)
+writetable(freq_psd_anova, "freq_psd_anova.csv");
+cd(code_path)
+
+%% torin's psd calcs at 0.5 hz (no log)
+index = 0;
+for dir = 1:2
+    
+
+    forehead_psd= psd_interest_sort(1:8, :,dir,1);
+    shoulder_psd= psd_interest_sort(11:18, :,dir,1);
+    neck_psd= psd_interest_sort(21:28, :,dir,1);
+    mean_forehead_psd = mean(forehead_psd);
+    mean_shoulder_psd = mean(shoulder_psd);
+    mean_neck_psd = mean(neck_psd);
+    median_forehead_psd = median(forehead_psd, 'omitnan');
+    median_shoulder_psd = median(shoulder_psd, 'omitnan');
+    median_neck_psd = median(neck_psd, 'omitnan');
+
+     max_forehead_psd = max(forehead_psd);
+    max_shoulder_psd = max(shoulder_psd);
+    max_neck_psd = max(neck_psd);
+
+    num_subs = length(max_forehead_psd);
+
+    for config = 1:3
+        index = index +1;  
+        if config ==1
+    
+            psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_forehead_psd;
+        elseif config ==2
+            psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_psd;
+    
+        elseif config ==3 
+            psd_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_neck_psd;
+    
+        end
+                     
+        psd_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+    
+        psd_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =Config(config);
+    
+        psd_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir);
+    
+        psd_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 0.5;
+    
+        psd_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+    
+    end
+end
+
+psd_anova( any(ismissing(psd_anova),2), :) = [];
+cd(file_path)
+writetable(psd_anova, "psd_anova.csv");
+cd(code_path)
+
 %%
 
 

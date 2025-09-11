@@ -25,6 +25,8 @@ num_freq = length(freq_interest);
 all_trials_sort = NaN(30,numsub, 3,fs*12+2);
 power_interest_sort = NaN(30, numsub,3,num_freq);
 mag_interest_sort = NaN(30, numsub,3,1);
+psd_interest_sort = NaN(30, numsub,3,1);
+psd_05_sort = NaN(30, numsub,3,1);
 %% load data 
 for sub = 1:numsub
     subject = subnum(sub);
@@ -59,7 +61,7 @@ for sub = 1:numsub
    
                     end
                     trial_angles = all_imu_angles.(['A', subject_str]){trial}(:,1:3)*180/pi();
-                    trial_time = (0:dt:length(trial_angles))';
+                    trial_time = (0:dt:length(trial_angles)*dt)';
                     % all_time.(['A', subject_str]){current,profile,config}(:,1) = all_imu_data.(['A', subject_str]){current,profile,config}(:,10);
                    
                     
@@ -67,9 +69,17 @@ for sub = 1:numsub
                     
 
                     % make all trials only 12s
-                    if len > 12*fs 
-                        start_buffer = floor((len - 12*fs)/2);
-                        end_buffer = (len - 12*fs) - start_buffer+1;
+                    % if len > 12*fs +4
+                    %     % start_buffer = floor((len - 12*fs)/2);
+                    %     start_buffer = ceil(0.1*fs+1);
+                    %     end_buffer = (len - 12*fs) - start_buffer+1;
+                    %     trial_angles = trial_angles(start_buffer:len - end_buffer,:); % take middle 10s of long trials
+                    %     trial_time_a = trial_time(start_buffer:len - end_buffer);
+                        
+                    if len > 10*fs 
+                        % start_buffer = floor((len - 12*fs)/2);
+                        start_buffer = fs+1;
+                        end_buffer = (len - 8*fs) - start_buffer+1;
                         trial_angles = trial_angles(start_buffer:len - end_buffer,:); % take middle 10s of long trials
                         trial_time_a = trial_time(start_buffer:len - end_buffer);
                         
@@ -78,6 +88,12 @@ for sub = 1:numsub
                     %      buffer = floor(abs((len - 12*fs)));
                     %      trial_angles = [trial_angles; NaN(buffer,wid)]; % buffer the end of short trials with NaN's
                     %      trial_time_a = [trial_time; NaN(buffer,1)];
+                    elseif len >4*fs
+                        start_buffer = fs+1;
+                        end_buffer = (len - 4*fs) - start_buffer+1;
+                        trial_angles = trial_angles(start_buffer:len - end_buffer,:); % take middle 10s of long trials
+                        trial_time_a = trial_time(start_buffer:len - end_buffer);
+
                     else 
                          trial_time_a = trial_time;
                     end
@@ -101,30 +117,44 @@ for sub = 1:numsub
                     [power_interest(trial, sub,2,1:num_freq),~] = periodogram(pitch_ang,[],freq_interest,fs);
                     [power_interest(trial,  sub,3,1:num_freq),~] = periodogram(yaw_ang,[],freq_interest,fs);
 
-                    if length(roll_ang) == 12*fs
-
-                        [pxx_roll,f_roll] = periodogram(roll_ang,hamming(length(roll_ang)),length(roll_ang),fs,'power');
-                        ind_f = find(ismember(f_roll,0.5)); % find the index that is 0.5Hz
-                        pwr_f = pxx_roll(ind_f);
-                        mag_interest(trial, sub,1,1) = sqrt(pwr_f *2);
-    
-                        [pxx_pitch,f_pitch] = periodogram(pitch_ang,hamming(length(pitch_ang)),length(pitch_ang),fs,'power');
-                        ind_f = find(ismember(f_pitch,0.5)); % find the index that is 0.5Hz
-                        pwr_f = pxx_pitch(ind_f);
-                        mag_interest(trial, sub,2,1) = sqrt(pwr_f *2);
-    
-                        [pxx_yaw,f_yaw] = periodogram(yaw_ang,hamming(length(yaw_ang)),length(yaw_ang),fs,'power');
-                        ind_f = find(ismember(f_yaw,0.5)); % find the index that is 0.5Hz
-                        pwr_f = pxx_yaw(ind_f);
-                        mag_interest(trial, sub,3,1) = sqrt(pwr_f *2);
-                    else
-                        mag_interest(trial, sub,:,1) = NaN;
-                    end
-
                     [med_freq(trial, sub,:), med_power(trial, sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq(trial,sub,:), mean_power(trial, sub,:)]=meanfreq(roll_ang,fs);
 
+                    
                     power_interest(trial, sub,:,1:num_freq) = log10(power_interest(trial, sub,:,1:num_freq))*10;
+                    psd_05(trial, sub,:,:) = power_interest(trial,  sub,:,10);
+
+                    if length(roll_ang) >= 4*fs
+
+                        [pxx_roll,f_roll] = periodogram(roll_ang,hamming(length(roll_ang)),length(roll_ang),fs,'power');
+                        ind_f = find(ismember(f_roll,0.5)); % find the index that is 0.5Hz
+                        % ind_f = [ind_f-1 ind_f ind_f+1];
+                        pwr_f = f_roll(ind_f);
+                        % pwr_f = interp1(f_roll, pxx_roll, 0.5); % the interp function should return the correct value still
+                        mag_interest(trial, sub,1,:) = sqrt(pwr_f *2);
+                        psd_interest(trial, sub,1,:) = pwr_f ;
+    
+                        [pxx_pitch,f_pitch] = periodogram(pitch_ang,hamming(length(pitch_ang)),length(pitch_ang),fs,'power');
+                        ind_f = find(ismember(f_pitch,0.5)); % find the index that is 0.5Hz
+                        % ind_f = [ind_f-1 ind_f ind_f+1];
+                        pwr_f = pxx_pitch(ind_f);
+                        % pwr_f = interp1(f_pitch, pxx_pitch, 0.5);
+                        mag_interest(trial, sub,2,:) = sqrt(pwr_f *2);
+                        psd_interest(trial, sub,2,:) = pwr_f ;
+    
+                        [pxx_yaw,f_yaw] = periodogram(yaw_ang,hamming(length(yaw_ang)),length(yaw_ang),fs,'power');
+                        ind_f = find(ismember(f_yaw,0.5)); % find the index that is 0.5Hz
+                        % ind_f = [ind_f-1 ind_f ind_f+1];
+                        pwr_f = pxx_yaw(ind_f);
+                        % pwr_f = interp1(f_yaw, pxx_yaw, 0.5); 
+                        mag_interest(trial, sub,3,:) = sqrt(pwr_f *2);
+                        psd_interest(trial, sub,3,:) = pwr_f ;
+                    else
+                        mag_interest(trial, sub,:,:) = NaN;
+                        psd_interest(trial, sub,:,:) = NaN;
+                    end
+
+
 
                     [len, wid] = size(trial_angles);
                     if len <12*fs+2
@@ -139,6 +169,8 @@ for sub = 1:numsub
                         all_trials_sort(index1, sub,:,:) = trial_angles';
                         power_interest_sort(index1, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         mag_interest_sort(index1, sub,:,:) = mag_interest(trial, sub,:,:);
+                        psd_interest_sort(index1, sub,:,:) = psd_interest(trial, sub,:,:);
+                        psd_05_sort(index1, sub,:,:) = psd_05(trial, sub,:,:);
                         All_Label.config_sort(sub,index1) = 1;
                         All_Label.trial_sort{sub,index1} = Label.trial(trial);
                         index1= index1+1;
@@ -147,6 +179,8 @@ for sub = 1:numsub
                         all_trials_sort(index2+10, sub,:,:) = trial_angles';
                         power_interest_sort(index2+10, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         mag_interest_sort(index2+10, sub,:,:) = mag_interest(trial, sub,:,:);
+                        psd_interest_sort(index2+10, sub,:,:) = psd_interest(trial, sub,:,:);
+                        psd_05_sort(index2+10, sub,:,:) = psd_05(trial, sub,:,:);
                         All_Label.config_sort(sub,10+index2) = 2;
                         All_Label.trial_sort{sub,index2+10} = Label.trial(trial);
                         index2= index2+1;
@@ -155,6 +189,8 @@ for sub = 1:numsub
                         all_trials_sort(index3+20, sub,:,:) = trial_angles';
                         power_interest_sort(index3+20, sub,:,:) = power_interest(trial, sub,:,1:num_freq);
                         mag_interest_sort(index3+20, sub,:,:) = mag_interest(trial, sub,:,:);
+                        psd_interest_sort(index3+20, sub,:,:) = psd_interest(trial, sub,:,:);
+                        psd_05_sort(index3+20, sub,:,:) = psd_05(trial, sub,:,:);
                         All_Label.config_sort(sub,20+index3) = 3;
                         All_Label.trial_sort{sub,index3+20} = Label.trial(trial);
                         index3= index3+1;
@@ -238,7 +274,7 @@ Label.sort = ["trial order", "Subject",  "direction", "time or freq", ];
     vars_2_save =  ['Label all_imu_angles all_ang all_time ' ...
         'freq_interest power_interest  med_freq mean_freq ' ...
         ' all_trials_sort power_interest_sort sway_diff sway_verbal_congruent ' ...
-        ' mag_interest mag_interest_sort'];% ...
+        ' mag_interest mag_interest_sort psd_interest psd_interest_sort psd_05 psd_05_sort'];% ...
         % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory

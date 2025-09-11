@@ -12,6 +12,10 @@ setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/freq_power_anova.csv")
+mag_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/mag_anova.csv")
+psd_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/psd_anova.csv")
+freq_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/freq_psd_anova.csv")
+
 verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/verbal.csv")
 congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/congruent.csv")
 
@@ -32,6 +36,47 @@ roll_power<-subset(freq_power, dir == "roll")
 neck_power <- subset(freq_power, config == "Neck")
 shoulder_power <- subset(freq_power, config == "Shoulder")
 forehead_power <- subset(freq_power, config == "Forehead")
+
+mag_power$type <- factor(mag_power$type)
+mag_power$freq_interest <- factor(mag_power$freq_interest)
+mag_power$config <- factor(mag_power$config)
+mag_power$dir <- factor(mag_power$dir)
+mag_power$sub <- factor(mag_power$sub)
+
+pitch_mag<-subset(mag_power, dir == "pitch")
+roll_mag<-subset(mag_power, dir == "roll")
+
+neck_mag <- subset(mag_power, config == "Neck")
+shoulder_mag <- subset(mag_power, config == "Shoulder")
+forehead_mag <- subset(mag_power, config == "Forehead")
+
+#psd_power$Var <- log10(psd_power$Var)
+
+psd_power$type <- factor(psd_power$type)
+psd_power$freq_interest <- factor(psd_power$freq_interest)
+psd_power$config <- factor(psd_power$config)
+psd_power$dir <- factor(psd_power$dir)
+psd_power$sub <- factor(psd_power$sub)
+
+pitch_psd<-subset(psd_power, dir == "pitch")
+roll_psd<-subset(psd_power, dir == "roll")
+
+neck_psd <- subset(psd_power, config == "Neck")
+shoulder_psd <- subset(psd_power, config == "Shoulder")
+forehead_psd <- subset(psd_power, config == "Forehead")
+
+freq_psd$type <- factor(freq_psd$type)
+freq_psd$freq_interest <- factor(freq_psd$freq_interest)
+freq_psd$config <- factor(freq_psd$config)
+freq_psd$dir <- factor(freq_psd$dir)
+freq_psd$sub <- factor(freq_psd$sub)
+
+pitch_freq_psd<-subset(freq_psd, dir == "pitch")
+roll_freq_psd<-subset(freq_psd, dir == "roll")
+
+neck_freq_psd <- subset(freq_psd, config == "Neck")
+shoulder_freq_psd <- subset(freq_psd, config == "Shoulder")
+forehead_freq_psd <- subset(freq_psd, config == "Forehead")
 
 ####################################
 # run verbal stats (Bradley Terry Model)
@@ -89,6 +134,97 @@ pairwise.t.test(freq_power[,1],freq_power[,5],p.adj = "bonf") # direction
 pairwise.t.test(freq_power[,1],freq_power[,3],p.adj = "bonf") # order
 
 pairwise.t.test(roll_power[,1],roll_power[,4],p.adj = "bonf") # roll only montage
+
+pairwise.t.test(pitch_power[,1],pitch_power[,4],p.adj = "bonf") # pitch only montage
+
+#################################
+# run pitch only anova
+# pooling the pitch data there is no difference between the montages
+pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(pitch_mag.aov)
+
+anova_result_pitch_mag <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag[,1:6])
+shapiro_test((anova_result_pitch_mag$`sub:config`$residuals))
+
+# run roll only anova
+roll_mag.aov <- anova_test(data = roll_mag[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(roll_mag.aov)
+
+anova_result_roll_mag <- aov(Var ~  config   + Error(sub/(config)), data = roll_mag[,1:6])
+shapiro_test((anova_result_roll_mag$`sub:config`$residuals))
+
+# run pitch v. roll anova
+mag_power_dir.aov <- anova_test(data = mag_power[,1:6], dv = Var, wid = sub, within = c(  "config", "dir" ))
+get_anova_table(mag_power_dir.aov)
+
+anova_result_all_mag <- aov(Var ~  config  +dir  + Error(sub/(config*dir)), data = mag_power[,1:6])
+shapiro_test((anova_result_all_mag$`sub:config`$residuals))
+
+# post hoc tests
+pairwise.t.test(mag_power[,1],mag_power[,3],p.adj = "bonf") # montage
+pairwise.t.test(mag_power[,1],mag_power[,4],p.adj = "bonf") # direction
+
+pairwise.t.test(roll_mag[,1],roll_mag[,3],p.adj = "bonf") # roll only montage
+pairwise.t.test(pitch_mag[,1],pitch_mag[,3],p.adj = "bonf") # pitch only montage
+#######################################################################################
+# run pitch only anova
+# pooling the pitch data there is no difference between the montages
+pitch_psd.aov <- anova_test(data = pitch_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(pitch_psd.aov)
+
+anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd[,1:6])
+shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
+
+# run roll only anova
+roll_psd.aov <- anova_test(data = roll_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(roll_psd.aov)
+
+anova_result_roll_psd <- aov(Var ~  config   + Error(sub/(config)), data = roll_psd[,1:6])
+shapiro_test((anova_result_roll_psd$`sub:config`$residuals))
+
+# run pitch v. roll anova
+psd_power_dir.aov <- anova_test(data = psd_power[,1:6], dv = Var, wid = sub, within = c(  "config", "dir" ))
+get_anova_table(psd_power_dir.aov)
+
+anova_result_all_psd <- aov(Var ~  config  +dir  + Error(sub/(config*dir)), data = psd_power[,1:6])
+shapiro_test((anova_result_all_psd$`sub:config`$residuals))
+
+# post hoc tests
+pairwise.t.test(psd_power[,1],psd_power[,3],p.adj = "bonf") # montage
+pairwise.t.test(psd_power[,1],psd_power[,4],p.adj = "bonf") # direction
+
+pairwise.t.test(roll_psd[,1],roll_psd[,3],p.adj = "bonf") # roll only montage
+pairwise.t.test(pitch_psd[,1],pitch_psd[,3],p.adj = "bonf") # pitch only montage
+
+#######################################################################################
+# run pitch only anova
+# pooling the pitch data there is no difference between the montages
+pitch_freq_psd.aov <- anova_test(data = pitch_freq_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(pitch_freq_psd.aov)
+
+anova_result_pitch_freq_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_freq_psd[,1:6])
+shapiro_test((anova_result_pitch_freq_psd$`sub:config`$residuals))
+
+# run roll only anova
+roll_freq_psd.aov <- anova_test(data = roll_freq_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+get_anova_table(roll_freq_psd.aov)
+
+anova_result_roll_freq_psd <- aov(Var ~  config   + Error(sub/(config)), data = roll_freq_psd[,1:6])
+shapiro_test((anova_result_roll_freq_psd$`sub:config`$residuals))
+
+# run pitch v. roll anova
+freq_psd_dir.aov <- anova_test(data = freq_psd[,1:6], dv = Var, wid = sub, within = c(  "config", "dir" ))
+get_anova_table(freq_psd_dir.aov)
+
+anova_result_all_freq_psd <- aov(Var ~  config  +dir  + Error(sub/(config*dir)), data =freq_psd[,1:6])
+shapiro_test((anova_result_all_freq_psd$`sub:config`$residuals))
+
+# post hoc tests
+pairwise.t.test(freq_psd[,1],freq_psd[,3],p.adj = "bonf") # montage
+pairwise.t.test(freq_psd[,1],freq_psd[,4],p.adj = "bonf") # direction
+
+pairwise.t.test(roll_freq_psd[,1],roll_freq_psd[,3],p.adj = "bonf") # roll only montage
+pairwise.t.test(pitch_freq_psd[,1],pitch_freq_psd[,3],p.adj = "bonf") # pitch only montage
 
 ######################### pitch
 #check data normality and homoscedacity 
