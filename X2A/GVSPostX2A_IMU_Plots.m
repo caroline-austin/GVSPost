@@ -214,7 +214,7 @@ end
 
 if contains(plots,'U ') % plot for Torin
 %% plot U - plots angle over time for the max current experienced by each participant
-for prof = [1]%1:num_profiles
+for prof = [4]%1:num_profiles
     [~,f] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3],["sham" "low" "max"],[3], Profiles_safe, [prof], all_ang_reduced, all_time_reduced, "Angle (deg)", "Max");
     
     for figure_index =1:length (imu_dir(7:9))
@@ -228,7 +228,7 @@ for prof = [1]%1:num_profiles
 
                 end
 
-                if figure_index == 1
+                if figure_index == 1 || figure_index == 2
                     ylim([-15 15])
                     
                 elseif figure_index ==3 && sub_plot_index ==1
