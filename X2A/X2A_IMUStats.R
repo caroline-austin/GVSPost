@@ -9,7 +9,7 @@ library('ARTool')
 setwd("C:/Users/caroa/OneDrive/Documents")
 #load all data organized by coupling scheme
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
-freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchMontageTesting/Data/freq_power_anova.csv")
+freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchMontageTesting/Data/freq_power_log_anova.csv")
 
 freq_power$type <- factor(freq_power$type)
 freq_power$freq_interest <- factor(freq_power$freq_interest)
@@ -61,14 +61,14 @@ pitch_disp_gvs_neg <- pitch_disp_gvs  %>%
 # Frequency Analysis
 # run binaural anovas
 binaural_roll_power.aov <- anova_test(data = binaural_roll_power[,1:6], dv = data, wid = sub, within = c(type , freq_interest))
-get_anova_table(binaural_roll_power.aov)
+get_anova_table(binaural_roll_power.aov) # use this for paper because significant interaction now
 
 anova_result_roll <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
 #anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
 summary(anova_result_roll)
 
 binaural_yaw_power.aov <- anova_test(data = binaural_yaw_power[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
-get_anova_table(binaural_yaw_power.aov)
+get_anova_table(binaural_yaw_power.aov) # can use this or the below test for paper
 
 anova_result_yaw <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_yaw_power[,1:6])
 #anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
@@ -80,13 +80,13 @@ get_anova_table(pitch_power.aov)
 
 anova_result_pitch <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = pitch_power[,1:6])
 #anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
-summary(anova_result_pitch)
+summary(anova_result_pitch) # can use this or above test for paper
 
 # run full anova
 freq_power.aov <- anova_test(data = freq_power[,1:6], dv = data, wid = sub, within = c("type" , "config" , "dir", "freq_interest" ))
 get_anova_table(freq_power.aov)
 
-#run follow up t tests 
+#run follow up t tests - not used in paper just fun to look at
 # binaural roll - t-tests
 pairwise.t.test(binaural_roll_power[,1],binaural_roll_power[,2],p.adj = "bonf") # exp/control
 pairwise.t.test(binaural_roll_power[,1],binaural_roll_power[,5],p.adj = "bonf") # freq of interest
@@ -241,17 +241,20 @@ get_anova_table(angle_disp.aov)
 #run follow up t tests 
 # binaural roll - t-tests
 pairwise.t.test(binaural_roll_disp_neg[,1],binaural_roll_disp_neg[,2],p.adj = "bonf") # exp/control # n = 12
-wilcox.test((binaural_roll_disp_gvs[1:6,1]), (binaural_roll_disp_gvs[7:12,1]), paired = TRUE) # profile n=6
+wilcox.test((binaural_roll_disp_gvs[1:6,1]), (binaural_roll_disp_gvs[7:12,1]), paired = TRUE) # profile n=6 *paper stat*
 pairwise.t.test(binaural_roll_disp_gvs[,1],binaural_roll_disp_gvs[,5],p.adj = "bonf") # profile # n=6 (should use non-parametric^)
 
 # pitch - t-tests
 pairwise.t.test(pitch_disp_neg[,1],pitch_disp_neg[,2],p.adj = "bonf") # exp/control
 pairwise.t.test(pitch_disp_neg[,1],pitch_disp_neg[,3],p.adj = "bonf") # montage
 
+wilcox.test((pitch_disp_gvs[1:6,1]), (pitch_disp_gvs[13:18,1]), paired = TRUE) # profile n= 6 non-parametric Forehead only - used in paper
+wilcox.test((pitch_disp_gvs[7:12,1]), (pitch_disp_gvs[19:24,1]), paired = TRUE) # profile n= 6 non-parametric Temples only - used in paper
+
 # test GVS cond when DC - is back to it's original direction
 # should maybe be non-parametric
 pairwise.t.test(pitch_disp_gvs[,1],pitch_disp_gvs[,5],p.adj = "bonf") # profile n = 12
-wilcox.test((pitch_disp_gvs[1:12,1]), (pitch_disp_gvs[13:24,1]), paired = TRUE) # profile n= 12 non-parametric
+wilcox.test((pitch_disp_gvs[1:12,1]), (pitch_disp_gvs[13:24,1]), paired = TRUE) # profile n= 12 non-parametric - used in paper
 
 # test montage only for the GVS conditions
 # should maybe be non-parametric

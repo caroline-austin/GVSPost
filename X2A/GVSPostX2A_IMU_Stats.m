@@ -182,8 +182,8 @@ for profile = interest_profile
                 power_log_eval_mat(:,index2) =  power_log_eval(:,index);
 
                 if freq<=3
-                    power_val_control_mat(:,index2) = power_control(:,index);             
-                    power_val_eval_mat(:,index2) =  power_eval(:,index);
+                    power_val_control_mat(:,index2) = power_val_control(:,index);             
+                    power_val_eval_mat(:,index2) =  power_val_eval(:,index);
                 end
 
             end
@@ -346,52 +346,52 @@ bilateral_yaw_mag_group = strcat(string(bilateral_yaw_mag.freq_interest), " Hz "
 
 pitch_mag_data = cell2mat(table2cell(pitch_mag(:,1)));
 pitch_mag_group = strcat( string(pitch_mag.freq_interest), " Hz ", string(pitch_mag.type));
-pitch_mag_group_montage = strcat(  string(pitch_mag.config), " ", string(pitch_mag.type));
+pitch_mag_group_montage = strcat(  string(pitch_mag.freq_interest), " Hz ", string(pitch_mag.type), " ", strrep(string(pitch_mag.config), "Aoyama", "Temples"));
 
 %%
-figure; 
-tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
-nexttile
-boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-title("Binaural Roll Sway")
-ylim([-30 30]);
-
-nexttile
-boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+% figure; 
+% tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
+% nexttile
+% boxplot(bilateral_roll_power_data , bilateral_roll_power_group)
 % ylabel("Sway at Freq. of Interest (dB/Hz)")
-xlabel("Experimental Condition")
-title("Binaural Yaw Sway")
-ylim([-30 30]);
-
-nexttile
-boxplot(pitch_power_data , pitch_power_group)
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% % xlabel("Experimental Condition")
+% title("Binaural Roll Sway")
+% ylim([-30 30]);
+% 
+% nexttile
+% boxplot(bilateral_yaw_power_data , bilateral_yaw_power_group)
+% % ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
-title("Forehead + Temples Pitch Sway")
-ylim([-30 30]);
-
-sgtitle("Sway For Montage-Direction Combinations of Interest")
-
-figure;
-tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
-nexttile
-boxplot(pitch_power_data(1:24) , pitch_power_group_montage(1:24))
-ylabel("Sway at Freq. of Interest (dB/Hz)")
-title("Sine 0.25Hz")
-ylim([-21 21]);
-
-nexttile
-boxplot(pitch_power_data (25:48) , pitch_power_group_montage(25:48))
-xlabel("Experimental Condition")
-title("Sine 0.5Hz")
-ylim([-21 21]);
-
-nexttile
-boxplot(pitch_power_data (49:72) , pitch_power_group_montage(49:72))
-title("Sine 1Hz")
-ylim([-21 21]);
+% title("Binaural Yaw Sway")
+% ylim([-30 30]);
+% 
+% nexttile
+% boxplot(pitch_power_data , pitch_power_group)
+% % ylabel("Sway at Freq. of Interest (dB/Hz)")
+% % xlabel("Experimental Condition")
+% title("Forehead + Temples Pitch Sway")
+% ylim([-30 30]);
+% 
+% sgtitle("Sway For Montage-Direction Combinations of Interest")
+% 
+% figure;
+% tiledlayout(1,3,"TileSpacing","tight", "Padding","tight")
+% nexttile
+% boxplot(pitch_power_data(1:24) , pitch_power_group_montage(1:24))
+% ylabel("Sway at Freq. of Interest (dB/Hz)")
+% title("Sine 0.25Hz")
+% ylim([-21 21]);
+% 
+% nexttile
+% boxplot(pitch_power_data (25:48) , pitch_power_group_montage(25:48))
+% xlabel("Experimental Condition")
+% title("Sine 0.5Hz")
+% ylim([-21 21]);
+% 
+% nexttile
+% boxplot(pitch_power_data (49:72) , pitch_power_group_montage(49:72))
+% title("Sine 1Hz")
+% ylim([-21 21]);
 
 %% stats for angle displacement 
 control_current = 1; 
@@ -889,21 +889,22 @@ xticklabels(["+DC" "Sham" "-DC"])
 f = figure('Position', [100, 100, 1200, 900]);
 tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
 
-colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;0 0 0; 0 0 0;0 0 0];
+colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;.5 .5 .5; .5 .5 .5 ; .5 .5 .5; 0 0 0; 0 0 0;0 0 0; 0 0 0; 0 0 0;0 0 0];
 nexttile(3)
 % boxplot(pitch_mag_data , pitch_mag_group, 'Colors', colors)
 
 % Unique groups and color map
-uniqueGroups = categories(categorical(pitch_mag_group));
-uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
+uniqueGroups = categories(categorical(pitch_mag_group_montage));
+% uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
+uniqueGroups = uniqueGroups([3 4 7 8 11 12 1 2 5 6 9 10]);
 % Plot using boxchart
 for i = 1:numel(uniqueGroups)
-    idx = pitch_mag_group == uniqueGroups{i};
+    idx = pitch_mag_group_montage == uniqueGroups{i};
     boxchart(ones(sum(idx),1)*i, pitch_mag_data(idx), 'BoxFaceColor', colors(i,:));
     hold on;
 end
 
-xticks([1 2 3 4 5 6])
+xticks([1 2 3 4 5 6 7 8 9 10 11 12])
 xticklabels(uniqueGroups)
 yscale('log')
 yticks([0.005 0.05 .5 5])
@@ -915,6 +916,7 @@ title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
 ylim([0.005 5]);
 
 nexttile(1)
+colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;0 0 0; 0 0 0;0 0 0];
 % boxplot(bilateral_roll_mag_data , bilateral_roll_mag_group)
 
 % Unique groups and color map
