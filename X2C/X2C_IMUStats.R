@@ -234,10 +234,13 @@ pairwise.t.test(pitch_power1[,1],pitch_power1[,4],p.adj = "bonf") #diff in sway 
 pairwise.t.test(pitch_power2[,1],pitch_power2[,4],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
 
 ########## median stats
-pitch_psd.aov <- anova_test(data = pitch_psd[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" ))
+pitch_psd.aov <- anova_test(data = pitch_psd_match[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" ))
 get_anova_table(pitch_psd.aov)
 
-anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd[,1:6])
+anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd_match[,1:8])
+shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
+
+anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd_match[,1:8])
 shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
 
 pairwise.t.test(pitch_psd[,1],pitch_psd[,8],p.adj = "bonf") # pitch only montage
@@ -248,7 +251,9 @@ pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for m
 pairwise.t.test(pitch_psd1[,1],pitch_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
 pairwise.t.test(pitch_psd2[,1],pitch_psd2[,3],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
 
-pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,8],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,3],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,4],p.adj = "bonf") # pitch only current
+pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,8],p.adj = "bonf") # pitch only montage and current
 
 ######################### pitch
 #check data normality and homoscedacity 
