@@ -173,6 +173,8 @@ for sub = 1:numsub
                     [pxx_yaw,f_yaw] = periodogram(yaw_ang,hamming(length(yaw_ang)),length(yaw_ang),fs,'power');
                     [med_freq(current, profile, config,sub,:), med_power(current, profile, config, sub,:)]=medfreq(roll_ang,fs);
                     [mean_freq(current, profile, config,sub,:), mean_power(current, profile, config, sub,:)]=meanfreq(roll_ang,fs);
+
+                    power_interest_log(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
                     
                     if length(roll_ang) ==12*fs
                         ind_f_roll = find(ismember(f_roll,freq_interest_reduced)); % find the index that is closest to each freq_interest
@@ -190,7 +192,7 @@ for sub = 1:numsub
                         mag_interest(current, profile, config, sub,1:3,1:num_freq_reduced) = NaN;
                     end
 
-                    power_interest_log(current, profile, config, sub,:,1:num_freq) = log10(power_interest(current, profile, config, sub,:,1:num_freq))*10;
+                    
 
                     mdl = fittype('a*sin(b*x+c)','indep','x');
                     fittedmdl1 = fit(trial_time_a,roll_ang,mdl,'start',[rand(),profile_freq(profile)*pi(),rand()]);
@@ -222,8 +224,8 @@ for sub = 1:numsub
                    %      angle_drift(current, profile, config, sub,2,:) =  angle_drift(current, profile, config, sub,2,:)*-1;
                    % end
                     if profile == 2 && config ==2 && subject == 2005 && current == 8 % correct for participant who did not do max in the max condition
-                        angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*10:fs*10+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
-                        angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*10:fs*10+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
+                        angle_drift(9, profile, config, sub,1,:) = mean(roll_ang(fs*5:fs*5+10),'omitnan') - mean(roll_ang(1:10),'omitnan') ;
+                        angle_drift(9, profile, config, sub,2,:) = mean(pitch_ang(fs*5:fs*5+10), 'omitnan') - mean(pitch_ang(1:10), 'omitnan') ;
 
                     end
 
