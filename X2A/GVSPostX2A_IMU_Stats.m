@@ -49,7 +49,7 @@ index = 0;
 index2 = 0;
 freq_power_anova = table;
 freq_power_log_anova = table;
-power_val_anova = table;
+% power_val_anova = table;
 mag_anova = table;
 
 for profile = interest_profile
@@ -86,26 +86,26 @@ for profile = interest_profile
                                
                 num_subs = height(power_eval);
 
-                   % save data into table 
-                power_val_control(:,index) = changem(squeeze(power_values_reduced(control_current,control_profile,config,:,dir,val_index)), nan);               
-                power_val_eval(:,index) = changem(squeeze(power_values_reduced(interest_current,profile,config,:,dir,val_index)), nan);
-                                %%% %save data into table
-                power_val_anova.data((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = power_val_eval(:,index);
-                power_val_anova.data((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = power_val_control(:,index); 
-                 
-                power_val_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
-                power_val_anova.type((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = "control";                
-
-                power_val_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = Config(config);
-                power_val_anova.config((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = Config(config);
-
-                power_val_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir+3);
-                power_val_anova.dir((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = imu_dir(dir+3);
-
-                power_val_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2) ) = freq_interest(freq);
-
-                power_val_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
-                power_val_anova.sub((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = 1:num_subs;
+                %    % save data into table 
+                % power_val_control(:,index) = changem(squeeze(power_values_reduced(control_current,control_profile,config,:,dir,val_index)), nan);               
+                % power_val_eval(:,index) = changem(squeeze(power_values_reduced(interest_current,profile,config,:,dir,val_index)), nan);
+                %                 %%% %save data into table
+                % power_val_anova.data((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = power_val_eval(:,index);
+                % power_val_anova.data((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = power_val_control(:,index); 
+                % 
+                % power_val_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+                % power_val_anova.type((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = "control";                
+                % 
+                % power_val_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = Config(config);
+                % power_val_anova.config((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = Config(config);
+                % 
+                % power_val_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir+3);
+                % power_val_anova.dir((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = imu_dir(dir+3);
+                % 
+                % power_val_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2) ) = freq_interest(freq);
+                % 
+                % power_val_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+                % power_val_anova.sub((index*num_subs*2 - num_subs +1):(index*num_subs*2) ) = 1:num_subs;
 
                 % save data into table 
                 mag_control(:,index) = changem(squeeze(mag_interest_reduced(control_current,control_profile,config,:,dir,val_index)), nan);               
@@ -181,10 +181,10 @@ for profile = interest_profile
                 power_log_control_mat(:,index2) = power_log_control(:,index);             
                 power_log_eval_mat(:,index2) =  power_log_eval(:,index);
 
-                if freq<=3
-                    power_val_control_mat(:,index2) = power_val_control(:,index);             
-                    power_val_eval_mat(:,index2) =  power_val_eval(:,index);
-                end
+                % if freq<=3
+                %     power_val_control_mat(:,index2) = power_val_control(:,index);             
+                %     power_val_eval_mat(:,index2) =  power_val_eval(:,index);
+                % end
 
             end
         end
@@ -193,7 +193,7 @@ end
 
  freq_power_anova( any(ismissing(freq_power_anova),2), :) = [];
  freq_power_log_anova( any(ismissing(freq_power_log_anova),2), :) = [];
- power_val_anova( any(ismissing(power_val_anova),2), :) = [];
+ % power_val_anova( any(ismissing(power_val_anova),2), :) = [];
  mag_anova( any(ismissing(mag_anova),2), :) = [];
 % power_control_save = power_control(~isnan(power_control));
 % power_eval_save = power_eval(~isnan(power_eval));
@@ -210,9 +210,9 @@ cd(file_path)
 writetable(freq_power_log_anova, "freq_power_log_anova.csv");
 cd(code_path)
 
-cd(file_path)
-writetable(power_val_anova, "power_val_anova.csv");
-cd(code_path)
+% cd(file_path)
+% writetable(power_val_anova, "power_val_anova.csv");
+% cd(code_path)
 
 cd(file_path)
 writetable(mag_anova, "mag_anova.csv");
@@ -261,24 +261,24 @@ pitch_power_log.config(pitch_power_log.config == "Cevete" ) = "Forehead";
 pitch_power_log.config(pitch_power_log.config == "Aoyama" ) = "Temples"; 
 
 %%
-bilateral_power_val = power_val_anova(power_val_anova.config == "Binaural",:);
-bilateral_roll_power_val = bilateral_power_val(bilateral_power_val.dir == "roll",:);
-bilateral_yaw_power_val = bilateral_power_val(bilateral_power_val.dir == "yaw",:);
-
-pitch_power_val = power_val_anova(power_val_anova.dir == "pitch",:);
-pitch_power_val = pitch_power_val(pitch_power_val.config ~= "Binaural",:);
-
-bilateral_roll_power_val.type(bilateral_roll_power_val.type == "exp" ) = "GVS"; 
-bilateral_roll_power_val.type(bilateral_roll_power_val.type == "control" ) = "Sham"; 
-
-bilateral_yaw_power_val.type(bilateral_yaw_power_val.type == "exp" ) = "GVS"; 
-bilateral_yaw_power_val.type(bilateral_yaw_power_val.type == "control" ) = "Sham"; 
-
-pitch_power_val.type(pitch_power_val.type == "exp" ) = "GVS"; 
-pitch_power_val.type(pitch_power_val.type == "control" ) = "Sham"; 
-
-pitch_power_val.config(pitch_power_val.config == "Cevete" ) = "Forehead"; 
-pitch_power_val.config(pitch_power_val.config == "Aoyama" ) = "Temples"; 
+% bilateral_power_val = power_val_anova(power_val_anova.config == "Binaural",:);
+% bilateral_roll_power_val = bilateral_power_val(bilateral_power_val.dir == "roll",:);
+% bilateral_yaw_power_val = bilateral_power_val(bilateral_power_val.dir == "yaw",:);
+% 
+% pitch_power_val = power_val_anova(power_val_anova.dir == "pitch",:);
+% pitch_power_val = pitch_power_val(pitch_power_val.config ~= "Binaural",:);
+% 
+% bilateral_roll_power_val.type(bilateral_roll_power_val.type == "exp" ) = "GVS"; 
+% bilateral_roll_power_val.type(bilateral_roll_power_val.type == "control" ) = "Sham"; 
+% 
+% bilateral_yaw_power_val.type(bilateral_yaw_power_val.type == "exp" ) = "GVS"; 
+% bilateral_yaw_power_val.type(bilateral_yaw_power_val.type == "control" ) = "Sham"; 
+% 
+% pitch_power_val.type(pitch_power_val.type == "exp" ) = "GVS"; 
+% pitch_power_val.type(pitch_power_val.type == "control" ) = "Sham"; 
+% 
+% pitch_power_val.config(pitch_power_val.config == "Cevete" ) = "Forehead"; 
+% pitch_power_val.config(pitch_power_val.config == "Aoyama" ) = "Temples"; 
 
 %%
 bilateral_mag = mag_anova(mag_anova.config == "Binaural",:);
@@ -298,7 +298,7 @@ pitch_mag.type(pitch_mag.type == "exp" ) = "GVS";
 pitch_mag.type(pitch_mag.type == "control" ) = "Sham"; 
 
 pitch_mag.config(pitch_mag.config == "Cevete" ) = "Forehead"; 
-pitch_mag.config(pitch_power_val.config == "Aoyama" ) = "Temples"; 
+pitch_mag.config(pitch_mag.config == "Aoyama" ) = "Temples"; 
 %%
 
 bilateral_roll_power_data = cell2mat(table2cell(bilateral_roll_power(:,1)));
@@ -326,16 +326,16 @@ pitch_power_log_data = cell2mat(table2cell(pitch_power_log(:,1)));
 pitch_power_log_group = strcat( string(pitch_power_log.freq_interest), " Hz ", string(pitch_power_log.type));
 pitch_power_log_group_montage = strcat(  string(pitch_power_log.config), " ", string(pitch_power_log.type));
 
-%%
-bilateral_roll_power_val_data = cell2mat(table2cell(bilateral_roll_power_val(:,1)));
-bilateral_roll_power_val_group = strcat(string(bilateral_roll_power_val.freq_interest), " Hz ", string(bilateral_roll_power_val.type));
-
-bilateral_yaw_power_val_data = cell2mat(table2cell(bilateral_yaw_power_val(:,1)));
-bilateral_yaw_power_val_group = strcat(string(bilateral_yaw_power_val.freq_interest), " Hz ", string(bilateral_yaw_power_val.type) );
-
-pitch_power_val_data = cell2mat(table2cell(pitch_power_val(:,1)));
-pitch_power_val_group = strcat( string(pitch_power_val.freq_interest), " Hz ", string(pitch_power_val.type));
-pitch_power_val_group_montage = strcat(  string(pitch_power_val.config), " ", string(pitch_power_val.type));
+% %%
+% bilateral_roll_power_val_data = cell2mat(table2cell(bilateral_roll_power_val(:,1)));
+% bilateral_roll_power_val_group = strcat(string(bilateral_roll_power_val.freq_interest), " Hz ", string(bilateral_roll_power_val.type));
+% 
+% bilateral_yaw_power_val_data = cell2mat(table2cell(bilateral_yaw_power_val(:,1)));
+% bilateral_yaw_power_val_group = strcat(string(bilateral_yaw_power_val.freq_interest), " Hz ", string(bilateral_yaw_power_val.type) );
+% 
+% pitch_power_val_data = cell2mat(table2cell(pitch_power_val(:,1)));
+% pitch_power_val_group = strcat( string(pitch_power_val.freq_interest), " Hz ", string(pitch_power_val.type));
+% pitch_power_val_group_montage = strcat(  string(pitch_power_val.config), " ", string(pitch_power_val.type));
 
 %%
 bilateral_roll_mag_data = cell2mat(table2cell(bilateral_roll_mag(:,1)));
@@ -508,7 +508,7 @@ bilateral_roll_disp_group = strcat(string(bilateral_roll_disp.profile), string( 
 
 pitch_disp_data = cell2mat(table2cell(pitch_disp(:,1)));
 pitch_disp_group = strcat( string(pitch_disp.profile), string(pitch_disp.type) );
-pitch_disp_group_montage = strcat( string(pitch_disp.config), string(pitch_disp.type ));
+pitch_disp_group_montage = strcat( string(pitch_disp.profile), string(pitch_disp.type) , string(pitch_disp.config));
 
 %%
 % figure;
@@ -653,128 +653,128 @@ pitch_disp_group_montage = strcat( string(pitch_disp.config), string(pitch_disp.
 % % sgtitle("Sway For Montage-Direction Combinations of Interest")
 
 
-%% paper plot option 2 (going with this one)
-f = figure('Position', [100, 100, 1200, 900]);
-tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
-
-colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;0 0 0; 0 0 0;0 0 0];
-nexttile(3)
-% boxplot(pitch_power_val_data , pitch_power_val_group, 'Colors', colors)
-
-% Unique groups and color map
-uniqueGroups = categories(categorical(pitch_power_val_group));
-uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
-% Plot using boxchart
-for i = 1:numel(uniqueGroups)
-    idx = pitch_power_val_group == uniqueGroups{i};
-    boxchart(ones(sum(idx),1)*i, pitch_power_val_data(idx), 'BoxFaceColor', colors(i,:));
-    hold on;
-end
-
-xticks([1 2 3 4 5 6])
-xticklabels(uniqueGroups)
-yscale('log')
-yticks([0.01 0.1 1])
-yticklabels([0.01 0.1 1])
-
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
-ylim([0.0025 1.25]);
-
-nexttile(1)
-% boxplot(bilateral_roll_power_val_data , bilateral_roll_power_val_group)
-
-% Unique groups and color map
-uniqueGroups = categories(categorical(bilateral_roll_power_val_group));
-uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
-% Plot using boxchart
-for i = 1:numel(uniqueGroups)
-    idx = bilateral_roll_power_val_group == uniqueGroups{i};
-    boxchart(ones(sum(idx),1)*i, bilateral_roll_power_val_data(idx), 'BoxFaceColor', colors(i,:));
-    hold on;
-end
-
-xticks([1 2 3 4 5 6])
-xticklabels(uniqueGroups)
-yscale('log')
-yticks([0.01 0.1 1])
-yticklabels([0.01 0.1 1])
-
-ylabel("Sway Power at Freq. of Interest (deg)")
-% xlabel("Experimental Condition")
-title("Binaural: Roll Sway", 'FontSize', 15)
-ylim([0.0025 1.25]);
-
-nexttile(2)
-% boxplot(bilateral_yaw_power_val_data , bilateral_yaw_power_val_group)
-
-% Unique groups and color map
-uniqueGroups = categories(categorical(bilateral_yaw_power_val_group));
-uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
-% Plot using boxchart
-for i = 1:numel(uniqueGroups)
-    idx = bilateral_yaw_power_val_group == uniqueGroups{i};
-    boxchart(ones(sum(idx),1)*i, bilateral_yaw_power_val_data(idx), 'BoxFaceColor', colors(i,:));
-    hold on;
-end
-
-% ylabel("Sway at Freq. of Interest (dB/Hz)")
-% xlabel("Experimental Condition")
-title("Binaural: Yaw Sway", 'FontSize', 15)
-ylim([0.0025 1.25]);
-
-xticks([1 2 3 4 5 6])
-xticklabels(uniqueGroups)
-yscale('log')
-yticks([0.01 0.1 1])
-yticklabels([0.01 0.1 1])
-
-colors = [ 0 0 0; .5 .5 .5; 0 0 0];
-nexttile(6)
-boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group([1:30 37:42]))
-
-pitch_disp_data_plot = pitch_disp_data([1:30 37:42]);
-pitch_disp_group_plot = pitch_disp_group([1:30 37:42]);
-% Unique groups and color map
-uniqueGroups = categories(categorical(pitch_disp_group_plot));
-% Plot using boxchart
-for i = 1:numel(uniqueGroups)
-    idx = pitch_disp_group_plot == uniqueGroups{i};
-    boxchart(ones(sum(idx),1)*i, pitch_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
-    hold on;
-end
-
-ylabel("Sway Displacement (deg)")
-% xlabel("Experimental Condition")
-title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
-% ylim([-12 12]);
-ylim([-8 8]);
-xticks([1 2 3])
-xticklabels(["+DC" "Sham" "-DC"])
-
-nexttile(4)
-% boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18))
-
-bilateral_roll_disp_data_plot = bilateral_roll_disp_data(1:18);
-bilateral_roll_disp_group_plot = bilateral_roll_disp_group(1:18);
-% Unique groups and color map
-uniqueGroups = categories(categorical(pitch_disp_group_plot));
-% Plot using boxchart
-for i = 1:numel(uniqueGroups)
-    idx = bilateral_roll_disp_group_plot == uniqueGroups{i};
-    boxchart(ones(sum(idx),1)*i, bilateral_roll_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
-    hold on;
-end
-
-ylabel("Sway Displacement (deg)")
-% xlabel("Experimental Condition")
-title("Binaural: Roll Sway", 'FontSize', 15)
-% ylim([-8 16]);
-ylim([-8 8]);
-xticks([1 2 3])
-xticklabels(["+DC" "Sham" "-DC"])
-% sgtitle("Sway For Montage-Direction Combinations of Interest")
+% %% paper plot option 2 
+% f = figure('Position', [100, 100, 1200, 900]);
+% tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
+% 
+% colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;0 0 0; 0 0 0;0 0 0];
+% nexttile(3)
+% % boxplot(pitch_power_val_data , pitch_power_val_group, 'Colors', colors)
+% 
+% % Unique groups and color map
+% uniqueGroups = categories(categorical(pitch_power_val_group));
+% uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
+% % Plot using boxchart
+% for i = 1:numel(uniqueGroups)
+%     idx = pitch_power_val_group == uniqueGroups{i};
+%     boxchart(ones(sum(idx),1)*i, pitch_power_val_data(idx), 'BoxFaceColor', colors(i,:));
+%     hold on;
+% end
+% 
+% xticks([1 2 3 4 5 6])
+% xticklabels(uniqueGroups)
+% yscale('log')
+% yticks([0.01 0.1 1])
+% yticklabels([0.01 0.1 1])
+% 
+% % ylabel("Sway at Freq. of Interest (dB/Hz)")
+% % xlabel("Experimental Condition")
+% title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
+% ylim([0.0025 1.25]);
+% 
+% nexttile(1)
+% % boxplot(bilateral_roll_power_val_data , bilateral_roll_power_val_group)
+% 
+% % Unique groups and color map
+% uniqueGroups = categories(categorical(bilateral_roll_power_val_group));
+% uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
+% % Plot using boxchart
+% for i = 1:numel(uniqueGroups)
+%     idx = bilateral_roll_power_val_group == uniqueGroups{i};
+%     boxchart(ones(sum(idx),1)*i, bilateral_roll_power_val_data(idx), 'BoxFaceColor', colors(i,:));
+%     hold on;
+% end
+% 
+% xticks([1 2 3 4 5 6])
+% xticklabels(uniqueGroups)
+% yscale('log')
+% yticks([0.01 0.1 1])
+% yticklabels([0.01 0.1 1])
+% 
+% ylabel("Sway Power at Freq. of Interest (deg)")
+% % xlabel("Experimental Condition")
+% title("Binaural: Roll Sway", 'FontSize', 15)
+% ylim([0.0025 1.25]);
+% 
+% nexttile(2)
+% % boxplot(bilateral_yaw_power_val_data , bilateral_yaw_power_val_group)
+% 
+% % Unique groups and color map
+% uniqueGroups = categories(categorical(bilateral_yaw_power_val_group));
+% uniqueGroups = uniqueGroups([2 4 6 1 3 5]);
+% % Plot using boxchart
+% for i = 1:numel(uniqueGroups)
+%     idx = bilateral_yaw_power_val_group == uniqueGroups{i};
+%     boxchart(ones(sum(idx),1)*i, bilateral_yaw_power_val_data(idx), 'BoxFaceColor', colors(i,:));
+%     hold on;
+% end
+% 
+% % ylabel("Sway at Freq. of Interest (dB/Hz)")
+% % xlabel("Experimental Condition")
+% title("Binaural: Yaw Sway", 'FontSize', 15)
+% ylim([0.0025 1.25]);
+% 
+% xticks([1 2 3 4 5 6])
+% xticklabels(uniqueGroups)
+% yscale('log')
+% yticks([0.01 0.1 1])
+% yticklabels([0.01 0.1 1])
+% 
+% colors = [ 0 0 0; .5 .5 .5; 0 0 0];
+% nexttile(6)
+% boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group([1:30 37:42]))
+% 
+% pitch_disp_data_plot = pitch_disp_data([1:30 37:42]);
+% pitch_disp_group_plot = pitch_disp_group([1:30 37:42]);
+% % Unique groups and color map
+% uniqueGroups = categories(categorical(pitch_disp_group_plot));
+% % Plot using boxchart
+% for i = 1:numel(uniqueGroups)
+%     idx = pitch_disp_group_plot == uniqueGroups{i};
+%     boxchart(ones(sum(idx),1)*i, pitch_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
+%     hold on;
+% end
+% 
+% ylabel("Sway Displacement (deg)")
+% % xlabel("Experimental Condition")
+% title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
+% % ylim([-12 12]);
+% ylim([-8 8]);
+% xticks([1 2 3])
+% xticklabels(["+DC" "Sham" "-DC"])
+% 
+% nexttile(4)
+% % boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18))
+% 
+% bilateral_roll_disp_data_plot = bilateral_roll_disp_data(1:18);
+% bilateral_roll_disp_group_plot = bilateral_roll_disp_group(1:18);
+% % Unique groups and color map
+% uniqueGroups = categories(categorical(pitch_disp_group_plot));
+% % Plot using boxchart
+% for i = 1:numel(uniqueGroups)
+%     idx = bilateral_roll_disp_group_plot == uniqueGroups{i};
+%     boxchart(ones(sum(idx),1)*i, bilateral_roll_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
+%     hold on;
+% end
+% 
+% ylabel("Sway Displacement (deg)")
+% % xlabel("Experimental Condition")
+% title("Binaural: Roll Sway", 'FontSize', 15)
+% % ylim([-8 16]);
+% ylim([-8 8]);
+% xticks([1 2 3])
+% xticklabels(["+DC" "Sham" "-DC"])
+% % sgtitle("Sway For Montage-Direction Combinations of Interest")
 
 %% paper plot option 3
 figure('Position', [100, 100, 1200, 900]);
@@ -886,11 +886,31 @@ xticklabels(["+DC" "Sham" "-DC"])
 
 
 %% paper plot option 4 (going with this one)
-f = figure('Position', [100, 100, 1200, 900]);
-tiledlayout(2,3,"TileSpacing","tight", "Padding","tight")
+%% initialize  
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+orange = [0.9020, 0.6235, 0.0000];  % golden orange
+skyblue = [0.3373, 0.7059, 0.9137]; % sky blue
+pink = [0.8353, 0.3686, 0.0000];    % strong warm pink
+teal = [0.2667, 0.4471, 0.3843];    % muted teal
+% yellow = [0.9451, 0.8941, 0.2588];  % soft yellow
+brown = [0.7059, 0.3961, 0.1137];   % medium brown
+yellow = [255 190 50]/255;
+black = [0 0 0];
 
-colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;.5 .5 .5; .5 .5 .5 ; .5 .5 .5; 0 0 0; 0 0 0;0 0 0; 0 0 0; 0 0 0;0 0 0];
-nexttile(3)
+%% paper plot option 4 (going with this one)
+
+f = figure('Position', [0, 0, 1600, 800]);
+tiledlayout(4,4,"TileSpacing","tight", "Padding","tight")
+set(f, 'DefaultAxesFontSize', 14);
+
+
+colors = [orange/2 ; blue/2; orange/2 ; blue/2; orange/2 ; blue/2; orange; blue; orange;blue; orange; blue; ];
+nexttile(3,[2 2])
 % boxplot(pitch_mag_data , pitch_mag_group, 'Colors', colors)
 
 % Unique groups and color map
@@ -905,18 +925,20 @@ for i = 1:numel(uniqueGroups)
 end
 
 xticks([1 2 3 4 5 6 7 8 9 10 11 12])
-xticklabels(uniqueGroups)
+% xticklabels(uniqueGroups)
+xticklabels(["0.25 Hz"; "0.25 Hz"; "0.5 Hz"; "0.5 Hz"; "1 Hz"; "1 Hz"; "0.25 Hz"; "0.25 Hz"; "0.5 Hz"; "0.5 Hz"; "1 Hz"; "1 Hz";])
 yscale('log')
 yticks([0.005 0.05 .5 5])
 % yticklabels([0.01 0.1 1])
 
 % ylabel("Sway at Freq. of Interest (dB/Hz)")
 % xlabel("Experimental Condition")
-title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
+title("Copolar: Pitch Sway", 'FontSize', 15)
 ylim([0.005 5]);
+xlim([0 13]);
 
-nexttile(1)
-colors = [ .5 .5 .5; .5 .5 .5 ; .5 .5 .5;0 0 0; 0 0 0;0 0 0];
+nexttile(1,[2, 1])
+colors = [ red/2; red/2 ; red/2; red; red;red];
 % boxplot(bilateral_roll_mag_data , bilateral_roll_mag_group)
 
 % Unique groups and color map
@@ -930,7 +952,8 @@ for i = 1:numel(uniqueGroups)
 end
 
 xticks([1 2 3 4 5 6])
-xticklabels(uniqueGroups)
+% xticklabels(uniqueGroups)
+xticklabels(["0.25 Hz";  "0.5 Hz"; "1 Hz";  "0.25 Hz"; "0.5 Hz";  "1 Hz";])
 yscale('log')
 yticks([0.005 0.05 .5 5])
 % yticklabels([0.01 0.1 1])
@@ -939,8 +962,9 @@ ylabel("Sway Power at Freq. of Interest (deg)")
 % xlabel("Experimental Condition")
 title("Binaural: Roll Sway", 'FontSize', 15)
 ylim([0.005 5]);
+xlim([0 7]);
 
-nexttile(2)
+nexttile(2, [2 1])
 % boxplot(bilateral_yaw_mag_data , bilateral_yaw_mag_group)
 
 % Unique groups and color map
@@ -957,46 +981,57 @@ end
 % xlabel("Experimental Condition")
 title("Binaural: Yaw Sway", 'FontSize', 15)
 ylim([0.005 5]);
+xlim([0 7]);
 
 xticks([1 2 3 4 5 6])
-xticklabels(uniqueGroups)
+% xticklabels(uniqueGroups)
+xticklabels(["0.25 Hz";  "0.5 Hz"; "1 Hz";  "0.25 Hz"; "0.5 Hz";  "1 Hz";])
 yscale('log')
 yticks([0.005 0.05 .5 5])
 % yticklabels([0.01 0.1 1])
 
-colors = [ 0 0 0; .5 .5 .5; 0 0 0];
-nexttile(6)
-boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group([1:30 37:42]))
+colors = [ orange; blue; orange/2;blue/2 ; orange; blue;];
+nexttile(11, [2 2])
+% boxplot(pitch_disp_data([1:30 37:42]) , pitch_disp_group_montage([1:30 37:42]))
 
 pitch_disp_data_plot = pitch_disp_data([1:30 37:42]);
-pitch_disp_group_plot = pitch_disp_group([1:30 37:42]);
+pitch_disp_group_plot = pitch_disp_group_montage([1:30 37:42]);
 % Unique groups and color map
 uniqueGroups = categories(categorical(pitch_disp_group_plot));
+% Unique groups and color map
+% uniqueGroups = uniqueGroups([1 3 2 4 5 6]);
 % Plot using boxchart
 for i = 1:numel(uniqueGroups)
-    idx = pitch_disp_group_plot == uniqueGroups{i};
+    idx = contains(pitch_disp_group_plot,uniqueGroups{i});
     boxchart(ones(sum(idx),1)*i, pitch_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
     hold on;
 end
 
 ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
-title("Forehead + Temples: Pitch Sway", 'FontSize', 15)
+title("Copolar: Pitch Sway", 'FontSize', 15)
 % ylim([-12 12]);
 ylim([-8 8]);
-xticks([1 2 3])
-xticklabels(["+DC" "Sham" "-DC"])
+xlim([0 7]);
+xticks([1 2 3 4 5 6])
+% xticklabels(["+DC" "Sham" "-DC"])
+xticklabels(["+ DC";  "+DC"; "Sham";  "Sham"; "- DC";  "- DC";])
+% xticklabels(uniqueGroups)
 
-nexttile(4)
+lgd = legend(["Forehead Max Current" ;"Temples Max Current"; "Forehead Sham"; "Temples Sham"], 'FontSize', 20 ,'Location','south');
+    lgd.Layout.Tile = 14;
+
+colors = [ red; red/2 ;red];
+nexttile(9, [2 1])
 % boxplot(bilateral_roll_disp_data(1:18) , bilateral_roll_disp_group(1:18))
 
 bilateral_roll_disp_data_plot = bilateral_roll_disp_data(1:18);
 bilateral_roll_disp_group_plot = bilateral_roll_disp_group(1:18);
 % Unique groups and color map
-uniqueGroups = categories(categorical(pitch_disp_group_plot));
+uniqueGroups = categories(categorical(bilateral_roll_disp_group_plot));
 % Plot using boxchart
 for i = 1:numel(uniqueGroups)
-    idx = bilateral_roll_disp_group_plot == uniqueGroups{i};
+    idx = contains(bilateral_roll_disp_group_plot, uniqueGroups{i});
     boxchart(ones(sum(idx),1)*i, bilateral_roll_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
     hold on;
 end
@@ -1006,6 +1041,12 @@ ylabel("Sway Displacement (deg)")
 title("Binaural: Roll Sway", 'FontSize', 15)
 % ylim([-8 16]);
 ylim([-8 8]);
+xlim([0 4]);
 xticks([1 2 3])
 xticklabels(["+DC" "Sham" "-DC"])
 % sgtitle("Sway For Montage-Direction Combinations of Interest")
+
+    lgd2 = legend(["Binaural Max Current" ;"Binaural Sham"], 'FontSize', 20,'Location','north' );
+    lgd2.Layout.Tile = 10;
+    lgd2.Location = 'north';
+

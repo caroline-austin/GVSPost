@@ -214,7 +214,7 @@ end
 
 if contains(plots,'U ') % plot for Torin
 %% plot U - plots angle over time for the max current experienced by each participant
-for prof = [4]%1:num_profiles
+for prof = [5]%1:num_profiles
     [~,f] = time_series_plot_mult_sub(subnum,subskip,imu_dir(7:9), Config , [1:3],["sham" "low" "max"],[3], Profiles_safe, [prof], all_ang_reduced, all_time_reduced, "Angle (deg)", "Max");
     
     for figure_index =1:length (imu_dir(7:9))
@@ -317,7 +317,7 @@ end
 %% functions
 %list of subjects, % %list of variables to
 %separate the suplots by
-function [data_plot,f] = time_series_plot_mult_sub(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
+function [data_plot,f,power_interest_test] = time_series_plot_mult_sub(subnum, subskip,figure_var, subplot_var,subplot_indices, trial_var, trial_indices, extra_var, extra_var_indices, data, time, y_label, comparison)
 numsub = length(subnum);
 num_figure_var = length(figure_var);
 num_subplot_var = length(subplot_var);
@@ -381,6 +381,8 @@ for sub = 1:numsub
                     
                     data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index} = data.(['A' subject_str ]){trial_index,extra_index,subplot_index}(:,figure_index);
                     
+                    % [power_interest_test.(subplot_var(subplot_index)).(figure_var(figure_index))(:),f_test] = periodogram(data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index},[],[0.5 1],25);
+
                     figure(f(figure_index));
                     plot( data_plot.(subplot_var(subplot_index)).(figure_var(figure_index)){:,trial_index}, "Color", color_grad(color_index,:), "LineWidth", 2); hold on;
                     hold on;

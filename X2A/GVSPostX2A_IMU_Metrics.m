@@ -19,7 +19,7 @@ subskip = [2001 2004 2008 2010];  %DNF'd subjects
 fs =25; % sampling freq of 100Hz
 dt = 1/fs;
 profile_freq = [ 0 0 0.25 0.5 1];
-freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25, 0.24, 0.26, 0.49, 0.51, 0.99, 1.01];
+freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
 num_freq = length(freq_interest);
 freq_interest_reduced = [ 0.25 0.5 1 ];
 num_freq_reduced = length(freq_interest_reduced);
@@ -260,14 +260,14 @@ for sub = 1:numsub
 
     
     % start with 0.25Hz profile then 0.5 and 1 Hz
-    power_values(:,:,:,sub,:,1) = (power_interest(:,:,:,sub,:,19) + power_interest(:,3,:,sub,:,20)+ power_interest(:,3,:,sub,:,6) )*(-freq_interest(19)+freq_interest(20))/2;
-    power_values(:,:,:,sub,:,2) = (power_interest(:,:,:,sub,:,21) + power_interest(:,3,:,sub,:,22)+ power_interest(:,3,:,sub,:,10) )*(-freq_interest(21)+freq_interest(22))/2;
-    power_values(:,:,:,sub,:,3) = (power_interest(:,:,:,sub,:,23) + power_interest(:,3,:,sub,:,24)+ power_interest(:,3,:,sub,:,15) )*(-freq_interest(23)+freq_interest(24))/2;
-    
+    % power_values(:,:,:,sub,:,1) = (power_interest(:,:,:,sub,:,19) + power_interest(:,3,:,sub,:,20)+ power_interest(:,3,:,sub,:,6) )*(-freq_interest(19)+freq_interest(20))/2;
+    % power_values(:,:,:,sub,:,2) = (power_interest(:,:,:,sub,:,21) + power_interest(:,3,:,sub,:,22)+ power_interest(:,3,:,sub,:,10) )*(-freq_interest(21)+freq_interest(22))/2;
+    % power_values(:,:,:,sub,:,3) = (power_interest(:,:,:,sub,:,23) + power_interest(:,3,:,sub,:,24)+ power_interest(:,3,:,sub,:,15) )*(-freq_interest(23)+freq_interest(24))/2;
+    % 
 
     [power_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest,MinCurrent,MaxCurrent,Label,sub);
     [power_interest_log_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_interest_log,MinCurrent,MaxCurrent,Label,sub);
-    [power_values_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_values,MinCurrent,MaxCurrent,Label,sub);
+    % [power_values_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(power_values,MinCurrent,MaxCurrent,Label,sub);
     [mag_interest_reduced(:,:,:,sub,:,:)] = ReduceVarMultiple(mag_interest,MinCurrent,MaxCurrent,Label,sub);
 
     [all_ang_reduced.(['A', subject_str])] = ReduceTimeSeriesMultiple(all_ang.(['A', subject_str]),MinCurrent,MaxCurrent,Label,sub);
@@ -278,8 +278,8 @@ end
 %%
 Label.IMUmetrics = ["Current" "Profile" "Config" "Subject" "Direction" "VarIndex"];
 Label.CurrentAmpReduced = ["Low" "Min" "Max"];
-power_values= sqrt(power_values);
-power_values_reduced = sqrt(power_values_reduced);
+% power_values= sqrt(power_values);
+% power_values_reduced = sqrt(power_values_reduced);
 
 
 %% save data
@@ -287,12 +287,13 @@ power_values_reduced = sqrt(power_values_reduced);
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label all_imu_data rms_save all_imu_data  all_ang all_time ' ...
-        'freq_interest power_interest power_interest_log power_values med_freq med_power mean_freq mean_power ' ...
+        'freq_interest power_interest power_interest_log  med_freq med_power mean_freq mean_power ' ...
         'phase_shift fit_freq fit_amp mean_amp med_amp rms_save_reduced' ...
-        ' power_interest_reduced power_interest_log_reduced  power_values_reduced med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
+        ' power_interest_reduced power_interest_log_reduced   med_freq_reduced med_power_reduced mean_freq_reduced mean_power_reduced ' ...
         'phase_shift_reduced fit_freq_reduced fit_amp_reduced mean_amp_reduced med_amp_reduced' ...
         ' angle_drift angle_drift_reduced all_ang_reduced all_time_reduced mag_interest mag_interest_reduced'];% ...
-        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos all_vel']; 
+        % ' EndImpedance StartImpedance MaxCurrent MinCurrent all_pos
+        % all_vel'];  % power_values power_values_reduced
     eval(['  save ' ['Allimu.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
