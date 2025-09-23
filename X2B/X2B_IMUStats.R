@@ -16,11 +16,16 @@ mag_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Reposit
 psd_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/psd_anova.csv")
 freq_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/freq_psd_anova.csv")
 
-verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/verbal.csv")
+verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/group_verbal.csv")
+sub_verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/sub_verbal.csv")
 congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/congruent.csv")
 
 verbal$condition1 <-factor(verbal$condition1)
 verbal$condition2 <-factor(verbal$condition2)
+
+sub_verbal$condition1 <-factor(sub_verbal$condition1)
+sub_verbal$condition2 <-factor(sub_verbal$condition2)
+sub_verbal$SID <-factor(sub_verbal$SID)
 
 congruent$SID <-factor(congruent$SID)
 
@@ -37,6 +42,7 @@ neck_power <- subset(freq_power, config == "Neck")
 shoulder_power <- subset(freq_power, config == "Shoulder")
 forehead_power <- subset(freq_power, config == "Forehead")
 
+#mag_power$Var <- log(mag_power$Var)
 mag_power$type <- factor(mag_power$type)
 mag_power$freq_interest <- factor(mag_power$freq_interest)
 mag_power$config <- factor(mag_power$config)
@@ -96,6 +102,23 @@ exp(BT_vis_model$coefficients)/(1+exp(BT_vis_model$coefficients))
 BT_metallic_model <- (BTm(cbind(metallic_wins1,metallic_wins2),  condition1, condition2, data =verbal))
 summary(BT_metallic_model)
 exp(BT_metallic_model$coefficients)/(1+exp(BT_metallic_model$coefficients))
+#############################
+t.test(sub_verbal$motion_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
+t.test(sub_verbal$motion_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
+t.test(sub_verbal$motion_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
+t.test(sub_verbal$tingling_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
+t.test(sub_verbal$tingling_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
+t.test(sub_verbal$tingling_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
+t.test(sub_verbal$vis_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
+t.test(sub_verbal$vis_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
+t.test(sub_verbal$vis_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
+t.test(sub_verbal$metallic_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
+t.test(sub_verbal$metallic_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
+t.test(sub_verbal$metallic_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
 ##################################
 # stats on consistency between sway and verbal reports
 t.test(congruent$correct, mu = 0.5)
@@ -107,7 +130,6 @@ binom.test(total_congruent, total_responses, p=0.5)
 
 #################################
 # run pitch only anova
-# pooling the pitch data there is no difference between the montages
 pitch_power.aov <- anova_test(data = pitch_power[,1:7], dv = Var, wid = sub, within = c(  "config", "order" ))
 get_anova_table(pitch_power.aov)
 
@@ -138,13 +160,13 @@ pairwise.t.test(roll_power[,1],roll_power[,4],p.adj = "bonf") # roll only montag
 pairwise.t.test(pitch_power[,1],pitch_power[,4],p.adj = "bonf") # pitch only montage
 
 #################################
-# run pitch only anova
-# pooling the pitch data there is no difference between the montages
-pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = Var, wid = sub, within = c(  "config" ))
+# run pitch only anova # mag # use in paper
+pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = Var, wid = sub, within = c(  "config" )) # paper
 get_anova_table(pitch_mag.aov)
 
 anova_result_pitch_mag <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag[,1:6])
 shapiro_test((anova_result_pitch_mag$`sub:config`$residuals))
+plot(anova_result_pitch_mag$`sub:config`$residuals)
 
 # run roll only anova
 roll_mag.aov <- anova_test(data = roll_mag[,1:6], dv = Var, wid = sub, within = c(  "config" ))
@@ -165,10 +187,9 @@ pairwise.t.test(mag_power[,1],mag_power[,3],p.adj = "bonf") # montage
 pairwise.t.test(mag_power[,1],mag_power[,4],p.adj = "bonf") # direction
 
 pairwise.t.test(roll_mag[,1],roll_mag[,3],p.adj = "bonf") # roll only montage
-pairwise.t.test(pitch_mag[,1],pitch_mag[,3],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_mag[,1],pitch_mag[,3],p.adj = "bonf") # pitch only montage # paper
 #######################################################################################
 # run pitch only anova
-# pooling the pitch data there is no difference between the montages
 pitch_psd.aov <- anova_test(data = pitch_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
 get_anova_table(pitch_psd.aov)
 
@@ -198,7 +219,6 @@ pairwise.t.test(pitch_psd[,1],pitch_psd[,3],p.adj = "bonf") # pitch only montage
 
 #######################################################################################
 # run pitch only anova
-# pooling the pitch data there is no difference between the montages
 pitch_freq_psd.aov <- anova_test(data = pitch_freq_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))
 get_anova_table(pitch_freq_psd.aov)
 
@@ -254,29 +274,29 @@ bptest(pitch_power_model)
 
 ######################### roll
 #check data normality and homoscedacity 
-roll_power %>% 
+pitch_mag %>% 
   group_by(config) %>% 
   get_summary_stats(Var, type = "mean_sd")
 
 #outliers
-roll_power %>%
+pitch_mag %>%
   group_by(config) %>%
   identify_outliers(Var)
 
 # normaility assumption
-roll_power %>%
+pitch_mag %>%
   group_by(config) %>%
   shapiro_test(Var)
-ggqqplot(roll_power, "Var", facet.by = "config")
+ggqqplot(pitch_mag, "Var", facet.by = "config")
 
 # homoscedascity assumption
-roll_power_model <- lm(Var ~ config, data = roll_power)
-plot(roll_power_model$fitted.values, resid(roll_power_model),
+pitch_mag_model <- lm(Var ~ config, data = pitch_mag)
+plot(pitch_mag_model$fitted.values, resid(pitch_mag_model),
      xlab = "Fitted Values", ylab = "Residuals",
      main = "Residuals vs Fitted")
 abline(h = 0, col = "red")
 
-bptest(roll_power_model)
+bptest(pitch_mag_model)
 
 ######################### all
 #check data normality and homoscedacity 

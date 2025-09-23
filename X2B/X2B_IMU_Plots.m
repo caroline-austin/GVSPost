@@ -23,6 +23,21 @@ yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05];
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
 xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+orange = [0.9020, 0.6235, 0.0000];  % golden orange
+skyblue = [0.3373, 0.7059, 0.9137]; % sky blue
+pink = [0.8353, 0.3686, 0.0000];    % strong warm pink
+teal = [0.2667, 0.4471, 0.3843];    % muted teal
+% yellow = [0.9451, 0.8941, 0.2588];  % soft yellow
+brown = [0.7059, 0.3961, 0.1137];   % medium brown
+yellow = [255 190 50]/255;
+black = [0 0 0];
+
 cd([file_path]);
 load(['Allimu.mat'])
 cd(code_path);
@@ -149,10 +164,12 @@ end
 % plots the mag interest results for the 0.5 Hz frequency - data is
 % pooled across replicate trials and subjects and compared only at the
 % montage level
-if contains(plots, "3b ")
+
+if contains(plots, "3b ") % use for paper
     %%
     for dir = 2%1:2
-        figure;
+        f=figure;
+        set(f, 'DefaultAxesFontSize', 14);
         forehead_power= mag_interest_sort(1:8, :,dir,1);
         shoulder_power= mag_interest_sort(11:18, :,dir,1);
         neck_power= mag_interest_sort(21:28, :,dir,1);
@@ -173,27 +190,35 @@ if contains(plots, "3b ")
         neck_power_group= reshape(neck_power,[],1);
         % boxplot([forehead_power_group shoulder_power_group neck_power_group]);
         % boxchart([forehead_power_group shoulder_power_group neck_power_group], 'BoxFaceColor', [0 0 0]);
-        boxchart([median_forehead_power; median_shoulder_power; median_neck_power]', 'BoxFaceColor', [0 0 0]);
+        boxchart([1 1 1 1 1 1 1 1 1 1],[median_forehead_power;]', 'BoxFaceColor', orange);
+        hold on; 
+        boxchart([2 2 2 2 2 2 2 2 2 2],[ median_shoulder_power; ]', 'BoxFaceColor', green);
+        hold on;
+        boxchart([3 3 3 3 3 3 3 3 3 3],[median_neck_power]', 'BoxFaceColor', pink);
         % boxchart([max_forehead_power; max_shoulder_power; max_neck_power]', 'BoxFaceColor', [0 0 0]);
         hold on; 
-        for sub = 1:numsub % num of sub
-            plot(1+xoffset2(sub), median_forehead_power(sub), sub_symbols(sub))
-            plot(2+xoffset2(sub), median_shoulder_power(sub), sub_symbols(sub))
-            plot(3+xoffset2(sub), median_neck_power(sub), sub_symbols(sub))
-            % plot(1+xoffset2(sub), max_forehead_power(sub), sub_symbols(sub))
-            % plot(2+xoffset2(sub), max_shoulder_power(sub), sub_symbols(sub))
-            % plot(3+xoffset2(sub), max_neck_power(sub), sub_symbols(sub))
-        end
-        xticklabels(["Forehead" "Shoulder" "Neck"]); 
+        % for sub = 1:numsub % num of sub
+        %     plot(1+xoffset2(sub), median_forehead_power(sub), sub_symbols(sub))
+        %     plot(2+xoffset2(sub), median_shoulder_power(sub), sub_symbols(sub))
+        %     plot(3+xoffset2(sub), median_neck_power(sub), sub_symbols(sub))
+        %     % plot(1+xoffset2(sub), max_forehead_power(sub), sub_symbols(sub))
+        %     % plot(2+xoffset2(sub), max_shoulder_power(sub), sub_symbols(sub))
+        %     % plot(3+xoffset2(sub), max_neck_power(sub), sub_symbols(sub))
+        % end
+        xticks([1 2 3])
+        xticklabels(["Forehead"  "Shoulder"  "Neck"]); 
         yscale('log')
-        ylim([0.005 5])
+        ylim([0.05 0.5])
+        % ylim([0.001 1])
+        % yticks([0.01 0.1 1])
         % yticklabels([0.01 0.1 1])
         yticks([0.05 0.5 5])
         yticklabels([0.05 0.5 5])
+        grid on
         if dir ==1
             sgtitle("Roll Sway Power at 0.5Hz")
         elseif dir ==2
-            sgtitle("Pitch Sway Power at 0.5Hz")
+            sgtitle("Pitch Sway Power at 0.5Hz", 'Fontsize', 17)
         end
         ylabel('Sway at Freq of Interest (deg)');
     end

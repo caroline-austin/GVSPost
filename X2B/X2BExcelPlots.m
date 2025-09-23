@@ -26,6 +26,21 @@ yoffset2 = [0.05; -0.05;0.05;-0.05;0.05;-0.05];
 xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100]; 
 xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+orange = [0.9020, 0.6235, 0.0000];  % golden orange
+skyblue = [0.3373, 0.7059, 0.9137]; % sky blue
+pink = [0.8353, 0.3686, 0.0000];    % strong warm pink
+teal = [0.2667, 0.4471, 0.3843];    % muted teal
+% yellow = [0.9451, 0.8941, 0.2588];  % soft yellow
+brown = [0.7059, 0.3961, 0.1137];   % medium brown
+yellow = [255 190 50]/255;
+black = [0 0 0];
+
 %%
 total_results = zeros(3,4);
 total_bonus_results = zeros(3,2);
@@ -139,15 +154,19 @@ for sub = 1:numsub
     total_shoulder_neck(side_effect-7,:) = total_shoulder_neck(side_effect-7,:) + shoulder_neck;
     total_forhead_shoulder(side_effect-7,:) = total_forhead_shoulder(side_effect-7,:) + forhead_shoulder;
 
+    
+        sub_neck_forhead (sub,:,side_effect-7)= neck_forhead;
+        sub_shoulder_neck (sub,:,side_effect-7)= shoulder_neck;
+        sub_forhead_shoulder (sub,:,side_effect-7)= forhead_shoulder;
+    
+
     end 
 
     sub_motion(:,sub) = main_results(:,1); 
     sub_tingle(:,sub) = main_results(:,2); 
     sub_metal(:,sub) = main_results(:,3); 
     sub_vis(:,sub) = main_results(:,4); 
-    sub_neck_forhead (sub,:)= neck_forhead;
-    sub_shoulder_neck (sub,:)= shoulder_neck;
-    sub_forhead_shoulder (sub,:)= forhead_shoulder;
+
 end
 
 %% save data
@@ -189,13 +208,15 @@ grid minor
 
 set(gcf,'position',[100,100,700,800])  
 
-%% box plots for motion and tingling 
+%% box plots for motion and tingling % for paper 
 figure;
 tiledlayout(2,2,"TileSpacing","compact")
-sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
+% sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 nexttile 
-b=boxplot(sub_motion');
+b=boxchart(repmat(1,numsub,1),sub_motion(1,:)', 'BoxFaceColor', orange);
 hold on;
+boxchart(repmat(2,numsub,1),sub_motion(2,:)', 'BoxFaceColor', green);
+boxchart(repmat(3,numsub,1),sub_motion(3,:)', 'BoxFaceColor', pink);
 for j = 1:numsub
     for i = 1:width(sub_motion')
         
@@ -204,8 +225,8 @@ for j = 1:numsub
     end
 end
 title ("Motion Sensation",'FontSize', 18);
-set(b, 'LineWidth', 2);
-set(b, 'Color', 'k');
+% set(b, 'LineWidth', 2);
+% set(b, 'Color', 'k');
 ax = gca; 
 set(ax, 'FontSize', 18);
 xticklabels([])
@@ -215,18 +236,22 @@ grid minor
 
 % nexttile
 nexttile(2)
-h = boxplot(sub_tingle');
+% h = boxplot(sub_tingle');
+h=boxchart(repmat(1,numsub,1),sub_tingle(1,:)', 'BoxFaceColor', orange);
+hold on;
+boxchart(repmat(2,numsub,1),sub_tingle(2,:)', 'BoxFaceColor', green);
+boxchart(repmat(3,numsub,1),sub_tingle(3,:)', 'BoxFaceColor', pink);
 hold on;
 for j = 1:numsub
-    for i = 1:width(sub_motion')
+    for i = 1:width(sub_tingle')
         
         plot(i+xoffset2(j), sub_tingle(i, j),sub_symbols(j),'MarkerSize',15,"LineWidth", 1.5);
         hold on;
     end
 end
 xticklabels([])
-set(h, 'LineWidth', 2);
-set(h, 'Color', 'k');
+% set(h, 'LineWidth', 2);
+% set(h, 'Color', 'k');
 ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Skin Tingling",'FontSize', 18);
@@ -241,7 +266,11 @@ set(gcf,'position',[100,100,700,800])
 % sgtitle('Total Ratings of Higher Sensation Intensity','FontSize', 20)
 % nexttile
 nexttile(3)
-b=boxplot(sub_metal');
+% b=boxplot(sub_metal');
+b=boxchart(repmat(1,numsub,1),sub_metal(1,:)', 'BoxFaceColor', orange);
+hold on;
+boxchart(repmat(2,numsub,1),sub_metal(2,:)', 'BoxFaceColor', green);
+boxchart(repmat(3,numsub,1),sub_metal(3,:)', 'BoxFaceColor', pink);
 hold on;
 for j = 1:numsub
     for i = 1:width(sub_metal')
@@ -251,17 +280,22 @@ for j = 1:numsub
     end
 end
 title ("Metallic Taste",'FontSize', 18);
-set(b, 'LineWidth', 2);
-set(b, 'Color', 'k');
+% set(b, 'LineWidth', 2);
+% set(b, 'Color', 'k');
 ax = gca; 
 set(ax, 'FontSize', 18);
+xticks([1 2 3])
 xticklabels(["Forehead","Shoulder","Neck"])
 ylabel("Number of Reports")
 ylim([-0.5 8.5])
 grid minor
 % nexttile
 nexttile(4)
-h = boxplot(sub_vis');
+% h = boxplot(sub_vis');
+b=boxchart(repmat(1,numsub,1),sub_vis(1,:)', 'BoxFaceColor', orange);
+hold on;
+boxchart(repmat(2,numsub,1),sub_vis(2,:)', 'BoxFaceColor', green);
+boxchart(repmat(3,numsub,1),sub_vis(3,:)', 'BoxFaceColor', pink);
 hold on;
 for j = 1:numsub
     for i = 1:width(sub_vis')
@@ -270,9 +304,10 @@ for j = 1:numsub
         hold on;
     end
 end
+xticks([1 2 3])
 xticklabels(["Forehead","Shoulder","Neck"])
-set(h, 'LineWidth', 2);
-set(h, 'Color', 'k');
+% set(h, 'LineWidth', 2);
+% set(h, 'Color', 'k');
 ax = gca;
 set(ax, 'FontSize', 18); 
 title ("Visual Flashes",'FontSize', 18);
@@ -292,7 +327,7 @@ xticklabels(["forehead" "shoulder" "shoulder" "neck" "neck" "forehead"])
 figure;
 sgtitle(['SAll Total Wins'])
 % subplot(2,1,1)
-b=boxplot([sub_forhead_shoulder sub_shoulder_neck sub_neck_forhead]);
+b=boxplot([sub_forhead_shoulder(:,:,1) sub_shoulder_neck(:,:,1) sub_neck_forhead(:,:,1)]);
 hold on;
 % for j = 1:numsub
 %     for i = 1:width(sub_motion')

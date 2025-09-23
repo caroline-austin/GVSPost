@@ -37,26 +37,50 @@ cd(code_path);
 imu_dir = ["roll" "pitch" "yaw" ];
 
 %% Verbal report data export
-verbal = table;
+group_verbal = table;
 % verbal.condition1 = ["Neck" "Neck"  "Shoulder" ]';
 % verbal.condition2 = ["Shoulder" "Forehead" "Forehead" ]';
-verbal.condition1 = ["Forehead"   "Shoulder" "Neck" ]';
-verbal.condition2 = ["Shoulder" "Neck" "Forehead"  ]';
-verbal.motion_wins1 = [ total_forhead_shoulder(1,1) total_shoulder_neck(1,1) total_neck_forhead(1,1) ]';
-verbal.motion_wins2 = [ total_forhead_shoulder(1,2) total_shoulder_neck(1,2) total_neck_forhead(1,2) ]';
+group_verbal.condition1 = ["Forehead"   "Shoulder" "Neck" ]';
+group_verbal.condition2 = ["Shoulder" "Neck" "Forehead"  ]';
+group_verbal.motion_wins1 = [ total_forhead_shoulder(1,1) total_shoulder_neck(1,1) total_neck_forhead(1,1) ]';
+group_verbal.motion_wins2 = [ total_forhead_shoulder(1,2) total_shoulder_neck(1,2) total_neck_forhead(1,2) ]';
 
-verbal.tingling_wins1 = [ total_forhead_shoulder(2,1) total_shoulder_neck(2,1) total_neck_forhead(2,1) ]';
-verbal.tingling_wins2 = [ total_forhead_shoulder(2,2) total_shoulder_neck(2,2) total_neck_forhead(2,2) ]';
+group_verbal.tingling_wins1 = [ total_forhead_shoulder(2,1) total_shoulder_neck(2,1) total_neck_forhead(2,1) ]';
+group_verbal.tingling_wins2 = [ total_forhead_shoulder(2,2) total_shoulder_neck(2,2) total_neck_forhead(2,2) ]';
 
-verbal.vis_wins1 = [ total_forhead_shoulder(3,1) total_shoulder_neck(3,1) total_neck_forhead(3,1) ]';
-verbal.vis_wins2 = [ total_forhead_shoulder(3,2) total_shoulder_neck(3,2) total_neck_forhead(3,2) ]';
+group_verbal.vis_wins1 = [ total_forhead_shoulder(3,1) total_shoulder_neck(3,1) total_neck_forhead(3,1) ]';
+group_verbal.vis_wins2 = [ total_forhead_shoulder(3,2) total_shoulder_neck(3,2) total_neck_forhead(3,2) ]';
 
-verbal.metallic_wins1 = [ total_forhead_shoulder(4,1) total_shoulder_neck(4,1) total_neck_forhead(4,1) ]';
-verbal.metallic_wins2 = [ total_forhead_shoulder(4,2) total_shoulder_neck(4,2) total_neck_forhead(4,2) ]';
+group_verbal.metallic_wins1 = [ total_forhead_shoulder(4,1) total_shoulder_neck(4,1) total_neck_forhead(4,1) ]';
+group_verbal.metallic_wins2 = [ total_forhead_shoulder(4,2) total_shoulder_neck(4,2) total_neck_forhead(4,2) ]';
 
 
 cd(file_path)
-writetable(verbal, "verbal.csv");
+writetable(group_verbal, "group_verbal.csv");
+cd(code_path)
+
+%% Verbal report data export
+sub_verbal = table;
+
+sub_verbal.SID = repmat([1:10]',3,1);
+sub_verbal.condition1 = [repmat("Forehead",numsub,1) ;  repmat("Shoulder",numsub,1); repmat("Neck",numsub,1) ];
+sub_verbal.condition2 = [repmat("Shoulder",numsub,1) ;repmat("Neck",numsub,1); repmat("Forehead",numsub,1)  ];
+sub_verbal.motion_wins1 = [ sub_forhead_shoulder(:,1,1); sub_shoulder_neck(:,1,1); sub_neck_forhead(:,1,1) ];
+sub_verbal.motion_wins2 = [ sub_forhead_shoulder(:,2,1) ;sub_shoulder_neck(:,2,1) ;sub_neck_forhead(:,2,1) ];
+
+
+sub_verbal.tingling_wins1 = [ sub_forhead_shoulder(:,1,2); sub_shoulder_neck(:,1,2); sub_neck_forhead(:,1,2) ];
+sub_verbal.tingling_wins2 = [ sub_forhead_shoulder(:,2,2); sub_shoulder_neck(:,2,2) ;sub_neck_forhead(:,2,2) ];
+
+sub_verbal.vis_wins1 = [ sub_forhead_shoulder(:,1,3); sub_shoulder_neck(:,1,3); sub_neck_forhead(:,1,3) ];
+sub_verbal.vis_wins2 = [ sub_forhead_shoulder(:,2,3); sub_shoulder_neck(:,2,3); sub_neck_forhead(:,2,3) ];
+
+sub_verbal.metallic_wins1 = [ sub_forhead_shoulder(:,1,4) ;sub_shoulder_neck(:,1,4); sub_neck_forhead(:,1,4) ];
+sub_verbal.metallic_wins2 = [ sub_forhead_shoulder(:,2,4) ;sub_shoulder_neck(:,2,4) ;sub_neck_forhead(:,2,4) ];
+
+
+cd(file_path)
+writetable(sub_verbal, "sub_verbal.csv");
 cd(code_path)
 
 %% congruency between sway and verbal reports

@@ -202,8 +202,11 @@ for sub = 1:numsub
         for trial =1:2:w % compare imu metrics to verbal reporting metrics
             match_up = ceil(trial/2);
             % grab sway power for each trial in the match up
-            power_1 = power_interest(trial, sub,2,10); % 2 is the pitch dir, 10 is the 0.5Hz freq
-            power_2 = power_interest(trial+1, sub,2,10);
+            % power_1 = power_interest(trial, sub,2,10); % 2 is the pitch dir, 10 is the 0.5Hz freq
+            % power_2 = power_interest(trial+1, sub,2,10);
+
+            power_1 = mag_interest(trial, sub,2); % 2 is the pitch dir, 10 is the 0.5Hz freq
+            power_2 = mag_interest(trial+1, sub,2);
 
             sway_diff(match_up,sub) = (power_1 - power_2);
 
