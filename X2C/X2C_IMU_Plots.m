@@ -25,6 +25,22 @@ xoffset1 = [-100;-80;-60;-40;-20;0;20;40;60;80;100];
 xoffset2 = [-0.25;-0.2;-0.15; -0.15; -0.1;-0.05;0;0.05;0.1;0.15;0.2;0.25]; 
 
 plots = [" "];
+
+% colors- first 5 are color blind friendly colors
+blue = [ 0.2118    0.5255    0.6275];
+green = [0.5059    0.7451    0.6314];
+navy = [0.2196    0.2118    0.3804];
+purple = [0.4196    0.3059    0.4431];
+red =[0.7373  0.1529    0.1922];
+orange = [0.9020, 0.6235, 0.0000];  % golden orange
+skyblue = [0.3373, 0.7059, 0.9137]; % sky blue
+pink = [0.8353, 0.3686, 0.0000];    % strong warm pink
+teal = [0.2667, 0.4471, 0.3843];    % muted teal
+% yellow = [0.9451, 0.8941, 0.2588];  % soft yellow
+brown = [0.7059, 0.3961, 0.1137];   % medium brown
+yellow = [255 190 50]/255;
+black = [0 0 0];
+
 %%
 
 cd([file_path]);
@@ -309,39 +325,51 @@ if contains(plots, "3b ")
         % set(gcf, 'Position', [100, 100, 1200, 600]);
 
         % 2nd plot with different order of montage/current amplitude
-        figure; 
+        f = figure; 
+         set(f, 'DefaultAxesFontSize', 14);
         % boxplot([shoulder_0_1mA_mag_group  shoulder_2mA_mag_group shoulder_3mA_mag_group shoulder_4mA_mag_group... 
         %     temples_0_1mA_mag_group temples_1mA_mag_group   ...
         %      temples_2mA_mag_group temples_3mA_mag_group ...
         %     temples_4mA_mag_group]);
-        boxchart([median_shoulder_0_1mA_mag;  median_shoulder_2mA_mag; median_shoulder_3mA_mag; median_shoulder_4mA_mag; ... 
+        data_plot=([median_shoulder_0_1mA_mag;  median_shoulder_2mA_mag; median_shoulder_3mA_mag; median_shoulder_4mA_mag; ... 
             median_temples_0_1mA_mag; median_temples_1mA_mag;   ...
              median_temples_2mA_mag; median_temples_3mA_mag; ...
-            median_temples_4mA_mag]', 'BoxFaceColor', [0 0 0]);
+            median_temples_4mA_mag]');
+
+        colors = [green/2; green; green; green; blue/2; blue; blue; blue; blue];
         hold on; 
-        for sub = 1:numsub % num of sub
-            plot(1+xoffset2(sub), median_shoulder_0_1mA_mag(sub), sub_symbols(sub))
-            plot(2+xoffset2(sub), median_shoulder_2mA_mag(sub), sub_symbols(sub)) 
-            plot(3+xoffset2(sub), median_shoulder_3mA_mag(sub), sub_symbols(sub))
-            plot(4+xoffset2(sub), median_shoulder_4mA_mag(sub), sub_symbols(sub))
-            plot(5+xoffset2(sub), median_temples_0_1mA_mag(sub), sub_symbols(sub))
-            plot(6+xoffset2(sub), median_temples_1mA_mag(sub), sub_symbols(sub))
-            plot(7+xoffset2(sub), median_temples_2mA_mag(sub), sub_symbols(sub))
-            plot(8+xoffset2(sub), median_temples_3mA_mag(sub), sub_symbols(sub))
-            plot(9+xoffset2(sub), median_temples_4mA_mag(sub), sub_symbols(sub))
+        for i = 1:width(data_plot)
+            boxchart((ones(10,1) * i), data_plot(:,i), 'BoxFaceColor', colors(i,:));
         end
-        xticklabels(["Shoulder 0.1mA"  "Shoulder 2mA" "Shoulder 3mA" "Shoulder 4mA" ... 
-                 "Temples 0.1mA" "Temples 1mA" "Temples 2mA"  "Temples 3mA" "Temples 4mA"]); 
+        % for sub = 1:numsub % num of sub
+        %     plot(1+xoffset2(sub), median_shoulder_0_1mA_mag(sub), sub_symbols(sub))
+        %     plot(2+xoffset2(sub), median_shoulder_2mA_mag(sub), sub_symbols(sub)) 
+        %     plot(3+xoffset2(sub), median_shoulder_3mA_mag(sub), sub_symbols(sub))
+        %     plot(4+xoffset2(sub), median_shoulder_4mA_mag(sub), sub_symbols(sub))
+        %     plot(5+xoffset2(sub), median_temples_0_1mA_mag(sub), sub_symbols(sub))
+        %     plot(6+xoffset2(sub), median_temples_1mA_mag(sub), sub_symbols(sub))
+        %     plot(7+xoffset2(sub), median_temples_2mA_mag(sub), sub_symbols(sub))
+        %     plot(8+xoffset2(sub), median_temples_3mA_mag(sub), sub_symbols(sub))
+        %     plot(9+xoffset2(sub), median_temples_4mA_mag(sub), sub_symbols(sub))
+        % end
+        xticks([1 2 3 4 5 6 7 8 9])
+        xticklabels(["0.1(0.05)mA"  "2(1)mA" "3(1.5)mA" "4(2)mA" ... 
+                 "0.1(0.1)mA" "1(1)mA" "2(2)mA"  "3(3)mA" "4(4)mA"]); 
+        % xticklabels(["Shoulder 0.1mA"  "Shoulder 2mA" "Shoulder 3mA" "Shoulder 4mA" ... 
+        %          "Temples 0.1mA" "Temples 1mA" "Temples 2mA"  "Temples 3mA" "Temples 4mA"]); 
+        xlim([0.5 9.5])
         ylim([0.005 5])
         yscale("log")
         yticks([0.005 0.05 0.5 5]) 
         if dir ==1
             sgtitle("Roll Sway Power at 0.5Hz")
         elseif dir ==2
-            sgtitle("Pitch Sway Power at 0.5Hz")
+            % sgtitle("Pitch Sway Power at 0.5Hz")
         end
         ylabel('Sway at Freq of Interest (deg)');
-        set(gcf, 'Position', [100, 100, 1200, 600]);
+        legend(["Shoudler Sham" "Shoulder" "" "" "Temples Sham" "Temples"],"Location","northwest", FontSize= 17)
+        grid on
+        set(gcf, 'Position', [100, 100, 1400, 600]);
 
 
    

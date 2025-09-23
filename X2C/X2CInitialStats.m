@@ -85,7 +85,7 @@ profile_freq = [ 0.5 ];
 index = 0;
 index2 = 0;
 freq_power_anova = table;
-freq_psd_anova = table;
+
 freq_interest = [ 0 0.05 0.1 0.15 0.2 0.25 0.3 0.35 0.4 0.5 0.6 0.75 0.8 0.9 1 1.1 1.2 1.25];
 
 for profile = interest_profile % in this case there was only the 0.5 Hz profile/waveform
@@ -157,21 +157,122 @@ writetable(freq_power_anova, "freq_power_anova.csv");
 cd(code_path)
 
 
-%% my psd calcs at 0.5Hz (log)
+%% magnitude of sway results 
+mag_anova = table;
 index = 0;
 for dir = 1:2
 % 
 % 
-        shoulder_0_1mA_psd= [psd_interest_sort(1:2, :,dir,1); NaN(8,10)]; % 
-        shoulder_2mA_psd= [psd_interest_sort(3:10, :,dir,1); NaN(2,10)];
-        shoulder_3mA_psd= [psd_interest_sort(11:18, :,dir,1); NaN(2,10)];
-        shoulder_4mA_psd= psd_interest_sort(19:28, :,dir,1);
+        shoulder_0_1mA_mag= [mag_interest_sort(1:2, :,dir,1); NaN(8,10)]; % 
+        shoulder_2mA_mag= [mag_interest_sort(3:10, :,dir,1); NaN(2,10)];
+        shoulder_3mA_mag= [mag_interest_sort(11:18, :,dir,1); NaN(2,10)];
+        shoulder_4mA_mag= mag_interest_sort(19:28, :,dir,1);
     
-        temples_0_1mA_psd= [psd_interest_sort(29:30, :,dir,1); NaN(8,10)]; % 
-        temples_1mA_psd= [psd_interest_sort(31:36, :,dir,1); NaN(4,10)];
-        temples_2mA_psd= [psd_interest_sort(37:42, :,dir,1); NaN(4,10)];
-        temples_3mA_psd= [psd_interest_sort(43:48, :,dir,1); NaN(4,10)];
-        temples_4mA_psd= [psd_interest_sort(49:56, :,dir,1); NaN(2,10)];
+        temples_0_1mA_mag= [mag_interest_sort(29:30, :,dir,1); NaN(8,10)]; % 
+        temples_1mA_mag= [mag_interest_sort(31:36, :,dir,1); NaN(4,10)];
+        temples_2mA_mag= [mag_interest_sort(37:42, :,dir,1); NaN(4,10)];
+        temples_3mA_mag= [mag_interest_sort(43:48, :,dir,1); NaN(4,10)];
+        temples_4mA_mag= [mag_interest_sort(49:56, :,dir,1); NaN(2,10)];
+
+        mean_shoulder_0_1mA_mag = mean(shoulder_0_1mA_mag, 'omitnan');
+        mean_shoulder_2mA_mag = mean(shoulder_2mA_mag, 'omitnan');
+        mean_shoulder_3mA_mag = mean(shoulder_3mA_mag, 'omitnan');
+        mean_shoulder_4mA_mag = mean(shoulder_4mA_mag, 'omitnan');
+
+        mean_temples_0_1mA_mag = mean(temples_0_1mA_mag, 'omitnan');
+        mean_temples_1mA_mag = mean(temples_1mA_mag, 'omitnan');
+        mean_temples_2mA_mag = mean(temples_2mA_mag, 'omitnan');
+        mean_temples_3mA_mag = mean(temples_3mA_mag, 'omitnan');
+        mean_temples_4mA_mag = mean(temples_4mA_mag, 'omitnan');
+        
+        median_shoulder_0_1mA_mag = median(shoulder_0_1mA_mag, 'omitnan');
+        median_shoulder_2mA_mag = median(shoulder_2mA_mag, 'omitnan');
+        median_shoulder_3mA_mag = median(shoulder_3mA_mag, 'omitnan');
+        median_shoulder_4mA_mag = median(shoulder_4mA_mag, 'omitnan');
+
+        median_temples_0_1mA_mag = median(temples_0_1mA_mag, 'omitnan');
+        median_temples_1mA_mag = median(temples_1mA_mag, 'omitnan');
+        median_temples_2mA_mag = median(temples_2mA_mag, 'omitnan');
+        median_temples_3mA_mag = median(temples_3mA_mag, 'omitnan');
+        median_temples_4mA_mag = median(temples_4mA_mag, 'omitnan');
+% 
+%      max_forehead_mag = max(forehead_mag);
+%     max_shoulder_mag = max(shoulder_mag);
+%     max_neck_mag = max(neck_mag);
+% 
+    num_subs = length(median_shoulder_0_1mA_mag);
+% 
+    for condition = 1:length(condition_interest) % counting the number of replicates using replicate order as an index
+        replicate_order = 0;
+        current_mA = current_interest(condition);
+        index = index +1; 
+
+        switch condition
+            case 1
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_0_1mA_mag;
+                config = 1;
+            case 2 
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_2mA_mag;
+                config = 1;
+            case 3
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_3mA_mag;
+                config = 1;
+            case 4
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_shoulder_4mA_mag;
+                config = 1;
+            case 5 
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_0_1mA_mag;
+                config = 2;
+            case 6 
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_1mA_mag;
+                config = 2;
+            case 7 
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_2mA_mag;
+                config = 2;
+            case 8
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_3mA_mag;
+                config = 2;
+            case 9 
+                mag_anova.Var((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = median_temples_4mA_mag;
+                config = 2; 
+        end
+
+        mag_anova.type((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = "exp";
+
+        mag_anova.config((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =Config(config);
+
+        mag_anova.mA((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) =current_mA;
+
+        mag_anova.dir((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = imu_dir(dir);
+
+        mag_anova.freq_interest((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 0.5;
+
+        mag_anova.sub((index*num_subs*2 - num_subs*2 +1):(index*num_subs*2 -num_subs) ) = 1:num_subs;
+
+    end
+end
+
+mag_anova( any(ismissing(mag_anova),2), :) = [];
+cd(file_path)
+writetable(mag_anova, "mag_anova.csv");
+cd(code_path)
+
+%% my psd calcs at 0.5Hz (log)
+freq_psd_anova = table;
+index = 0;
+for dir = 1:2
+% 
+% 
+        shoulder_0_1mA_psd= [psd_05_sort(1:2, :,dir,1); NaN(8,10)]; % 
+        shoulder_2mA_psd= [psd_05_sort(3:10, :,dir,1); NaN(2,10)];
+        shoulder_3mA_psd= [psd_05_sort(11:18, :,dir,1); NaN(2,10)];
+        shoulder_4mA_psd= psd_05_sort(19:28, :,dir,1);
+    
+        temples_0_1mA_psd= [psd_05_sort(29:30, :,dir,1); NaN(8,10)]; % 
+        temples_1mA_psd= [psd_05_sort(31:36, :,dir,1); NaN(4,10)];
+        temples_2mA_psd= [psd_05_sort(37:42, :,dir,1); NaN(4,10)];
+        temples_3mA_psd= [psd_05_sort(43:48, :,dir,1); NaN(4,10)];
+        temples_4mA_psd= [psd_05_sort(49:56, :,dir,1); NaN(2,10)];
 
         mean_shoulder_0_1mA_psd = mean(shoulder_0_1mA_psd, 'omitnan');
         mean_shoulder_2mA_psd = mean(shoulder_2mA_psd, 'omitnan');

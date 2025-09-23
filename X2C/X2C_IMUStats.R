@@ -18,6 +18,7 @@ setwd("C:/Users/caroa/OneDrive/Documents")
 #C:/Users/Caroline Austin/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS
 freq_power<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/freq_power_anova.csv")
 freq_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/freq_psd_anova.csv")
+mag_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/mag_anova.csv")
 verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/verbal.csv")
 congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/congruent.csv")
 
@@ -59,7 +60,7 @@ pitch_power2 <-subset(freq_power2,  dir == "pitch" )
 temples_power <- subset(freq_power, config == "Four")
 shoulder_power <- subset(freq_power, config == "Three")
 
-
+#freq_psd$Var <- log10(freq_psd$Var)
 freq_psd$type <- factor(freq_psd$type)
 freq_psd$freq_interest <- factor(freq_psd$freq_interest)
 freq_psd$config <- factor(freq_psd$config)
@@ -89,14 +90,46 @@ pitch_psd_match <-subset(freq_psd_match,  dir == "pitch" )
 temples_psd <- subset(freq_psd, config == "Four")
 shoulder_psd <- subset(freq_psd, config == "Three")
 
+###
+#mag_psd$Var <- log10(mag_psd$Var)
+mag_psd$type <- factor(mag_psd$type)
+mag_psd$freq_interest <- factor(mag_psd$freq_interest)
+mag_psd$config <- factor(mag_psd$config)
+mag_psd$dir <- factor(mag_psd$dir)
+mag_psd$sub <- factor(mag_psd$sub)
+mag_psd$mA <- factor(mag_psd$mA)
+mag_psd$condition <- paste(mag_psd$config, mag_psd$mA)
+mag_psd$condition <-factor(mag_psd$condition)
+
+pitch_mag<-subset(mag_psd, dir == "pitch")
+roll_mag<-subset(mag_psd, dir == "roll")
+# (mA == "1" & config == "Four")
+#   (mA == "2" & config == "Three")
+
+#mag_psd1 <-subset(mag_psd, ((mA == "1" & config == "Four") | (mA == "2" & config == "Three")) )
+#mag_psd2 <-subset(mag_psd, ((mA == "2" & config == "Four") | (mA == "4" & config == "Three")) )
+
+mag_psd1 <-subset(mag_psd, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three")) )
+mag_psd2 <-subset(mag_psd, ((mA == "2" & config == "Four") | (mA == "2" & config == "Three")) )
+
+mag_psd_match <-subset(mag_psd, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three") | (mA == "2" & config == "Four") | (mA == "2" & config == "Three")) | (mA =="0.1") )
+mag_psd_match_GVS <-subset(mag_psd, ((mA == "1" & config == "Four") | (mA == "1" & config == "Three") | (mA == "2" & config == "Four") | (mA == "2" & config == "Three")) )
+
+pitch_mag1 <-subset(mag_psd1,  dir == "pitch" )
+pitch_mag2 <-subset(mag_psd2,  dir == "pitch" )
+pitch_mag_match <-subset(mag_psd_match,  dir == "pitch" )
+pitch_mag_match_GVS <-subset(mag_psd_match_GVS,  dir == "pitch" )
+
+temples_mag <- subset(mag_psd, config == "Four")
+shoulder_mag <- subset(mag_psd, config == "Three")
 
 ####################################
 # run verbal stats -> checking binomial probability?
-t.test(verbal$motion_wins1, mu = 10)
 
 total_wins =  # there are 2 forced choice comparisons per condition
 total_responses = 20; # 2*10 subj
 
+## all of these binomial tests are used in the paper
 # motion
 # all are significantly different from 0.5 in the expected direction except the 2 conditions
 # where current at the mastoids is the same (1 and 10 where p is around 0.5)
@@ -192,8 +225,8 @@ total_responses = 280; # 28*10 subj
 binom.test(total_congruent, total_responses, p=0.5)
 
 ################################# IMU stats
-# run linear mixed model
-pitch_power_lme_model <- lmer(Var ~ config * mA + (1 | sub), data = pitch_power)
+# ##run linear mixed model
+##pitch_power_lme_model <- lmer(Var ~ config * mA + (1 | sub), data = pitch_power)
 
 # run pitch only anova
 # pooling the pitch data there is no difference between the montages
@@ -233,20 +266,19 @@ pairwise.t.test(freq_power2[,1],freq_power2[,4],p.adj = "bonf") # diff in sway f
 pairwise.t.test(pitch_power1[,1],pitch_power1[,4],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
 pairwise.t.test(pitch_power2[,1],pitch_power2[,4],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
 
+#########################################################################################################
 ########## median stats
+
 pitch_psd.aov <- anova_test(data = pitch_psd_match[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" ))
 get_anova_table(pitch_psd.aov)
 
 anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd_match[,1:8])
 shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
 
-anova_result_pitch_psd <- aov(Var ~  config  + Error(sub/(config)), data = pitch_psd_match[,1:8])
-shapiro_test((anova_result_pitch_psd$`sub:config`$residuals))
+pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,8],p.adj = "bonf") # pitch only montage
 
-pairwise.t.test(pitch_psd[,1],pitch_psd[,8],p.adj = "bonf") # pitch only montage
-
-pairwise.t.test(freq_psd1[,1],freq_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
-pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
+#pairwise.t.test(freq_psd1[,1],freq_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
+#pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
 
 pairwise.t.test(pitch_psd1[,1],pitch_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA
 pairwise.t.test(pitch_psd2[,1],pitch_psd2[,3],p.adj = "bonf") #diff in sway for montage in pitch at 2mA
@@ -254,6 +286,37 @@ pairwise.t.test(pitch_psd2[,1],pitch_psd2[,3],p.adj = "bonf") #diff in sway for 
 pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,3],p.adj = "bonf") # pitch only montage
 pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,4],p.adj = "bonf") # pitch only current
 pairwise.t.test(pitch_psd_match[,1],pitch_psd_match[,8],p.adj = "bonf") # pitch only montage and current
+
+#########################################################################################################
+########## median stats mag 
+
+pitch_mag.aov <- anova_test(data = pitch_mag_match[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" ))
+get_anova_table(pitch_mag.aov)
+
+anova_result_pitch_mag <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag_match[,1:8])
+shapiro_test((anova_result_pitch_mag$`sub:config`$residuals))
+plot((anova_result_pitch_mag$`sub:config`$residuals))
+
+pitch_mag_GVS.aov <- anova_test(data = pitch_mag_match_GVS[,1:8], dv = Var, wid = sub, within = c(  "config", "mA" )) # used in paper
+get_anova_table(pitch_mag_GVS.aov)
+
+anova_result_pitch_mag_GVS <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag_match_GVS[,1:8])
+shapiro_test((anova_result_pitch_mag_GVS$`sub:config`$residuals))
+plot((anova_result_pitch_mag_GVS$`sub:config`$residuals))
+
+pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,8],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_mag_match_GVS[,1],pitch_mag_match_GVS[,8],p.adj = "bonf") # pitch only, current only montage 
+
+#pairwise.t.test(freq_psd1[,1],freq_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
+#pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
+
+pairwise.t.test(pitch_mag1[,1],pitch_mag1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA # used in paper
+pairwise.t.test(pitch_mag2[,1],pitch_mag2[,3],p.adj = "bonf") #diff in sway for montage in pitch at 2mA # used in ppaer
+
+pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,3],p.adj = "bonf") # pitch only montage
+pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,3],p.adj = "bonf") # pitch only, non sham only, montage 
+pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,4],p.adj = "bonf") # pitch only current
+pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,8],p.adj = "bonf") # pitch only montage and current
 
 ######################### pitch
 #check data normality and homoscedacity 
@@ -283,29 +346,29 @@ bptest(pitch_power_model)
 
 ######################### roll
 #check data normality and homoscedacity 
-roll_power %>% 
+pitch_mag %>% 
   group_by(config) %>% 
   get_summary_stats(Var, type = "mean_sd")
 
 #outliers
-roll_power %>%
+pitch_mag %>%
   group_by(config) %>%
   identify_outliers(Var)
 
 # normaility assumption
-roll_power %>%
+pitch_mag %>%
   group_by(config) %>%
   shapiro_test(Var)
-ggqqplot(roll_power, "Var", facet.by = "config")
+ggqqplot(pitch_mag, "Var", facet.by = "config")
 
 # homoscedascity assumption
-roll_power_model <- lm(Var ~ config, data = roll_power)
-plot(roll_power_model$fitted.values, resid(roll_power_model),
+pitch_mag_model <- lm(Var ~ config, data = pitch_mag)
+plot(pitch_mag_model$fitted.values, resid(pitch_mag_model),
      xlab = "Fitted Values", ylab = "Residuals",
      main = "Residuals vs Fitted")
 abline(h = 0, col = "red")
 
-bptest(roll_power_model)
+bptest(pitch_mag_model)
 
 ######################### all
 #check data normality and homoscedacity 
