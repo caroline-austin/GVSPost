@@ -103,9 +103,18 @@ BT_metallic_model <- (BTm(cbind(metallic_wins1,metallic_wins2),  condition1, con
 summary(BT_metallic_model)
 exp(BT_metallic_model$coefficients)/(1+exp(BT_metallic_model$coefficients))
 #############################
+# use the t-test in the paper not the binomial
+binom.test(verbal$motion_wins1[1], 40, p=0.5) # Forehead-Shoulder
+binom.test(verbal$motion_wins1[2], 40, p=0.5) # Shoulder-Neck
+binom.test(verbal$motion_wins1[3], 40, p=0.5) # Neck-Forehead
+
 t.test(sub_verbal$motion_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$motion_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
 t.test(sub_verbal$motion_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
+binom.test(verbal$tingling_wins1[1], 40, p=0.5) # Forehead-Shoulder
+binom.test(verbal$tingling_wins1[2], 40, p=0.5) # Shoulder-Neck
+binom.test(verbal$tingling_wins1[3], 40, p=0.5) # Neck-Forehead
 
 t.test(sub_verbal$tingling_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$tingling_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
