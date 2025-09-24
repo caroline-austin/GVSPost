@@ -908,7 +908,6 @@ f = figure('Position', [0, 0, 1600, 800]);
 tiledlayout(4,4,"TileSpacing","tight", "Padding","tight")
 set(f, 'DefaultAxesFontSize', 14);
 
-
 colors = [orange/2 ; blue/2; orange/2 ; blue/2; orange/2 ; blue/2; orange; blue; orange;blue; orange; blue; ];
 nexttile(3,[2 2])
 % boxplot(pitch_mag_data , pitch_mag_group, 'Colors', colors)
@@ -936,6 +935,7 @@ yticks([0.005 0.05 .5 5])
 title("Copolar: Pitch Sway", 'FontSize', 15)
 ylim([0.005 5]);
 xlim([0 13]);
+grid on
 
 nexttile(1,[2, 1])
 colors = [ red/2; red/2 ; red/2; red; red;red];
@@ -963,6 +963,7 @@ ylabel("Sway Power at Freq. of Interest (deg)")
 title("Binaural: Roll Sway", 'FontSize', 15)
 ylim([0.005 5]);
 xlim([0 7]);
+grid on
 
 nexttile(2, [2 1])
 % boxplot(bilateral_yaw_mag_data , bilateral_yaw_mag_group)
@@ -989,6 +990,7 @@ xticklabels(["0.25 Hz";  "0.5 Hz"; "1 Hz";  "0.25 Hz"; "0.5 Hz";  "1 Hz";])
 yscale('log')
 yticks([0.005 0.05 .5 5])
 % yticklabels([0.01 0.1 1])
+grid on
 
 colors = [ orange; blue; orange/2;blue/2 ; orange; blue;];
 nexttile(11, [2 2])
@@ -1020,6 +1022,7 @@ xticklabels(["+ DC";  "+DC"; "Sham";  "Sham"; "- DC";  "- DC";])
 
 lgd = legend(["Forehead Max Current" ;"Temples Max Current"; "Forehead Sham"; "Temples Sham"], 'FontSize', 20 ,'Location','south');
     lgd.Layout.Tile = 14;
+    grid on
 
 colors = [ red; red/2 ;red];
 nexttile(9, [2 1])
@@ -1044,6 +1047,7 @@ ylim([-8 8]);
 xlim([0 4]);
 xticks([1 2 3])
 xticklabels(["+DC" "Sham" "-DC"])
+grid on
 % sgtitle("Sway For Montage-Direction Combinations of Interest")
 
     lgd2 = legend(["Binaural Max Current" ;"Binaural Sham"], 'FontSize', 20,'Location','north' );
