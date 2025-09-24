@@ -1008,7 +1008,7 @@ for i = 1:numel(uniqueGroups)
     boxchart(ones(sum(idx),1)*i, pitch_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
     hold on;
 end
-
+plot([0 8],[0 0],'k--')
 ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
 title("Copolar: Pitch Sway", 'FontSize', 15)
@@ -1038,7 +1038,7 @@ for i = 1:numel(uniqueGroups)
     boxchart(ones(sum(idx),1)*i, bilateral_roll_disp_data_plot(idx), 'BoxFaceColor', colors(i,:));
     hold on;
 end
-
+plot([0 5],[0 0],'k--')
 ylabel("Sway Displacement (deg)")
 % xlabel("Experimental Condition")
 title("Binaural: Roll Sway", 'FontSize', 15)
