@@ -136,7 +136,9 @@ for sub = 1:numsub
        % the P/N angle coupling trials are flipped here because the GVS
         % sign convention and physical motion sign convention are flipped
         % and that was not corrected for in the creation/naming of the GVS
-        % profiles
+        % profiles - this switches things so that "postively" coupled GVS
+        % means a negative (cathode) at the mastoid when the tilt is
+        % positive (forward)
         if contains(GVS_profile_name, '-') && contains(GVS_profile_name, '5m') 
             polarity = 'N';
             current_amp = string(abs(str2num(string(Trial_Info(row,5)))));
