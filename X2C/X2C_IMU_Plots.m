@@ -271,6 +271,20 @@ if contains(plots, "3b ")
         mean_temples_2mA_mag = mean(temples_2mA_mag, 'omitnan');
         mean_temples_3mA_mag = mean(temples_3mA_mag, 'omitnan');
         mean_temples_4mA_mag = mean(temples_4mA_mag, 'omitnan');
+
+        std_shoulder_0_1mA_mag = std(shoulder_0_1mA_mag, 'omitnan');
+        std_shoulder_2mA_mag = std(shoulder_2mA_mag, 'omitnan');
+        std_shoulder_3mA_mag = std(shoulder_3mA_mag, 'omitnan');
+        std_shoulder_4mA_mag = std(shoulder_4mA_mag, 'omitnan');
+
+        std_temples_0_1mA_mag = std(temples_0_1mA_mag, 'omitnan');
+        std_temples_1mA_mag = std(temples_1mA_mag, 'omitnan');
+        std_temples_2mA_mag = std(temples_2mA_mag, 'omitnan');
+        std_temples_3mA_mag = std(temples_3mA_mag, 'omitnan');
+        std_temples_4mA_mag = std(temples_4mA_mag, 'omitnan');
+        std_all = [std_shoulder_0_1mA_mag;std_shoulder_2mA_mag;std_shoulder_3mA_mag;  ... 
+            std_shoulder_4mA_mag; std_temples_0_1mA_mag; std_temples_1mA_mag; ... 
+            std_temples_2mA_mag ; std_temples_3mA_mag;std_temples_4mA_mag];
         
         median_shoulder_0_1mA_mag = median(shoulder_0_1mA_mag, 'omitnan');
         median_shoulder_2mA_mag = median(shoulder_2mA_mag, 'omitnan');

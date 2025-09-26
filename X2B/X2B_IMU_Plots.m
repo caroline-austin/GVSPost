@@ -179,6 +179,11 @@ if contains(plots, "3b ") % use for paper
         mean_forehead_power = mean(forehead_power);
         mean_shoulder_power = mean(shoulder_power);
         mean_neck_power = mean(neck_power);
+
+        std_forehead_power = std(forehead_power, 'omitnan');
+        std_shoulder_power = std(shoulder_power, 'omitnan');
+        std_neck_power = std(neck_power, 'omitnan');
+
         median_forehead_power = median(forehead_power, 'omitnan');
         median_shoulder_power = median(shoulder_power, 'omitnan');
         median_neck_power = median(neck_power, 'omitnan');
