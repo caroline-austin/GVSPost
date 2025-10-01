@@ -143,7 +143,7 @@ for config = 1:num_config %generate electrode subplots
             end
 
         end
-        plot(Label.CurrentAmp+xoffset(sub), y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot(Label.CurrentAmp+xoffset(sub)*1.1, y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
@@ -217,7 +217,7 @@ for config = 1:num_config %generate electrode subplots
             end
 
         end
-        plot(Label.CurrentAmp+xoffset(sub), y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot(Label.CurrentAmp+xoffset(sub)*1.1, y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
@@ -292,14 +292,14 @@ for config = 1:num_config %generate electrode subplots
             end
 
         end
-        plot(Label.CurrentAmp+xoffset(sub), y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot(Label.CurrentAmp+xoffset(sub)*1.1, y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
-        % %add labels and info to the plot
-        % lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 38 );
-        % lgd.Layout.Tile = 4;
-        % lgd.Color =  [1 1 1];
+        %add labels and info to the plot
+        lgd = legend('none','noticeable', 'moderate', 'severe', 'no report', 'FontSize', 38 );
+        lgd.Layout.Tile = 4;
+        lgd.Color =  [1 1 1];
 
         % TotalTitle = char(strjoin(["Side Effect Ratings" Profiles(prof)]));
         % sgtitle( TotalTitle, "FontSize", 25);
@@ -348,7 +348,7 @@ for config = 1:num_config %generate electrode subplots
         % ylabel("Distribution of Reports")  
     elseif config == 2
         yticklabels([]);
-        xlabel("Current Amplitude mA", "FontSize", 25)
+        xlabel("Current Amplitude (mA)", "FontSize", 25)
         xticks([ 1, 2, 3, 4])
         xticklabels(["1(0.5)", "2(1)","3(1.5)", "4(2)"]);
         
@@ -394,7 +394,7 @@ for config = 1:num_config %generate electrode subplots
             end
 
         end
-        plot(Label.CurrentAmp+xoffset(sub), y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot(Label.CurrentAmp+xoffset(sub)*1.1, y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
@@ -506,7 +506,7 @@ end
         if config ~= 1
             yticklabels([]);
             if config == 2
-                xlabel("Current mA", "FontSize", 22)
+                xlabel("Current (mA)", "FontSize", 22)
                 Current_levels_str = ["0.1(0.05)" ".5(0.25)" "1(0.5)" "1.5(0.75)" "2(1)" "2.5(1.25)" "3(1.5)" "3.5(1.75)" "4(2)"];
                 xticklabels(Current_levels_str);
             end
@@ -628,7 +628,7 @@ for config = 1:num_config %generate electrode subplots
 
         end
         %add symbols to plot
-        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot([1:num_profiles]+xoffset(sub)*2, symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
@@ -728,7 +728,7 @@ for config = 1:num_config %generate electrode subplots
 
         end
         %add symbols to plot
-        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
+        plot([1:num_profiles]+xoffset(sub)*2, symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
 
     end
 end
@@ -830,7 +830,7 @@ for config = 1:num_config %generate electrode subplots
 
         end
         %add symbols to plot
-        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
+        plot([1:num_profiles]+xoffset(sub)*2, symbol_y_val(:,config), sub_symbols(sub), LineWidth=1.5)
 
     end
 end
@@ -934,7 +934,7 @@ for config = 1:num_config %generate electrode subplots
 
         end
         %add symbols to plot
-        plot([1:num_profiles]+xoffset(sub), symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
+        plot([1:num_profiles]+xoffset(sub)*2, symbol_y_val(:,config), sub_symbols(sub),LineWidth=1.5)
 
     end
 end
