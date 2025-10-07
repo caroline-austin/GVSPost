@@ -19,6 +19,7 @@ freq_psd<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Reposito
 verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/group_verbal.csv")
 sub_verbal<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/sub_verbal.csv")
 congruent<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/Data/congruent.csv")
+congruentC<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/NewPitchMontageTesting/DataC/congruent.csv")
 
 verbal$condition1 <-factor(verbal$condition1)
 verbal$condition2 <-factor(verbal$condition2)
@@ -28,6 +29,8 @@ sub_verbal$condition2 <-factor(sub_verbal$condition2)
 sub_verbal$SID <-factor(sub_verbal$SID)
 
 congruent$SID <-factor(congruent$SID)
+congruentC$SID <-(congruentC$SID+10)
+congruentC$SID <-factor(congruentC$SID)
 
 freq_power$type <- factor(freq_power$type)
 freq_power$freq_interest <- factor(freq_power$freq_interest)
