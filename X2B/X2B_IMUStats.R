@@ -31,6 +31,7 @@ sub_verbal$SID <-factor(sub_verbal$SID)
 congruent$SID <-factor(congruent$SID)
 congruentC$SID <-(congruentC$SID+10)
 congruentC$SID <-factor(congruentC$SID)
+congruent_total <- rbind(congruent, congruentC)
 
 freq_power$type <- factor(freq_power$type)
 freq_power$freq_interest <- factor(freq_power$freq_interest)
@@ -134,11 +135,18 @@ t.test(sub_verbal$metallic_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
 ##################################
 # stats on consistency between sway and verbal reports
 t.test(congruent$correct, mu = 0.5)
+t.test(congruent_total$correct, mu = 0.5)
 
 total_congruent = sum(congruent$correct)*12
-total_responses = 120;
+total_congruentC = sum(congruentC$correct)*28
+total_responses = 120
+total_responsesC = 280
+
+total_congruent_BC = total_congruent+total_congruentC
+total_responses_BC = total_responses +total_responsesC
 
 binom.test(total_congruent, total_responses, p=0.5)
+binom.test(total_congruent_BC, total_responses_BC, p=0.5)
 
 #################################
 # run pitch only anova
