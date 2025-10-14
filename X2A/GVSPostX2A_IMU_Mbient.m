@@ -41,6 +41,9 @@ trunc = [0.3 -0.3]; %seconds
 findbuffers = 0; % 1 is on other num is off
 % Used to view sensor orientation over time
 sensorpositionplot =0; % 1 is on other num is off
+config_names = ["Binaural", "Forehead", "Temples"];
+prof_names = ["PDC" "NDC" "Sin0_25Hz" "Sin0_5Hz" "Sin1Hz"];
+current_names = ["0_1mA" "0_5mA" "1mA" "1_5mA" "2mA" "2_5mA" "3mA" "3_5mA" "4mA"];
 
 %% Initialize Storage Variables
 numsub = length(subnum);
@@ -284,8 +287,20 @@ for trial =1:numtrials
     tilt_angles(floor(Times(trial*2-1)*fs):ceil(Times(trial*2)*fs),1:3)];
     % imu_data{current_index,profile_index,config_index,:,4:6} = gyro(Times(trial*2-1):Times(trial*2),1:3);
 
-
-
+    % save_table = [];
+    % save_table =  [ time(floor(Times(trial*2-1)*fs):ceil(Times(trial*2)*fs))' ... 
+    % acc(floor(Times(trial*2-1)*fs):ceil(Times(trial*2)*fs),1:3) ...
+    % gyro(floor(Times(trial*2-1)*fs):ceil(Times(trial*2)*fs),1:3) ...
+    %  ];
+    % save_table = array2table(save_table);
+    % save_table.Properties.VariableNames ={'time (s)', 'x-axis acc (g)', 'y-axis acc (g)', 'z-axis acc (g)', 'x-axis gyro (deg/s)', 'y-axis gyro (deg/s)', 'z-axis gyro (deg/s)' };
+    % 
+    % % create file names
+    % Filename = strrep(strjoin(['S' subject_str '_' config_names(config_index) '_' current_names(current_index) '_' prof_names(profile_index) '_' num2str(trial) '.csv']), ' ', '');
+    % % save 
+    % cd([file_path '/' subject_str])
+    % writetable(save_table, Filename);
+    % cd(code_path)
 
 
 end
