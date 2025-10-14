@@ -290,7 +290,7 @@ end
 
 
 end
-% plan to use in the paper
+% plan to use in the paper/supplementary materials
 if contains(plots,'Z ') % visualizes a single participants data only for combinations of interest at the maximum current amplitude, 3 subplots each with 5 curves
 %% plot Z - plots angle over time
     ang_plot.(Profiles_safe(5))  = time_series_plot_combine(subnum(2),subskip,imu_dir(7:8), Config , [1:3], ["sham" "low" "max"],[3], Profiles_safe, [1:5], all_ang_reduced, all_time_reduced, "Angle (deg)", Color_list);

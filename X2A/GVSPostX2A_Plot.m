@@ -33,6 +33,11 @@ num_profiles = length(Profiles);
 num_config = 3;
 config_names = ["Binaural"; "Forehead"; "Temples"];
 
+sub_symbols = ["ok";"+k"; "*k"; "xk"; "squarek"; "^k"; ">k"; "vk";"<k"; "pentagramk"];
+
+yoffset = [0.25;0.25;0.25;0.25;0.25;-0.25;-0.25;-0.25;-0.25;-0.25]; 
+xoffset = [-0.1;-0.05;0;0.05;0.1;-0.1;-0.05;0;0.05;0.1]; 
+
 
 %% 
 code_path = pwd; %save code directory
@@ -433,7 +438,7 @@ end
 
 %plots for Direction, Type, and Timing all current amplitudes and all waveforms
 
-if contains(Include_plots,'5') % use in paper
+if contains(Include_plots,'5') % similar to the plot used in paper
     %% Plot Motion Direction (full list)
     for prof = 1:num_profiles
     figure;
@@ -721,46 +726,97 @@ if contains(Include_plots, '6') % not for use in paper just bonus visualization
     end
 end
 
-if contains(Include_plots, '7') % probably won't use in paper
+if contains(Include_plots, '7') %use in supplementary materials
 %% Plot the Max/minCurrents
 %plots the maximum tolerable current amplitudes in different electrode configurations
 %responses vs current amplitude (mA), plots for 2/3/4 electrodes
-%plots as 3 histograms
+%plots as 3 histogram
 
     figure; 
-    t_dir = tiledlayout(2,2);
+    t_dir = tiledlayout(3,2, "TileSpacing","tight", 'Padding','tight');
     for config = 1:num_config
-        config_order= [1,3,2];
+        config_order= [1,2,3];
+        tile_order = [1,3,5];
         use_config = config_order(config);
-        nexttile
+        tile_index = tile_order(config);
+        nexttile(tile_index)
         h1 = histogram(All_MaxCurrent(use_config,:),(Label.CurrentAmp+.01));
         h1.FaceColor = Color_list(4,:); %red
         ax = gca;
-        ax.FontSize = 27;
+        ax.FontSize = 20;
         hold on; 
 %         h2 = histogram(All_MinCurrent(config,:),(Label.CurrentAmp+.01));
 %         h2.FaceColor = Color_list(3,:); %red
 %         ax = gca;
 %         ax.FontSize = 27;
-        Title = strjoin([num2str(config+1) " Electrodes"]);
-        title(Title, "FontSize", 45)
+        for sub_index = 1:length(All_MaxCurrent(use_config,:))
+            plot(All_MaxCurrent(use_config,sub_index)-0.25+xoffset(sub_index),0.5+yoffset(sub_index),sub_symbols(sub_index))
+        
+        end
+        Title = config_names(config);
+        title(Title, "FontSize", 20)
         ylim([0 num_sub])
+        if config == 1
+            xticklabels([])
+        elseif config ==2
+            xticklabels([])
+            ylabel(" Number of Participants", "FontSize", 20)
+        end
     
     end
-    ylabel("                        Number of Responses", "FontSize", 35)
-    xlabel("Current mA", "FontSize", 37)
+    
+    xlabel("Current mA", "FontSize", 20)
+    xticks([-0.25 0.25 0.75 1.25 1.75 2.25 2.75 3.25 3.75])
+    xticklabels([0 0.5 1 1.5 2 2.5 3 3.5 4])
+
+    for config = 1:num_config
+        config_order= [1,2,3];
+        tile_order = [2,4,6];
+        use_config = config_order(config);
+        tile_index = tile_order(config);
+        nexttile(tile_index)
+
+        h1 = histogram(All_MinCurrent(use_config,:),(Label.CurrentAmp+.01));
+        h1.FaceColor = Color_list(4,:); %red
+        ax = gca;
+        ax.FontSize = 20;
+        hold on; 
+%         h2 = histogram(All_MinCurrent(config,:),(Label.CurrentAmp+.01));
+%         h2.FaceColor = Color_list(3,:); %red
+%         ax = gca;
+%         ax.FontSize = 27;
+        for sub_index = 1:length(All_MinCurrent(use_config,:))
+            plot(All_MinCurrent(use_config,sub_index)-0.25+xoffset(sub_index),0.5+yoffset(sub_index),sub_symbols(sub_index))
+        
+        end
+        Title = config_names(config);
+        title(Title, "FontSize", 20)
+        ylim([0 num_sub])
+        if config == 1
+            xticklabels([])
+        elseif config ==2
+            xticklabels([])
+            % ylabel(" Number of Participants", "FontSize", 20)
+        end
+    
+    end
+    
+    xlabel("Current mA", "FontSize", 20)
+    xticks([-0.25 0.25 0.75 1.25 1.75 2.25 2.75 3.25 3.75])
+    xticklabels([0 0.5 1 1.5 2 2.5 3 3.5 4])
+    set(gcf,'position',[100,100,1000,900])  
 %     lgd = legend('Maximum Tolerable Current','Low Current', 'FontSize', 38 );
 %     lgd.Layout.Tile = 4;
-    overall_title = strjoin(["Maximum Tolerable Current Amplitudes"]);
-    sgtitle(overall_title, "FontSize", 50)
+    % overall_title = strjoin(["Maximum Tolerable Current Amplitudes"]);
+    % sgtitle(overall_title, "FontSize", 50)
     
     Filename = strtrim(strjoin(["Current_Hist"]));
     
     % cd(plots_path);
     % saveas(gcf, [char(Filename) '.fig']);
     % cd(code_path);
-    disp("press any key to continue"); pause; 
-    close all
+    % disp("press any key to continue"); pause; 
+    % close all
 
 end
 if contains(Include_plots, '8') % not for use in paper, just a good visual check
