@@ -113,16 +113,17 @@ for sub = 1:numsub
         % save file
 
         cd([file_path, '/' , subject_str, '/IMU']);
+        % writetable(imu_table, strjoin([imu_filename ".csv"],''));
         vars_2_save = ['imu_data imu_table'];
         eval(strjoin(['  save ' strjoin([imu_filename ".mat "],'') vars_2_save  '  vars_2_save']));     
         cd(code_path);
         
     end
 
-    cd([file_path, '/' , subject_str]);
-    vars_2_save = ['Label main_match_ups main_results start_impedance end_impedance ' ...
-        'total_motion_wins_3 total_motion_wins_4 total_tingle_wins_3 total_tingle_wins_4'];
-    eval(strjoin(['  save ' strjoin(['S' subject_str ".mat "],'') vars_2_save  '  vars_2_save']));     
-    cd(code_path);
+    % cd([file_path, '/' , subject_str]);
+    % vars_2_save = ['Label main_match_ups main_results start_impedance end_impedance ' ...
+    %     'total_motion_wins_3 total_motion_wins_4 total_tingle_wins_3 total_tingle_wins_4'];
+    % eval(strjoin(['  save ' strjoin(['S' subject_str ".mat "],'') vars_2_save  '  vars_2_save']));     
+    % cd(code_path);
 
 end

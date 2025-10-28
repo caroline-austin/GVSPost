@@ -87,8 +87,9 @@ for sub = 1:numsub
         % save file
 
         cd([file_path, '/' , subject_str, '/IMU']);
-        vars_2_save = ['imu_data imu_table'];
-        eval(strjoin(['  save ' strjoin([imu_filename ".mat "],'') vars_2_save  '  vars_2_save']));     
+        writetable(imu_table, strjoin([imu_filename ".csv"],''));
+        % vars_2_save = ['imu_data imu_table'];
+        % eval(strjoin(['  save ' strjoin([imu_filename ".mat "],'') vars_2_save  '  vars_2_save']));     
         cd(code_path);
         
     end
