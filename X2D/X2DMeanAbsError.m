@@ -184,13 +184,20 @@ for p = 1: length(prof)
     eval(["All_avg_mae_" + prof(p) + "= All_avg_mae_" + prof(p) + "./num_trials_" + prof(p) + ";"]);
     eval(["mae_save_" + prof(p) + "= mae_save_" + prof(p) + "./num_sub_trials_" + prof(p) + ";"]);
 end 
-
+%%
 %create box plot
 figure;
-b = boxplot(mae_save_all);
+% colors = [226 107 109;226 107 109; 128 128 128;90 160 163;90 160 163]/255;
+colors = [90 160 163;90 160 163; 128 128 128; 226 107 109;226 107 109; ]/255;
+for i = 1:width(mae_save_all)
+    boxchart(([ones(length(mae_save_all),1)]*i)',mae_save_all(:,i), 'BoxFaceColor', colors(i,:))
+    hold on;
+end
+% b = boxchart(mae_save_all);
 % b.BoxFaceColor = blue;
-plot_label = ["- Angle"; "- Optimal" ; "No GVS";"+ Angle"; "+ Optimal" ];
-% xticks([1 2 3 4 5 6 ]);
+% plot_label = ["Amplifying Angle"; "Amplifying Optimal" ; "No GVS";"Attenuating Angle"; "Attenutating Optimal" ];
+plot_label = ["Negative Angle"; "Negative Optimal" ; "No GVS";"Positive Angle"; "Positive Optimal" ];
+xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
 
@@ -211,10 +218,10 @@ hold on;
 sgtitle(['Mean Absolute Deflection' ],fontsize = 36); % for nice pretty plots
 % sgtitle(['Perception-tilt-Slope-All-Profiles: AllSubjectsBoxPlot' datatype ]); %for within the group plots
 
- cd(plots_path);
-    saveas(gcf, [ 'MAE-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
-    cd(code_path);
-    hold off;
+ % cd(plots_path);
+ %    saveas(gcf, [ 'MAE-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+ %    cd(code_path);
+ %    hold off;
 
 % %create box plot
 % figure;
@@ -247,10 +254,10 @@ xticklabels(plot_list);
 hold on; 
 sgtitle(['MAE-Sham-Removed-All-Profiles: AllSubjectsBoxPlot' datatype ]);
 
- cd(plots_path);
-    saveas(gcf, [ 'MAE-Sham-Removed-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
-    cd(code_path);
-    hold off;
+ % cd(plots_path);
+ %    saveas(gcf, [ 'MAE-Sham-Removed-All-ProfilesAllSubjectsBoxPlot' datatype  ]); 
+ %    cd(code_path);
+ %    hold off;
 %%
 
 figure;

@@ -290,12 +290,18 @@ end
 %%%%%
 %%
 f= figure;
-b = boxplot(slope_save_all);
+% b = boxchart(slope_save_all);
+colors = [226 107 109;226 107 109; 128 128 128;90 160 163;90 160 163]/255;
+for i = 1:width(slope_save_all)
+    boxchart(([ones(length(slope_save_all),1)]*i)',slope_save_all(:,i), 'BoxFaceColor', colors(i,:))
+    hold on;
+end
 % b.BoxFaceColor = blue;
-plot_label = ["- Angle"; "- Optimal"; "No GVS"; "+ Angle" ; "+ Optimal" ];
-% xticks([1 2 3 4 5 6 ]);
+plot_label = ["Amplifying Angle"; "Amplifying Angle Optimal"; "No GVS"; "Attenuating Angle" ; "Attenuating Optimal" ];
+xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;
+
 
 for j = 1:numsub
     for i = 1:width(slope_save_all)
