@@ -8,7 +8,7 @@
 clc; clear; close all;
 
 %% set up
-subnum = 1011:1022;  % Subject List 
+subnum = [ 1011:1022 1066:1068];  % Subject List 1011:1022
 numsub = length(subnum);
 subskip = [1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'Bias';
@@ -153,7 +153,8 @@ for sub = 1:numsub
 
 
 end
-
+ mean_time_shift = mean(cell2mat(Time_shift_sub), 'omitnan');
+ std_time_shift = std(cell2mat(Time_shift_sub), 'omitnan');
 plotadj=1;
 if plotadj == 1
     figure;
