@@ -1,18 +1,26 @@
-% script 3 (can be used for both X2A and X1)
+%% GVSPost X2A Script 3 : Combine Data/Info Across subjects
+% Caroline Austin 
+% Created ?/?/2023? Last Modified:10/9/24
+% this script handles the verbal reports data from X2A - this includes 
+% verbal rating of none slight/noticeable moderate severe for motion
+% sensations and side effects as well as qualitative descriptions of
+% motion. This script combines the tallied reports from across subjects
 
+
+%% house keeping
 close all; 
 clear all; 
 clc; 
 
-%%
-
-%% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
+cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+cd(code_path)
 
-subnum = 1014:1022;  % Subject List 2001:2010
+subnum = 2001:2010;  
+% Subject List 2001:2010
 numsub = length(subnum);
 subskip = [1011 1012 1013 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 

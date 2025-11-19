@@ -1,13 +1,27 @@
+%% GVSPost X2A Script 2 : Organize and Extract Info from the Data
+% Caroline Austin 
+% Created ?/?/2023? Last Modified:10/9/24
+% this script handles the verbal reports data from X2A - this includes 
+% verbal rating of none slight/noticeable moderate severe for motion
+% sensations and side effects as well as qualitative descriptions of
+% motion. This script sorts and tallies up the reports of certain key words
+% by the trial conditions they are asscoiated with (map variables) then
+% saves them into a .mat file
+
+% C:\Users\caroa\UCB-O365\Bioastronautics File Repository - File Repository\Torin Group Items\Projects\Motion Coupled GVS\PitchMontageTesting
+
+%% house keeping
 %prep the workspace
 close all; 
 clear all; 
 clc; 
 
-%% 
 code_path = pwd; %save code directory
 file_path = uigetdir; %user selects file directory
 plots_path = [file_path '\Plots']; % specify where plots are saved
+cd ..
 [foldernames]=file_path_info2(code_path, file_path); % get foldernames from file folder
+cd(code_path)
 
 subnum = 2001:2010;  % Subject List 
 numsub = length(subnum); % calculate how many subjects are specified in line above
@@ -86,38 +100,65 @@ ObservedRating_mapReduced = ReduceMapMultiple(ObservedRating_map,MinCurrent,MaxC
     %current level, response, electrode configuration, and profile
     %these variables are more open ended, subjects can have multiple key
     %word repsonses for each trial 
-    % suffix 1 denotes part 1 suffix 2 denotes part 2     
-     Motion_map1 = TextMatchMap(MotionSense1,TrialInfo1,["roll"; "pitch"; "yaw"], 3);
-     Motion_map2 = TextMatchMap(MotionSense2,TrialInfo2,["roll"; "pitch"; "yaw"], 3);
+    % suffix 1 denotes part 1 suffix 2 denotes part 2
+     possible_motions = ["right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw"];
+     Motion_map1 = TextMatchMap(MotionSense1,TrialInfo1,possible_motions, 3);
+     Motion_map2 = TextMatchMap(MotionSense2,TrialInfo2,possible_motions, 3);
      Motion_map = Motion_map1+Motion_map2; % combined into a single variable
+     Motion_map_simple = [Motion_map(:,1,:,:)+Motion_map(:,2,:,:)+ Motion_map(:,8,:,:) , Motion_map(:,3,:,:)+Motion_map(:,4,:,:)+ Motion_map(:,9,:,:), Motion_map(:,7,:,:), Motion_map(:,10,:,:) ];
+     Motion_map_simple(Motion_map_simple>= 1) = 1;
+     Label.direction = possible_motions;
+     Label.direction_simple = ["lateral", "fore-aft", "circular", "yaw"];
      Label.Motion_map = ["Current"; "Direction"; "Config";"Profile"];%labels are for the 4 dimensions of the array
      %take map variables and reduce it so that they only contain the responses
      %from the high (max), low (min), and sham (0.1) trials - the actual current values 
      % vary between subjects for high and low
      Motion_mapReduced = ReduceMapMultiple(Motion_map,MinCurrent,MaxCurrent,Label);
+     Motion_map_simpleReduced = ReduceMapMultiple(Motion_map_simple,MinCurrent,MaxCurrent,Label);
 
+     Label.timing = ["rhyt"; "cont"; "inter"];
      Timing_map1 = TextMatchMap(MotionSense1,TrialInfo1,["rhyt"; "cont"; "inter"], 4);
      Timing_map2 = TextMatchMap(MotionSense2,TrialInfo2,["rhyt"; "cont"; "inter"], 4);
      Timing_map = Timing_map1+Timing_map2;
      Label.Timing_map = ["Current"; "Timing"; "Config";"Profile"];
      Timing_mapReduced = ReduceMapMultiple(Timing_map,MinCurrent,MaxCurrent,Label);
 
+     Label.motion_type = ["tilt"; "trans"; "general"];
      Type_map1 = TextMatchMap(MotionSense1,TrialInfo1,["tilt"; "trans"; "general"], 2);
      Type_map2 = TextMatchMap(MotionSense2,TrialInfo2,["tilt"; "trans"; "general"], 2);
      Type_map = Type_map1+Type_map2;
      Label.Type_map = ["Current"; "Type"; "Config";"Profile"];
      Type_mapReduced = ReduceMapMultiple(Type_map,MinCurrent,MaxCurrent,Label);
 
+    %% OBSERVED MOTION DIRECTIONS (SEBASTIAN)
+    % save the possible directions as a label
+    possible_directions = ["right", "left", "up", "down", "forward", "back", "circular", "roll", "pitch", "yaw"];
+    Observed_Motion_map1 = TextMatchMap(Observed1,TrialInfo1, possible_directions, 2);
+    Observed_Motion_map2 = TextMatchMap(Observed2,TrialInfo2, possible_directions, 2);
+    Observed_Motion_map = Observed_Motion_map1 + Observed_Motion_map2;
+    Label.Observed_Motion_map = ["Current"; "Direction"; "Config";"Profile"];
+    Observed_Motion_mapReduced = ReduceMapMultiple(Observed_Motion_map,MinCurrent,MaxCurrent,Label);
+
+
+    %% OBSERVED MOTION TIMINGS (SEBASTIAN)
+    possible_timings = ["rhyt", "cont", "inter"];
+    Observed_Timing_map1 = TextMatchMap(Observed1, TrialInfo1, possible_timings, 3);
+    Observed_Timing_map2 = TextMatchMap(Observed2, TrialInfo2, possible_timings, 3);
+    Observed_Timing_map = Observed_Timing_map1 + Observed_Timing_map2;
+    Label.Observed_Timing_map = ["Current"; "Timing"; "Config";"Profile"];
+    Observed_Timing_mapReduced = ReduceMapMultiple(Observed_Timing_map,MinCurrent,MaxCurrent,Label);
+
+    
 %% Save file
     cd([file_path, '/' , subject_str]); %move to directory where file will be saved
     %add all variables that we want to save to a list must include space
     %between variable names 
     vars_2_save =  ['Label Motion_map Tingle_map Metallic_map' ... 
         ' VisFlash_map MotionRating_map ObservedRating_map' ... 
-        ' Timing_map Type_map Tingle_mapReduced Motion_mapReduced '...
-        'Metallic_mapReduced VisFlash_mapReduced MotionRating_mapReduced ' ...
+        ' Timing_map Type_map Observed_Timing_map Observed_Motion_map Tingle_mapReduced Motion_mapReduced '...
+        'Observed_Motion_mapReduced Observed_Timing_mapReduced Metallic_mapReduced VisFlash_mapReduced MotionRating_mapReduced ' ...
         'ObservedRating_mapReduced Type_mapReduced Timing_mapReduced '...
-        ' EndImpedance StartImpedance MaxCurrent MinCurrent ']; 
+        ' EndImpedance StartImpedance MaxCurrent MinCurrent Motion_map_simple Motion_map_simpleReduced']; 
     eval(['  save ' ['A', subject_str,'Extract.mat '] vars_2_save ' vars_2_save']); %save file     
     cd(code_path) %return to code directory
     %clear saved variables to prevent them from affecting next subjects' data
@@ -242,10 +283,6 @@ end
 
 % for debugging both subject 2 and 3 are missing some of their reports;
 % subject 3 is missing for the 3 and 4 electrode configuration of profile 1
-
-%need to fix Min and max current are ordered Bi, Ay, Cv instead of Bi, Cv,
-%Ay (which is what everything else in the code is ordered) - need to fix
-%this
 
 function [Reduced_map] = ReduceMapMultiple(Rating_map,MinCurrent,MaxCurrent,Label)
 %this function takes a previously generated map and reduces it so that the
