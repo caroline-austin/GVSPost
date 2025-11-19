@@ -245,38 +245,56 @@ if k~=0
 end
 
 %% Plot GVS signals.
-figure;
+figure('Name',"test");
+
 subplot(2,3,1);
-title('Electrode 1 Signal (Blue)'); hold on;
-plot(t,(NewElectM(1,2:end)./100));
+title('Electrode 1'); hold on;
+plot(t,(NewElectM(1,2:end)./100),"b-",LineWidth=1.5);
 xlabel('Time (seconds)');
 ylabel('Current (mA)');
+ylim([-3,3]);
+xlim([0,12]);
+
 subplot(2,3,2);
-title('Electrode 2 Signal (White)'); hold on;
-plot(t,(NewElectM(2,2:end)./100));
+title('Electrode 2'); hold on;
+plot(t,(NewElectM(2,2:end)./100),"r-",LineWidth=1.5);
 xlabel('Time (seconds)');
 ylabel('Current (mA)');
+ylim([-3,3]);
+xlim([0,12]);
+
 subplot(2,3,3);
-title('Electrode 3 Signal (Green)'); hold on;
-plot(t,(NewElectM(3,2:end)./100));
+title('Electrode 3'); hold on;
+plot(t,(NewElectM(3,2:end)./100),"Color","#22cc00",LineWidth=1.5);
 xlabel('Time (seconds)');
 ylabel('Current (mA)');
+ylim([-3,3]);
+xlim([0,12]);
+
 subplot(2,3,4);
-title('Electrode 4 Signal (Yellow)'); hold on;
-plot(t,(NewElectM(4,2:end)./100));
+title('Electrode 4'); hold on;
+plot(t,(NewElectM(4,2:end)./100),"Color", "#Ffd700",LineWidth=1.5);
 xlabel('Time (seconds)');
 ylabel('Current (mA)');
+ylim([-3,3]);
+xlim([0,12]);
+
 subplot(2,3,5);
-title('Electrode 5 Signal (Black)'); hold on;
-plot(t,(NewElectM(5,2:end)./100));
+title('Electrode 5'); hold on;
+plot(t,(NewElectM(5,2:end)./100),"k-",LineWidth=1.5);
 xlabel('Time (seconds)');
 ylabel('Current (mA)');
-subplot(2,3,6);
-plot(freq,10*log10(psdx));
-grid on;
-title('GVS Signal Periodogram Using FFT');
-xlabel('Frequency (Hz)');
-ylabel('Power/Frequency (dB/Hz)');
+ylim([-3,3]);
+xlim([0,12]);
+
+sgtitle("3 Electrode Forehead Montage")
+
+% subplot(2,3,6);
+% plot(freq,10*log10(psdx));
+% grid on;
+% title('GVS Signal Periodogram Using FFT');
+% xlabel('Frequency (Hz)');
+% ylabel('Power/Frequency (dB/Hz)');
 % cd('Profiles/');
 % saveas(gcf, Filename);
 % cd('../');
