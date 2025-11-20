@@ -6,11 +6,11 @@ fs=50;
 %Info for saving the Files
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % set the folder that you want to save the files to
-file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
-% 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSDynamicTilt';
+% file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
+file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
 %'/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt';
 % uncomment the mkdir line if the folder does not already exist
-% mkdir(file_path) 
+mkdir(file_path) 
 
 % a good naming convention is 
 % MontageName_Current_mA_Duration_s_Profile_Type_freq/dir 
@@ -26,14 +26,14 @@ file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_V
 
 % number of electrodes in the montage (must be at least 2 and no more than 5)
 % 2 = bilateral 3 = Cevette, 4 = Aoyama
-Num_Electrode = 2; 
+Num_Electrode = 4; 
 
 % 7 = tilt velocity; 8 = tilt angle ; 
 % between 7 and 8 = scaled contribution (closer to 7 is more velocity
 % weighted, closer to 8 is more angle weighted)
-Proportional = 7.5;
+Proportional = 8;
 
-PmA =[-4 -2 0 2 4];
+PmA =[-4 0 4];
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
 
@@ -134,8 +134,8 @@ Filename = strrep(Filename, ' ', '');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % PmA = max(abs(GVS_Signal));
 
-if maxGVS>4 %can now go up to 4 mA instead of just 3mA
-    error('Error: Peak current cannot exceed 4 mA.')
+if maxGVS>6 %can now go up to 6 mA instead of just 3mA
+    error('Error: Peak current cannot exceed 6 mA.')
 end
 if Num_Electrode<2 || Num_Electrode>5
     error('Error: Number of electrodes cannot be <2 or >5.');
