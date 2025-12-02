@@ -15,6 +15,8 @@ perception_tilt<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File R
 mae_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/Plots/Measures/MeanAbsError/SAllMeanAbsErrorShortBiasTimeGainFull.csv")
 perception_tilt_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/Plots/Measures/Perception-tilt-Slope/SAllPerception-tilt-SlopeBiasTimeGainFull.csv")
 
+mag <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/mag_anova.csv")
+psd <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/psd_anova.csv")
 
 #1# look at MAE 
 #make data factor
@@ -27,6 +29,7 @@ mae_full$CouplingScheme <- factor(mae_full$CouplingScheme)
 mae_full$CouplingDirection <- factor(mae_full$CouplingDirection)
 mae_full$MotionProfile <- factor(mae_full$MotionProfile)
 mae_full$MotionDirection <- factor(mae_full$MotionDirection)
+
 
 # transform for normality
 #mae$Var <- log(mae$Var)
@@ -139,3 +142,59 @@ pairwise.t.test(perception_tilt[,3],perception_tilt[,2],p.adj = "bonf")
 #2b# consider motion profile
 res_perception_tilt_full.aov <- anova_test(data = perception_tilt_full[,1:6], dv = Var, wid = SID, within = c("CouplingScheme" , "MotionProfile" , "MotionDirection" ))
 get_anova_table(res_perception_tilt_full.aov)
+
+
+##############################
+## IMU metrics from the pretest
+mag$type<-factor(mag$type)
+mag$mA<-factor(mag$mA)
+mag$dir<-factor(mag$dir)
+mag$freq_interest<-factor(mag$freq_interest)
+mag$sub<-factor(mag$sub)
+
+psd$type<-factor(psd$type)
+psd$mA<-factor(psd$mA)
+psd$dir<-factor(psd$dir)
+psd$freq_interest<-factor(psd$freq_interest)
+psd$sub<-factor(psd$sub)
+psd$condition <- paste(psd$freq_interest, psd$mA)
+psd$condition <-factor(psd$condition)
+
+#mag$Var <- log10(mag$Var)
+
+pitch_mag<-subset(mag, dir == "pitch")
+roll_mag<-subset(mag, dir == "roll")
+
+# run pitch only anova
+# pooling the pitch data there is no difference between the montages
+pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = Var, wid = sub, within = c( "mA" , "freq_interest"))
+get_anova_table(pitch_mag.aov)
+
+
+################################
+
+
+#psd$Var <- log10(psd$Var)
+
+pitch_psd<-subset(psd, dir == "pitch")
+roll_psd<-subset(psd, dir == "roll")
+
+# run pitch only anova with all data 
+# pooling the pitch data there is no difference between the montages
+pitch_psd.aov <- anova_test(data = pitch_psd[,1:6], dv = Var, wid = sub, within = c( "mA" , "freq_interest"))
+get_anova_table(pitch_psd.aov)
+
+
+pairwise.t.test(pitch_psd[,1],pitch_psd[,7],p.adj = "bonf") # 
+
+# for the freq 1 Hz only 
+
+pitch_psd_1Hz <-subset(pitch_psd, freq_interest == "1")
+
+pitch_psd_1Hz.aov <- anova_test(data = pitch_psd_1Hz[,1:6], dv = Var, wid = sub, within = c( "mA"))
+get_anova_table(pitch_psd_1Hz.aov)
+
+
+pairwise.t.test(pitch_psd_1Hz[,1],pitch_psd_1Hz[,7],p.adj = "bonf") # 
+
+
