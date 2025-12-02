@@ -6,7 +6,8 @@ cd(file_path)
 load(file_name)
 cd(code_path)
 %%
-var_name = "mae_save_all"; % have to know aggregate variable name (check before hand)- peak,over, slope,mae
+% var_name = "mae_save_all"; % have to know aggregate variable name (check before hand)- peak,over, slope,mae
+var_name = "slope_save_all";
 eval("var = " + var_name + ";");
 row_index = 0; 
 for couple = 1:width(var)
@@ -37,8 +38,9 @@ direction_list = ["A"; "B"; "A"; "B";"A"; "B"];
 direction_num = [1; 2; 1; 2;1; 2];
 row_index = 0;
 for motion = 1:length(motion_list)
-    eval("var = mae_save_" + motion_list(motion) + direction_list(motion) + ";"); % have to know aggregate variable name (check before hand)
-%     eval("var = " + var_name_full + ";");
+    % eval("var = mae_save_" + motion_list(motion) + direction_list(motion) + ";"); % have to know aggregate variable name (check before hand)
+    eval("var = slope_save_" + motion_list(motion) + direction_list(motion) + ";"); % have to know aggregate variable name (check before hand)
+    %     eval("var = " + var_name_full + ";");
     for couple = 1:width(var)
         for sub = 1:length(var)
             row_index = row_index+1;
