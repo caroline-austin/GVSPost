@@ -74,10 +74,10 @@ pitch_disp_gvs_neg <- pitch_disp_gvs  %>%
 
 
 ########################################################
-# Frequency Analysis
+# Frequency Analysis This is not used for the paper
 # run binaural anovas
 binaural_roll_power.aov <- anova_test(data = binaural_roll_power[,1:6], dv = data, wid = sub, within = c(type , freq_interest))
-get_anova_table(binaural_roll_power.aov) # use this for paper because significant interaction now
+get_anova_table(binaural_roll_power.aov) # 
 
 anova_result_roll <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
 #anova_result <- aov(data ~  type * freq_interest  + Error(sub/(type*freq_interest)), data = binaural_roll_power[,1:6])
@@ -263,15 +263,38 @@ pairwise.t.test(binaural_roll_mag[,1],binaural_roll_mag[,2],p.adj = "bonf") # ex
 pairwise.t.test(binaural_roll_mag[,1],binaural_roll_mag[,5],p.adj = "bonf") # freq of interest
 pairwise.t.test(binaural_roll_mag[1:120,1],binaural_roll_mag[1:120,2],p.adj = "bonf") # exp/control without 1 Hz
 
+bi_roll_mag_exp <- subset(binaural_roll_mag, type == "exp")
+bi_roll_mag_control <- subset(binaural_roll_mag, type == "control")
+wilcox.test((binaural_roll_mag[1:6,1]), (binaural_roll_mag[7:12,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((binaural_roll_mag[13:18,1]), (binaural_roll_mag[19:24,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((binaural_roll_mag[25:30,1]), (binaural_roll_mag[31:36,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((bi_roll_mag_exp[,1]), (bi_roll_mag_control[,1]), paired = TRUE) # exp/control n=18 
+
 # binaural yaw - t-tests
 pairwise.t.test(binaural_yaw_mag[,1],binaural_yaw_mag[,2],p.adj = "bonf") # exp/control
 pairwise.t.test(binaural_yaw_mag[,1],binaural_yaw_mag[,5],p.adj = "bonf") # freq of interest
+
+bi_yaw_mag_exp <- subset(binaural_yaw_mag, type == "exp")
+bi_yaw_mag_control <- subset(binaural_yaw_mag, type == "control")
+wilcox.test((binaural_yaw_mag[1:6,1]), (binaural_yaw_mag[7:12,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((binaural_yaw_mag[13:18,1]), (binaural_yaw_mag[19:24,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((binaural_yaw_mag[25:30,1]), (binaural_yaw_mag[31:36,1]), paired = TRUE) # exp/control n=6 
+wilcox.test((bi_yaw_mag_exp[,1]), (bi_yaw_mag_control[,1]), paired = TRUE) # exp/control n=18 
 
 # pitch - t-tests
 pairwise.t.test(pitch_mag[,1],pitch_mag[,2],p.adj = "bonf") # exp/control
 pairwise.t.test(pitch_mag[,1],pitch_mag[,5],p.adj = "bonf") # freq of interest
 pairwise.t.test(pitch_mag[,1],pitch_mag[,3],p.adj = "bonf") # montage
 pairwise.t.test(pitch_mag[49:204,1],pitch_mag[49:204,2],p.adj = "bonf") # exp/control excluding 1Hz
+
+pitch_mag_exp <- subset(pitch_mag, type == "exp")
+pitch_mag_exp_forehead <- subset(pitch_mag, config == "Cevete")
+pitch_mag_exp_temples <- subset(pitch_mag, config == "Aoyama")
+pitch_mag_control <- subset(pitch_mag, type == "control")
+wilcox.test((pitch_mag_exp[,1]), (pitch_mag_control[,1]), paired = TRUE) # exp/control n=36 
+wilcox.test((pitch_mag_exp_forehead[,1]), (pitch_mag_exp_temples[,1]), paired = TRUE) # montage comparison for only GVS n=18 
+pairwise_wilcox_test(pitch_mag, data ~ type, p.adjust.method = "bonferroni")
+pairwise_wilcox_test(pitch_mag, data ~ freq_interest, p.adjust.method = "bonferroni")
 
 
 # full data t-test
@@ -293,11 +316,11 @@ mag_psd %>%
 
 binaural_roll_power %>% 
   group_by(type) %>% 
-  get_summary_stats(data, type = "mean_sd") # questionable variance equivalence
+  get_summary_stats(data, type = "mean_sd") # questionable are resonably equivalence
 
 binaural_yaw_power %>% 
   group_by(type) %>% 
-  get_summary_stats(data, type = "mean_sd") # questionable variance equivalence
+  get_summary_stats(data, type = "mean_sd") # variance are reasonably equivalence
 
 pitch_power %>% 
   group_by(type, config) %>% 

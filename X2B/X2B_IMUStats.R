@@ -188,6 +188,10 @@ anova_result_pitch_mag <- aov(Var ~  config  + Error(sub/(config)), data = pitch
 shapiro_test((anova_result_pitch_mag$`sub:config`$residuals))
 plot(anova_result_pitch_mag$`sub:config`$residuals)
 
+# non parametric equivalent test(s)
+friedman.test(Var ~ config | sub, data = pitch_mag)
+pairwise_wilcox_test(pitch_mag, Var ~ config, p.adjust.method = "bonferroni")
+
 # run roll only anova
 roll_mag.aov <- anova_test(data = roll_mag[,1:6], dv = Var, wid = sub, within = c(  "config" ))
 get_anova_table(roll_mag.aov)
