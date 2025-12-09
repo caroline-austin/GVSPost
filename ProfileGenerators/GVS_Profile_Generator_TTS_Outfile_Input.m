@@ -7,7 +7,8 @@ fs=50;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 % set the folder that you want to save the files to
 % file_path = '/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt/Ang_50_Vel_50/SumOfSin6B';
-file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
+% file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\TTSPitchTilt';
+file_path = 'C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\GVSProfiles\GVSwaveformOptimization';
 %'/home/gvslinux/Documents/ChairGVS/Profiles/TTS/DynamicTilt';
 % uncomment the mkdir line if the folder does not already exist
 mkdir(file_path) 
@@ -26,16 +27,20 @@ mkdir(file_path)
 
 % number of electrodes in the montage (must be at least 2 and no more than 5)
 % 2 = bilateral 3 = Cevette, 4 = Aoyama
-Num_Electrode = 4; 
+Num_Electrode = 2; 
 
 % 7 = tilt velocity; 8 = tilt angle ; 
 % between 7 and 8 = scaled contribution (closer to 7 is more velocity
 % weighted, closer to 8 is more angle weighted)
-Proportional = 8;
+Proportional = 7.5;
 
-PmA =[-4 0 4];
+PmA = [4.0]; %[- 4 0 4];
 
 % C = [-0.5, -0.25, 0., 0.25 0.5];
+
+% For reconstruction of GIST profiles set GIST =1, for original profiles
+% designed for sparky set = 0;
+GIST_IMU = 1;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Profile Type Modifiers
@@ -63,36 +68,88 @@ Electrode_Config = 2;
 % other number otherwise
 Profile_Type = 1; 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% if GIST_IMU = 1; 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% General 
+
+% Default waveform for coupling is "DC" , "DC+SD" is DC plus a custom
+% waveform (code should prompt for the additional custom waveform)
+Waveform = "DC";
+mA_max = 5; % maximum current for coupling
+% doesn't apply for the DC, but I think this is the sampling freq for the 
+% custom waveform
+freq = 0.5; 
+SD_period = 0; % in seconds (this might actually be for the custom waveform)
+
+% angle and velocity at which the maximum current is realized
+max_angle = 10;
+max_vel = 6;
+
+% Channel 1
+Ch1 = 1;
+K1 = 999;
+Couple_1 = "Roll";
+Threshold_1 = 0;
+K2 = 999;
+Couple_2 = "ZVelocity";
+Threshold_2 = 0;
+% Channel 2
+Ch2 = 0;
+K3 = 999;
+Couple_3 = "Roll";
+Threshold_3 = 0;
+K4 = 999;
+Couple_4 = "ZVelocity";
+Threshold_4 = 0;
+% Channel 3
+Ch3 = 0;
+K5 = 999;
+Couple_5 = "Roll";
+Threshold_5 = 0;
+K6 = 999;
+Couple_6 = "ZVelocity";
+Threshold_6 = 0;
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Select the TTS file
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 cd ../..
-[input_filearg,input_path] = uigetfile('*.txt');
+[input_filearg,input_path] = uigetfile('*.csv');
 fprintf([input_filearg '\n']);
 
 cd(input_path) %make sure the profile you want to run is in this folder
-TTS_file = load(input_filearg);  
+TTS_file = readtable(input_filearg);  
 cd(code_path);
+%% 
+Var_names = TTS_file.Properties.VariableNames;
+if Var_names{1} == "Var1" % out put from manual control vi
+    TTS_param(:,8) = TTS_file.(Var_names{5})/200; % store tilt feedback (actual tilt)
+    TTS_param(:,7) = [0; (diff(TTS_file.(Var_names{5}))/200)./(diff(TTS_file.(Var_names{1}))/1000)]; % store tilt velocity
+else % out put from skylar's vi
+    TTS_param(:,8) = TTS_file.TiltFeedback/200; % store tilt feedback (actual tilt)
+    TTS_param(:,7) = [0; smoothdata(diff(TTS_file.TiltFeedback/200)./(diff(TTS_file.ms)/1000), "movmean",10)]; % store tilt velocity (filtering over 0.2s window)
+end
 
+%%
 for iter = 1:length(PmA)
 
 % GVS_Signal = (TTS_file(:,8)*C(iter))';
-
+if GIST_IMU == 0
 if ismember(Proportional, [1 2 3 4 5 6 7 8])
     
-    GVS_Signal = (TTS_file(:,Proportional))'; 
+    GVS_Signal = (TTS_param(:,Proportional))'; 
     signal_max = max(abs(GVS_Signal));
     scale = PmA(iter)/signal_max;
     C = scale;
     
-elseif Proportional < 8
+elseif Proportional < 8 && Proportional > 1
        Type_1 = floor(Proportional);
        Type_2 = ceil(Proportional);
 
        Weight_1 = Type_2 - Proportional;
        Weight_2 = 1-Weight_1; 
 
-       Signal_1 = (TTS_file(:,Type_1))'; 
-       Signal_2 = (TTS_file(:,Type_2))'; 
+       Signal_1 = (TTS_param(:,Type_1))'; 
+       Signal_2 = (TTS_param(:,Type_2))'; 
 
        signal_max1 = max(abs(Signal_1));
        signal_max2 = max(abs(Signal_2));
@@ -109,22 +166,139 @@ elseif Proportional < 8
 %        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
        C = scale/signal_max;
 
-elseif Propotional == 0
-    %special case(s) you could use to tie weight with tilt and translation
-    %or any other two data types that aren't in adjacent columns 
+elseif Proportional <1 && Proportional>0
+    %special case where proportional to angle and abs(velocity)
 
+       Type_2 = 8; % angle
+       Type_1 = 7; % velocity
+
+       Weight_1 = 1-Proportional; 
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = abs((TTS_param(:,Type_1)))'; 
+       Signal_2 = (TTS_param(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       Signal_1 = Signal_1 / signal_max1;
+       Signal_2 = Signal_2 / signal_max2;
+
+       [loc] =find(Signal_2<0);
+       Signal_1(loc) = Signal_1(loc)*-1;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
+
+elseif Proportional >-1 && Proportional<0
+    %special case where proportional to velocity and abs(angle)
+
+       Type_2 = 8; % angle
+       Type_1 = 7; % velocity
+
+       Weight_1 = 1+Proportional; % equal weighting for now
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = (TTS_param(:,Type_1))'; 
+       Signal_2 = abs(TTS_param(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       Signal_1 = Signal_1 / signal_max1;
+       Signal_2 = Signal_2 / signal_max2;
+
+       [loc] =find(Signal_1<0);
+       Signal_2(loc) = Signal_2(loc)*-1;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
+       
+elseif Proportional <-1
+      % special case where angle and velocity are coupled with opposite
+      % signs - default as velocity + and angle negative
+       Type_1 = floor(abs(Proportional));
+       Type_2 = ceil(abs(Proportional));
+
+       Weight_1 = Type_2 - abs(Proportional);
+       Weight_2 = 1-Weight_1; 
+
+       Signal_1 = (TTS_param(:,Type_1))'; 
+       Signal_2 = -1*(TTS_param(:,Type_2))'; 
+
+       signal_max1 = max(abs(Signal_1));
+       signal_max2 = max(abs(Signal_2));
+
+       % Signal_1 = Signal_1 / signal_max1;
+       % Signal_2 = Signal_2 / signal_max2;
+
+       GVS_Signal = Signal_1*Weight_1+Signal_2*Weight_2;
+
+       signal_max = max(abs(GVS_Signal));
+       GVS_Signal = GVS_Signal/max(abs(GVS_Signal));
+
+       scale = (PmA(iter));
+%        C = scale/(signal_max1*Weight_1+signal_max2*Weight_2);
+       C = scale/signal_max;
 end 
 
 GVS_Signal = GVS_Signal*(scale);
+
+
+elseif GIST_IMU == 1
+    % for now assuming only channel 1 is in use so only bilateral GVS (2
+    % electrodes)
+    if Couple_1 == "Roll"
+        Signal_1 = (TTS_param(:,8))'; 
+        max_1 = max_angle;
+    elseif Couple_1 == "ZVelocity"
+        Signal_1 = -(TTS_param(:,7))'; 
+        max_1 = max_vel;
+    end
+
+    if Couple_2 == "Roll"
+        Signal_2 = (TTS_param(:,8))'; 
+        max_2 = max_angle;
+    elseif Couple_2 == "ZVelocity"
+        Signal_2 = -(TTS_param(:,7))'; 
+        max_2 = max_vel;
+    end
+
+    GVS_Signal = K1/999*(mA_max/max_1)*(Signal_1-Threshold_1) + K2/999*(mA_max/max_2)*(Signal_2-Threshold_2);
+    % loc = find(GVS_Signal > 5);
+    GVS_Signal(GVS_Signal > 5) = 5;
+    % loc = find(GVS_Signal < -5);
+    GVS_Signal(GVS_Signal < -5) = -5;
+
+    C = 0; % normally C is scale/maxGVS not sure why
+
+
+end 
+
 maxGVS = max(abs(GVS_Signal));
 
 GVS_Signal = [ zeros(zpad*fs) GVS_Signal];
-
 dt =1/fs;
 T = length(GVS_Signal);
 t = (0:T-1)*dt;
 
 Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(PmA(iter)) "mA_prop"  num2str(Proportional)])); %C(iter)
+if GIST_IMU == 1
+    Filename = strtrim(strjoin([input_filearg(1:end-4) "_" num2str(mA_max(iter)) ...
+        "mAmax_Ch1"  num2str(K1) Couple_1 num2str(K2) Couple_2  "MaxAngle" num2str(max_angle) "MaxVel" num2str(max_vel)]));
+end
 Filename = strrep(Filename, '.', '_');
 Filename = strrep(Filename, ' ', '');
 
@@ -208,12 +382,14 @@ elseif Num_Electrode==4
     elseif Electrode_Config==2
         Electrode_5_Sig=zeros(1,T);% may need to switch this to match the length of the sinusoid - seems to be and 2 second difference?
         if Current_Direction == 2
-            % electrodes 3&4 are anodes(?) and 1&2 are cathodes (forward)
+            % electrodes 3&4 are anodes(+) and 1&2 are cathodes(-)
+            % (forward)- positive motion coupling
             Electrode_1_Sig=GVS_Signal*(-1);
             Electrode_2_Sig=Electrode_1_Sig;
             Electrode_3_Sig=GVS_Signal;
         else
-            % electrodes 1&2 are anodes and 3&4 are cathodes (Backward)
+            % electrodes 1&2 are anodes (+) and 3&4 are cathodes (-) 
+            % (Backward) - negative motion coupling 
             Electrode_2_Sig=GVS_Signal;
             Electrode_3_Sig=GVS_Signal*(-1);
         end
