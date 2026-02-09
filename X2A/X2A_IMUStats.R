@@ -4,6 +4,7 @@ library(ggpubr)
 library(rstatix)
 library(dplyr)
 library('ARTool')
+library(effectsize)
 
 #navigate to the directory
 setwd("C:/Users/caroa/OneDrive/Documents")
@@ -212,16 +213,6 @@ pitch_power %>%
 
 # need to check homoscedascity because I think they have diff variances
 
-# calculate effect size's using glass's delta
-
-# binaural roll
-binaural_roll_power_ef <- (-4.97-15.1)/8.62
-
-# binaural yaw
-binaural_yaw_power_ef <- (2.88-14.4)/6.56
-
-# binaural yaw
-pitch_power_ef <- (-12.6-(-4.74))/6.17
 ####################################
 # Frequency Analysis magnitude cals
 # run binaural anovas
@@ -233,6 +224,8 @@ anova_result_roll <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_in
 summary(anova_result_roll)
 shapiro_test((anova_result_roll$`sub:freq_interest`$residuals))
 shapiro_test((anova_result_roll$`sub:type`$residuals))
+eta_squared(anova_result_roll, partial = TRUE)
+eta_squared(anova_result_roll, partial = FALSE)
 
 binaural_yaw_mag.aov <- anova_test(data = binaural_yaw_mag[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest" ))
 get_anova_table(binaural_yaw_mag.aov) # can use this or the below test for paper
@@ -242,6 +235,8 @@ anova_result_yaw <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_int
 summary(anova_result_yaw)
 shapiro_test((anova_result_yaw$`sub:freq_interest`$residuals))
 shapiro_test((anova_result_yaw$`sub:type`$residuals))
+eta_squared(anova_result_yaw, partial = TRUE)
+eta_squared(anova_result_yaw, partial = FALSE)
 
 # run pitch anova
 pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = data, wid = sub, within = c("type" , "freq_interest", "config" ))
@@ -252,6 +247,9 @@ anova_result_pitch <- aov(data ~  type + freq_interest  + Error(sub/(type*freq_i
 summary(anova_result_pitch) # can use this or above test for paper
 shapiro_test((anova_result_pitch$`sub:freq_interest`$residuals))
 shapiro_test((anova_result_pitch$`sub:type`$residuals))
+eta_squared(anova_result_pitch, partial = TRUE)
+eta_squared(anova_result_pitch, partial = FALSE)
+
 
 # run full anova
 mag_psd.aov <- anova_test(data = mag_psd[,1:6], dv = data, wid = sub, within = c("type" , "config" , "dir", "freq_interest" ))
@@ -269,6 +267,8 @@ wilcox.test((binaural_roll_mag[1:6,1]), (binaural_roll_mag[7:12,1]), paired = TR
 wilcox.test((binaural_roll_mag[13:18,1]), (binaural_roll_mag[19:24,1]), paired = TRUE) # exp/control n=6 
 wilcox.test((binaural_roll_mag[25:30,1]), (binaural_roll_mag[31:36,1]), paired = TRUE) # exp/control n=6 
 wilcox.test((bi_roll_mag_exp[,1]), (bi_roll_mag_control[,1]), paired = TRUE) # exp/control n=18 
+cohens_d((bi_roll_mag_exp[,1]), (bi_roll_mag_control[,1]), hedges.correction = TRUE)
+glass_delta(x=(bi_roll_mag_exp[,1]), y=(bi_roll_mag_control[,1]), hedges.correction = TRUE)
 
 # binaural yaw - t-tests
 pairwise.t.test(binaural_yaw_mag[,1],binaural_yaw_mag[,2],p.adj = "bonf") # exp/control
@@ -280,6 +280,8 @@ wilcox.test((binaural_yaw_mag[1:6,1]), (binaural_yaw_mag[7:12,1]), paired = TRUE
 wilcox.test((binaural_yaw_mag[13:18,1]), (binaural_yaw_mag[19:24,1]), paired = TRUE) # exp/control n=6 
 wilcox.test((binaural_yaw_mag[25:30,1]), (binaural_yaw_mag[31:36,1]), paired = TRUE) # exp/control n=6 
 wilcox.test((bi_yaw_mag_exp[,1]), (bi_yaw_mag_control[,1]), paired = TRUE) # exp/control n=18 
+cohens_d((bi_yaw_mag_exp[,1]), (bi_yaw_mag_control[,1]), hedges.correction = TRUE)
+glass_delta(x=(bi_yaw_mag_exp[,1]), y=(bi_yaw_mag_control[,1]), hedges.correction = TRUE)
 
 # pitch - t-tests
 pairwise.t.test(pitch_mag[,1],pitch_mag[,2],p.adj = "bonf") # exp/control
@@ -296,6 +298,10 @@ wilcox.test((pitch_mag_exp_forehead[,1]), (pitch_mag_exp_temples[,1]), paired = 
 pairwise_wilcox_test(pitch_mag, data ~ type, p.adjust.method = "bonferroni")
 pairwise_wilcox_test(pitch_mag, data ~ freq_interest, p.adjust.method = "bonferroni")
 
+cohens_d((pitch_mag_exp[,1]), (pitch_mag_control[,1]), hedges.correction = TRUE)
+glass_delta(x=(pitch_mag_exp[,1]), y=(pitch_mag_control[,1]), hedges.correction = TRUE)
+
+cohens_d((pitch_mag_exp_forehead[,1]), (pitch_mag_exp_temples[,1]), hedges.correction = TRUE)
 
 # full data t-test
 pairwise.t.test(mag_psd[,1],mag_psd[,2],p.adj = "bonf") #exp/control
@@ -390,17 +396,6 @@ pitch_power %>%
 
 # need to check homoscedascity because I think they have diff variances
 
-# calculate effect size's using glass's delta
-
-# binaural roll
-binaural_roll_power_ef <- (-4.97-15.1)/8.62
-
-# binaural yaw
-binaural_yaw_power_ef <- (2.88-14.4)/6.56
-
-# binaural yaw
-pitch_power_ef <- (-12.6-(-4.74))/6.17
-
 ########################################################
 # Displacement Analysis
 
@@ -433,20 +428,25 @@ get_anova_table(angle_disp.aov)
 #run follow up t tests 
 # binaural roll - t-tests
 pairwise.t.test(binaural_roll_disp_neg[,1],binaural_roll_disp_neg[,2],p.adj = "bonf") # exp/control # n = 12
-wilcox.test((binaural_roll_disp_gvs[1:6,1]), (binaural_roll_disp_gvs[7:12,1]), paired = TRUE) # profile n=6 *paper stat* *used in paper*
+wilcox.test((binaural_roll_disp_gvs[1:6,1]), (binaural_roll_disp_gvs[7:12,1]), paired = TRUE) # profile n=6 *paper stat* *used in paper* (comparing +/- max DC trials)
 pairwise.t.test(binaural_roll_disp_gvs[,1],binaural_roll_disp_gvs[,5],p.adj = "bonf") # profile # n=6 (should use non-parametric^)
+
+cohens_d((binaural_roll_disp_gvs[1:6,1]), (binaural_roll_disp_gvs[7:12,1]), hedges_g = TRUE)
 
 # pitch - t-tests
 pairwise.t.test(pitch_disp_neg[,1],pitch_disp_neg[,2],p.adj = "bonf") # exp/control
 pairwise.t.test(pitch_disp_neg[,1],pitch_disp_neg[,3],p.adj = "bonf") # montage
 
 wilcox.test((pitch_disp_gvs[1:6,1]), (pitch_disp_gvs[13:18,1]), paired = TRUE) # profile n= 6 non-parametric Forehead only - used in paper
+cohens_d((pitch_disp_gvs[1:6,1]), (pitch_disp_gvs[13:18,1]), hedges_g = TRUE)
 wilcox.test((pitch_disp_gvs[7:12,1]), (pitch_disp_gvs[19:24,1]), paired = TRUE) # profile n= 6 non-parametric Temples only - used in paper
+cohens_d((pitch_disp_gvs[7:12,1]), (pitch_disp_gvs[19:24,1]), hedges_g = TRUE)
 
 # test GVS cond when DC - is back to it's original direction
 # should maybe be non-parametric
 pairwise.t.test(pitch_disp_gvs[,1],pitch_disp_gvs[,5],p.adj = "bonf") # profile n = 12
 wilcox.test((pitch_disp_gvs[1:12,1]), (pitch_disp_gvs[13:24,1]), paired = TRUE) # profile n= 12 non-parametric - used in paper
+cohens_d((pitch_disp_gvs[1:12,1]), (pitch_disp_gvs[13:24,1]), hedges_g = TRUE)
 
 # test montage only for the GVS conditions
 # should maybe be non-parametric

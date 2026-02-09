@@ -6,6 +6,7 @@ library(dplyr)
 library('ARTool')
 library(lmtest)
 library(BradleyTerry2)
+library(effectsize)
 
 #navigate to the directory
 setwd("C:/Users/caroa/OneDrive/Documents")
@@ -116,6 +117,10 @@ t.test(sub_verbal$motion_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$motion_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
 t.test(sub_verbal$motion_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
 
+cohens_d(sub_verbal$motion_wins1[1:10]/4, 0.5)
+cohens_d(sub_verbal$motion_wins1[11:20]/4, 0.5)
+cohens_d(sub_verbal$motion_wins1[21:30]/4, 0.5)
+
 binom.test(verbal$tingling_wins1[1], 40, p=0.5) # Forehead-Shoulder
 binom.test(verbal$tingling_wins1[2], 40, p=0.5) # Shoulder-Neck
 binom.test(verbal$tingling_wins1[3], 40, p=0.5) # Neck-Forehead
@@ -124,17 +129,30 @@ t.test(sub_verbal$tingling_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$tingling_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
 t.test(sub_verbal$tingling_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
 
+cohens_d(sub_verbal$tingling_wins1[1:10]/4, 0.5)
+cohens_d(sub_verbal$tingling_wins1[11:20]/4, 0.5)
+cohens_d(sub_verbal$tingling_wins1[21:30]/4, 0.5)
+
 t.test(sub_verbal$vis_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$vis_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
 t.test(sub_verbal$vis_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
+
+cohens_d(sub_verbal$vis_wins1[1:10]/4, 0.5)
+cohens_d(sub_verbal$vis_wins1[11:20]/4, 0.5)
+cohens_d(sub_verbal$vis_wins1[21:30]/4, 0.5)
 
 t.test(sub_verbal$metallic_wins1[1:10]/4, mu = 0.5) # Forehead- Shoulder
 t.test(sub_verbal$metallic_wins1[11:20]/4, mu = 0.5) # Shoulder- Neck
 t.test(sub_verbal$metallic_wins1[21:30]/4, mu = 0.5) # Neck- Forehead
 
+cohens_d(sub_verbal$metallic_wins1[1:10]/4, 0.5)
+cohens_d(sub_verbal$metallic_wins1[11:20]/4, 0.5)
+cohens_d(sub_verbal$metallic_wins1[21:30]/4, 0.5)
+
 ##################################
 # stats on consistency between sway and verbal reports
 t.test(congruent$correct, mu = 0.5)
+t.test(congruentC$correct, mu = 0.5)
 t.test(congruent_total$correct, mu = 0.5)
 
 total_congruent = sum(congruent$correct)*12
@@ -147,6 +165,7 @@ total_responses_BC = total_responses +total_responsesC
 
 binom.test(total_congruent, total_responses, p=0.5)
 binom.test(total_congruent_BC, total_responses_BC, p=0.5)
+# no straight forward effect size for binomial
 
 #################################
 # run pitch only anova
@@ -185,8 +204,12 @@ pitch_mag.aov <- anova_test(data = pitch_mag[,1:6], dv = Var, wid = sub, within 
 get_anova_table(pitch_mag.aov)
 
 anova_result_pitch_mag <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag[,1:6])
+summary(anova_result_pitch_mag)
 shapiro_test((anova_result_pitch_mag$`sub:config`$residuals))
 plot(anova_result_pitch_mag$`sub:config`$residuals)
+
+eta_squared(anova_result_pitch_mag, partial = TRUE)
+eta_squared(anova_result_pitch_mag, partial = FALSE)
 
 # non parametric equivalent test(s)
 friedman.test(Var ~ config | sub, data = pitch_mag)
@@ -212,6 +235,11 @@ pairwise.t.test(mag_power[,1],mag_power[,4],p.adj = "bonf") # direction
 
 pairwise.t.test(roll_mag[,1],roll_mag[,3],p.adj = "bonf") # roll only montage
 pairwise.t.test(pitch_mag[,1],pitch_mag[,3],p.adj = "bonf") # pitch only montage # paper
+
+cohens_d(pitch_mag[1:10,1], pitch_mag[11:20,1], hedges.correction = TRUE)
+cohens_d(pitch_mag[1:10,1], pitch_mag[21:30,1], hedges.correction = TRUE)
+cohens_d(pitch_mag[21:30,1], pitch_mag[11:20,1], hedges.correction = TRUE)
+
 #######################################################################################
 # run pitch only anova
 pitch_psd.aov <- anova_test(data = pitch_psd[,1:6], dv = Var, wid = sub, within = c(  "config" ))

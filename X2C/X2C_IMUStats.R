@@ -10,6 +10,8 @@ library(BradleyTerry2)
 library(lme4)
 library(lmerTest)
 library(emmeans)
+library(effectsize)
+library(coin)
 
 
 #navigate to the directory
@@ -301,8 +303,12 @@ pitch_mag_GVS.aov <- anova_test(data = pitch_mag_match_GVS[,1:8], dv = Var, wid 
 get_anova_table(pitch_mag_GVS.aov)
 
 anova_result_pitch_mag_GVS <- aov(Var ~  config  + Error(sub/(config)), data = pitch_mag_match_GVS[,1:8])
+summary(anova_result_pitch_mag_GVS)
 shapiro_test((anova_result_pitch_mag_GVS$`sub:config`$residuals))
 plot((anova_result_pitch_mag_GVS$`sub:config`$residuals))
+
+eta_squared(anova_result_pitch_mag_GVS, partial = TRUE)
+eta_squared(anova_result_pitch_mag_GVS, partial = FALSE)
 
 pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,8],p.adj = "bonf") # pitch only montage
 pairwise.t.test(pitch_mag_match_GVS[,1],pitch_mag_match_GVS[,8],p.adj = "bonf") # pitch only, current only montage 
@@ -310,8 +316,27 @@ pairwise.t.test(pitch_mag_match_GVS[,1],pitch_mag_match_GVS[,8],p.adj = "bonf") 
 #pairwise.t.test(freq_psd1[,1],freq_psd1[,3],p.adj = "bonf") #diff in sway for montage in pitch and roll at 1mA
 #pairwise.t.test(freq_psd2[,1],freq_psd2[,3],p.adj = "bonf") # diff in sway for montage in pitch and roll at 2mA
 
-pairwise.t.test(pitch_mag1[,1],pitch_mag1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA # used in paper
+pairwise.t.test(pitch_mag1[,1],pitch_mag1[,3],p.adj = "bonf") #diff in sway for montage in pitch at 1mA # used in paper (here the bonferoni correction doesn't do anything so I manually multiply by 2)
 pairwise.t.test(pitch_mag2[,1],pitch_mag2[,3],p.adj = "bonf") #diff in sway for montage in pitch at 2mA # used in ppaer
+
+wilcox.test((pitch_mag1[1:10,1]), (pitch_mag1[11:20,1]), paired = TRUE) 
+wilcox.test((pitch_mag2[1:10,1]), (pitch_mag2[11:20,1]), paired = TRUE) 
+
+cohens_d(pitch_mag1[1:10,1], pitch_mag1[11:20,1], hedges.correction = TRUE)
+cohens_d(pitch_mag2[1:10,1], pitch_mag2[11:20,1], hedges.correction = TRUE)
+
+cohens_d(pitch_mag[1:10,1], pitch_mag[31:40,1], hedges.correction = TRUE)
+cohens_d(pitch_mag[41:50,1], pitch_mag[61:70,1], hedges.correction = TRUE)
+cohens_d(pitch_mag[41:50,1], pitch_mag[81:90,1], hedges.correction = TRUE)
+
+wilcox_effsize(pitch_mag1, Var ~ config)
+wilcox_effsize(pitch_mag2, Var ~ config)
+
+pitch_mag_shoulder <-subset((pitch_mag))
+pitch_mag_temples <-matrix((pitch_mag[41:50,] ,pitch_mag[61:70,]))
+
+wilcox_effsize(pitch_mag_shoulder, Var ~config)
+wilcox_effsize(pitch_mag_temples, Var ~config)
 
 pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,3],p.adj = "bonf") # pitch only montage
 pairwise.t.test(pitch_mag_match[,1],pitch_mag_match[,3],p.adj = "bonf") # pitch only, non sham only, montage 
