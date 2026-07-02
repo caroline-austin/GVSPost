@@ -112,12 +112,12 @@ for j = 1:length(match_list)
     end
 end
 
-% %% curve fitting plots % commented out because don't need to recreate
+%% curve fitting plots % commented out because don't need to recreate
 % %everytime
-% x_current = linspace(-8,8);
-% for j = 1:length(slope_all)
-%     y_slope(:,j) = x_current.*slope_all(j);
-% end
+x_current = linspace(-8,8);
+for j = 1:length(slope_all)
+    y_slope(:,j) = x_current.*slope_all(j);
+end
 % 
 % figure;
 % plot(tilt_N_4_00mA_7_00,shot_N_4_00mA_7_00, '^','MarkerEdgeColor', blue);
@@ -133,10 +133,10 @@ end
 % ylim([-20 20])
 % legend([match_list(4) match_list(1:3)'])
 % hold off;
-% cd(plots_path);
-%     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Negative' datatype subject_str ]); 
-%     cd(code_path);
-%     hold off; 
+% % cd(plots_path);
+% %     saveas(gcf, [ 'Perception-tilt-Slope-Fit-Negative' datatype subject_str ]); 
+% %     cd(code_path);
+% %     hold off; 
 % figure;
 % plot(tilt_P_4_00mA_7_00,shot_P_4_00mA_7_00, '^','MarkerEdgeColor', blue);
 % hold on; plot(tilt_P_4_00mA_7_50,shot_P_4_00mA_7_50, 'diamond','MarkerEdgeColor', purple);
@@ -156,26 +156,26 @@ end
 %     cd(code_path);
 %     hold off; 
 % 
-%     LC = [226 107 109;128 128 128;90 160 163]/255;
+    LC = [226 107 109;128 128 128;90 160 163]/255;
 % %%
 % 
-% figure;
-% hold on; plot(tilt_0_00mA,shot_0_00mA, 'o','MarkerEdgeColor', LC(2,:));
-% hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'o','MarkerEdgeColor', LC(1,:));
-% hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'o','MarkerEdgeColor', LC(3,:));
-% hold on; plot(x_current,y_slope(:,4),"Color","black", "LineWidth", 3);
-% hold on; plot(x_current,y_slope(:,7),'--',"Color", "black", "LineWidth", 3);
-% hold on; plot(x_current,y_slope(:,3),':',"Color", "black", "LineWidth", 3);
-% 
-% %plot slopes
-% title(["Tilt Perception V. Actual Tilt " ], FontSize=35)
-% xlabel("Actual Tilt Angle (deg)", FontSize=30)
-% ylabel ("Percieved Tilt Angle (deg)", FontSize=30)
-% ax = gca;
-% ax.XAxis.FontSize = 30;
-% ax.YAxis.FontSize = 30;
-% ylim([-20 20]);
-% legend(["No GVS"; "Amplifying"; "Attenuating"; "No GVS"; "Amplifying"; "Attenuating" ], "Location", "northwest", FontSize=25);
+figure;
+hold on; plot(tilt_0_00mA,shot_0_00mA, 'o','MarkerEdgeColor', LC(2,:));
+hold on; plot(tilt_P_4_00mA_8_00,shot_P_4_00mA_8_00, 'o','MarkerEdgeColor', LC(1,:));
+hold on; plot(tilt_N_4_00mA_8_00,shot_N_4_00mA_8_00, 'o','MarkerEdgeColor', LC(3,:));
+hold on; plot(x_current,y_slope(:,1),"Color","black", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,5),'--',"Color", "black", "LineWidth", 3);
+hold on; plot(x_current,y_slope(:,3),':',"Color", "black", "LineWidth", 3);
+
+%plot slopes
+title(["Tilt Perception V. Actual Tilt " ], FontSize=35)
+xlabel("Actual Tilt Angle (deg)", FontSize=30)
+ylabel ("Percieved Tilt Angle (deg)", FontSize=30)
+ax = gca;
+ax.XAxis.FontSize = 30;
+ax.YAxis.FontSize = 30;
+ylim([-20 20]);
+legend(["No GVS"; "Amplifying"; "Attenuating"; "No GVS"; "Amplifying"; "Attenuating" ], "Location", "northwest", FontSize=25);
 % 
 % %%
 % cd(plots_path);
@@ -260,7 +260,7 @@ Label_slope = match_list;
    eval (['clear ' vars_2_save])
    shot_0_00mA =[]; shot_N_4_00mA_8_00 =[]; shot_P_4_00mA_8_00=[];
    tilt_0_00mA =[]; tilt_N_4_00mA_8_00 =[]; tilt_P_4_00mA_8_00=[];
-   close all;
+   % close all;
     
 end
 %divide the aggregate report by the number of trials added into it to get
@@ -297,7 +297,7 @@ for i = 1:width(slope_save_all)
     hold on;
 end
 % b.BoxFaceColor = blue;
-plot_label = ["Amplifying Angle"; "Amplifying Angle Optimal"; "No GVS"; "Attenuating Angle" ; "Attenuating Optimal" ];
+plot_label = ["- Angle"; "- Optimal"; "No GVS"; "+ Angle" ; "+ Optimal" ];
 xticks([1 2 3 4 5 6 ]);
 xticklabels(plot_label);
 hold on;

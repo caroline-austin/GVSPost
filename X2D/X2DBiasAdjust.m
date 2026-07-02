@@ -115,6 +115,8 @@ for sub = 1:numsub
         max_bis(sub) = max([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
         min_bis(sub) = min([bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]);
 
+        all_trial_bias{sub} = [bias_4A bias_5A bias_6A bias_4B bias_5B bias_6B]';
+
         all_bias(sub) = bias_correction;
         hist([bias_4A bias_4B bias_5A bias_5B bias_6A bias_6B])
 %% save files
@@ -126,15 +128,28 @@ for sub = 1:numsub
    eval(['  save ' ['S', subject_str, 'Extract' datatype 'Bias.mat '] vars_2_save ' vars_2_save']);      
    cd(code_path)
    eval (['clear ' vars_2_save])
-   close all;
+   % close all;
 
 
 end
 mean_bias = mean(abs(all_bias));
 std_bias = std(abs(all_bias));
 
-% hist(all_bias)
+hist(all_bias)
 
+%%
+all_bias_val = [];
+
+for i = 1:width(all_trial_bias)
+    if isempty(all_trial_bias{i})
+        continue
+    end
+    all_bias_val = [all_bias_val all_trial_bias{i}'];
+end
+hist(all_bias_val)
+std_all_bias = std(all_bias_val);
+mean_all_bias = mean(all_bias_val);
+%%
 function bias=calc_bias(motion, report)
         %find average for each signal
         motion_avg = mean(motion,"omitnan"); 

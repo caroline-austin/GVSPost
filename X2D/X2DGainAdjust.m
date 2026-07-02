@@ -151,6 +151,9 @@ end
 mean_gain = mean(all_avg_gain, 'omitnan');
 std_gain = std(all_avg_gain, 'omitnan');
 
+min_gain = min(all_avg_gain);
+max_gain = max(all_avg_gain);
+
 
 plotgains=1;
 if plotgains == 1

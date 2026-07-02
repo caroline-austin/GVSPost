@@ -16,7 +16,7 @@ clear all;
 clc; 
 
 %% set up
-subnum = [  2078];  % Subject List 2049, 2051 ,2053:2057, 2061:2062 2078:2090
+subnum = [ 2080 2084];  % Subject List 2049, 2051 ,2053:2057, 2061:2062 2078:2090
 numsub = length(subnum);
 subskip = [2058 2059 2060 2069:2077 2083 2085 2070 2072 1015 40005 40006];  %DNF'd subjects or subjects that didn't complete this part
 datatype = 'BiasTimeGain'; %can change this to specify which data you want to use for the checkng
@@ -29,7 +29,7 @@ Color_List = [ "black";"green";"cyan"; "blue"; "magenta";"red";"green"; "cyan";"
 match_list = ["N_4_00mA_7_00"; "N_4_00mA_7_50"; "N_4_00mA_8_00"; "N_5_00mA_0_00"; "0_00mA";"P_4_00mA_7_00"; "P_4_00mA_7_50"; "P_4_00mA_8_00";"P_5_00mA_0_00"];
 
 code_path = pwd; %save code directory
-file_path = uigetdir; %user selects file directory
+file_path = uigetdir; %user selects file directory % select the data folder
 
 if ismac || isunix
     plots_path = [file_path '/Plots/Check']; % specify where plots are saved
@@ -133,7 +133,7 @@ for sub = 1:numsub
     %for large portions of the trial consider removing the trial
     num_time_step = length(time);
     figure;
-    cd ..
+    % cd ..
     subplot(rows,cols,1)
         for prof2plot = 1:length(Label.shot_4A)
             subplot(rows,cols, prof2plot)

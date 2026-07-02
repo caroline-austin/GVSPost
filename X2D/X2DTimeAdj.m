@@ -142,6 +142,7 @@ for sub = 1:numsub
     time = time(1:trial_end);
 
     Time_shift_sub{sub}= avg_loc_rms_min_all;
+    applied_shift_sub{sub} = avg_loc_rms_min;
 
 %% save files
    cd(subject_path);
@@ -156,8 +157,15 @@ for sub = 1:numsub
 
 
 end
- mean_time_shift = mean(cell2mat(Time_shift_sub), 'omitnan');
- std_time_shift = std(cell2mat(Time_shift_sub), 'omitnan');
+ % mean_time_shift = mean(cell2mat(Time_shift_sub), 'omitnan')/50 -0.2;
+ % std_time_shift = std(cell2mat(Time_shift_sub), 'omitnan')/50;
+
+ mean_time_shift = mean(cell2mat(applied_shift_sub), 'omitnan')/50 -0.2;
+ std_time_shift = std(cell2mat(applied_shift_sub), 'omitnan')/50;
+
+ max_time_shift = max(cell2mat(applied_shift_sub))/50 - 0.2;
+ min_time_shift = min(cell2mat(applied_shift_sub))/50 - 0.2;
+
 plotadj=1;
 if plotadj == 1
     figure;
@@ -195,7 +203,7 @@ function [avg_loc_rms_min,avg_time_rms_min] = find_time_shift(shot,tilt)
     %taking the median not the mean to help account for potential outliers)
     [min_rms,loc_min_rms]=min(time_rms);
     avg_loc_rms_min = median(loc_min_rms); % could use the mean instead 
-    avg_time_rms_min = mean(min_rms);
+    avg_time_rms_min = median(min_rms);%mean(min_rms);
 end
 
 function [shot,tilt, GVS,predict] = shift_file(shot,tilt,GVS,predict, start_index, end_index)

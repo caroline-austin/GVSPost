@@ -46,7 +46,7 @@ prof = ["4A"; "4B"; "5A"; "5B"; "6A"; "6B"];
 for m = 1:6 
     Type = prof(m);
     Title = Type;
-    conditions = [1 3 4; 5 3 2];
+    conditions = [1  4; 5  2]; % [1 3 4; 5 3 2];
     motions = ["4"];
     
     [row, col]=size(conditions);
@@ -168,7 +168,7 @@ prof = ["4"; "5"; "6"];
 for m = 1:3
     Type = prof(m);
     Title = Type;
-    conditions = [4 3 1; 5 3 2]; % 1 3 4; 2 3 5 is the order for "Actual" amplification/zero/attenutation % 4 3 1; 5 3 2 is the order for positive/negative coupling
+    conditions = [4 3 1; 5 3 2]; %[4 3 1; 5 3 2]; % 1 3 4; 2 3 5 is the order for "Actual" amplification/zero/attenutation % 4 3 1; 5 3 2 is the order for positive/negative coupling
     motions = ["4"];
     
     [row, col]=size(conditions);
@@ -285,6 +285,170 @@ for m = 1:3
     % ax.XAxis.FontSize = 32;
     % ax.YAxis.FontSize = 32;
 end
+%% Make figures - combined A and B data with separate visualization of +/- (use in paper)
+LC = [226 107 109;90 160 163]/255;
+prof = ["4"; "5"; "6"];
+for m = 1:3
+    Type = prof(m);
+    Title = Type;
+    conditions = [4 3 1; 5 3 2]; %[4 3 1; 5 3 2]; % 1 3 4; 2 3 5 is the order for "Actual" amplification/zero/attenutation % 4 3 1; 5 3 2 is the order for positive/negative coupling
+    motions = ["4"];
+    
+    [row, col]=size(conditions);
+    
+    f=figure;
+    t=tiledlayout(3,row,'TileSpacing','tight');
+    for k = 1:3 % 1 = GVS plot 2 = full perception plot 3 = GVS perceptions only
+        for j = 1:row % number of GVS coupling schemes
+         
+            nexttile
+            hold on
+            
+            if k ==3
+                num_cond = 2;
+                conditions = [4 1; 5 2];
+                LC = [226 107 109;90 160 163]/255;
+            else 
+                num_cond = 3;
+                conditions = [4 3 1; 5 3 2];
+                LC = [226 107 109;128 128 128;90 160 163]/255;
+            end
+
+            for i = 1:num_cond % postive/negative/
+                condition = conditions(j,i);
+    %             motion = motions(j);
+        
+                tiltname = "tilt_"+Type+"A";
+                tiltang = Var.(tiltname);
+        
+                T = length(tiltang)*0.02;
+                dt = 0.02;
+                time = (0:dt:T-dt)';
+                
+                if k == 2 % plot the shot report
+                   
+                    shot_name = "All_shot_"+Type;
+                    shot_data = Var.(shot_name);
+                    perceptions = shot_data(:,condition);
+                    sem_name = "SEM_shot_save_"+Type;
+                    SEM = Var.(sem_name);
+                    percSEM = SEM(:,condition);
+            
+                 
+                    % PostProcess
+                    timeplot = 0:dt*2:T;
+                    angplot = interp1(time,tiltang(:,1)*-1,timeplot);
+                    percplot = interp1(time,perceptions*-1,timeplot);
+                    semplot = interp1(time,percSEM,timeplot);
+                    % yyaxis right
+                    plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
+                    plot(timeplot,percplot,'-','LineWidth',LW,'color',...
+                        LC(i,:),'LineStyle',LS(i))
+                    
+                    % Plot SEM
+                    plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
+                    plot(timeplot, percplot+semplot, 'color',LC(i,:), 'LineWidth',1);
+                    x2 = [timeplot, fliplr(timeplot)];
+                    inBetween = [percplot-semplot, fliplr(percplot+semplot)];
+                    fill(x2, inBetween,LC(i,:),'FaceAlpha',0.3);
+                elseif k == 3 % plot the shot report
+
+                    shot_name = "All_shot_"+Type;
+                    shot_data = Var.(shot_name);
+                    perceptions = shot_data(:,condition);
+                    sem_name = "SEM_shot_save_"+Type;
+                    SEM = Var.(sem_name);
+                    percSEM = SEM(:,condition);
+            
+                 
+                    % PostProcess
+                    timeplot = 0:dt*2:T;
+                    angplot = interp1(time,tiltang(:,1)*-1,timeplot);
+                    percplot = interp1(time,perceptions*-1,timeplot);
+                    semplot = interp1(time,percSEM,timeplot);
+                    % yyaxis right
+                    % plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
+                    plot(timeplot,percplot,'-','LineWidth',LW,'color',...
+                        LC(i,:),'LineStyle',LS(i))
+                    
+                    % Plot SEM
+                    plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
+                    plot(timeplot, percplot+semplot, 'color',LC(i,:), 'LineWidth',1);
+                    x2 = [timeplot, fliplr(timeplot)];
+                    inBetween = [percplot-semplot, fliplr(percplot+semplot)];
+                    fill(x2, inBetween,LC(i,:),'FaceAlpha',0.3);
+    
+                else
+                    % plot GVS stuff
+                    GVS_name = "All_GVS_"+Type+"A";
+                    GVS_data = Var.(GVS_name);
+                    if condition < 3
+                        stimulations = GVS_data(:,condition);
+                    else % there are 6 GVS dimensions instead of 5 so need to add one 
+                        stimulations = GVS_data(:,condition+1);
+                    end
+    
+    
+                    timeplot = 0:dt*2:T;
+                    angplot = interp1(time,tiltang(:,1)*-1,timeplot);
+                    stimplot = interp1(time,stimulations*-1,timeplot);
+                    plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
+                    plot(timeplot(1:end-5),stimplot(6:end),'-','LineWidth',LW,'color',...
+                        LC(i,:),'LineStyle',LS(i))
+                end
+                
+                % if strcmp(Type,'Velocity')==1 && i == 3
+                %     plot(time,tiltang(:,3),'LineWidth',LW,'Color',[0.5 0.5 0.5 0.5],'LineStyle','--')
+                % elseif strcmp(Type,'Semi')==1 && i == 3
+                %     plot(time,0.5*tiltang(:,3)+0.5*tiltang(:,1),'LineWidth',LW,'Color',[0.5 0.5 0.5 0.5],'LineStyle','--')
+                % end
+            end
+            hold off
+            ylim([-12 12])
+            xlim([0 27])
+            set(gca,'FontSize',16)
+            if k == 2 || k ==3
+                % yyaxis right
+                ylabel('Tilt (deg)')
+                yticks([-10 0 10])
+            elseif k == 1
+            
+    %             ylabel('Tilt (deg)')
+                yticks([-10 0 10])
+            end
+                
+            if k ~= 3
+                xticks([])
+            else
+                xlabel('Time(s)')
+                xticks(0:5:25)
+            end
+            if k ==1 && j==2 
+                title('Model Based Coupling', FontSize= 30)
+            end
+            if k == 1 && j ==1
+                title('Angle Coupled', FontSize= 30)
+                ylabel(' GVS (mA)')
+            elseif k == 1 && j ==2
+                ylabel('GVS (mA)  ')
+
+
+            end
+            ax = gca;
+            ax.XAxis.FontSize = 20;
+            ax.YAxis.FontSize = 20;
+         end
+    end
+    sgtitle(t,Title,'Fontsize',16)
+    nexttile(3)
+    % legend({'Positve','','','','Negative','','',''},'Position',[0.8 0.325 0.15 0.15])
+    legend({'Physical Tilt','Positve','','','','','No GVS','','','','','Negative'},'Position',[0.8 0.325 0.15 0.15])
+    f.Position = [100 100 1500 620];
+    % ax = gca;
+    % ax.XAxis.FontSize = 32;
+    % ax.YAxis.FontSize = 32;
+end
+
 %% make figure of diff from baseline
 % prof = ["4A"; "4B"; "5A"; "5B"; "6A"; "6B"];
 % LC = [226 107 109;128 128 128;128 128 128;90 160 163]/255;
