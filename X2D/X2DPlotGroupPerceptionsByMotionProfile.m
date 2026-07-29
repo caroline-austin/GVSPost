@@ -297,8 +297,8 @@ for m = 1:3
     [row, col]=size(conditions);
     
     f=figure;
-    t=tiledlayout(3,row,'TileSpacing','tight');
-    for k = 1:3 % 1 = GVS plot 2 = full perception plot 3 = GVS perceptions only
+    t=tiledlayout(2,row,'TileSpacing','tight');
+    for k = [1 3] % 1 = GVS plot 2 = full perception plot 3 = GVS perceptions only
         for j = 1:row % number of GVS coupling schemes
          
             nexttile
@@ -326,31 +326,31 @@ for m = 1:3
                 time = (0:dt:T-dt)';
                 
                 if k == 2 % plot the shot report
-                   
-                    shot_name = "All_shot_"+Type;
-                    shot_data = Var.(shot_name);
-                    perceptions = shot_data(:,condition);
-                    sem_name = "SEM_shot_save_"+Type;
-                    SEM = Var.(sem_name);
-                    percSEM = SEM(:,condition);
-            
-                 
-                    % PostProcess
-                    timeplot = 0:dt*2:T;
-                    angplot = interp1(time,tiltang(:,1)*-1,timeplot);
-                    percplot = interp1(time,perceptions*-1,timeplot);
-                    semplot = interp1(time,percSEM,timeplot);
-                    % yyaxis right
-                    plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
-                    plot(timeplot,percplot,'-','LineWidth',LW,'color',...
-                        LC(i,:),'LineStyle',LS(i))
-                    
-                    % Plot SEM
-                    plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
-                    plot(timeplot, percplot+semplot, 'color',LC(i,:), 'LineWidth',1);
-                    x2 = [timeplot, fliplr(timeplot)];
-                    inBetween = [percplot-semplot, fliplr(percplot+semplot)];
-                    fill(x2, inBetween,LC(i,:),'FaceAlpha',0.3);
+                    % 
+                    % shot_name = "All_shot_"+Type;
+                    % shot_data = Var.(shot_name);
+                    % perceptions = shot_data(:,condition);
+                    % sem_name = "SEM_shot_save_"+Type;
+                    % SEM = Var.(sem_name);
+                    % percSEM = SEM(:,condition);
+                    % 
+                    % 
+                    % % PostProcess
+                    % timeplot = 0:dt*2:T;
+                    % angplot = interp1(time,tiltang(:,1)*-1,timeplot);
+                    % percplot = interp1(time,perceptions*-1,timeplot);
+                    % semplot = interp1(time,percSEM,timeplot);
+                    % % yyaxis right
+                    % plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
+                    % plot(timeplot,percplot,'-','LineWidth',LW,'color',...
+                    %     LC(i,:),'LineStyle',LS(i))
+                    % 
+                    % % Plot SEM
+                    % plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
+                    % plot(timeplot, percplot+semplot, 'color',LC(i,:), 'LineWidth',1);
+                    % x2 = [timeplot, fliplr(timeplot)];
+                    % inBetween = [percplot-semplot, fliplr(percplot+semplot)];
+                    % fill(x2, inBetween,LC(i,:),'FaceAlpha',0.3);
                 elseif k == 3 % plot the shot report
 
                     shot_name = "All_shot_"+Type;
@@ -368,8 +368,13 @@ for m = 1:3
                     semplot = interp1(time,percSEM,timeplot);
                     % yyaxis right
                     % plot(timeplot,angplot,'LineWidth',LW,'color',[0 0 0]);
-                    plot(timeplot,percplot,'-','LineWidth',LW,'color',...
+                    if i==1
+                        plot(timeplot,percplot,'-','LineWidth',LW,'color',...
                         LC(i,:),'LineStyle',LS(i))
+                    else
+                        plot(timeplot,percplot,'-.','LineWidth',LW,'color',...
+                        LC(i,:))
+                    end
                     
                     % Plot SEM
                     plot(timeplot, percplot-semplot, 'color',LC(i,:), 'LineWidth', 1);
@@ -442,7 +447,7 @@ for m = 1:3
     sgtitle(t,Title,'Fontsize',16)
     nexttile(3)
     % legend({'Positve','','','','Negative','','',''},'Position',[0.8 0.325 0.15 0.15])
-    legend({'Physical Tilt','Positve','','','','','No GVS','','','','','Negative'},'Position',[0.8 0.325 0.15 0.15])
+    % legend({'Physical Tilt','Positve','','','','','No GVS','','','','','Negative'},'Position',[0.8 0.325 0.15 0.15])
     f.Position = [100 100 1500 620];
     % ax = gca;
     % ax.XAxis.FontSize = 32;

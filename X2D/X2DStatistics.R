@@ -18,6 +18,9 @@ perception_tilt_full<-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics F
 mag <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/mag_anova.csv")
 psd <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/psd_anova.csv")
 
+pitch_Gain_sub <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/Pitch_Gain_sub.csv")
+pitch_Gain_jack <-read.csv(file = "C:/Users/caroa/UCB-O365/Bioastronautics File Repository - File Repository/Torin Group Items/Projects/Motion Coupled GVS/PitchDynamicGVSPlusTiltTesting/Data/Pitch_Gain_jack.csv")
+
 #1# look at MAE 
 #make data factor
 mae$SID <- factor(mae$SID)
@@ -62,11 +65,25 @@ abline(h = 0, col = "red")
 
 bptest(mae_model)
 
-#compute one-way repeated measures anova
+#compute one-way repeated measures anova with only participants that did all conditions
 res_mae.aov <- anova_test(data = mae, dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_mae.aov)
 
 pairwise.t.test(mae[,3],mae[,2],p.adj = "bonf")
+
+#compute one-way repeated measures anova with only data from angle coupled
+mae_angle <- subset(mae, (mae$CouplingScheme== 1| mae$CouplingScheme== 3 | mae$CouplingScheme==4))
+res_mae_angle.aov <- anova_test(data = mae_angle, dv = Var, wid = SID, within = CouplingScheme)
+get_anova_table(res_mae_angle.aov)
+
+pairwise.t.test(mae_angle[,3],mae_angle[,2],p.adj = "bonf")
+
+#compute one-way repeated measures anova with only data from optimized
+mae_opt<- subset(mae, (mae$CouplingScheme== 2| mae$CouplingScheme== 3 | mae$CouplingScheme==5))
+res_mae_opt.aov <- anova_test(data = mae_opt, dv = Var, wid = SID, within = CouplingScheme)
+get_anova_table(res_mae_opt.aov)
+
+pairwise.t.test(mae_opt[,3],mae_opt[,2],p.adj = "bonf")
 
 #res_mae_neg.aov <- anova_test(data = mae[1:44,], dv = Var, wid = SID, within = CouplingScheme)
 #get_anova_table(res_mae_neg.aov)
@@ -77,6 +94,11 @@ pairwise.t.test(mae[,3],mae[,2],p.adj = "bonf")
 #1b# consider motion profile
 res_mae_full.aov <- anova_test(data = mae_full[,1:6], dv = Var, wid = SID, within = c("CouplingScheme" , "MotionProfile" , "MotionDirection" ))
 get_anova_table(res_mae_full.aov)
+
+# look at only the opt waveform data
+mae_full_opt <- subset(mae_full, (mae$CouplingScheme== 2| mae$CouplingScheme== 3 | mae$CouplingScheme==5))
+res_mae_full_opt.aov <- anova_test(data = mae_full_opt[,1:6], dv = Var, wid = SID, within = c("CouplingScheme" , "MotionProfile" , "MotionDirection" ))
+get_anova_table(res_mae_full_opt.aov)
 
 ###########################################################
 #2# look at tilt perception slope
@@ -127,11 +149,25 @@ bptest(perception_tilt_model)
 
 # fails normality test, barely passes homoscedacity test
 
-#compute one-way repeated measures anova
+#compute one-way repeated measures anova 
 res_perception_tilt.aov <- anova_test(data = perception_tilt, dv = Var, wid = SID, within = CouplingScheme)
 get_anova_table(res_perception_tilt.aov)
 
 pairwise.t.test(perception_tilt[,3],perception_tilt[,2],p.adj = "bonf")
+
+#compute one-way repeated measures anova with only angle coupled data
+perception_tilt_angle <-subset(perception_tilt, (mae$CouplingScheme== 1| mae$CouplingScheme== 3 | mae$CouplingScheme==4))
+res_perception_tilt_angle.aov <- anova_test(data = perception_tilt_angle, dv = Var, wid = SID, within = CouplingScheme)
+get_anova_table(res_perception_tilt_angle.aov)
+
+pairwise.t.test(perception_tilt_angle[,3],perception_tilt_angle[,2],p.adj = "bonf")
+
+#compute one-way repeated measures anova with only optimized coupled data
+perception_tilt_opt <-subset(perception_tilt, (mae$CouplingScheme== 2| mae$CouplingScheme== 3 | mae$CouplingScheme==5))
+res_perception_tilt_opt.aov <- anova_test(data = perception_tilt_opt, dv = Var, wid = SID, within = CouplingScheme)
+get_anova_table(res_perception_tilt_opt.aov)
+
+pairwise.t.test(perception_tilt_opt[,3],perception_tilt_opt[,2],p.adj = "bonf")
 
 #res_perception_tilt_neg.aov <- anova_test(data = perception_tilt[1:44,], dv = Var, wid = SID, within = CouplingScheme)
 #get_anova_table(res_perception_tilt_neg.aov)
@@ -197,4 +233,9 @@ get_anova_table(pitch_psd_1Hz.aov)
 
 pairwise.t.test(pitch_psd_1Hz[,1],pitch_psd_1Hz[,7],p.adj = "bonf") # 
 
-
+################################################################################
+# KGVS stats
+################################################################################
+shapiro_test(pitch_Gain_sub$Gain)
+t.test(pitch_Gain_sub, mu = 0)
+t.test(pitch_Gain_sub, mu = 0.0245)

@@ -5,6 +5,8 @@ colors;
 
 addpath('../PerceptionData/CarolineData/')
 addpath('../Training/')
+% this is where the pre-run data is saved on Caroline's computer 
+addpath('C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\X2D_Data') 
 
 % Load precomputed observer results
 load("ModelResultsFine.mat","Results","GVS_range","Post_range"); 
@@ -14,12 +16,12 @@ P = length(Post_range);
 % Run parameters
 name = 'SubjectFits_JackknifeFine.mat';
 subjects = 1:22;
-conditions_use = [2 6];  % subset of conditions to evaluate
+conditions_use = [1 2 5 6];  % subset of conditions to evaluate
 
 % Trial elements in the study
 motions = ["4","5","6"];
 dirs = ["A","B"];
-conditions_all = [2 6];  % original order of Results
+conditions_all = [1 2 5 6];  % original order of Results
 
 lm = length(motions);
 ld = length(dirs);

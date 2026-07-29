@@ -4,6 +4,8 @@ clc; clear; close all;
 
 addpath('../PerceptionData/CarolineData/')
 addpath('../Training/')
+% this is where the pre-run data is saved on Caroline's computer 
+addpath('C:\Users\caroa\OneDrive - UCB-O365\Research\Testing\X2D_Data') 
 % typically in ../Training/
 load("ModelResultsTest.mat","Results","GVS_range"); 
 
@@ -119,11 +121,12 @@ for subIdx = 1:length(subjects)
     end
 
     % Smooth out cost function (somewhat noisy)
-    J_sub_smooth = movmean(J_sub, 50);  % 5-point moving average
+    J_sub_smooth = movmean(J_sub, 5);  % 5-point moving average
 
     % Plot the OG and smooth curves
     figure; hold on;
     plot(GVS_range,J_sub);plot(GVS_range,J_sub_smooth);hold off;
+    legend(["raw" "smooth"])
     title(sprintf('Subject %d: J\_sub', i)); drawnow;
     J_sub = J_sub_smooth; % overwrite
 
