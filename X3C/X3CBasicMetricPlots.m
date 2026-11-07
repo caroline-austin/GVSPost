@@ -6,7 +6,7 @@ clear all;
 clc; 
 
 %% setup
-subnum = [ 3096:3100];  % Subject List 
+subnum = [ 3096:3103];  % Subject List 
 numsub = length(subnum);
 subskip = [ 1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 

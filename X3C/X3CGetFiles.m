@@ -11,7 +11,7 @@ close all; clear; clc;
 warning('off', 'MATLAB:table:ModifiedAndSavedVarnames');
 
 %% setup
-subnum = [ 3100];  % Subject List 1011:1022; 3091:3092
+subnum = [ 3103];  % Subject List 1011:1022; 3091:3092
 numsub = length(subnum);
 subskip = [1013 40005 40006];  %DNF'd subjects or subjects that didn't complete this part 
 
